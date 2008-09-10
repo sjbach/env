@@ -1,0 +1,44 @@
+(add-to-list 'load-path "~/.elisp")
+
+(require 'iswitchb)
+(iswitchb-mode t)
+(setq-default indent-tabs-mode nil)
+
+(require 'lusty-explorer)
+
+(defun close-buffer-and-window-unless-last ()
+  (interactive)
+  (let* ((buffer (current-buffer))
+         (window (get-buffer-window buffer))
+         (next (next-window window)))
+    (kill-buffer buffer)
+    (when (and window
+               (not (eq window next)))
+      (delete-window window))))
+
+(global-set-key "\C-x\C-m" 'execute-extended-command)
+(global-set-key "\C-c\C-m" 'execute-extended-command)
+(global-set-key "\C-d" 'close-buffer-and-window-unless-last)
+
+;; Put all backups into a single directory
+(setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs-tmp"))))
+(setq-default vc-make-backup-files t)
+
+;; Don't warn about opening symlinked files.
+(setq-default vc-follow-symlinks t)
+
+(defun expand-load (filename)
+  (when (stringp filename)
+    (load-file (expand-file-name (format "~/.emacs.d/%s" filename)))))
+
+(defun ita-p ()
+  (string-equal (getenv "LOGNAME") "sbach"))
+
+(mapc 'expand-load
+      `("look-and-feel.el"
+        ,(and (ita-p) "qpx-ita.el")
+        "viper-setup.el"))
+
+(custom-set-variables
+ '(load-home-init-file t t))
+(custom-set-faces)
