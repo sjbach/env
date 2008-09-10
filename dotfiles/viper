@@ -39,8 +39,10 @@
 (define-key viper-vi-global-user-map ",x1" 'delete-other-windows)
 (define-key viper-vi-global-user-map ",A" 'beginning-of-defun)
 (define-key viper-vi-global-user-map ",v" 'vimpulse-vim-excursion)
-(define-key viper-vi-global-user-map ",xl" 'slime-dialect-qpx)
+(define-key viper-vi-global-user-map ",xl"
+                                     'qpx-slime-startup-or-goto-existing-repl)
 (define-key viper-vi-global-user-map ",xq" 'slime-quit-lisp)
+(define-key viper-vi-global-user-map ",xs" 'slime-selector)
 (define-key viper-vi-global-user-map "=" 'indent-according-to-mode)
 
 ;; Help-mode and Info-mode should be in viper
