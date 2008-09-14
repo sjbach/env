@@ -14,7 +14,12 @@ NEWLINE='\
 
 [ ! -d $SOUND_DIR ] && mkdir -p $SOUND_DIR
 
-WAVS=$(wget -q -O - "http://www.m-w.com/cgi-bin/dictionary?$1" | sed -n "/audio\.gif/s/>/$NEWLINE/pg" | sed -rn "/popWin/s/^.*popWin\('([^']*)'\).*$/http:\/\/www\.m-w\.com\/\1/gp"| xargs -r wget -q -O - | sed -n '/Click here/s/^.*<A HREF="\([^"]*\)">.*$/\1/gp')
+WAVS=$(\
+  wget -q -O - "http://www.m-w.com/cgi-bin/dictionary?$1" | \
+  sed -n "/audio\.gif/s/>/$NEWLINE/pg" | \
+  sed -rn "/popWin/s|^.*popWin\('([^']*)'\).*$|http://www\.m-w\.com/\1|gp"| \
+  xargs -r wget -q -O - | \
+  sed -n '/Click here/s/^.*<A HREF="\([^"]*\)">.*$/\1/gp')
 
 if [ -z "$WAVS" ]; then
 	echo "No sounds found for \"$1\"." >&2
