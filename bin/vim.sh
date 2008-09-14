@@ -5,8 +5,7 @@
 
 # Avoid infinite recursion.
 VIM=`which -a vim | sed 1d | head -n1`
-
-# (Just in case this script isn't in the path.)
+[ "$VIM" ] || VIM=`which vim`
 [ "$VIM" ] || VIM=vim
 
 DISPLAY= exec $VIM "$@"
