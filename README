@@ -1,0 +1,6 @@
+My dotfiles and some scripts.  To "install":
+
+    $ ./deploy.sh
+
+It should only replace symlinks, not any existing files.
+
