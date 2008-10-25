@@ -123,13 +123,14 @@
 (defun steve-slime-repl-fixes ()
   (viper-change-state-to-vi)
   (viper-add-local-keys 'vi-state
-                        `((,(kbd "RET") . slime-repl-closing-return)))
+                        `((,(kbd "RET") . slime-repl-closing-return)
+                          (,(kbd "RET") . slime-repl-closing-return)
+                          ("\C-n" . steve-slime-repl-forward)
+                          ("\C-p" . steve-slime-repl-backward)))
   (viper-add-local-keys 'insert-state
-                        `((,(kbd "RET") . slime-repl-closing-return)))
-  (viper-add-local-keys 'vi-state '(("\C-n" . steve-slime-repl-forward)))
-  (viper-add-local-keys 'vi-state '(("\C-p" . steve-slime-repl-backward)))
-  (viper-add-local-keys 'insert-state '(("\C-n" . steve-slime-repl-forward)))
-  (viper-add-local-keys 'insert-state '(("\C-p" . steve-slime-repl-backward))))
+                        '(("\C-n" . steve-slime-repl-forward)
+                          ("\C-p" . steve-slime-repl-backward)))
+  )
 (add-hook 'slime-repl-mode-hook 'steve-slime-repl-fixes)
 
 ; - remember viper-harness-minor-mode
