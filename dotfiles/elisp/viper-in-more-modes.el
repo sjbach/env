@@ -285,6 +285,7 @@ work on closed parens like one can expect in vi."
         map))
 
 (viper-modify-major-mode 'lisp-mode 'vi-state my-lisp-modified-vi-map)
+(viper-modify-major-mode 'clojure-mode 'vi-state my-lisp-modified-vi-map)
 ;; STEVE FIXME vvv doesn't work?
 ;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
 

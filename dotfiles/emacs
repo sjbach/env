@@ -1,10 +1,25 @@
 (add-to-list 'load-path "~/.elisp")
 
+(defun itap ()
+  (string-equal (getenv "LOGNAME") "sbach"))
+
 (require 'iswitchb)
 (iswitchb-mode t)
 (setq-default indent-tabs-mode nil)
 
 (require 'lusty-explorer)
+
+(unless (itap)
+  ;; TODO: cleanup
+  (add-to-list 'load-path "/home/steve/clojure/swank-clojure")
+  (setq swank-clojure-jar-path "/home/steve/clojure/clojure/clojure.jar")
+  (require 'swank-clojure-autoload)
+
+  (eval-after-load "slime"
+    '(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl"))))
+
+  (add-to-list 'load-path "/home/steve/clojure/clojure-mode")
+  (require 'clojure-auto))
 
 (defun close-buffer-and-window-unless-last ()
   (interactive)
@@ -31,12 +46,9 @@
   (when (stringp filename)
     (load-file (expand-file-name (format "~/.emacs.d/%s" filename)))))
 
-(defun ita-p ()
-  (string-equal (getenv "LOGNAME") "sbach"))
-
 (mapc 'expand-load
       `("look-and-feel.el"
-        ,(and (ita-p) "qpx-ita.el")
+        ,(and (itap) "qpx-ita.el")
         "viper-setup.el"))
 
 (custom-set-variables
