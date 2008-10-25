@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2007 Alessandro Piras, Brad Beveridge, Jason Spiro
 ;; 
-;; Version: 0.1.1
+;; Version: x.x.x
 ;; Authors: Alessandro Piras <laynor@gmail.com>,
 ;;          Brad Beveridge <brad.beveridge@gmail.com>
 ;; Maintainer: Jason Spiro <jasonspiro3@gmail.com>
@@ -11,7 +11,9 @@
 ;; This file is not part of GNU Emacs.
 
 ;;; Commentary:
-;; 
+;;
+;; Note: This file has been heavily modified by Stephen Bach.
+;;
 ;; This file is an unofficial add-on to viper-mode.  It currently
 ;; provides vi-like keymaps for emacs-lisp-mode, lisp-interaction-mode,
 ;; slime-repl-mode, and lisp-mode.  If you have any questions or
@@ -29,7 +31,7 @@
 
 ;;; Change Log:
 ;; 
-;; Version 0.1.1:  Made viper-leader-char a var, not a const.  Thank you
+;; Version 0.1.1:  Made vimper-leader-char a var, not a const.  Thank you
 ;; John J Foerch <jjfoerch at earthlink.net>.
 ;; Version 0.1:  Initial upload to wiki.
 
@@ -50,7 +52,7 @@
 
 
 
-;; Begin utility code {{{
+;; Begin utility code
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Macro workaround to make some commands ;;;
@@ -60,7 +62,7 @@
 ;;; (like in vim)			   ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; STEVE: FIXME: should use save-excursion instead?
+;; STEVE FIXME: should use save-excursion instead?
 (defmacro do-one-char-forward (&rest body)
   "Wraps the body between `forward-char' and `backward-char' to make commands
 work on closed parens like one can expect in vi."
@@ -69,14 +71,14 @@ work on closed parens like one can expect in vi."
      ,@body
      (backward-char)))
 
-(defmacro def-simple-vimper-wrapper-ocf (name &rest body)
+(defmacro def-vimper-ocf (name &rest body)
   ";     Define a wrapper for a command to execute it as if the cursor was one
    ; char forward the current position. Uses `do-one-char-forward'. Use it
    ; like a defun without lambdalist.
    ;
    ;     For example, this:
    ;
-   ; (def-simple-vimper-wrapper-ocf my-eval-last-sexp (eval-last-sexp))
+   ; (def-vimper-ocf my-eval-last-sexp (eval-last-sexp))
    ;
    ;     expands to this:
    ;
@@ -89,7 +91,7 @@ work on closed parens like one can expect in vi."
      (do-one-char-forward
       ,@body)))
 
-;; }}} End utility code
+;; End utility code
 
 
 
@@ -97,14 +99,15 @@ work on closed parens like one can expect in vi."
 
 
 
-;; Begin major mode keybinding code {{{
+;; Begin major mode keybinding code
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Major mode keybindings and functions used by vimper  ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar viper-leader-char " ")
+(defvar vimper-leader-char " ")
 (defmacro vimper-defkey-l (map key func)
-  `(define-key ,map (concat viper-leader-char ,key) ,func))
+  `(define-key ,map (concat vimper-leader-char ,key) ,func))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;     Emacs Lisp Mode - Viper Mappings       ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -114,6 +117,13 @@ work on closed parens like one can expect in vi."
 ;;;	    on sexps. We use the `do-one-char-forward' utility macro here,
 ;;;	    look at vimper/utilities.el for details on that macro).
 (defun vimper-eval-last-sexp (&optional eval-last-sexp-arg-internal)
+  (interactive)
+  (do-one-char-forward (eval-last-sexp eval-last-sexp-arg-internal)))
+
+(def-vimper-ocf vimper-eval-print-last-sexp
+  (eval-print-last-sexp))
+
+(defun vimper-eval-print-last-sexp (&optional eval-last-sexp-arg-internal)
   (interactive)
   (do-one-char-forward (eval-last-sexp eval-last-sexp-arg-internal)))
 
@@ -129,11 +139,12 @@ work on closed parens like one can expect in vi."
 (defun vimper-pp-eval-last-sexp (&optional eval-last-sexp-arg-internal)
   (interactive)
   (do-one-char-forward (pp-eval-last-sexp eval-last-sexp-arg-internal)))
+
 ;; macroexpand command (macroexpands last sexp)
-(def-simple-vimper-wrapper-ocf vimper-macroexpand
+(def-vimper-ocf vimper-macroexpand
   (message (pp-to-string (macroexpand (sexp-at-point)))))
 ;; macroexpand-all command (macroexpands-all last sexp)
-(def-simple-vimper-wrapper-ocf vimper-macroexpand-all
+(def-vimper-ocf vimper-macroexpand-all
   (message (pp-to-string (macroexpand-all (sexp-at-point)))))
 
 ;;; bindings
@@ -144,6 +155,7 @@ work on closed parens like one can expect in vi."
 	(vimper-defkey-l map "pE" 'pp-eval-expression)
 	(vimper-defkey-l map "pr" 'vimper-pp-eval-region)
 	(vimper-defkey-l map "e" 'vimper-eval-last-sexp)
+	(vimper-defkey-l map "j" 'vimper-eval-print-last-sexp)
 	(vimper-defkey-l map "r" 'vimper-eval-region)
         (vimper-defkey-l map "K" 'eval-buffer)
 	(vimper-defkey-l map "da" 'apropos)
@@ -156,7 +168,7 @@ work on closed parens like one can expect in vi."
 	map))
 (viper-modify-major-mode 'emacs-lisp-mode 'vi-state my-elisp-modified-vi-map)
 (viper-modify-major-mode 'lisp-interaction-mode 'vi-state my-elisp-modified-vi-map)
-;; STEVE: FIXME is this an editing leftover?
+;; STEVE FIXME is this an editing leftover?
 (eval-after-load 'slime
   '(viper-modify-major-mode 'slime-repl-mode 'vi-state my-elisp-modified-vi-map))
 ;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-elisp-modified-vi-map)
@@ -166,13 +178,13 @@ work on closed parens like one can expect in vi."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Commands
-(def-simple-vimper-wrapper-ocf vimper-slime-compile-defun 
+(def-vimper-ocf vimper-slime-compile-defun 
    (slime-compile-defun))
-(def-simple-vimper-wrapper-ocf vimper-slime-eval-defun 
+(def-vimper-ocf vimper-slime-eval-defun 
    (slime-eval-defun))
-(def-simple-vimper-wrapper-ocf vimper-slime-eval-last-expression 
+(def-vimper-ocf vimper-slime-eval-last-expression 
    (slime-eval-last-expression))
-(def-simple-vimper-wrapper-ocf vimper-slime-pprint-eval-last-expression
+(def-vimper-ocf vimper-slime-pprint-eval-last-expression
    (slime-pprint-eval-last-expression))
 (defun vimper-slime-eval-region ()
   (interactive)
@@ -184,7 +196,7 @@ work on closed parens like one can expect in vi."
   (interactive "P")
   (do-one-char-forward
    (slime-macroexpand-1 REPEATEDLY)))
-(def-simple-vimper-wrapper-ocf vimper-slime-macroexpand-all
+(def-vimper-ocf vimper-slime-macroexpand-all
   (slime-macroexpand-all))
 ;; Bindings
 
@@ -240,7 +252,7 @@ work on closed parens like one can expect in vi."
         ;; Macro expansion
         ;(vimper-defkey-l map "m" 'vimper-slime-macroexpand-1)
         ;(vimper-defkey-l map "M" 'vimper-slime-macroexpand-all)
-        ; STEVE: FIXME vvv ?
+        ; STEVE FIXME vvv ?
         (vimper-defkey-l map "m" 'slime-macroexpand-1)
         (vimper-defkey-l map "M" 'slime-macroexpand-all)
         (vimper-defkey-l map "t" 'slime-toggle-trace-fdefinition)
@@ -316,6 +328,6 @@ work on closed parens like one can expect in vi."
 (viper-modify-major-mode 'slime-repl-mode 'insert-state
 			 my-repl-modified-insert-map)
 
-;; }}} End major mode keybinding code
+;; End major mode keybinding code
 
 (provide 'viper-in-more-modes)
