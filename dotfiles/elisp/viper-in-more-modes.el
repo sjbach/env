@@ -163,10 +163,8 @@ work on closed parens like one can expect in vi."
 	map))
 (viper-modify-major-mode 'emacs-lisp-mode 'vi-state my-elisp-modified-vi-map)
 (viper-modify-major-mode 'lisp-interaction-mode 'vi-state my-elisp-modified-vi-map)
-;; STEVE FIXME is this an editing leftover?
-;(eval-after-load 'slime
-;  '(viper-modify-major-mode 'slime-repl-mode 'vi-state my-elisp-modified-vi-map))
-;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-elisp-modified-vi-map)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;     Common Lisp Mode - Viper Mappings      ;;;
 ;;;                    Slime                   ;;;
