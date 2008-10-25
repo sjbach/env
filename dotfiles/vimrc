@@ -73,7 +73,7 @@ else
 end
 
 " Lusty
-"let g:LustyJugglerSuppressRubyWarning = 1
+"let g:LustyJugglerShowKeys = 2
 let g:LustyExplorerSuppressRubyWarning = 1
 let g:LustyExplorerFileMasks = "*.o,*.fasl"
 nmap <silent> <Leader>f :FilesystemExplorer<CR>
