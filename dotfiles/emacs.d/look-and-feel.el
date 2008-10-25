@@ -25,10 +25,9 @@
 
 ;(set-default-font "Bitstream Vera Sans Mono-8")
 ;(set-default-font "Bitstream Vera Sans Mono-9")
+(set-default-font "Bitstream Vera Sans Mono-10")
 ;(set-default-font "Bitstream Vera Sans Mono-11") 
-(if (itap)
-    (set-default-font "Bitstream Vera Sans Mono-12")
-  (set-default-font "Bitstream Vera Sans Mono-10"))
+;(set-default-font "Bitstream Vera Sans Mono-12")
 
 ;; Turn on font-lock mode for syntax highlighting
 (global-font-lock-mode t)
