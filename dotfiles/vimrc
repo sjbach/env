@@ -14,6 +14,9 @@ set showcmd
 set sidescroll=1
 set sidescrolloff=3
 
+" Set xterm title
+set title
+
 " Search options
 set hlsearch
 set incsearch
@@ -24,7 +27,7 @@ set novisualbell
 set noerrorbells
 set printoptions=paper:letter
 
-" Keep 3 lines of context
+" Keep more lines of context
 set scrolloff=3
 
 " Make backspace delete lots of things
@@ -89,7 +92,11 @@ nmap <silent> <TAB> :JugglePrevious<CR>
 " For lisp repl
 "autocmd BufRead *.lsp,*.lisp so ~/vilisp/VIlisp.vim
 
-" Fix command typos (stolen from Adam)
+" Catch trailing whitespace
+set listchars=tab:>-,trail:·,eol:$
+nmap <silent> <leader>s :set nolist!<CR>
+
+" Fix command typos (stolen from Adam Katz)
 nmap ; :
 
 " ` is more useful than ' but less accessible.
@@ -105,7 +112,7 @@ nmap <C-d> :bw<CR>
 
 " Toggle highlighting
 " nmap <silent> <C-n> :silent :set nohls!<CR>:silent :set nohls?<CR>
-map <silent> <C-N> :noh<CR>
+nmap <silent> <C-n> :silent :nohlsearch<CR>
 
 " Scroll faster
 nnoremap <C-e> <C-e><C-e><C-e>
@@ -140,6 +147,12 @@ autocmd BufReadPre .viper set filetype=lisp
 " a.vim
 nmap <silent> <Leader>h :A<CR>
 
+" Indent XML readably
+function! DoPrettyXML()
+	1,$!xmllint --format --recover -
+endfunction
+command! PrettyXML call DoPrettyXML()
+
 " Chris Gaal's documentation auto-lookup function.
 function! OnlineDocSearch(keyword, ...)
     let lang = exists("a:1") ? tolower(a:1) : &ft
@@ -157,19 +170,10 @@ function! OnlineDocSearch(keyword, ...)
         return
     endif
 
-    "let browser = "\"C:\\Program Files\\Mozilla Firefox\\firefox.exe\""
     let browser = "firefox"
     let url = substitute(urlTemplate, "%", a:keyword, "g")
-    "let cmd = "silent !start " . browser . " " . url
-    let cmd = "silent !firefox " . url
+    let cmd = "silent !" . browser . " " . url
     execute cmd
 endfunction
-
-map <silent> <M-d> :call OnlineDocSearch(expand("<cword>"))<CR>
-
-" Indent XML readably
-fu! DoPrettyXML()
-	1,$!xmllint --format --recover -
-endfu
-command! PrettyXML call DoPrettyXML()
+nmap <silent> <M-d> :call OnlineDocSearch(expand("<cword>"))<CR>
 
