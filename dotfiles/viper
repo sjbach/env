@@ -151,3 +151,4 @@
 ;  j, k, h, l
 ; *grep*:
 ;  <SPACE>-r
+; - map key to select *scratch*
