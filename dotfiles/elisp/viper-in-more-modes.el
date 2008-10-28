@@ -287,6 +287,7 @@ work on closed parens like one can expect in vi."
         ;; Repl!
         (vimper-defkey-l map "R" 'slime-switch-to-output-buffer)
         (vimper-defkey-l map "z" 'slime-switch-to-output-buffer)
+        (vimper-defkey-l map "s" 'slime-scratch)
         
         ;; Profiler
         ;; "p" is already taken as a key, we
