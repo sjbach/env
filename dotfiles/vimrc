@@ -153,27 +153,3 @@ function! DoPrettyXML()
 endfunction
 command! PrettyXML call DoPrettyXML()
 
-" Chris Gaal's documentation auto-lookup function.
-function! OnlineDocSearch(keyword, ...)
-    let lang = exists("a:1") ? tolower(a:1) : &ft
-
-    if lang =~ "cpp"
-        let urlTemplate = " http://doc.trolltech.com/3.3/%.html"
-    elseif lang =~ "ruby"
-        let urlTemplate = "http://www.ruby-doc.org/core/classes/%.html "
-    elseif lang =~ "perl"
-        let urlTemplate = "http://perldoc.perl.org/functions/%.html"
-    elseif lang =~ "php"
-        let urlTemplate = "http://www.php.net/%"
-    else
-        echo "No doc URL for filetype \"" . lang . "\""
-        return
-    endif
-
-    let browser = "firefox"
-    let url = substitute(urlTemplate, "%", a:keyword, "g")
-    let cmd = "silent !" . browser . " " . url
-    execute cmd
-endfunction
-nmap <silent> <M-d> :call OnlineDocSearch(expand("<cword>"))<CR>
-
