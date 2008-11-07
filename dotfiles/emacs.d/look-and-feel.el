@@ -4,9 +4,13 @@
 (require 'color-theme)
 ;(color-theme-xemacs)
 (color-theme-initialize)
-(color-theme-robin-hood)
+(let ((display (getenv "DISPLAY")))
+  (if (and display (> (length display) 0))
+      ;; X
+      (color-theme-robin-hood)
+    ;; Terminal
+    (color-theme-comidia)))
 ;(color-theme-sitaramv-solaris)
-;(color-theme-comidia)
 
 ; Slime autodoc often expands the minibuffer height, which is annoying.
 (setq resize-mini-windows nil)
