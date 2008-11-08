@@ -5,9 +5,12 @@ noremap k kkk
 noremap <C-e> <C-e><C-e><C-e>
 noremap <C-y> <C-y><C-y><C-y>
 noremap <C-d> d
+noremap h H
+noremap l L
+noremap H h
+noremap L l
 
 " Options
-"set guioptions=mTb
 set showtabline=1
 
 " Abbreviations
