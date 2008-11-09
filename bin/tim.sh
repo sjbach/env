@@ -1,23 +1,40 @@
 #!/bin/sh
-# Send stdin to a temporary vim/gvim buffer
+# Send stdin or output from running arguments to a temporary vim/gvim buffer
 
 VIM_PARAMS="+set nowrap buftype=nofile bufhidden=hide"
 
 if [ "$DISPLAY" ]; then
-  cat 2>/dev/null | (
-    if [ "$1" ] && [ ! "$1" = "-" ]; then
-      title_string=`echo "$@" | sed 's/ /\\\\ /g'`
-      "$@" | gvim "$VIM_PARAMS titlestring=$title_string" -
-    else
-      exec gvim "$VIM_PARAMS titlestring=<stdin>" -
-    fi
-  ) >/dev/null &
+  VIM=gvim
+  style=display
 else
-  if [ "$1" ] && [ ! "$1" = "-" ]; then
-    title_string=`echo "$@" | sed 's/ /\\\\ /g'`
-    "$@" | vim "$VIM_PARAMS titlestring=$title_string" -
-  else
-    exec vim "$VIM_PARAMS titlestring=<stdin>" -
-  fi
+  VIM=vim
+  style=terminal
 fi
+
+if [ "$1" ] && [ "$1" != "-" ]; then
+  TITLE=`echo "$@" | sed 's/ /\\\\ /g'`
+  style="$style subcommand"
+else
+  TITLE='<stdin>'
+  style="$style stdin"
+fi
+
+run_vim () {
+  [ "$1" ] && exec $VIM "$VIM_PARAMS titlestring=$TITLE" -
+  $VIM "$VIM_PARAMS titlestring=$TITLE" -
+}
+
+case $style in
+  *stdin)
+    run_vim exec
+    ;;
+  "terminal subcommand")
+    "$@" | run_vim
+    ;;
+  "display subcommand")
+    cat 2>/dev/null | (
+      "$@" | run_vim
+    ) >/dev/null &
+    ;;
+esac
 
