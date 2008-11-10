@@ -1,0 +1,20 @@
+" 1.2 (created: 2008/08/16 18:51:52)
+" Mappings
+noremap j jjj
+noremap k kkk
+noremap <C-e> <C-e><C-e><C-e>
+noremap <C-y> <C-y><C-y><C-y>
+noremap <C-d> d
+noremap h H
+noremap l L
+noremap H h
+noremap L l
+
+" Options
+set showtabline=1
+
+" Abbreviations
+
+source! ~/.vimperatorrc.local
+
+" vim: set ft=vimperator:
