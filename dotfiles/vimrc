@@ -23,7 +23,7 @@ set incsearch
 set ignorecase
 set smartcase
 
-set novisualbell
+set visualbell
 set noerrorbells
 set printoptions=paper:letter
 
