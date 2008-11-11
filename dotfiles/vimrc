@@ -115,8 +115,8 @@ nmap <C-d> :bw<CR>
 nmap <silent> <C-n> :silent :nohlsearch<CR>
 
 " Scroll faster
-nnoremap <C-e> <C-e><C-e><C-e>
-nnoremap <C-y> <C-y><C-y><C-y>
+nnoremap <C-e> 3<C-e>
+nnoremap <C-y> 3<C-y>
 
 " % matches on if/else, html tags, etc.
 runtime macros/matchit.vim
