@@ -114,6 +114,9 @@ nmap <C-d> :bw<CR>
 " nmap <silent> <C-n> :silent :set nohls!<CR>:silent :set nohls?<CR>
 nmap <silent> <C-n> :silent :nohlsearch<CR>
 
+nmap H ^
+nmap L $
+
 " Scroll faster
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
