@@ -121,7 +121,7 @@
 
 ;; SLIME REPL fixes
 (defun steve-slime-repl-fixes ()
-;  (viper-change-state-to-vi)
+  (viper-change-state-to-vi)
   (viper-add-local-keys 'vi-state
                         `((,(kbd "RET") . slime-repl-closing-return)
                           (,(kbd "RET") . slime-repl-closing-return)
