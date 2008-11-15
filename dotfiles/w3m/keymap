@@ -1,0 +1,14 @@
+keymap ? HELP
+keymap C-f NEXT_PAGE
+keymap C-b PREV_PAGE
+keymap w NEXT_WORD
+keymap W NEXT_WORD
+keymap e NEXT_WORD
+keymap E NEXT_WORD
+keymap b PREV_WORD
+keymap B PREV_WORD
+keymap H BACK
+keymap L NEXT
+keymap 0 LINE_BEGIN
+keymap $ LINE_END
+
