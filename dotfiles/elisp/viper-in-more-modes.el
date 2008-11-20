@@ -321,15 +321,18 @@ work on closed parens like one can expect in vi."
       (let ((map (make-sparse-keymap)))
         (vimper-defkey-l map "m" 'vimper-slime-macroexpand-1)
         (vimper-defkey-l map "i" 'slime-inspect)
-        (vimper-defkey-l map "<C-return>" 'slime-repl-closing-return)
-        (vimper-defkey-l map "G" 'end-of-buffer)))
+        (vimper-defkey-l map "<return>" 'slime-repl-closing-return)
+;        (vimper-defkey-l map "<C-return>" 'slime-repl-closing-return)
+;        (vimper-defkey-l map "G" 'end-of-buffer)
+        ))
 (viper-modify-major-mode 'slime-repl-mode 'vi-state my-repl-modified-vi-map)
 
 ;; STEVE FIXME: does not work
 (setq my-repl-modified-insert-map
       (let ((map (make-sparse-keymap)))
-        (vimper-defkey-l map "<C-return>"
-                         'slime-repl-closing-return)))
+        (vimper-defkey-l map "<return>" 'slime-repl-closing-return)
+;        (vimper-defkey-l map "<C-return>" 'slime-repl-closing-return)
+        ))
 
 (viper-modify-major-mode 'slime-repl-mode 'insert-state
                          my-repl-modified-insert-map)

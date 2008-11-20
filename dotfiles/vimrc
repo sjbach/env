@@ -120,6 +120,8 @@ nmap L $
 " Scroll faster
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
+vnoremap <C-e> 3<C-e>
+vnoremap <C-y> 3<C-y>
 
 " % matches on if/else, html tags, etc.
 runtime macros/matchit.vim

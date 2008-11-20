@@ -5,7 +5,7 @@
 (setq-default viper-auto-indent t)
 (setq-default viper-keep-point-on-repeat nil)
 (setq-default viper-toggle-key (kbd "C-;"))  ;; FIXME: no worky in terminal.
-;(setq-default viper-ESC-keyseq-timeout 0)
+(setq-default viper-ESC-keyseq-timeout 0)
 (setq-default viper-translate-all-ESC-keysequences nil)
 (setq-default viper-change-notification-threshold 200)
 
@@ -26,7 +26,6 @@
 (define-key viper-vi-global-user-map "\C-e" (lambda ()
                                               (interactive)
                                               (viper-scroll-up-one 3)))
-;(define-key viper-vi-global-user-map ",b" 'iswitchb-buffer)
 (define-key viper-vi-global-user-map ",f" 'find-file)
 (define-key viper-vi-global-user-map ",r" 'lusty-file-explorer)
 (define-key viper-vi-global-user-map ",b" 'lusty-buffer-explorer)
@@ -49,6 +48,7 @@
 (setq viper-emacs-state-mode-list
       (remove 'Info-mode (remove 'help-mode viper-emacs-state-mode-list)))
 
+;; Add more viper-ified modes
 (setq viper-vi-state-mode-list (append viper-vi-state-mode-list
                                        '(grep-mode
                                          slime-xref-mode
@@ -130,6 +130,11 @@
   (viper-add-local-keys 'insert-state
                         '(("\C-n" . steve-slime-repl-forward)
                           ("\C-p" . steve-slime-repl-backward)))
+
+  (viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
+  ;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-repl-modified-vi-map)
+  ;(viper-modify-major-mode 'slime-repl-mode 'insert-state
+  ;                         my-repl-modified-insert-map)
   )
 (add-hook 'slime-repl-mode-hook 'steve-slime-repl-fixes)
 
