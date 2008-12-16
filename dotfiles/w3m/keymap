@@ -1,4 +1,8 @@
 keymap ? HELP
+keymap j MOVE_DOWN
+keymap k MOVE_UP
+keymap C-y DOWN
+keymap C-e UP
 keymap C-f NEXT_PAGE
 keymap C-b PREV_PAGE
 keymap w NEXT_WORD

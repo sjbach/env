@@ -12,7 +12,7 @@
 (unless (itap)
   ;; TODO: cleanup
   (add-to-list 'load-path "/home/steve/clojure/swank-clojure")
-  (setq swank-clojure-jar-path "/home/steve/clojure/clojure/clojure.jar")
+  (setq swank-clojure-jar-path "/home/steve/clojure/clojure-svn/clojure.jar")
   (require 'swank-clojure-autoload)
 
   (eval-after-load "slime"
