@@ -4,9 +4,9 @@
 # display takes a long time and there's just no reason to even try.
 
 # Avoid infinite recursion.
-VIM=`which -a vim | sed 1d | head -n1`
-[ "$VIM" ] || VIM=`which vim`
-[ "$VIM" ] || VIM=vim
+vim=`which -a vim | sed 1d | head -n1`
+[ "$vim" ] || vim=`which vim`
+[ "$vim" ] || vim=vim
 
-DISPLAY= exec $VIM "$@"
+DISPLAY= exec $vim "$@"
 
