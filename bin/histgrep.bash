@@ -18,7 +18,7 @@ sed -r 's%.*\.hists/(.*).(histfile|bash_history):%\1:%' | \
 sort --key 1.7,1.8nr --key 1.1,1.3Mr --key 1.4,1.5nr | \
 #
 # Remove duplicates
-sort --stable -u -t ':' --key 3 | \
+sort -u -t ':' --key 3 | \
 #
 # Put more recent lines first again (it gets screwed up)
 sort --key 1.7,1.8nr --key 1.1,1.3Mr --key 1.4,1.5nr | \
