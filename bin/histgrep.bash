@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Grep through archived command history.
+# (See //cron/save-hist.bash)
 #
 
 # Get results, reverse, prepend line numbers
