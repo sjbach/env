@@ -2,7 +2,10 @@
 
 BROWSER="/usr/bin/lynx -source"
 #WEBSITE="http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=$1"
-WEBSITE="http://thesaurus.reference.com/search?q=$1"
+
+term=`sed 's/ /+/g' <<< $1`
+
+WEBSITE="http://thesaurus.reference.com/search?q=$term"
 HTML2TEXT="/usr/bin/html2text -style compact"
 
 if [ "$1" ]; then
