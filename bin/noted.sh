@@ -1,5 +1,5 @@
 #!/bin/sh
 
-rm ~/notifications
+rm -f ~/notifications
 touch ~/notifications
 
