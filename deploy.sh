@@ -24,23 +24,23 @@ symlink() {
 
 [ -d .git ] || die "run from git root"
 
-DIR="$PWD"
+REPOS_PATH="$PWD"
 
+# bin scripts
+#
+scripts=`ls bin/`
 mkdir -p ~/bin
-cd bin
-for file in *; do
-  cd ~/bin
-  symlink "$DIR/bin/$file" "${file%.*}"
-  cd ~-
+cd ~/bin
+for file in $scripts; do
+  symlink "$REPOS_PATH/bin/$file" "${file%.*}"
 done
 
-DIR="$DIR/dotfiles"
-
-cd $DIR
-
-find . -type f | sed 's|^\./||' | while read path; do
-  dir=`sed -n '/\//s|/[^/]*$||p' <<< $path`
-  file=${path##*/}
+# dotfiles
+#
+cd $REPOS_PATH/dotfiles
+find . -type f | sed 's/^..//' | while read path; do
+  dir=`sed -n '/\//s|/[^/]*$||p' <<< $path`  # (empty if at pwd)
+  file=`basename $path`
 
   if [ "$dir" ]; then
     mkdir -p ~/.$dir
@@ -50,6 +50,6 @@ find . -type f | sed 's|^\./||' | while read path; do
     cd ~
   fi
 
-  symlink "$DIR/$path" "$file"
+  symlink "$REPOS_PATH/$path" "$file"
 done
- 
+
