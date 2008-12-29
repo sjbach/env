@@ -1,6 +1,7 @@
 #!/usr/bin/ruby -w
 #
 # Boy, do I hate parking tickets.
+# cron: no-auto-deploy
 #
 
 require 'net/smtp'

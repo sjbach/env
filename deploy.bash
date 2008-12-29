@@ -53,3 +53,17 @@ find . -type f | sed 's/^..//' | while read path; do
   symlink "$REPOS_PATH/dotfiles/$path" "$file"
 done
 
+# crons
+#
+if [ "$1" = "do-cron" ]; then
+  cd $REPOS_PATH/cron
+  for file in *; do
+    fields=`grep '^# cron:' $file | sed 's/.*cron: //'`
+    [ "$fields" = "no-auto-deploy" ] && continue
+
+    line="$fields $REPOS_PATH/cron/$file"
+    echo "adding cron: $file"
+    crontab -l | sed "/$file/s|.*|$line|" | crontab -
+  done
+fi
+

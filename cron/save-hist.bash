@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Archive .histfile files.
+# cron: 5 0 * * *
 #
 
 cd ~
