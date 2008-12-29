@@ -3,7 +3,7 @@
 
 (
   for i in 1 2 3; do
-    echo -en '\a'
+    /bin/echo -en '\a'
     sleep 0.3 
   done 2>/dev/null
 ) &
