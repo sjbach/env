@@ -50,6 +50,6 @@ find . -type f | sed 's/^..//' | while read path; do
     cd ~
   fi
 
-  symlink "$REPOS_PATH/$path" "$file"
+  symlink "$REPOS_PATH/dotfiles/$path" "$file"
 done
 
