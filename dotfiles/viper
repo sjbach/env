@@ -1,3 +1,11 @@
+;;;
+;;; Vim-like stuff
+;;; Also see:
+;;;   ~/.emacs.d/viper-setup.el
+;;;   ~/.elisp/vimpulse.el
+;;;   ~/.elisp/viper-in-more-modes.el
+;;;
+
 (setq-default viper-inhibit-startup-message t)
 (setq-default viper-expert-level '5)
 (setq-default viper-want-ctl-h-help t)
@@ -43,6 +51,7 @@
 (define-key viper-vi-global-user-map ",xq" 'slime-quit-lisp)
 (define-key viper-vi-global-user-map ",xs" 'slime-selector)
 (define-key viper-vi-global-user-map "=" 'indent-according-to-mode)
+(define-key viper-vi-global-user-map ";" 'execute-extended-command)
 
 ;; Help-mode and Info-mode should be in viper
 (setq viper-emacs-state-mode-list
