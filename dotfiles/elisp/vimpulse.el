@@ -175,15 +175,15 @@
   (interactive)
   (viper-goto-line 1)) 
 
-(defun vimpulse-search-for-symbol-at-point (whether-forward)
+(defun vimpulse-search-for-symbol-at-point (forward-p)
   "Search forwards or backwards for the symbol under point."
   (let* ((str (regexp-quote (thing-at-point 'symbol)))
          (search-str (concat "\\<" str "\\>"
                              "\\|"
                              "\\_<" str "\\_>")))
     (setq viper-s-string search-str)
-    (setq viper-s-forward whether-forward)
-    (viper-search search-str whether-forward 1)))
+    (setq viper-s-forward forward-p)
+    (viper-search search-str forward-p 1)))
 
 (defun vimpulse-search-forward-for-symbol-at-point ()
   (interactive)
