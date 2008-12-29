@@ -62,8 +62,13 @@ if [ "$1" = "do-cron" ]; then
     [ "$fields" = "no-auto-deploy" ] && continue
 
     line="$fields $REPOS_PATH/cron/$file"
-    echo "adding cron: $file"
-    crontab -l | sed "/$file/s|.*|$line|" | crontab -
+    if crontab -l | grep -q "$file"; then
+      echo "updating cron: $file"
+      crontab -l | sed "/$file/s|.*|$line|" | crontab -
+    else
+      echo "adding cron: $file"
+      ( crontab -l ; echo "$line" ) | crontab -
+    fi
   done
 fi
 
