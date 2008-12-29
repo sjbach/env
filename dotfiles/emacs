@@ -9,16 +9,16 @@
 
 (require 'lusty-explorer)
 
-(unless (itap)
+(when (file-exists-p "~/clojure")
   ;; TODO: cleanup
-  (add-to-list 'load-path "/home/steve/clojure/swank-clojure")
-  (setq swank-clojure-jar-path "/home/steve/clojure/clojure-svn/clojure.jar")
+  (add-to-list 'load-path "~/clojure/swank-clojure")
+  (setq swank-clojure-jar-path "~/clojure/clojure-svn/clojure.jar")
   (require 'swank-clojure-autoload)
 
   (eval-after-load "slime"
     '(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl"))))
 
-  (add-to-list 'load-path "/home/steve/clojure/clojure-mode")
+  (add-to-list 'load-path "~/clojure/clojure-mode")
   (require 'clojure-auto))
 
 (defun close-buffer-and-window-unless-last ()

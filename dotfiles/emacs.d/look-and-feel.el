@@ -55,13 +55,12 @@
 (setq visible-bell t)
 
 ;; Highlight XXX style code tags in source
-(font-lock-add-keywords 'python-mode
- '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
-(font-lock-add-keywords 'c-mode
- '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
-(font-lock-add-keywords 'c++-mode
- '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
-(font-lock-add-keywords 'lisp-mode
- '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
-(font-lock-add-keywords 'emacs-lisp-mode
- '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
+(let ((words
+       '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\|BUG\\)"
+          1 font-lock-warning-face prepend))))
+  (font-lock-add-keywords 'python-mode words)
+  (font-lock-add-keywords 'c-mode words)
+  (font-lock-add-keywords 'c++-mode words)
+  (font-lock-add-keywords 'lisp-mode words)
+  (font-lock-add-keywords 'emacs-lisp-mode words))
+
