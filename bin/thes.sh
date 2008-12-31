@@ -1,20 +1,28 @@
 #!/bin/sh
 
-BROWSER="/usr/bin/lynx -source"
-#WEBSITE="http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=$1"
+if ! which lynx >/dev/null 2>&1; then 
+  echo "Install lynx" >&2 
+  exit 1
+elif ! which html2text >/dev/null 2>&1; then 
+  echo "Install html2text" >&2 
+  exit 2
+fi
 
-term=`sed 's/ /+/g' <<< $1`
+BROWSER="lynx -source"
+HTML2TEXT="html2text -style compact"
 
-WEBSITE="http://thesaurus.reference.com/search?q=$term"
-HTML2TEXT="/usr/bin/html2text -style compact"
+term=`echo "$1" | sed 's/ /+/g'`
+
+#URL="http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=$term"
+URL="http://thesaurus.reference.com/search?q=$term"
 
 if [ "$1" ]; then
-    #${BROWSER} ${WEBSITE} | sed '1,/<!-- begin content -->/d; /<!-- end content -->/,$d' | ${HTML2TEXT} | ${PAGER}
-    #${BROWSER} ${WEBSITE} | sed '1,/<!-- Content -->/d; /SPONSORED LINKS/,$d' | ${HTML2TEXT} | ${PAGER}
-    #${BROWSER} ${WEBSITE} | sed '1,/<!-- Content -->/d' | sed '/SPONSORED LINKS/,$d' #| ${HTML2TEXT} | ${PAGER}
-    ${BROWSER} ${WEBSITE}  | ${HTML2TEXT} | less
+#    $BROWSER $URL | sed '1,/<!-- begin content -->/d; /<!-- end content -->/,$d' | $HTML2TEXT | $PAGER
+#    $BROWSER $URL | sed '1,/<!-- Content -->/d; /SPONSORED LINKS/,$d' | $HTML2TEXT | $PAGER
+#    $BROWSER $URL | sed '1,/<!-- Content -->/d' | sed '/SPONSORED LINKS/,$d' #| $HTML2TEXT | $PAGER
+    $BROWSER $URL  | $HTML2TEXT | less
 else
-    echo "Usage: $0 word" >&2
+    echo "Usage: $0 <word>" >&2
     exit 1
 fi
 
