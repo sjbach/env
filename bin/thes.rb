@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/ruby
 #
 # Thesaurus
 #
@@ -18,12 +18,10 @@ if ARGV[0].nil?
   exit 0
 end
 
-entries = []
-
 def to_terminal_rows(words)
   rows = []
   rows << words.inject do |x,y|
-    if (x + ', ' + y).length < 80
+    if (x + ', ' + y).length < terminal_width()
       x + ', ' + y
     else
       rows << x
@@ -31,7 +29,11 @@ def to_terminal_rows(words)
     end
   end
 
-  rows.join("\n")
+  "  " + rows.join("\n  ")
+end
+
+def terminal_width
+  %x{stty size}.split[1].to_i - 2
 end
 
 term = ARGV[0].gsub(" ", "+")
