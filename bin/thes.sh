@@ -9,18 +9,20 @@ elif ! which html2text >/dev/null 2>&1; then
 fi
 
 BROWSER="lynx -source"
+#BROWSER="w3m --dump_source"
 HTML2TEXT="html2text -style compact"
 
 term=`echo "$1" | sed 's/ /+/g'`
 
 #URL="http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=$term"
-URL="http://thesaurus.reference.com/search?q=$term"
+#URL="http://thesaurus.reference.com/search?q=$term"
+URL="http://thesaurus.reference.com/browse/$term"
 
 if [ "$1" ]; then
 #    $BROWSER $URL | sed '1,/<!-- begin content -->/d; /<!-- end content -->/,$d' | $HTML2TEXT | $PAGER
 #    $BROWSER $URL | sed '1,/<!-- Content -->/d; /SPONSORED LINKS/,$d' | $HTML2TEXT | $PAGER
 #    $BROWSER $URL | sed '1,/<!-- Content -->/d' | sed '/SPONSORED LINKS/,$d' #| $HTML2TEXT | $PAGER
-    $BROWSER $URL  | $HTML2TEXT | less
+    $BROWSER "$URL" | $HTML2TEXT | less
 else
     echo "Usage: $0 <word>" >&2
     exit 1
