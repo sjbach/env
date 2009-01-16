@@ -1,32 +1,31 @@
 #!/bin/sh
 # Send stdin or output from running arguments to a temporary vim/gvim buffer
 
-VIM_PARAMS="+set nowrap buftype=nofile bufhidden=hide"
-
 if [ "$DISPLAY" ]; then
-  VIM=gvim
+  vim=gvim
   style=display
 else
-  VIM=vim
+  vim=vim
   style=terminal
 fi
 
 if [ "$1" ] && [ "$1" != "-" ]; then
-  TITLE=`echo "$@" | sed 's/ /\\\\ /g'`
+  title=`echo "$@" | sed 's/ /\\\\ /g'`
   style="$style subcommand"
 else
-  TITLE='<stdin>'
+  title='<stdin>'
   style="$style stdin"
 fi
 
 run_vim () {
-  [ "$1" ] && exec $VIM "$VIM_PARAMS titlestring=$TITLE" -
-  $VIM "$VIM_PARAMS titlestring=$TITLE" -
+  params="+set nowrap buftype=nofile bufhidden=hide titlestring=$title"
+  [ "$1" ] && exec $vim "$params" -
+  $vim "$params" -
 }
 
 case $style in
   *stdin)
-    run_vim exec
+    run_vim do_exec
     ;;
   "terminal subcommand")
     "$@" | run_vim
