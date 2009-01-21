@@ -1,0 +1,226 @@
+source ~/.muttrc-personal
+
+# Don't ask to move read messages to mbox on exit
+set move=no
+
+set net_inc=0
+set read_inc=0
+set write_inc=0
+
+set editor="vim %s" 
+
+set charset="utf8"
+# For sending, the default should be fine (I only use ascii).
+#set send_charset="utf8"
+
+ignore *
+unignore date from to cc subject resent-from reply-to organization x-mailer user-agent importance x-label
+
+# Mailbox mask
+set mask='!^(\.[^.]|-i$|\<attach\>|\<postponed\>)'
+
+set pager_stop=yes
+
+bind index x help
+# Want to use Ctrl-F for page forward, not forget-passphrase.
+#bind index \Cs forget-passphrase
+#bind pager \Cs forget-passphrase
+#bind index \Cf next-page
+#bind index \Cb previous-page
+#bind pager \Cf next-page
+#bind pager \Cb previous-page
+#bind pager G bottom
+bind pager k previous-line
+bind pager j next-line
+bind pager ? search-reverse
+
+#
+#   Make mutt's bindings as close to lynx', slrn's, and vim's as possible
+#   Originally from http://zach.in.tu-clausthal.de/mutt/muttrc
+
+# move 1/2 page up/down like in vi
+bind generic \Cu    half-up
+bind generic \Cd    half-down
+bind pager   \Cu    half-up
+bind pager   \Cd    half-down
+bind generic   b    previous-page
+bind generic \Cb    previous-page
+bind generic \Cf    next-page
+bind generic   1G   first-entry
+bind generic   1g   first-entry
+bind generic <Home> first-entry
+bind generic \Ca    first-entry
+bind generic   G    last-entry
+bind generic <End>  last-entry
+bind generic \Ce    last-entry
+
+bind pager   \eD    delete-thread
+bind pager   \eU    undelete-thread
+# ^U and ^D were bound otherwise, so bind it now again to something else
+bind pager \Ca      top
+bind pager <Home>   top
+bind pager  1G      top
+bind pager  1g      top
+bind pager \Ce      bottom
+bind pager <End>    bottom
+bind pager   G      bottom
+bind pager   q      exit
+bind pager <Left>   exit
+#bind pager   i      noop
+bind pager   B      bounce-message
+bind pager   b      previous-page
+bind pager \Cb      previous-page
+bind pager \Cf      next-page
+bind pager   f    next-page
+bind pager <Up>     previous-line
+bind pager <Down>   next-line
+bind pager <Insert> previous-entry
+bind pager <Delete> next-entry
+
+bind index \eD     delete-thread
+bind index \eU     undelete-thread
+# ^U and ^D were bound otherwise, so bind it now again to something else
+bind index   B     bounce-message
+bind index \ef     forget-passphrase
+bind index \Cb     previous-page
+bind index \Cf     next-page
+bind index <Up>    previous-entry
+bind index <Down>  next-entry
+#bind index <Right> display-message
+bind index <Home>  first-entry
+bind index <End>   last-entry
+bind index   1G    first-entry
+bind index   1g    first-entry
+bind index \Ca     first-entry
+bind index   G     last-entry
+bind index \Ce     last-entry
+#bind index y     edit-label
+#bind pager y     edit-label
+
+bind alias <Tab> next-entry
+
+bind browser <Right> select-entry
+
+hdr_order From: Date: To: Cc: Subject:
+
+set autoedit=yes
+
+unset confirmappend
+
+# Prefer plaintext
+alternative_order text/plain text/html
+
+# Assume attaching forwarded messages rather than inline.
+set mime_forward=ask-yes
+# Assume forwarding attachments as well.
+set mime_forward_rest=yes
+
+# View html mails using lynx
+set implicit_autoview
+auto_view text/html  application/x-pgp-message
+#set mailcap_path="~/.mailcap"
+set mailcap_path="/etc/mailcap"
+set mailcap_sanitize=yes
+
+# Don't save outgoing attachments
+# unset fcc_attach
+
+# Dont include self in reply
+unset reply_self
+
+# Automatically quote message
+set include=yes
+
+#set index_format   = "%4C %Z %{%b %d} %-15.15F (%?l?%4l&%4c?) %s"
+set index_format   = "%4C %Z %{%b %d} %-15.15F %?l?%4l&%4c? %s"
+set to_chars = ""
+set forward_format="Fw: %s"     # subject in forwarded messages
+#set date_format="%d/%m/%y %H:%M %Z"
+#set quote_regexp="^([A-Za-z ]+>|[]%>:|}-][]>:|}-]*)"
+#set reply_regexp="^(re([\\[0-9\\]+])*|aw):[ \t]*"
+#set reply_regexp='^((re(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*'
+
+set reply_to=yes
+set askcc
+
+folder-hook . 'set sort=threads'
+#folder-hook . set signature="~/sig.suresh|"
+#folder-hook . 'set attribution="+++ %n [%d]:"'
+#folder-hook . my_hdr X-OS: `uname -mnrs`
+
+# color patterns for mutt
+color normal   white black
+color attachment brightyellow black
+color hdrdefault cyan black
+color indicator black cyan
+color markers   brightred black
+color quoted   green black
+color signature cyan black
+color status   brightgreen blue
+color tilde   blue black
+color tree   red black
+color header   brightgreen black ^From:
+color header   brightcyan black ^To:
+color header   brightcyan black ^Reply-To:
+color header   brightcyan black ^Cc:
+color header   brightblue black ^Subject:
+color body   brightred black [\-\.+_a-zA-Z0-9]+@[\-\.a-zA-Z0-9]+
+color body   brightblue black (https?|ftp)://[\-\.,/%~_:?&=\#a-zA-Z0-9]+
+
+color index white default ~A
+color index yellow default ~P
+color index yellow default ~Q
+color index yellow default '~y done'
+
+################################
+# Start of editlabel stuff
+################################
+# labels
+
+#macro index y "<enter-command>set editor=\"~/bin/editlabel append\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Append label"
+#macro pager y "<enter-command>set editor=\"~/bin/editlabel append\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Append label"
+#macro index Y "<enter-command>set editor=\"~/bin/editlabel menu\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Edit labels"
+#macro pager Y "<enter-command>set editor=\"~/bin/editlabel menu\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Edit labels"
+#macro index \Cy "<limit>~y " "Limit view to label"
+
+#macro index y "<enter-command>set editor=\"~/bin/editlabel\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Edit Label"
+#macro pager y "<enter-command>set editor=\"~/bin/editlabel\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Edit Label"
+#macro index \Cy "<limit>~y " "Limit view to label"
+
+###macro index,pager y "<enter-command>set editor=\"editlabel\"\n\
+###<shell-escape>rm -f ~/.label_saved_action<enter>\
+###<tag-prefix><edit>\
+###<sync-mailbox><next-undeleted>\
+###<shell-escape>rm -f ~/.label_saved_action<enter>\
+###<enter-command>set editor=vim\n" "Edit Label"
+
+## labels
+#macro index y "<enter-command>set editor=\"~/bin/editlabel append\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Append label"
+#macro pager y "<enter-command>set editor=\"~/bin/editlabel append\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Append label"
+#macro index Y "<enter-command>set editor=\"~/bin/editlabel menu\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Edit labels"
+#macro pager Y "<enter-command>set editor=\"~/bin/editlabel menu\"\n\
+#<edit><sync-mailbox><next-undeleted>\
+#<enter-command>set editor=vim\n" "Edit labels"
+#macro index \Cy "<limit>~y " "Limit view to label"
+################################
+# End of editlabel stuff
+################################
+
