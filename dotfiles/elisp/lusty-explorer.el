@@ -2,8 +2,8 @@
 ;;
 ;; Copyright (C) 2008 Stephen Bach <this-file@sjbach.com>
 ;;
-;; Version: 1.0.1
-;; Created: January 25, 2009
+;; Version: 1.0.2
+;; Created: January 26, 2009
 ;; Keywords: convenience, files, matching
 ;; Compatibility: GNU Emacs 22 and 23
 ;;
@@ -41,6 +41,7 @@
 
 ;;; Contributors
 ;; Jan Rehders
+;; Hugo Schmitt
 ;;
 
 ;;; Code:
@@ -71,12 +72,16 @@
 (defvar lusty--active-mode nil)
 (defvar lusty--previous-contents nil)
 (defvar lusty--initial-window-config nil)
+(defvar lusty--completion-ignored-extensions nil)
 
 ;;;###autoload
 (defun lusty-file-explorer ()
   "Launch the file/directory mode of LustyExplorer"
   (interactive)
   (let* ((lusty--active-mode :file-explorer)
+         (lusty--completion-ignored-extensions
+          (mapcar (lambda (ext) (concat (regexp-quote ext) "$"))
+                  completion-ignored-extensions))
          (file (lusty--run 'read-file-name)))
     (when file
       (switch-to-buffer
@@ -136,19 +141,17 @@ much as possible."
 (defun lusty-filter-files (file-portion files)
   "Return FILES with './' removed and hidden files if FILE-PORTION
 does not begin with '.'."
-  (let ((ignored-regexes (mapcar (lambda (ext) (concat ext "$"))
-                                 completion-ignored-extensions)))
-    (flet ((hidden-p (str)
-             (char-equal (string-to-char str) ?.))
-           (pwd-p (str)
-             (string= (directory-file-name str) "."))
-           (ignored-p (name)
-             (some (lambda (ext) (string-match ext name))
-                   ignored-regexes)))
-      (remove-if 'ignored-p
-                 (if (hidden-p file-portion)
-                     (remove-if 'pwd-p files)
-                   (remove-if 'hidden-p files))))))
+  (flet ((hidden-p (str)
+           (char-equal (string-to-char str) ?.))
+         (pwd-p (str)
+           (string= (directory-file-name str) "."))
+         (ignored-p (name)
+           (some (lambda (ext) (string-match ext name))
+                 lusty--completion-ignored-extensions )))
+    (remove-if 'ignored-p
+               (if (hidden-p file-portion)
+                   (remove-if 'pwd-p files)
+                 (remove-if 'hidden-p files)))))
 
 (defun lusty-set-minibuffer-text (&rest args)
   "Sets ARGS into the minibuffer after the prompt."
