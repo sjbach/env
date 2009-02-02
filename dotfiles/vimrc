@@ -78,7 +78,7 @@ end
 " Lusty
 "let g:LustyJugglerShowKeys = 2
 let g:LustyExplorerSuppressRubyWarning = 1
-let g:LustyExplorerFileMasks = "*.o,*.fasl"
+"let g:LustyExplorerFileMasks = "*.o,*.fasl"
 nmap <silent> <Leader>f :FilesystemExplorer<CR>
 nmap <silent> <Leader>b :BufferExplorer<CR>
 nmap <silent> <Leader>r :FilesystemExplorerFromHere<CR>
@@ -129,6 +129,7 @@ runtime macros/matchit.vim
 " Bash-like filename completion
 set wildmenu
 set wildmode=list:longest
+set wildignore=*.o,*.fasl
 
 autocmd BufRead *.qcf set filetype=lisp
 autocmd BufRead qpx.inc set filetype=make
