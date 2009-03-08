@@ -20,7 +20,10 @@ end
 
 def to_terminal_rows(words)
   rows = []
-  rows << words.inject do |x,y|
+  rows << words.compact \
+               .map { |word| word.strip } \
+               .select { |word| !word.empty? } \
+               .inject do |x,y|
     if (x + ', ' + y).length < terminal_width()
       x + ', ' + y
     else
@@ -68,13 +71,13 @@ doc.search("//table[@class = 'the_content']") do |table|
       puts "Synonyms..."
 
       words = e.next_sibling.innerText.gsub(/\s+/, " ").strip.split(",")
-      puts to_terminal_rows(words.map{ |w| w.strip })
+      puts to_terminal_rows(words)
 
     when /Antonyms/
       puts "Antonyms..."
 
       words = e.next_sibling.innerText.gsub(/\s+/, " ").strip.split(",")
-      puts to_terminal_rows(words.map{ |w| w.strip })
+      puts to_terminal_rows(words)
 
     when /Definition/
       puts "Definition: #{e.next_sibling.innerText}"
