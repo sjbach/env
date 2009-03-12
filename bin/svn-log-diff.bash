@@ -9,7 +9,7 @@ function usage {
 
 function die {
   [ "$1" ] && echo "Error: $1" >&2
-  exit 1
+  usage
 }
 
 case "$1" in
@@ -29,10 +29,13 @@ esac
 
 file="$2"
 
-if [ "$file" ] && ! [ -e "$file" ]; then
-  die "file does not exist: $file"
+if [ "$file" ]; then
+  if ! egrep -q '://' <<< "$file" && \
+     ! [ -e "$file" ]; then
+    die "file does not exist: $file"
+  fi
 fi
 
-svn log -v -r $rev
+svn log -v -r $rev "$file"
 svn diff -c $rev "$file"
 
