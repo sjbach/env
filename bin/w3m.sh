@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Start w3m on the bookmark page by default.
 
@@ -8,7 +8,9 @@ W3M=`which -a w3m | sed 1d | head -n1`
 [ "$W3M" ] || W3M=w3m
 
 if [ "$1" ]; then
-  if [ -e "$1" ] || echo "$*" | grep -q '\.' ; then
+  if [ -e "$1" ] || \
+     [[ "$1" == -* ]] || \
+     echo "$*" | grep -q '\.' ; then
     exec $W3M "$@"
   else
     terms=`echo "$*" | sed 's/ /+/g'`
