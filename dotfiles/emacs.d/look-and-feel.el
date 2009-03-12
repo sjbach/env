@@ -56,7 +56,7 @@
 
 ;; Highlight XXX style code tags in source
 (let ((words
-       '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\|BUG\\)"
+       '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\|BUG\\|STEVE\\)"
           1 font-lock-warning-face prepend))))
   (font-lock-add-keywords 'python-mode words)
   (font-lock-add-keywords 'c-mode words)
