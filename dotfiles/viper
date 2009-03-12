@@ -102,7 +102,9 @@
 
 ;; SLIME XREF fixes
 (setq viper-slime-xref-fixes (make-sparse-keymap))
+;; vvv doesn't work vvv (or, works by coincidence)
 (define-key viper-slime-xref-fixes (kbd "RET") 'slime-show-xref)
+;; vvv doesn't work vvv (overridden by viper)
 (define-key viper-slime-xref-fixes (kbd "SPACE") 'slime-goto-xref)
 (define-key viper-slime-xref-fixes "q" 'slime-xref-quit)
 (viper-modify-major-mode 'slime-xref-mode 'vi-state viper-slime-xref-fixes)
@@ -150,6 +152,7 @@
 ; - remember viper-harness-minor-mode
 ; - don't show date on (qgrep)
 ; - make (qgrep) window the height of its output
+; - viper mode in *Completions*
 ; don't prompt when creating new scratch buffer
 ; map ESC to end visual mode (which C-g does)
 ; map ESC to end search mode (which C-g does)
