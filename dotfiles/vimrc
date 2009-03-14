@@ -43,25 +43,6 @@ set hidden
 " Look for the file in the current directory, then south until you reach home.
 set tags=tags;~/
 
-" Change <Leader>
-let mapleader = ","
-
-" Alternatives to using Ctrl-[ for esc:
-"imap jkl <esc>
-"imap jlk <esc>
-"imap kjl <esc>
-"imap klj <esc>
-"imap lkj <esc>
-"imap ljk <esc>
-"imap ;l <esc>
-
-" Quick timeouts on key combinations.
-set timeoutlen=300 
-
-":nmap : q:i
-":nmap / q/i
-":nmap ? q?i
-
 " Who needs .gvimrc?
 if has('gui_running')
   set encoding=utf-8
@@ -74,6 +55,30 @@ if has('gui_running')
 else
   colorscheme desert
 end
+
+" Change <Leader>
+let mapleader = ","
+
+" Quick timeouts on key combinations.
+set timeoutlen=300
+
+" Alternatives to ESC:
+"imap jkl <ESC>
+"imap jlk <ESC>
+"imap kjl <ESC>
+"imap klj <ESC>
+"imap lkj <ESC>
+"imap ljk <ESC>
+"imap ;l <ESC>
+
+" "Very magic" regexes in searches
+nnoremap / /\v
+nnoremap ? ?\v
+
+" Vi-style editing in the command-line
+"nnoremap : q:a
+"nnoremap / q/a
+"nnoremap ? q?a
 
 " Lusty
 "let g:LustyJugglerShowKeys = 2
@@ -88,9 +93,6 @@ nmap <silent> <TAB> :JugglePrevious<CR>
 
 " Window management
 "nmap <silent> <Leader>xo :wincmd j<CR>
-
-" For lisp repl
-"autocmd BufRead *.lsp,*.lisp so ~/vilisp/VIlisp.vim
 
 " Catch trailing whitespace
 set listchars=tab:>-,trail:·,eol:$
