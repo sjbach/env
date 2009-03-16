@@ -27,11 +27,12 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
-;(set-default-font "Bitstream Vera Sans Mono-8")
-;(set-default-font "Bitstream Vera Sans Mono-9")
-(set-default-font "Bitstream Vera Sans Mono-10")
-;(set-default-font "Bitstream Vera Sans Mono-11") 
-;(set-default-font "Bitstream Vera Sans Mono-12")
+(when (>= emacs-major-version 23)
+  ;(set-default-font "Bitstream Vera Sans Mono-8")
+  ;(set-default-font "Bitstream Vera Sans Mono-9")
+  ;(set-default-font "Bitstream Vera Sans Mono-11")
+  ;(set-default-font "Bitstream Vera Sans Mono-12")
+  (set-default-font "Bitstream Vera Sans Mono-10"))
 
 ;; Turn on font-lock mode for syntax highlighting
 (global-font-lock-mode t)
