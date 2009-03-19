@@ -55,64 +55,79 @@
 
 ;; Help-mode and Info-mode should be in viper
 (setq viper-emacs-state-mode-list
-      (remove 'Info-mode (remove 'help-mode viper-emacs-state-mode-list)))
+      (set-difference viper-emacs-state-mode-list
+                      '(Info-mode help-mode)))
 
 ;; Add more viper-ified modes
-(setq viper-vi-state-mode-list (append viper-vi-state-mode-list
-                                       '(grep-mode
-                                         slime-xref-mode
-                                         slime-repl-mode
-                                         help-mode
-                                         Info-mode
-                                         debugger-mode
-                                         apropos-mode
-                                         completion-list-mode)))
+(setq viper-vi-state-mode-list
+      (append viper-vi-state-mode-list
+              '(grep-mode
+                slime-xref-mode
+                slime-repl-mode
+                help-mode
+                Info-mode
+                debugger-mode
+                apropos-mode
+                completion-list-mode)))
 
 ;; Help-mode fixes
-(setq viper-help-mode-fixes (make-sparse-keymap))
-(define-key viper-help-mode-fixes "q" 'View-quit)
-;(define-key viper-help-mode-fixes [return] 'help-follow)
+(defvar viper-help-mode-fixes
+  (let ((map (make-sparse-keymap)))
+    (define-key map "q" 'View-quit)
+    ;(define-key map [return] 'help-follow)
+    map))
 (viper-modify-major-mode 'help-mode 'vi-state viper-help-mode-fixes)
 
 ;; Info-mode fixes
-(setq viper-info-mode-fixes (make-sparse-keymap))
-(define-key viper-info-mode-fixes "q" 'Info-exit)
-(define-key viper-info-mode-fixes (kbd "RET") 'Info-follow-nearest-node)
+(defvar viper-info-mode-fixes 
+  (let ((map (make-sparse-keymap)))
+    (define-key map "q" 'Info-exit)
+    (define-key map (kbd "RET") 'Info-follow-nearest-node)
+    map))
 (viper-modify-major-mode 'Info-mode 'vi-state viper-info-mode-fixes)
 
 ;; Apropos-mode fixes
-(setq viper-apropos-mode-fixes (make-sparse-keymap))
-(define-key viper-apropos-mode-fixes "q" 'quit-window)
-(define-key viper-apropos-mode-fixes (kbd "RET") 'apropos-follow)
+(defvar viper-apropos-mode-fixes
+  (let ((map (make-sparse-keymap)))
+    (define-key map "q" 'quit-window)
+    (define-key map (kbd "RET") 'apropos-follow)
+    map))
 (viper-modify-major-mode 'apropos-mode 'vi-state viper-apropos-mode-fixes)
 
 ;; Completion-list-mode fixes
-(setq viper-completion-list-mode-fixes (make-sparse-keymap))
-;(define-key viper-completion-list-mode-fixes "q" 'quit-window)
-(define-key viper-completion-list-mode-fixes (kbd "RET") 'choose-completion)
+(defvar viper-completion-list-mode-fixes
+  (let ((map (make-sparse-keymap)))
+    ;(define-key map "q" 'quit-window)
+    (define-key map (kbd "RET") 'choose-completion)
+    map))
 (viper-modify-major-mode 'completion-list-mode 'vi-state
                          viper-completion-list-mode-fixes)
-(add-hook 'completion-list-mode-hook '(lambda ()
-                                        (viper-change-state-to-vi)))
+(add-hook 'completion-list-mode-hook 'viper-change-state-to-vi)
 
 ;; Debugger-mode fixes
-(setq viper-debugger-mode-fixes (make-sparse-keymap))
-(define-key viper-debugger-mode-fixes "q" 'top-level)
+(defvar viper-debugger-mode-fixes 
+  (let ((map (make-sparse-keymap)))
+    (define-key map "q" 'top-level)
+    map))
 (viper-modify-major-mode 'debugger-mode 'vi-state viper-debugger-mode-fixes)
 
 ;; SLIME XREF fixes
-(setq viper-slime-xref-fixes (make-sparse-keymap))
-;; vvv doesn't work vvv (or, works by coincidence)
-(define-key viper-slime-xref-fixes (kbd "RET") 'slime-show-xref)
-;; vvv doesn't work vvv (overridden by viper)
-(define-key viper-slime-xref-fixes (kbd "SPACE") 'slime-goto-xref)
-(define-key viper-slime-xref-fixes "q" 'slime-xref-quit)
+(defvar viper-slime-xref-fixes 
+  (let ((map (make-sparse-keymap)))
+    ;; STEVE: vvv doesn't work vvv (or, works by coincidence)
+    (define-key map (kbd "RET") 'slime-show-xref)
+    ;; STEVE: vvv doesn't work vvv (overridden by viper)
+    (define-key map (kbd "SPACE") 'slime-goto-xref)
+    (define-key map "q" 'slime-xref-quit)
+    map))
 (viper-modify-major-mode 'slime-xref-mode 'vi-state viper-slime-xref-fixes)
-(add-hook 'slime-xref-mode-hook (lambda () (viper-change-state-to-vi)))
+(add-hook 'slime-xref-mode-hook 'viper-change-state-to-vi)
 
 ;; Grep mode fixes
-(setq viper-grep-mode-fixes (make-sparse-keymap))
-(define-key viper-grep-mode-fixes "q" 'close-buffer-and-window-unless-last)
+(defvar viper-grep-mode-fixes 
+  (let ((map (make-sparse-keymap)))
+    (define-key map "q" 'close-buffer-and-window-unless-last)
+    map))
 (viper-modify-major-mode 'grep-mode 'vi-state viper-grep-mode-fixes)
 
 ;; SLIME macroexpansion mode fixes
@@ -122,49 +137,12 @@
     (viper-add-local-keys 'vi-state '(("q" . slime-temp-buffer-quit)))))
 (add-hook 'lisp-mode-hook 'steve-slime-temp-buffer-fixes)
 
-(defun steve-slime-repl-forward ()
-  (interactive)
-  (slime-repl-history-replace 'forward))
-
-(defun steve-slime-repl-backward ()
-  (interactive)
-  (slime-repl-history-replace 'backward))
-
 ;; SLIME REPL fixes
-(defun steve-slime-repl-fixes ()
-  (viper-change-state-to-vi)
-  (viper-add-local-keys 'vi-state
-                        `((,(kbd "RET") . slime-repl-closing-return)
-                          ("RET" . slime-repl-closing-return)
-                          ([return] . slime-repl-closing-return)
-                          ("\C-n" . steve-slime-repl-forward)
-                          ("\C-p" . steve-slime-repl-backward)))
-  (viper-add-local-keys 'insert-state
-                        `((,(kbd "RET") . slime-repl-closing-return)
-                          ("RET" . slime-repl-closing-return)
-                          ([return] . slime-repl-closing-return)
-                          ("\C-n" . steve-slime-repl-forward)
-                          ("\C-p" . steve-slime-repl-backward)))
-
-;  (viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
-
-  ;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-repl-modified-vi-map)
-  ;(viper-modify-major-mode 'slime-repl-mode 'insert-state
-  ;                         my-repl-modified-insert-map)
-  )
 (add-hook 'slime-repl-mode-hook 'viper-change-state-to-vi)
-;(add-hook 'slime-repl-mode-hook 'steve-slime-repl-fixes)
-
-(setq viper-repl-mode-fixes (make-sparse-keymap))
-(define-key viper-repl-mode-fixes " n" 'steve-slime-repl-forward)
-(define-key viper-repl-mode-fixes " p" 'steve-slime-repl-backward)
-(define-key viper-repl-mode-fixes "RET" 'slime-repl-closing-return)
-;(viper-modify-major-mode 'slime-repl-mode 'vi-state viper-repl-mode-fixes)
-
-;(vimper-defkey-l map "n" 'steve-slime-repl-forward)
-;(vimper-defkey-l map "p" 'steve-slime-repl-backward)
 
 
+
+;TODO:
 ; - rebind C-;
 ; - remember viper-harness-minor-mode
 ; - don't show date on (qgrep)

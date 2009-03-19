@@ -59,7 +59,7 @@
 ;;; work on the character the cursor is on ;;;
 ;;; too (eg. in visual mode pressing "d"   ;;;
 ;;; deletes also the char under the cursor ;;;
-;;; (like in vim)			   ;;;
+;;; (like in vim)                          ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; STEVE FIXME: should use save-excursion instead?
@@ -72,51 +72,32 @@ work on closed parens like one can expect in vi."
      (backward-char)))
 
 (defmacro def-ocf (name args &rest body)
-  ";     Define a wrapper for a command to execute it as if the cursor was one
-   ; char forward the current position. Uses `do-one-char-forward'. Use it
-   ; like a defun without lambdalist.
-   ;
-   ;     For example, this:
-   ;
-   ; (def-ocf my-eval-last-sexp ()
-   ;   (eval-last-sexp))
-   ;
-   ;     expands to this:
-   ;
-   ; (defun my-eval-last-sexp ()
-   ;   (interactive)
-   ;   (do-one-char-forward
-   ;    (eval-last-sexp)))"
+  "Define a wrapper for a command to execute it as if the cursor was one
+   char forward the current position. Uses `do-one-char-forward'. Use it
+   like a defun without lambda-list.  See examples below."
   `(defun ,name (,@args)
      (interactive)
      (do-one-char-forward
       ,@body)))
 
+(defvar vimper-leader-char " ")
+(defmacro vimper-define-key (map key func)
+  "Define a key binding prefixed with `vimper-leader-char'."
+  `(define-key ,map (concat vimper-leader-char ,key) ,func))
+
 ;; End utility code
 
 
-
- 
-
-
-
 ;; Begin major mode keybinding code
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Major mode keybindings and functions used by vimper  ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar vimper-leader-char " ")
-(defmacro vimper-defkey-l (map key func)
-  `(define-key ,map (concat vimper-leader-char ,key) ,func))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;     Emacs Lisp Mode - Viper Mappings       ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Commands definitions (Almost all are work-arounds due to the fact that
-;;; 	    Emacs wants the cursor to be _after_ the ")" to execute functions
-;;;	    on sexps. We use the `do-one-char-forward' utility macro here,
-;;;	    look at vimper/utilities.el for details on that macro).
+;;; Commands definitions.  Almost all are work-arounds due to the fact that
+;;; Emacs wants the cursor to be _after_ the ")" to execute functions
+;;; on sexps. We use the `do-one-char-forward' utility macro here (see above).
+
 (def-ocf vimper-eval-print-last-sexp ()
   (eval-print-last-sexp))
 
@@ -142,27 +123,31 @@ work on closed parens like one can expect in vi."
 (def-ocf vimper-macroexpand-all ()
   (message (pp-to-string (macroexpand-all (sexp-at-point)))))
 
-;;; bindings
-(setq my-elisp-modified-vi-map
-      (let ((map (make-sparse-keymap)))
-;	(vimper-defkey-l map "p" (make-sparse-keymap))
-	(vimper-defkey-l map "pe" 'vimper-pp-eval-last-sexp)
-	(vimper-defkey-l map "pE" 'pp-eval-expression)
-	(vimper-defkey-l map "pr" 'vimper-pp-eval-region)
-	(vimper-defkey-l map "e" 'vimper-eval-last-sexp)
-	(vimper-defkey-l map "j" 'vimper-eval-print-last-sexp)
-	(vimper-defkey-l map "r" 'vimper-eval-region)
-        (vimper-defkey-l map "K" 'eval-buffer)
-	(vimper-defkey-l map "da" 'apropos)
-	(vimper-defkey-l map "df" 'describe-function)
-	(vimper-defkey-l map "dv" 'describe-variable)
-	(vimper-defkey-l map "E"  'eval-expression)
-	(vimper-defkey-l map "m" 'vimper-macroexpand)
-	(vimper-defkey-l map "M" 'vimper-macroexpand-all)
-	(vimper-defkey-l map "B" 'byte-compile-file)
-	map))
-(viper-modify-major-mode 'emacs-lisp-mode 'vi-state my-elisp-modified-vi-map)
-(viper-modify-major-mode 'lisp-interaction-mode 'vi-state my-elisp-modified-vi-map)
+;;; Bindings
+
+(defvar vimper-emacs-lisp-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    ;(vimper-define-key map "p" (make-sparse-keymap))
+    (vimper-define-key map "pe" 'vimper-pp-eval-last-sexp)
+    (vimper-define-key map "pE" 'pp-eval-expression)
+    (vimper-define-key map "pr" 'vimper-pp-eval-region)
+    (vimper-define-key map "e" 'vimper-eval-last-sexp)
+    (vimper-define-key map "j" 'vimper-eval-print-last-sexp)
+    (vimper-define-key map "r" 'vimper-eval-region)
+    (vimper-define-key map "K" 'eval-buffer)
+    (vimper-define-key map "da" 'apropos)
+    (vimper-define-key map "df" 'describe-function)
+    (vimper-define-key map "dv" 'describe-variable)
+    (vimper-define-key map "E"  'eval-expression)
+    (vimper-define-key map "m" 'vimper-macroexpand)
+    (vimper-define-key map "M" 'vimper-macroexpand-all)
+    (vimper-define-key map "B" 'byte-compile-file)
+    map))
+
+(viper-modify-major-mode 'emacs-lisp-mode 'vi-state
+                         vimper-emacs-lisp-mode-vi-map)
+(viper-modify-major-mode 'lisp-interaction-mode 'vi-state
+                         vimper-emacs-lisp-mode-vi-map)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,8 +158,10 @@ work on closed parens like one can expect in vi."
 ;; Commands
 (def-ocf vimper-slime-compile-defun ()
    (slime-compile-defun))
+
 (def-ocf vimper-slime-eval-defun ()
    (slime-eval-defun))
+
 (def-ocf vimper-slime-eval-last-expression ()
    (slime-eval-last-expression))
 
@@ -188,156 +175,150 @@ work on closed parens like one can expect in vi."
 
 (def-ocf vimper-slime-pprint-eval-last-expression ()
    (slime-pprint-eval-last-expression))
+
 (defun vimper-slime-eval-region ()
   (interactive)
   (if (not viper-visual-mode)
       (message "Select the region in Visual Mode!")
     (slime-eval-region (min (mark) (point)) (max (mark) (point)))
     (viper-visual-mode 'toggle)))
-(defun vimper-slime-macroexpand-1 (&optional REPEATEDLY)
-  (interactive "P")
-  (do-one-char-forward
-   (slime-macroexpand-1 REPEATEDLY)))
-(def-ocf vimper-slime-macroexpand-all ()
-  (slime-macroexpand-all))
+
 ;; Bindings
 
-;; In general the Viper Slime mappings are much the same as regular Slime bindings,
-;; The C-c and C-x prefixes are dropped.
-;; When commands are similar, we use a lower case letter for the C-<key> case and an upper
-;; case letter for the M-<key>, such as:
-;; C-c C-k : slime-compile-and-load-file  : (vip-slime-leader k)
-;; C-c M-k : slime-compile-file           : (vip-slime-leader K)
-;; All commands begin with vip-slime-leader, which defaults to <space>
-;; the M-x commands are not mapped, as they are presumably rare
-;; Some keys are a triple key sequence.  The second key is a marker for a category
-;; the third key is the activation key.
+;; In general the Viper Slime mappings are much the same as regular Slime
+;; bindings, with the C-c and C-x prefixes dropped.  When commands are
+;; similar, we use a lower case letter for the C-<key> case and an upper case
+;; letter for the M-<key>, such as:
+;;
+;;   slime-compile-and-load-file : C-c C-k -> (vimper-leader-char k)
+;;   slime-compile-file          : C-c M-k -> (vimper-leader-char K)
+;;
+;; All commands begin with vimper-leader-char, which defaults to <space>.  The
+;; M-x commands are not mapped, as they are presumably rare.  Some keys are a
+;; triple key sequence.  The second key is a marker for a category, the third
+;; key is the activation key.
 
-(setq my-lisp-modified-vi-map
-      (let ((map (make-sparse-keymap)))
+(defvar vimper-lisp-mode-vi-map
+  (let ((map (make-sparse-keymap)))
 
-        ;; ITA
-        (vimper-defkey-l map "g" 'qgrep)
-        (vimper-defkey-l map "\C-i" 'insert-dp)
-        (vimper-defkey-l map "\C-r" 'remove-dp)
-        
-        ;; Compilation Commands
-        (vimper-defkey-l map "k" 'slime-compile-and-load-file)
-        (vimper-defkey-l map "K" 'slime-compile-file)
-        (vimper-defkey-l map "c" 'vimper-slime-compile-defun)
-        (vimper-defkey-l map "C" 'slime-remove-notes)
-        
-        ;; Note handling has the same binding as Slime defaults
-        (vimper-defkey-l map "M-n" 'slime-next-note)
-        (vimper-defkey-l map "M-p" 'slime-previous-note)
-        
-        ;; Finding definitions (they are same as Slime default)
-        (vimper-defkey-l map "." 'slime-edit-definition)   
-        (vimper-defkey-l map "," 'slime-pop-find-definition-stack)
-        
-        ;; Lisp Evaluation
-        (vimper-defkey-l map "x" 'vimper-slime-eval-defun)
-        (vimper-defkey-l map "e" 'vimper-slime-eval-last-expression)
-        (vimper-defkey-l map "j" 'vimper-slime-eval-print-last-expression)
-;        (vimper-defkey-l map "p" 'vimper-slime-pprint-eval-last-expression)
-        (vimper-defkey-l map "r" 'vimper-slime-eval-region) ; watch for visual mode!!
-        ;; Lisp Documentation
-        ;; 3 key sequences
-        (vimper-defkey-l map "dd" 'slime-describe-symbol) 
-        (vimper-defkey-l map "da" 'slime-apropos) 
-        (vimper-defkey-l map "dz" 'slime-apropos-all)
-        (vimper-defkey-l map "dp" 'slime-apropos-package)
-        (vimper-defkey-l map "dh" 'slime-hyperspec-lookup)
-        (vimper-defkey-l map "d~" 'common-lisp-hyperspec-format)
-        ;; Macro expansion
-        ;(vimper-defkey-l map "m" 'vimper-slime-macroexpand-1)
-        ;(vimper-defkey-l map "M" 'vimper-slime-macroexpand-all)
-        ; STEVE FIXME vvv ?
-        (vimper-defkey-l map "m" 'slime-macroexpand-1)
-        (vimper-defkey-l map "M" 'slime-macroexpand-all)
-        (vimper-defkey-l map "t" 'slime-toggle-trace-fdefinition)
-        
-        ;; Disassembly
-        (vimper-defkey-l map "D" 'slime-disassemble-symbol)
-        
-        ;; Abort/Recovery
-        (vimper-defkey-l map "b" 'slime-interrupt)
-        (vimper-defkey-l map "~" 'slime-sync-package-and-default-directory)
-        (vimper-defkey-l map "P" 'slime-repl-set-package)
-        
-        ;; Cross-reference
-        
-        ;; All cross-reference functions are
-        ;; triple key sequences
-        ;; (vip-slime-leader ?w key)
-        (vimper-defkey-l map "wc" 'slime-who-calls)
-        (vimper-defkey-l map "wr" 'slime-who-references)
-        (vimper-defkey-l map "wb" 'slime-who-binds)
-        (vimper-defkey-l map "ws" 'slime-who-sets)
-        (vimper-defkey-l map "wm" 'slime-who-macroexpands)
-        (vimper-defkey-l map "<" 'slime-list-callers)
-        (vimper-defkey-l map ">" 'slime-list-callees)
-        
-        ;; Inspector
-        (vimper-defkey-l map "i" 'slime-inspect)
-        
-        ;; Repl!
-        (vimper-defkey-l map "R" 'slime-switch-to-output-buffer)
-        (vimper-defkey-l map "z" 'slime-switch-to-output-buffer)
-        (vimper-defkey-l map "s" 'slime-scratch)
-        
-        ;; Profiler
-        ;; "p" is already taken as a key, we
-        ;; use "f" to access the profiler functions
-;        (vimper-defkey-l map "f" (make-sparse-keymap))
-        (vimper-defkey-l map "ft" 'slime-toggle-profile-fdefinition)
-        (vimper-defkey-l map "fp" 'slime-profile-package)
-        (vimper-defkey-l map "fu" 'slime-unprofile-all)
-        (vimper-defkey-l map "fr" 'slime-profile-report)
-        (vimper-defkey-l map "fR" 'slime-profile-reset)		
-        map))
+    ;; ITA
+    (when (itap)
+      (vimper-define-key map "g" 'qgrep)
+      (vimper-define-key map "\C-i" 'insert-dp)
+      (vimper-define-key map "\C-r" 'remove-dp))
 
-(viper-modify-major-mode 'lisp-mode 'vi-state my-lisp-modified-vi-map)
-(viper-modify-major-mode 'clojure-mode 'vi-state my-lisp-modified-vi-map)
+    ;; Compilation Commands
+    (vimper-define-key map "k" 'slime-compile-and-load-file)
+    (vimper-define-key map "K" 'slime-compile-file)
+    (vimper-define-key map "c" 'vimper-slime-compile-defun)
+    (vimper-define-key map "C" 'slime-remove-notes)
 
-;; STEVE FIXME: does not work
-;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
+    ;; Note handling has the same binding as Slime defaults
+    (vimper-define-key map "M-n" 'slime-next-note)
+    (vimper-define-key map "M-p" 'slime-previous-note)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;   Slime Inspector Mode - Viper Mappings    ;;;
-;;;                    Slime                   ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Finding definitions (they are same as Slime default)
+    (vimper-define-key map "." 'slime-edit-definition)   
+    (vimper-define-key map "," 'slime-pop-find-definition-stack)
+
+    ;; Lisp Evaluation
+    (vimper-define-key map "x" 'vimper-slime-eval-defun)
+    (vimper-define-key map "e" 'vimper-slime-eval-last-expression)
+    (vimper-define-key map "j" 'vimper-slime-eval-print-last-expression)
+;    (vimper-define-key map "p" 'vimper-slime-pprint-eval-last-expression)
+    ; watch for visual mode!!
+    (vimper-define-key map "r" 'vimper-slime-eval-region) 
+
+    ;; Lisp Documentation
+    ;; 3 key sequences
+    (vimper-define-key map "dd" 'slime-describe-symbol) 
+    (vimper-define-key map "da" 'slime-apropos) 
+    (vimper-define-key map "dz" 'slime-apropos-all)
+    (vimper-define-key map "dp" 'slime-apropos-package)
+    (vimper-define-key map "dh" 'slime-hyperspec-lookup)
+    (vimper-define-key map "d~" 'common-lisp-hyperspec-format)
+
+    ;; Macro expansion
+    (vimper-define-key map "m" 'slime-macroexpand-1)
+    (vimper-define-key map "M" 'slime-macroexpand-all)
+    (vimper-define-key map "t" 'slime-toggle-trace-fdefinition)
+
+    ;; Disassembly
+    (vimper-define-key map "D" 'slime-disassemble-symbol)
+
+    ;; Abort/Recovery
+    (vimper-define-key map "b" 'slime-interrupt)
+    (vimper-define-key map "~" 'slime-sync-package-and-default-directory)
+    (vimper-define-key map "P" 'slime-repl-set-package)
+        
+    ;; Cross-reference
+    ;; 3 key sequences
+    (vimper-define-key map "wc" 'slime-who-calls)
+    (vimper-define-key map "wr" 'slime-who-references)
+    (vimper-define-key map "wb" 'slime-who-binds)
+    (vimper-define-key map "ws" 'slime-who-sets)
+    (vimper-define-key map "wm" 'slime-who-macroexpands)
+    (vimper-define-key map "<" 'slime-list-callers)
+    (vimper-define-key map ">" 'slime-list-callees)
+
+    ;; Inspector
+    (vimper-define-key map "i" 'slime-inspect)
+
+    ;; Repl!
+    (vimper-define-key map "R" 'slime-switch-to-output-buffer)
+    (vimper-define-key map "z" 'slime-switch-to-output-buffer)
+    (vimper-define-key map "s" 'slime-scratch)
+        
+    ;; Profiler
+    ;; "p" is already taken as a key, we
+    ;; use "f" to access the profiler functions
+;    (vimper-define-key map "f" (make-sparse-keymap))
+    (vimper-define-key map "ft" 'slime-toggle-profile-fdefinition)
+    (vimper-define-key map "fp" 'slime-profile-package)
+    (vimper-define-key map "fu" 'slime-unprofile-all)
+    (vimper-define-key map "fr" 'slime-profile-report)
+    (vimper-define-key map "fR" 'slime-profile-reset)
+    map))
+
+(viper-modify-major-mode 'lisp-mode 'vi-state vimper-lisp-mode-vi-map)
+(viper-modify-major-mode 'clojure-mode 'vi-state vimper-lisp-mode-vi-map)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Slime   REPL    Mode - Viper Mappings    ;;;
 ;;;                    Slime                   ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq my-repl-modified-vi-map
-      (let ((map (copy-keymap my-lisp-modified-vi-map)))
-;      (let ((map (make-sparse-keymap)))
-;        (vimper-defkey-l map "m" 'vimper-slime-macroexpand-1)
-;        (vimper-defkey-l map "i" 'slime-inspect)
-        (vimper-defkey-l map "n" 'steve-slime-repl-forward)
-        (vimper-defkey-l map "p" 'steve-slime-repl-backward)
-        (define-key map "\C-n" 'steve-slime-repl-forward)
-        (define-key map "\C-p" 'steve-slime-repl-backward)
-        (define-key map (kbd "RET") 'slime-repl-closing-return)
-        map))
-;(viper-add-keymap my-lisp-modified-vi-map my-repl-modified-vi-map)
-;        (vimper-defkey-l map "RET" 'slime-repl-closing-return)
-;        ))
-(viper-modify-major-mode 'slime-repl-mode 'vi-state my-repl-modified-vi-map)
+;; Commands
 
-(setq my-repl-modified-insert-map
-      (let ((map (make-sparse-keymap)))
-        (define-key map (kbd "RET") 'slime-repl-closing-return)
-        (define-key map "\C-n" 'steve-slime-repl-forward)
-        (define-key map "\C-p" 'steve-slime-repl-backward)
-        map
-        ))
+(defun vimper-slime-repl-forward ()
+  (interactive)
+  (slime-repl-history-replace 'forward))
+
+(defun vimper-slime-repl-backward ()
+  (interactive)
+  (slime-repl-history-replace 'backward))
+
+;; Bindings
+
+(defvar vimper-slime-repl-mode-vi-map
+  (let ((map (copy-keymap vimper-lisp-mode-vi-map)))
+    (vimper-define-key map "n" 'vimper-slime-repl-forward)
+    (vimper-define-key map "p" 'vimper-slime-repl-backward)
+    (define-key map "\C-n" 'vimper-slime-repl-forward)
+    (define-key map "\C-p" 'vimper-slime-repl-backward)
+    (define-key map (kbd "RET") 'slime-repl-closing-return)
+    map))
+(viper-modify-major-mode 'slime-repl-mode 'vi-state
+                         vimper-slime-repl-mode-vi-map)
+
+(defvar vimper-slime-repl-mode-insert-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "RET") 'slime-repl-closing-return)
+    (define-key map "\C-n" 'vimper-slime-repl-forward)
+    (define-key map "\C-p" 'vimper-slime-repl-backward)
+    map))
 (viper-modify-major-mode 'slime-repl-mode 'insert-state
-                         my-repl-modified-insert-map)
+                         vimper-slime-repl-mode-insert-map)
 
 ;; End major mode keybinding code
 
