@@ -135,20 +135,37 @@
   (viper-change-state-to-vi)
   (viper-add-local-keys 'vi-state
                         `((,(kbd "RET") . slime-repl-closing-return)
-                          (,(kbd "RET") . slime-repl-closing-return)
+                          ("RET" . slime-repl-closing-return)
+                          ([return] . slime-repl-closing-return)
                           ("\C-n" . steve-slime-repl-forward)
                           ("\C-p" . steve-slime-repl-backward)))
   (viper-add-local-keys 'insert-state
-                        '(("\C-n" . steve-slime-repl-forward)
+                        `((,(kbd "RET") . slime-repl-closing-return)
+                          ("RET" . slime-repl-closing-return)
+                          ([return] . slime-repl-closing-return)
+                          ("\C-n" . steve-slime-repl-forward)
                           ("\C-p" . steve-slime-repl-backward)))
 
-  (viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
+;  (viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
+
   ;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-repl-modified-vi-map)
   ;(viper-modify-major-mode 'slime-repl-mode 'insert-state
   ;                         my-repl-modified-insert-map)
   )
-(add-hook 'slime-repl-mode-hook 'steve-slime-repl-fixes)
+(add-hook 'slime-repl-mode-hook 'viper-change-state-to-vi)
+;(add-hook 'slime-repl-mode-hook 'steve-slime-repl-fixes)
 
+(setq viper-repl-mode-fixes (make-sparse-keymap))
+(define-key viper-repl-mode-fixes " n" 'steve-slime-repl-forward)
+(define-key viper-repl-mode-fixes " p" 'steve-slime-repl-backward)
+(define-key viper-repl-mode-fixes "RET" 'slime-repl-closing-return)
+;(viper-modify-major-mode 'slime-repl-mode 'vi-state viper-repl-mode-fixes)
+
+;(vimper-defkey-l map "n" 'steve-slime-repl-forward)
+;(vimper-defkey-l map "p" 'steve-slime-repl-backward)
+
+
+; - rebind C-;
 ; - remember viper-harness-minor-mode
 ; - don't show date on (qgrep)
 ; - make (qgrep) window the height of its output
@@ -169,3 +186,4 @@
 ; *grep*:
 ;  <SPACE>-r
 ; - map key to select *scratch*
+; - try viper-syntax-preference set to extended

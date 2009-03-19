@@ -145,7 +145,7 @@ work on closed parens like one can expect in vi."
 ;;; bindings
 (setq my-elisp-modified-vi-map
       (let ((map (make-sparse-keymap)))
-	(vimper-defkey-l map "p" (make-sparse-keymap))
+;	(vimper-defkey-l map "p" (make-sparse-keymap))
 	(vimper-defkey-l map "pe" 'vimper-pp-eval-last-sexp)
 	(vimper-defkey-l map "pE" 'pp-eval-expression)
 	(vimper-defkey-l map "pr" 'vimper-pp-eval-region)
@@ -227,9 +227,6 @@ work on closed parens like one can expect in vi."
         (vimper-defkey-l map "c" 'vimper-slime-compile-defun)
         (vimper-defkey-l map "C" 'slime-remove-notes)
         
-        ;; Do I want to change those??? Meta key -_-''
-        ;; TODO: of course I want to change theese!! we're using
-        ;;       leader char here, so it definately sucks!!
         ;; Note handling has the same binding as Slime defaults
         (vimper-defkey-l map "M-n" 'slime-next-note)
         (vimper-defkey-l map "M-p" 'slime-previous-note)
@@ -242,7 +239,7 @@ work on closed parens like one can expect in vi."
         (vimper-defkey-l map "x" 'vimper-slime-eval-defun)
         (vimper-defkey-l map "e" 'vimper-slime-eval-last-expression)
         (vimper-defkey-l map "j" 'vimper-slime-eval-print-last-expression)
-        (vimper-defkey-l map "p" 'vimper-slime-pprint-eval-last-expression)
+;        (vimper-defkey-l map "p" 'vimper-slime-pprint-eval-last-expression)
         (vimper-defkey-l map "r" 'vimper-slime-eval-region) ; watch for visual mode!!
         ;; Lisp Documentation
         ;; 3 key sequences
@@ -292,7 +289,7 @@ work on closed parens like one can expect in vi."
         ;; Profiler
         ;; "p" is already taken as a key, we
         ;; use "f" to access the profiler functions
-        (vimper-defkey-l map "f" (make-sparse-keymap))
+;        (vimper-defkey-l map "f" (make-sparse-keymap))
         (vimper-defkey-l map "ft" 'slime-toggle-profile-fdefinition)
         (vimper-defkey-l map "fp" 'slime-profile-package)
         (vimper-defkey-l map "fu" 'slime-unprofile-all)
@@ -304,7 +301,7 @@ work on closed parens like one can expect in vi."
 (viper-modify-major-mode 'clojure-mode 'vi-state my-lisp-modified-vi-map)
 
 ;; STEVE FIXME: does not work
-(viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
+;(viper-modify-major-mode 'slime-repl-mode 'vi-state my-lisp-modified-vi-map)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Slime Inspector Mode - Viper Mappings    ;;;
@@ -316,24 +313,29 @@ work on closed parens like one can expect in vi."
 ;;;                    Slime                   ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; STEVE FIXME: does not work
 (setq my-repl-modified-vi-map
-      (let ((map (make-sparse-keymap)))
-        (vimper-defkey-l map "m" 'vimper-slime-macroexpand-1)
-        (vimper-defkey-l map "i" 'slime-inspect)
-        (vimper-defkey-l map "<return>" 'slime-repl-closing-return)
-;        (vimper-defkey-l map "<C-return>" 'slime-repl-closing-return)
-;        (vimper-defkey-l map "G" 'end-of-buffer)
-        ))
+      (let ((map (copy-keymap my-lisp-modified-vi-map)))
+;      (let ((map (make-sparse-keymap)))
+;        (vimper-defkey-l map "m" 'vimper-slime-macroexpand-1)
+;        (vimper-defkey-l map "i" 'slime-inspect)
+        (vimper-defkey-l map "n" 'steve-slime-repl-forward)
+        (vimper-defkey-l map "p" 'steve-slime-repl-backward)
+        (define-key map "\C-n" 'steve-slime-repl-forward)
+        (define-key map "\C-p" 'steve-slime-repl-backward)
+        (define-key map (kbd "RET") 'slime-repl-closing-return)
+        map))
+;(viper-add-keymap my-lisp-modified-vi-map my-repl-modified-vi-map)
+;        (vimper-defkey-l map "RET" 'slime-repl-closing-return)
+;        ))
 (viper-modify-major-mode 'slime-repl-mode 'vi-state my-repl-modified-vi-map)
 
-;; STEVE FIXME: does not work
 (setq my-repl-modified-insert-map
       (let ((map (make-sparse-keymap)))
-        (vimper-defkey-l map "<return>" 'slime-repl-closing-return)
-;        (vimper-defkey-l map "<C-return>" 'slime-repl-closing-return)
+        (define-key map (kbd "RET") 'slime-repl-closing-return)
+        (define-key map "\C-n" 'steve-slime-repl-forward)
+        (define-key map "\C-p" 'steve-slime-repl-backward)
+        map
         ))
-
 (viper-modify-major-mode 'slime-repl-mode 'insert-state
                          my-repl-modified-insert-map)
 
