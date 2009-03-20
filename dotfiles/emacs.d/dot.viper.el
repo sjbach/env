@@ -56,7 +56,9 @@
 ;; Add more viper-ified modes
 (setq viper-vi-state-mode-list
       (append viper-vi-state-mode-list
-              '(grep-mode
+              '(fundamental-mode  ; << doesn't seem to work
+                grep-mode
+                comint-mode
                 slime-xref-mode
                 slime-repl-mode
                 sldb-mode
@@ -69,7 +71,6 @@
 (setq viper-emacs-state-mode-list
       (set-difference viper-emacs-state-mode-list
                       '(Info-mode help-mode completion-list-mode)))
-
 
 ;; Help-mode fixes
 (defvar viper-help-mode-fixes
@@ -132,10 +133,12 @@
 (add-hook 'lisp-mode-hook 'steve-slime-temp-buffer-fixes)
 
 ;; SLIME REPL fixes
-(add-hook 'slime-repl-mode-hook 'viper-change-state-to-vi)
+(add-hook 'slime-repl-mode-hook 'viper-comint-mode-hook)
 
 
 ;TODO:
+; - viper in *slime-events*
+; - fixes for slime xref
 ; - remember viper-harness-minor-mode
 ; map ESC to end visual mode (which C-g does)
 ; map ESC to end search mode (which C-g does)
