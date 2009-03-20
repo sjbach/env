@@ -1,14 +1,14 @@
 ;;;
 ;;; Vim-like stuff
 ;;; Also see:
-;;;   ~/.emacs.d/dot.viper.el
+;;;   ~/.emacs.d/dot-viper.el
 ;;;   ~/.elisp/vimpulse.el
 ;;;   ~/.elisp/viper-in-more-modes.el
 ;;;
 
 (setq viper-mode t)
 (setq viper-custom-file-name
-      (convert-standard-filename "~/.emacs.d/dot.viper.el"))
+      (convert-standard-filename "~/.emacs.d/dot-viper.el"))
 (require 'viper)
 (require 'vimpulse)
 (require 'viper-in-more-modes)
