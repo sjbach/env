@@ -12,7 +12,7 @@
 (setq-default viper-ESC-moves-cursor-back t)
 (setq-default viper-auto-indent t)
 (setq-default viper-keep-point-on-repeat nil)
-(setq-default viper-toggle-key (kbd "C-;"))  ;; FIXME: no worky in terminal.
+(setq-default viper-toggle-key [C-up])
 (setq-default viper-ESC-keyseq-timeout 0)
 (setq-default viper-translate-all-ESC-keysequences nil)
 (setq-default viper-change-notification-threshold 200)
@@ -56,7 +56,7 @@
 ;; Help-mode and Info-mode should be in viper
 (setq viper-emacs-state-mode-list
       (set-difference viper-emacs-state-mode-list
-                      '(Info-mode help-mode)))
+                      '(Info-mode help-mode completion-list-mode)))
 
 ;; Add more viper-ified modes
 (setq viper-vi-state-mode-list
@@ -93,16 +93,6 @@
     (define-key map (kbd "RET") 'apropos-follow)
     map))
 (viper-modify-major-mode 'apropos-mode 'vi-state viper-apropos-mode-fixes)
-
-;; Completion-list-mode fixes
-(defvar viper-completion-list-mode-fixes
-  (let ((map (make-sparse-keymap)))
-    ;(define-key map "q" 'quit-window)
-    (define-key map (kbd "RET") 'choose-completion)
-    map))
-(viper-modify-major-mode 'completion-list-mode 'vi-state
-                         viper-completion-list-mode-fixes)
-(add-hook 'completion-list-mode-hook 'viper-change-state-to-vi)
 
 ;; Debugger-mode fixes
 (defvar viper-debugger-mode-fixes 
@@ -143,7 +133,6 @@
 
 
 ;TODO:
-; - rebind C-;
 ; - remember viper-harness-minor-mode
 ; - don't show date on (qgrep)
 ; - make (qgrep) window the height of its output
