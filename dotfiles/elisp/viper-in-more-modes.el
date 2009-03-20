@@ -5,7 +5,8 @@
 ;; Version: x.x.x
 ;; Authors: Alessandro Piras <laynor@gmail.com>,
 ;;          Brad Beveridge <brad.beveridge@gmail.com>
-;; Maintainer: Jason Spiro <jasonspiro3@gmail.com>
+;;          Stephen Bach <this-file@sjbach.com>
+;; Maintainer: Stephen Bach
 ;; URL: http://emacswiki.org/elisp/viper-in-more-modes.el
 ;; 
 ;; This file is not part of GNU Emacs.
@@ -29,12 +30,6 @@
 ;; This is alpha-quality code.  If it works for you, we would
 ;; appreciate it if you let us know.
 
-;;; Change Log:
-;; 
-;; Version 0.1.1:  Made vimper-leader-char a var, not a const.  Thank you
-;; John J Foerch <jjfoerch at earthlink.net>.
-;; Version 0.1:  Initial upload to wiki.
-
 ;;; License:
 ;; 
 ;; This program is free software; you can redistribute it and/or modify it under
@@ -50,9 +45,12 @@
 ;; this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 ;; Place - Suite 330, Boston, MA 02111-1307, USA.
 
+;;; Contributors:
+;;
+;; John J Foerch
+;;
 
-
-;; Begin utility code
+;;; Code:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Macro workaround to make some commands ;;;
@@ -85,10 +83,6 @@ work on closed parens like one can expect in vi."
   "Define a key binding prefixed with `vimper-leader-char'."
   `(define-key ,map (concat vimper-leader-char ,key) ,func))
 
-;; End utility code
-
-
-;; Begin major mode keybinding code
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;     Emacs Lisp Mode - Viper Mappings       ;;;
@@ -319,6 +313,33 @@ work on closed parens like one can expect in vi."
     map))
 (viper-modify-major-mode 'slime-repl-mode 'insert-state
                          vimper-slime-repl-mode-insert-map)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Slime Debugger Mode
+
+;; Bindings
+
+(defvar vimper-sldb-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "RET") 'sldb-default-action)
+    (define-key map "q" 'sldb-quit)
+    (vimper-define-key map "0" 'sldb-invoke-restart-0)
+    (vimper-define-key map "1" 'sldb-invoke-restart-1)
+    (vimper-define-key map "2" 'sldb-invoke-restart-2)
+    (vimper-define-key map "3" 'sldb-invoke-restart-3)
+    (vimper-define-key map "4" 'sldb-invoke-restart-4)
+    (vimper-define-key map "5" 'sldb-invoke-restart-5)
+    (vimper-define-key map "6" 'sldb-invoke-restart-6)
+    (vimper-define-key map "7" 'sldb-invoke-restart-7)
+    (vimper-define-key map "8" 'sldb-invoke-restart-8)
+    (vimper-define-key map "9" 'sldb-invoke-restart-9)
+    (vimper-define-key map "a" 'sldb-abort)
+    (vimper-define-key map "c" 'sldb-continue)
+    (vimper-define-key map "v" 'sldb-show-source)
+    map))
+(viper-modify-major-mode 'sldb-mode 'vi-state
+                         vimper-sldb-mode-vi-map)
+
 
 ;; End major mode keybinding code
 

@@ -53,22 +53,23 @@
 (define-key viper-vi-global-user-map "=" 'indent-according-to-mode)
 (define-key viper-vi-global-user-map ";" 'execute-extended-command)
 
-;; Help-mode and Info-mode should be in viper
-(setq viper-emacs-state-mode-list
-      (set-difference viper-emacs-state-mode-list
-                      '(Info-mode help-mode completion-list-mode)))
-
 ;; Add more viper-ified modes
 (setq viper-vi-state-mode-list
       (append viper-vi-state-mode-list
               '(grep-mode
                 slime-xref-mode
                 slime-repl-mode
+                sldb-mode
                 help-mode
                 Info-mode
                 debugger-mode
                 apropos-mode
                 completion-list-mode)))
+
+(setq viper-emacs-state-mode-list
+      (set-difference viper-emacs-state-mode-list
+                      '(Info-mode help-mode completion-list-mode)))
+
 
 ;; Help-mode fixes
 (defvar viper-help-mode-fixes
@@ -100,6 +101,9 @@
     (define-key map "q" 'top-level)
     map))
 (viper-modify-major-mode 'debugger-mode 'vi-state viper-debugger-mode-fixes)
+
+;; SLIME Debugger fixes
+(add-hook 'sldb-mode-hook 'viper-change-state-to-vi)
 
 ;; SLIME XREF fixes
 (defvar viper-slime-xref-fixes 
