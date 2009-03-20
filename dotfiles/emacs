@@ -49,7 +49,7 @@
 (mapc 'expand-load
       `("look-and-feel.el"
         ,(and (itap) "qpx-ita.el")
-        "viper-setup.el"))
+        "viper-boot.el"))
 
 (custom-set-variables
  '(load-home-init-file t t))
