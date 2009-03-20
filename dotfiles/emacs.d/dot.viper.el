@@ -135,25 +135,13 @@
 (add-hook 'slime-repl-mode-hook 'viper-change-state-to-vi)
 
 
-
 ;TODO:
 ; - remember viper-harness-minor-mode
-; - don't show date on (qgrep)
-; - make (qgrep) window the height of its output
-; - viper mode in *Completions*
-; don't prompt when creating new scratch buffer
 ; map ESC to end visual mode (which C-g does)
 ; map ESC to end search mode (which C-g does)
 ; map C-[ to end search mode (which C-g does)
 ; remember "] register"
-; make '/' use I-search (C-s) instead of viper search
-; make '?' use reverse I-search (C-r) instead of viper search
-; make ESC break out of ex mode
-; - in repl, RETURN runs expr unless it's above 'SCH>'
-; repl:
-;  M-., <SPACE>-g
-; debugger:
-;  j, k, h, l
+; - in repl, RETURN runs expr unless it's above prompt
 ; *grep*:
 ;  <SPACE>-r
 ; - map key to select *scratch*

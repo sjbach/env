@@ -1,6 +1,7 @@
 ;;
 ;; Look and feel
 ;;
+
 (require 'color-theme)
 ;(color-theme-xemacs)
 (color-theme-initialize)
