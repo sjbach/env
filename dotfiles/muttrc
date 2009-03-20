@@ -108,7 +108,7 @@ set autoedit=yes
 unset confirmappend
 
 # Prefer plaintext
-alternative_order text/plain text/html
+alternative_order text/enriched text/plain text/html
 
 # Assume attaching forwarded messages rather than inline.
 set mime_forward=ask-yes
@@ -119,7 +119,7 @@ set mime_forward_rest=yes
 set implicit_autoview
 auto_view text/html  application/x-pgp-message
 #set mailcap_path="~/.mailcap"
-set mailcap_path="/etc/mailcap"
+#set mailcap_path="/etc/mailcap"
 set mailcap_sanitize=yes
 
 # Don't save outgoing attachments
