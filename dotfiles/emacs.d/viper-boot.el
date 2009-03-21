@@ -15,11 +15,12 @@
 (require 'redo)
 (require 'rect-mark)  ; For block visual mode.
 
-;; Hack to get *Messages* in Viper mode.
-;; futzing with fundamental-mode doesn't seem to help.
-(switch-to-buffer "*Messages*")
-(viper-change-state-to-vi)
-(previous-buffer)
+;; Hack to get *Messages* in viper-mode.
+;; (must be done after loading viper)
+;; Futzing with fundamental-mode doesn't seem to help.
+(save-excursion
+  (set-buffer "*Messages*")
+  (viper-change-state-to-vi))
 
 ;; Make Emacs mode stick out more in status bar.
 (setq viper-emacs-state-id

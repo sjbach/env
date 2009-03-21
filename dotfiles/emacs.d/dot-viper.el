@@ -135,9 +135,14 @@
 ;; SLIME REPL fixes
 (add-hook 'slime-repl-mode-hook 'viper-comint-mode-hook)
 
+;; SLIME *slime-events* fix
+(add-hook 'slime-connected-hook
+          (lambda ()
+            (save-excursion
+              (set-buffer (slime-events-buffer))
+              (viper-change-state-to-vi))))
 
 ;TODO:
-; - viper in *slime-events*
 ; - fixes for slime xref
 ; - remember viper-harness-minor-mode
 ; map ESC to end visual mode (which C-g does)
