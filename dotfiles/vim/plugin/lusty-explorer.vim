@@ -9,7 +9,7 @@
 "
 " Name Of File: lusty-explorer.vim
 "  Description: Dynamic Filesystem and Buffer Explorer Vim Plugin
-"   Maintainer: Stephen Bach <sjbach@users.sourceforge.net>
+"   Maintainer: Stephen Bach <this-file@sjbach.com>
 " Contributors: Raimon Grau, Sergey Popov, Yuichi Tateno, Bernhard Walle,
 "               Rajendra Badapanda, cho45
 "
@@ -99,6 +99,7 @@
 "
 "   let g:LustyExplorerSuppressRubyWarning = 1
 "
+" GetLatestVimScripts: 1890 9903 lusty-explorer.vim
 "
 " TODO:
 " - when an edited file is in nowrap mode and the explorer is called while the
@@ -227,7 +228,7 @@ class String
 end
 
 
-class Vim::Buffer
+class VIM::Buffer
   # On Windows, name() returns paths with backslashes instead of the Ruby
   # standard forward slashes, so we need to fix that for portability.
   def name_p
