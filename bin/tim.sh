@@ -1,5 +1,8 @@
 #!/bin/sh
 # Send stdin or output from running arguments to a temporary vim/gvim buffer
+# TODO: add arguments to an env variable
+# TODO: within Vim, add a binding to refresh the output by
+#       calling system() with args from the variable
 
 if [ "$DISPLAY" ]; then
   vim=gvim
