@@ -34,6 +34,7 @@
 (define-key viper-vi-global-user-map "\C-e" (lambda ()
                                               (interactive)
                                               (viper-scroll-up-one 3)))
+(define-key viper-vi-global-user-map ",l" 'hs-toggle-hiding)
 (define-key viper-vi-global-user-map ",f" 'find-file)
 (define-key viper-vi-global-user-map ",r" 'lusty-file-explorer)
 (define-key viper-vi-global-user-map ",b" 'lusty-buffer-explorer)
@@ -145,6 +146,7 @@
 ;TODO:
 ; - fixes for slime xref
 ; - remember viper-harness-minor-mode
+; - C-j combines lines and also removes spacing when merged line begins with )
 ; map ESC to end visual mode (which C-g does)
 ; map ESC to end search mode (which C-g does)
 ; map C-[ to end search mode (which C-g does)

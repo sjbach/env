@@ -7,6 +7,10 @@
 (iswitchb-mode t)
 (setq-default indent-tabs-mode nil)
 
+(require 'hideshow)
+(add-hook 'lisp-mode-hook (lambda () (hs-minor-mode 1)))
+(add-hook 'emacs-lisp-mode-hook (lambda () (hs-minor-mode 1)))
+
 (require 'lusty-explorer)
 
 (when (file-exists-p "~/clojure")
