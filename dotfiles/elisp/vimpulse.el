@@ -46,45 +46,6 @@
 ;; point) that none of the visual modes provided by vimpulse provide 
 ;; that capability (yet). 
 ;;
-;; - (class of bugs) In visual or line visual mode, pressing things
-;;   like C-g or C-SPC tends to confuse Vimpulse and do weird things.
-
-;; - make sentence movement work like in Vim.  I wonder if this can be
-;;   done by setting viper options.
-;;     - In Vim, according to :help sentence, end of sentence is:
-;;         - '.', '?', or '!'
-;;         - then (optionally) one or more '"', ''', ')', and ']'
-;;           characters
-;;         - then a newline, space, or tab.
-;;         - A paragraph or section boundary is also a sentence
-;;           boundary, but I bet viper handles that, and if it doesn't,
-;;           it should.
-;;             - A paragraph begins after each truly empty line (no
-;;               whitespace chars on it) or after certain col-1 nroff
-;;               macros.  A sentence begins after a form feed (^L), or
-;;               certain nroff macros, in column 1.
-;;             - The characters '{' and '}' sometimes affect paragraph
-;;               definitions.  See :help paragraph.
-;;     - In Viper, on the other hand, I bet sentences are like in vi,
-;;       where Tabs aren't whitespace, and you need at least two spaces
-;;       after the punctuation mark.
-;; 
-;; - In vimpulse, like in real vim, C-r only does redo in command
-;;   mode; in insert mode it does something else.  (In vimpulse that
-;;   "something else" is reverse i-search.)  Should it do reverse
-;;   i-search in insert mode too?
-;; 
-;; - When you press "v" for visual mode, Vimpulse modifies the mode
-;;   section of the modeline, so it reads e.g. "(Emacs-Lisp visual)".
-;;   Shouldn't it do something to the <V> indicator instead?
-;; 
-;; - In v / V mode, Vim makes sure there is always at least 1 char /
-;;   line selected.  IMO it provides nice feedback as to whether
-;;   visual mode is on or not.  Is this worth implementing?
-;; 
-;; - should gj and gk do longlines-style movement like in Vim?  I
-;;   really must resolve my Windows vs. Unix line-length hangups by
-;;   Googling or asking before I even think about this.
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -101,31 +62,16 @@
 ;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 ;; 02111-1307, USA.
 
-
-;; Define a helper function that sets up the viper keys in a given map.
-;; This function is useful for creating movement maps or altering existing
-;; maps
-;(defun vimpulse-set-movement-keys-for-map (map)
-;  ; STEVE: I don't use these.
-;  ;(define-key map "\C-d" 'viper-scroll-up)
-;  ;(define-key map "\C-u" 'viper-scroll-down)
-;  (define-key map "\C-f" 'viper-scroll-screen)
-;  (define-key map "\C-b" 'viper-scroll-screen-back)
-;  (define-key map "j" 'viper-next-line)
-;  (define-key map "k" 'viper-previous-line)
-;  (define-key map "l" 'viper-forward-char)
-;  (define-key map "h" 'viper-backward-char))
+;; TODO:
+;; - In v / V mode, Vim makes sure there is always at least 1 char /
+;;   line selected.
+;; - gj and gk do longlines-style movement like in Vim
 ;;
-;; EXAMPLE, the following lines enable Vim style movement in help
-;; and dired modes.
-;; create a movement map and set the keys
-;(setq vimpulse-movement-map (make-sparse-keymap))
-;(vimpulse-set-movement-keys-for-map vimpulse-movement-map)
-;(viper-modify-major-mode 'dired-mode 'emacs-state vimpulse-movement-map) 
-;(viper-modify-major-mode 'help-mode 'emacs-state vimpulse-movement-map)
+;; - fix block visual mode
+;; - visual mode tilde
+;; - search with / or ? highlights all matches, not just current
 
 ;;; Code:
-
 
 (require 'advice)
 ;; Load redo.el if available.  Sadly we can't use APEL's require
