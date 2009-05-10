@@ -8,6 +8,15 @@
 (setq-default indent-tabs-mode nil)
 
 (require 'hideshow)
+(defun display-code-line-counts (ov)
+  (when (eq 'code (overlay-get ov 'hs))
+    (overlay-put ov 'display
+                 (propertize
+                   (format " ...<%d>)"
+                           (count-lines (overlay-start ov)
+                                        (overlay-end ov)))
+                   'face 'font-lock-constant-face))))
+(setq hs-set-up-overlay 'display-code-line-counts)
 (add-hook 'lisp-mode-hook (lambda () (hs-minor-mode 1)))
 (add-hook 'emacs-lisp-mode-hook (lambda () (hs-minor-mode 1)))
 
