@@ -83,7 +83,7 @@ nnoremap ? ?\v
 " Lusty
 "let g:LustyJugglerShowKeys = 2
 let g:LustyExplorerSuppressRubyWarning = 1
-"let g:LustyExplorerFileMasks = "*.o,*.fasl"
+"let g:LustyExplorerAlwaysShowDotFiles = 1
 nmap <silent> <Leader>f :FilesystemExplorer<CR>
 nmap <silent> <Leader>b :BufferExplorer<CR>
 nmap <silent> <Leader>r :FilesystemExplorerFromHere<CR>
