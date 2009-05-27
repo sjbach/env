@@ -36,7 +36,8 @@ def to_terminal_rows(words)
 end
 
 def terminal_width
-  %x{stty size}.split[1].to_i - 2
+  stty_width = %x{stty size}.split[1].to_i - 2
+  stty_width < 0 ? 78 : stty_width
 end
 
 term = ARGV[0].gsub(" ", "+")
