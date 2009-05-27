@@ -12,8 +12,8 @@
 "   Maintainer: Stephen Bach <this-file@sjbach.com>
 " Contributors: Juan Frias
 "
-" Release Date: Friday, November 14, 2008
-"      Version: 1.0.4
+" Release Date: May 26, 2009
+"      Version: 1.1.0
 "
 "        Usage: To launch the juggler:
 "
@@ -89,7 +89,7 @@
 "
 "   let g:LustyJugglerSuppressRubyWarning = 1
 "
-" GetLatestVimScripts: 2050 9507 lusty-juggler.vim
+" GetLatestVimScripts: 2050 1 :AutoInstall: lusty-juggler.vim
 "
 " TODO:
 " - save and restore mappings
@@ -130,7 +130,7 @@ if !has("ruby")
     echo "    1. Download and install Ruby from here:"
     echo "       http://www.ruby-lang.org/"
     echo "    2. Install a Vim binary with Ruby support:"
-    echo "       http://hasno.info/2007/5/18/windows-vim-7-1-2\n"
+    echo "       http://segfault.hasno.info/vim/gvim72.zip\n"
 
     echo "Manually (including Cygwin):"
     echo "    1. Install Ruby."
@@ -138,7 +138,10 @@ if !has("ruby")
     echo "    3. Build and install:"
     echo "         # tar -xvjf vim-7.0.tar.bz2"
     echo "         # ./configure --enable-rubyinterp"
-    echo "         # make && make install"
+    echo "         # make && make install\n"
+
+    echo "(If you just wish to stifle this message, set the following option:"
+    echo "  let g:LustyJugglerSuppressRubyWarning = 1)"
     echohl none
   endif
   endif
@@ -333,7 +336,7 @@ class BarItem
     return BarItem.new(@str[*rest], @color)
   end
 
-  def BarItem.full_length(array)
+  def self.full_length(array)
     if array
       array.inject(0) { |sum, el| sum + el.length }
     else
@@ -606,8 +609,12 @@ class BufferStack
     end
 
     def names
+      # Get the last 10 buffer names by MRU.  Show only as much of
+      # the name as necessary to differentiate between buffers of
+      # the same name.
       cull!
-      @stack.collect { |i| buf_name(i) }.reverse[0,10]
+      names = @stack.collect { |i| buf_name(i) }.reverse[0,10]
+      shorten_paths(names)
     end
 
     def num_at_pos(i)
@@ -638,6 +645,50 @@ class BufferStack
 
     def buf_name(i)
       eva("bufname(#{i})")
+    end
+
+    def shorten_paths(buffer_names)
+      # Shorten each buffer name by removing all path elements which are not
+      # needed to differentiate a given name from other names.  This usually
+      # results in only the basename shown, but if several buffers of the
+      # same basename are opened, there will be more.
+
+      # Group the buffers by common basename
+      common_base = Hash.new { |hash, k| hash[k] = [] }
+      buffer_names.each do |name|
+        basename = Pathname.new(name).basename.to_s
+        common_base[basename] << name
+      end
+
+      # Determine the longest common prefix for each basename group.
+      basename_to_prefix = {}
+      common_base.each do |k, names|
+        if names.length > 1
+          basename_to_prefix[k] = common_prefix(names)
+        end
+      end
+
+      # Shorten each buffer_name by removing the prefix.
+      buffer_names.map { |name|
+        base = Pathname.new(name).basename.to_s
+        prefix = basename_to_prefix[base]
+        prefix ? name[prefix.length..-1] \
+               : base
+      }
+    end
+
+    def common_prefix(paths)
+      prefix = paths[0]
+      for path in paths
+        for i in 0...prefix.length
+          if path.length <= i or prefix[i] != path[i]
+            prefix = prefix[0...i]
+            prefix = prefix[0..(prefix.rindex('/') or -1)]
+            break
+          end
+        end
+      end
+      return prefix
     end
 end
 
