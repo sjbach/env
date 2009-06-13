@@ -35,6 +35,13 @@ def to_terminal_rows(words)
   "  " + rows.join("\n  ")
 end
 
+# From:
+# http://blog.macromates.com/2006/wrapping-text-with-regular-expressions/
+def wrap_text(text)
+  col = terminal_width()
+  text.gsub(/(.{1,#{col}})( +|$)\n?|(.{#{col}})/, "  \\1\\3\n")
+end
+
 def terminal_width
   stty_width = %x{stty size}.split[1].to_i - 2
   stty_width < 0 ? 78 : stty_width
@@ -82,6 +89,10 @@ doc.search("//table[@class = 'the_content']") do |table|
 
     when /Definition/
       puts "Definition: #{e.next_sibling.innerText}"
+
+    when /Notes/
+      puts "Notes..."
+      puts "#{wrap_text(e.next_sibling.innerText)}"
 
     else
       puts "Unknown::"
