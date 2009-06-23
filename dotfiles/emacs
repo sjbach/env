@@ -35,6 +35,9 @@
   (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
   (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode)))
 
+(eval-after-load "slime"
+    '(add-to-list 'slime-lisp-implementations '(scheme ("mzscheme"))))
+
 (defun close-buffer-and-window-unless-last ()
   (interactive)
   (let* ((buffer (current-buffer))

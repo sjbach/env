@@ -47,7 +47,7 @@ set tags=tags;~/
 if has('gui_running')
   set encoding=utf-8
   "set guifont=Monospace\ Bold\ 9
-  set guifont=Bitstream\ Vera\ Sans\ Mono\ 8
+  set guifont=Bitstream\ Vera\ Sans\ Mono\ 9
   " Turn off toolbar and menu
   set guioptions-=T
   set guioptions-=m

@@ -58,6 +58,7 @@
 (setq viper-vi-state-mode-list
       (append viper-vi-state-mode-list
               '(fundamental-mode  ; << doesn't seem to work
+                clojure-mode
                 grep-mode
                 comint-mode
                 slime-xref-mode
@@ -132,6 +133,7 @@
     (viper-change-state-to-vi)
     (viper-add-local-keys 'vi-state '(("q" . slime-temp-buffer-quit)))))
 (add-hook 'lisp-mode-hook 'steve-slime-temp-buffer-fixes)
+(add-hook 'clojure-mode-hook 'steve-slime-temp-buffer-fixes)
 
 ;; SLIME REPL fixes
 (add-hook 'slime-repl-mode-hook 'viper-comint-mode-hook)
