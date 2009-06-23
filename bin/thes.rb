@@ -50,17 +50,6 @@ end
 term = ARGV[0].gsub(" ", "+")
 doc = Hpricot(open("http://thesaurus.reference.com/browse/#{term}"))
 
-doc.search("//div[@class = 'padnearby']") do |nearby|
-  puts "Did you mean..."
-  words = []
-  nearby.search("div/a") do |word|
-    words << word.innerText
-  end
-
-  puts to_terminal_rows(words)
-  puts
-end
-
 doc.search("//table[@class = 'the_content']") do |table|
 
 
@@ -102,6 +91,21 @@ doc.search("//table[@class = 'the_content']") do |table|
 
   end
   
+  puts
+end
+
+puts
+puts "-------------------------"
+puts
+
+doc.search("//div[@class = 'padnearby']") do |nearby|
+  puts "Did you mean..."
+  words = []
+  nearby.search("div/a") do |word|
+    words << word.innerText
+  end
+
+  puts to_terminal_rows(words)
   puts
 end
 
