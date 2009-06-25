@@ -40,3 +40,29 @@
 (when (facep 'viper-minibuffer-emacs)
   (set-face-foreground 'viper-minibuffer-emacs "white")
   (set-face-background 'viper-minibuffer-emacs "black"))
+
+;; Viper is overreaching by caring whether a visited file is under version
+;; control -- disable this check.
+(defun viper-maybe-checkout (buf)
+  nil)
+
+;; Let ESC disable visual mode.
+(defadvice viper-intercept-ESC-key (around steve-visual-mode-ESC activate)
+  (if vimpulse-visual-mode
+    (vimpulse-visual-mode 'toggle)
+    ad-do-it))
+
+;; Simple Vim command line functions
+
+(defun w (&optional args)
+  (interactive "p")
+  (save-buffer args))
+
+(defun q (&optional args)
+  (interactive "P")
+  (save-buffers-kill-emacs args))
+
+(defun wq (&optional args)
+  (interactive "P")
+  (save-buffers-kill-emacs args))
+

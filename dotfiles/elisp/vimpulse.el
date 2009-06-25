@@ -80,18 +80,6 @@
 (unless (featurep 'redo)
   (load "redo" 'noerror))
 
-(defun w (&optional args)
-  (interactive "p")
-  (save-buffer args))
-
-(defun q (&optional args)
-  (interactive "P")
-  (save-buffers-kill-emacs args))
-
-(defun wq (&optional args)
-  (interactive "P")
-  (save-buffers-kill-emacs args))
-
 (define-key viper-vi-global-user-map ":"    'execute-extended-command)
 (define-key viper-vi-global-user-map "gf"   'find-file-at-point)
 (define-key viper-vi-global-user-map "gg"   'vimpulse-goto-first-line) 
@@ -111,10 +99,6 @@
 (define-key viper-vi-global-user-map "\C-r" 'redo)
 
 ; Block Visual Mode keys
-; STEVE: this stuff is buggy.
-;(define-key viper-vi-global-user-map "\C-y" 'rm-kill-ring-save)
-;(define-key viper-vi-global-user-map "\C-v" 'rm-set-mark)
-;(define-key viper-vi-global-user-map "\C-p" 'yank-rectangle)
 
 (defun vimpulse-goto-first-line ()
   "Send point to the start of the first line."
@@ -144,16 +128,6 @@
  (let ((tag (thing-at-point 'word)))
    (find-tag tag)))
 
-(defun vimpulse-vim-excursion ()
-  ;; FIXME cleanup
-  (interactive)
-  (let ((file (buffer-file-name)))
-    (cond ((null file) (message "Buffer not visiting a file"))
-          ((buffer-modified-p) (message "Buffer is modified!"))
-          (t
-           (call-process "gvim" nil nil nil file)
-           (ex-edit)))))
-
 ;; This function replaces viper's original viper-exec-change function
 ;; which is invoked by key sequences starting with 'c'.  When the user
 ;; requests a command like 'cw', this function calls a sequence like
@@ -164,11 +138,6 @@
   (save-excursion
     (viper-exec-delete m-com com))                            
   (viper-insert nil))
-
-;; Viper is overreaching by caring whether a visited file is under version
-;; control -- disable this check.
-(defun viper-maybe-checkout (buf)
-  nil)
 
 ;;
 ;; Vim-like paren (and bracket, curly-brace, etc.) matching
@@ -217,32 +186,28 @@
   :type 'hook
   :group 'vimpulse-visual)
 
-(defadvice viper-move-marker-locally (around vimpulse-move-marker-locally-wrap
-                                      activate)
+(defadvice viper-move-marker-locally (around vimpulse-move-marker-locally-wrap activate)
  (unless vimpulse-visual-mode
    ad-do-it))
 
-(defadvice viper-deactivate-mark (around vimpulse-deactivate-mark-wrap
-                                  activate)
+(defadvice viper-deactivate-mark (around vimpulse-deactivate-mark-wrap activate)
  (unless vimpulse-visual-mode
    ad-do-it))
 
-;; Let ESC disable visual mode.
-(defadvice viper-intercept-ESC-key (around vimpulse-visual-mode-ESC activate)
-  (if vimpulse-visual-mode
-    (vimpulse-visual-mode 'toggle)
-    ad-do-it))
+;; this thing is just to silence the byte compiler
+;; and stop it bugging about free variable
+;; viper--key-maps in emacs 21 :)
+;; update: and to stop emacs 23 bugging about the old macro
+(defmacro vimpulse-add-visual-maps-macro(keymap)
+  `(defadvice viper-normalize-minor-mode-map-alist (after vimpulse-add-visual-maps activate)
+     "This function modifies minor-mode-map-alists to include the visual mode keymap"
+     (push (cons 'vimpulse-visual-mode vimpulse-visual-mode-map) ,keymap)))
 
-(defmacro my-get-emulation-keymap ()
-  (if (>= emacs-major-version 22)
-      'viper--key-maps
-      'minor-mode-map-alist))
-
-(defadvice viper-normalize-minor-mode-map-alist (after vimpulse-add-visual-maps
-                                                 activate)
-  "This function modifies minor-mode-map-alists to include the visual mode keymap"
-    (push (cons 'vimpulse-visual-mode vimpulse-visual-mode-map)
-          (my-get-emulation-keymap)))
+(cond
+ ((>= emacs-major-version 22)
+  (vimpulse-add-visual-maps-macro viper--key-maps))
+ (t 
+  (vimpulse-add-visual-maps-macro minor-mode-map-alist)))
 
 ;; Keys that differ from normal mode
 (defun vimpulse-visual-yank-command ()

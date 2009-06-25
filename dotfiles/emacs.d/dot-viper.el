@@ -46,6 +46,17 @@
 (define-key viper-vi-global-user-map ",x0" 'delete-window)
 (define-key viper-vi-global-user-map ",x1" 'delete-other-windows)
 (define-key viper-vi-global-user-map ",A" 'beginning-of-defun)
+
+(defun vimpulse-vim-excursion ()
+  ;; FIXME cleanup
+  (interactive)
+  (let ((file (buffer-file-name)))
+    (cond ((null file) (message "Buffer not visiting a file"))
+          ((buffer-modified-p) (message "Buffer is modified!"))
+          (t
+           (call-process "gvim" nil nil nil file)
+           (ex-edit)))))
+
 (define-key viper-vi-global-user-map ",v" 'vimpulse-vim-excursion)
 (define-key viper-vi-global-user-map ",xl"
                                      'qpx-slime-startup-or-goto-existing-repl)
