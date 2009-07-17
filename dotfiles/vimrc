@@ -72,8 +72,8 @@ set timeoutlen=300
 "imap ;l <ESC>
 
 " "Very magic" regexes in searches
-nnoremap / /\v
-nnoremap ? ?\v
+"nnoremap / /\v
+"nnoremap ? ?\v
 
 " Vi-style editing in the command-line
 "nnoremap : q:a
