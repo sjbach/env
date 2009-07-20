@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# Minimal alsamixer interface for more effective use
+# in screen over ssh:
+#
+# k or up-arrow   -- increase volume 10%
+# j or down-arrow -- decrease volume 10%
+#
 
 function mixer_mod() {
   if [ "$1" = up ]; then
@@ -15,7 +22,6 @@ function mixer_mod() {
 }
   
 while read data; do
-  echo "$data"
   case "$data" in
     k*|*[A) mixer_mod up ;;
     j*|*[B) mixer_mod down ;;
