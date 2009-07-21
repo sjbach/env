@@ -47,6 +47,16 @@ def terminal_width
   stty_width < 0 ? 78 : stty_width
 end
 
+rd, wr = IO.pipe
+
+if fork()
+  wr.close
+  $stdin.reopen(rd)
+  exec "less"
+end
+
+rd.close
+
 term = ARGV[0].gsub(" ", "+")
 doc = Hpricot(open("http://thesaurus.reference.com/browse/#{term}"))
 
@@ -57,55 +67,55 @@ doc.search("//table[@class = 'the_content']") do |table|
 
     case e.search("b/text()").to_s
     when /Entry/
-      puts "Entry: #{e.next_sibling.innerText}"
+      wr.puts "Entry: #{e.next_sibling.innerText}"
 
     when /Speech/
       e.next_sibling.search("span") do |speech|
-        puts "Type: #{speech.innerText}"
+        wr.puts "Type: #{speech.innerText}"
       end
 
     when /Synonyms/
-      puts "Synonyms..."
+      wr.puts "Synonyms..."
 
       words = e.next_sibling.innerText.gsub(/\s+/, " ").strip.split(",")
-      puts to_terminal_rows(words)
+      wr.puts to_terminal_rows(words)
 
     when /Antonyms/
-      puts "Antonyms..."
+      wr.puts "Antonyms..."
 
       words = e.next_sibling.innerText.gsub(/\s+/, " ").strip.split(",")
-      puts to_terminal_rows(words)
+      wr.puts to_terminal_rows(words)
 
     when /Definition/
-      puts "Definition: #{e.next_sibling.innerText}"
+      wr.puts "Definition: #{e.next_sibling.innerText}"
 
     when /Notes/
-      puts "Notes..."
-      puts "#{wrap_text(e.next_sibling.innerText)}"
+      wr.puts "Notes..."
+      wr.puts "#{wrap_text(e.next_sibling.innerText)}"
 
     else
-      puts "Unknown::"
-      puts e.search("b/text()").to_s
+      wr.puts "Unknown::"
+      wr.puts e.search("b/text()").to_s
 
     end
 
   end
   
-  puts
+  wr.puts
 end
 
-puts
-puts "-------------------------"
-puts
+wr.puts
+wr.puts "-------------------------"
+wr.puts
 
 doc.search("//div[@class = 'padnearby']") do |nearby|
-  puts "Did you mean..."
+  wr.puts "Did you mean..."
   words = []
   nearby.search("div/a") do |word|
     words << word.innerText
   end
 
-  puts to_terminal_rows(words)
-  puts
+  wr.puts to_terminal_rows(words)
+  wr.puts
 end
 
