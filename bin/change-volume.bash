@@ -3,15 +3,15 @@
 # Minimal alsamixer interface for more effective use
 # in screen over ssh:
 #
-# k or up-arrow   -- increase volume 10%
-# j or down-arrow -- decrease volume 10%
+# k or up-arrow   -- increase volume 5%
+# j or down-arrow -- decrease volume 5%
 #
 
 function mixer_mod() {
   if [ "$1" = up ]; then
-    change=10%+
+    change=5%+
   else
-    change=10%-
+    change=5%-
   fi
 
   if ! amixer -q set Master $change 2>/dev/null && \
