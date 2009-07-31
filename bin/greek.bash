@@ -2,21 +2,29 @@
 #
 # Download the pronunciations for the given word and play them.
 
+function usage {
+  echo "usage: ${0##*/} <word> [dir]" >&2
+  exit 1
+}
+
 case $# in
-  0) echo "Error: No words given." >&2
-     exit 2
+  0) echo "Error: no words given." >&2
+     usage
      ;;
   1) ;;
-  *) for word in $@; do
-       $0 "$word"
-     done
-     exit
+  2) dir="$2" ;;
+  *) echo "Error: too many arguments." >&2
+     usage
      ;;
 esac
 
-SOUND_DIR=~/.greek
+if [ "$dir" ]; then
+  sound_dir="$dir"
+else
+  sound_dir=~/.greek
+fi
 
-[ ! -d $SOUND_DIR ] && mkdir -p $SOUND_DIR
+[ ! -d "$sound_dir" ] && mkdir -p "$sound_dir"
 
 WAVS=$(\
   wget -q -O - "http://www.m-w.com/dictionary/$1" | \
@@ -30,10 +38,10 @@ if [ -z "$WAVS" ]; then
 	exit 1
 fi
 
-wget -q $WAVS -P $SOUND_DIR
+wget -q $WAVS -P "$sound_dir"
 
 for sound in $WAVS; do
-	echo $SOUND_DIR/${sound##*/}
-	aplay $SOUND_DIR/${sound##*/}
+	echo "$sound_dir"/${sound##*/}
+	aplay "$sound_dir"/${sound##*/}
 done
 
