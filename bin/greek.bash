@@ -18,6 +18,8 @@ case $# in
      ;;
 esac
 
+sound="$1"
+
 if [ "$dir" ]; then
   sound_dir="$dir"
 else
@@ -26,22 +28,29 @@ fi
 
 [ ! -d "$sound_dir" ] && mkdir -p "$sound_dir"
 
-WAVS=$(\
+sound_names=$(\
   wget -q -O - "http://www.m-w.com/dictionary/$1" | \
-  sed -n '/audio\.gif/s/>/\n/pg' | \
-  sed -rn "/popWin/s|^.*popWin\('([^']*)'\).*$|http://www\.m-w\.com/\1|gp"| \
-  xargs -r wget -q -O - | \
-  sed -rn '/Click here/s/^.*<A HREF="([^"]*)">.*$/\1/gp')
+  grep '\<au(' | \
+  sed -r "s/au\('([^']+)/\n--\1--\n/g" | \
+  sed -rn '/^--/s/--([^-]+).*/\1/p')
 
-if [ -z "$WAVS" ]; then
-	echo "No sounds found for \"$1\"." >&2
-	exit 1
+if [ -z "$sound_names" ]; then
+  echo "No sounds found for \"$1\"." >&2
+  exit 1
 fi
 
-wget -q $WAVS -P "$sound_dir"
+sound_urls=$(\
+  for sound in $sound_names; do
+    wget -q -O - "http://www.merriam-webster.com/cgi-bin/audio.pl?$sound=$word" | \
+    grep EMBED | sed -r 's/.*SRC="([^"]+)".*/\1/'
+  done)
 
-for sound in $WAVS; do
-	echo "$sound_dir"/${sound##*/}
-	aplay "$sound_dir"/${sound##*/}
+wget -q $sound_urls -P "$sound_dir"
+
+for url in $sound_urls; do
+  path="$sound_dir/${url##*/}"
+  mv "$path" "$path".wav
+  echo "$path".wav
+  aplay "$path".wav
 done
 
