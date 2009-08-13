@@ -64,8 +64,9 @@ doc.search("//table[@class = 'the_content']") do |table|
 
 
   table.search("//td[@valign = 'top']") do |e|
+    clause = e.innerText
 
-    case e.search("b/text()").to_s
+    case clause
     when /Entry/
       wr.puts "Entry: #{e.next_sibling.innerText}"
 
@@ -95,7 +96,7 @@ doc.search("//table[@class = 'the_content']") do |table|
 
     else
       wr.puts "Unknown::"
-      wr.puts e.search("b/text()").to_s
+      wr.puts clause
 
     end
 
