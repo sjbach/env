@@ -94,6 +94,10 @@ doc.search("//table[@class = 'the_content']") do |table|
       wr.puts "Notes..."
       wr.puts "#{wrap_text(e.next_sibling.innerText)}"
 
+    when /Related/
+      wr.puts "Related..."
+      wr.puts "#{wrap_text(e.next_sibling.innerText.strip)}"
+
     else
       wr.puts "Unknown::"
       wr.puts clause
