@@ -1,0 +1,14 @@
+# Let ";" work like ":" in less since it's easier to type.
+# You need to run `lesskey` once for this to take effect.
+#
+
+#command
+;f        status
+;e        examine
+;n        next-file
+;p        prev-file
+;x        index-file
+;d        remove-file
+;t        toggle-option t
+;q        quit
+;Q        quit
