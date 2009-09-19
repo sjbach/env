@@ -98,12 +98,17 @@ doc.search("//table[@class = 'the_content']") do |table|
       wr.puts "Related..."
       wr.puts "#{wrap_text(e.next_sibling.innerText.strip)}"
 
+    when /Concept/
+      wr.puts "Concept: #{e.next_sibling.innerText}"
+
+    when /Category/
+      wr.puts "Category: #{e.next_sibling.innerText}"
+
     else
       wr.puts "Unknown::"
       wr.puts clause
 
     end
-
   end
   
   wr.puts
