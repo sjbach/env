@@ -19,9 +19,12 @@ function mixer_mod() {
     echo "No Master or PCM" >&2
     exit 1
   fi
+
+  echo "$1"
 }
   
-while read data; do
+while true; do
+  data=$(raw-read)
   case "$data" in
     k*|*[A) mixer_mod up ;;
     j*|*[B) mixer_mod down ;;
