@@ -12,10 +12,6 @@
 #  sudo gem install hpricot
 #
 
-# TODO:
-#  - order of modifier, letter for test[1]
-#
-
 require 'uri'
 require 'rubygems'
 require 'hpricot'
@@ -103,6 +99,9 @@ def parse_entry(doc)
   doc.search("//div[@id = 'mwEntryData']") do |div|
     # Leading headers
     div.search("//ul/li") do |li|
+      li.search("sup") do |sup|
+        sup.swap("(#{sup.inner_text.strip}) ")
+      end
       text = li.inner_text.strip.sub("\t", " ").squeeze(" ")
       case text
       when /^Pronunciation/
@@ -143,10 +142,24 @@ def parse_entry(doc)
         end
       end
 
+      # em class="sn" is a separator like strong
+      p.search("em[@class = 'sn']") do |em|
+        content = em.inner_text.strip
+        if content =~ /^([[:alpha:]])$/
+          em.swap("<strong>#!#{$1}!#</strong>")
+        end
+      end
+
       # Sometimes verbs are separated into e.g. transitive and
       # intransitive sections
       p.search("em[@class = 'v']") do |em|
         em.swap("#!TYPE #{em.inner_text.strip}!#")
+      end
+
+      p.search("em[@class = 'su']") do |em|
+        # These are for e.g. (1), (2) -- these em confuse
+        # some stuff below.
+        em.swap(em.inner_text)
       end
 
       # em@uni is for unicode characters -- sometimes confuses
@@ -177,11 +190,18 @@ def parse_entry(doc)
       lines = p.inner_text.gsub(/(:?#![^!]*!#\s*)+/, "\n\\&")
 
       reformatted = []
-      type = " "
-      number = " "
-      letter = " "
-      colon = " "
-      modifier = " "
+      type_indent = ""
+
+      number = ""
+      letter = ""
+      colon = ""
+      modifier = ""
+
+      prev_number = nil
+      prev_letter = nil
+      prev_colon = nil
+      prev_modifier = nil
+
       lines.each do |line|
         if line =~ /((?:#![^!]*!#\s*)+)(.*)/
           tokens = $1
@@ -190,20 +210,21 @@ def parse_entry(doc)
             token = token.strip.sub(/^#!/,'')
             case token
             when /^TYPE (.*)/
-              type = "#{$1} "
-              number = " "
-              letter = " "
-              colon = " "
-              modifier = " "
+              reformatted << " /#{$1}/"
+              type_indent = " "
+              number = ""
+              letter = ""
+              colon = ""
+              modifier = ""
             when /^(\d+)-([[:alpha:]])$/  # e.g. "1 a"
               number = $1
               letter = $2
-              colon = " "
+              colon = ""
               modifier = ""
             when /^(\d+)$/  # e.g. "2"
               number = $1
-              letter = " "
-              colon = " "
+              letter = ""
+              colon = ""
               modifier = ""
             when /^([[:alpha:]])$/  # e.g. "b"
               letter = $1
@@ -211,15 +232,15 @@ def parse_entry(doc)
             when /^:$/
               colon = ":"
             when /^MODIFIER (.*)/
-              modifier += "#{$1} "
+              modifier = "#{modifier} #{$1}".strip
             when /^SYNONYMS/
-              number = " "
-              letter = " "
+              number = ""
+              letter = ""
               modifier = "Synonyms"
               colon = ":"
             when /^USAGE/
-              number = " "
-              letter = " "
+              number = ""
+              letter = ""
               modifier = "Usage"
               colon = ":"
             when /^\s*$/
@@ -228,10 +249,35 @@ def parse_entry(doc)
               d("unknown token: #{token}")
             end
           end
-          lead = " #{type} #{number} #{modifier} #{letter} #{colon} ".squeeze(" ")
+          lead = " "
+          i = number == prev_number ? (" " * number.length) : number
+          i += " " unless i.empty?
+          lead += i
+          i = modifier == prev_modifier ? (" " * modifier.length) : modifier
+          i += " " unless i.empty?
+          lead += i
+          i = if letter == prev_letter
+                if not modifier.empty?
+                  ""
+                else
+                  (" " * letter.length)
+                end
+              else
+                letter
+              end
+          i += " " unless i.empty?
+          lead += i
+          lead += colon + " "
+          lead = type_indent + lead
           indent = " " * lead.length
           content_wrapped = wrap_text(content, indent)
+
           reformatted << (lead + content_wrapped[lead.length..content_wrapped.length])
+
+          prev_number = number
+          prev_letter = letter
+          prev_colon = colon
+          prev_modifier = modifier
 
         elsif line !~ /^\s*$/
           # Assume this is okay -- usually a note on a proper noun
