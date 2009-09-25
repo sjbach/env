@@ -97,12 +97,30 @@ end
 
 def parse_entry(doc)
   doc.search("//div[@id = 'mwEntryData']") do |div|
-    # Leading headers
+    # Leading headers (obsolete HTML?)
     div.search("//ul/li") do |li|
       li.search("sup") do |sup|
         sup.swap("(#{sup.inner_text.strip}) ")
       end
       text = li.inner_text.strip.sub("\t", " ").squeeze(" ")
+      case text
+      when /^Pronunciation/
+        # skip -- I'd rather hear it
+      when /Etymology/
+        puts "Etymology..."
+        content = text.sub(/^Etymology:\s+/, "")
+        puts wrap_text(content, " ")
+      else
+        puts text
+      end
+    end
+
+    # Leading headers
+    div.search("div") do |div2|
+      div2.search("sup") do |sup|
+        sup.swap("(#{sup.inner_text.strip}) ")
+      end
+      text = div2.inner_text.strip.sub("\t", " ").squeeze(" ")
       case text
       when /^Pronunciation/
         # skip -- I'd rather hear it
