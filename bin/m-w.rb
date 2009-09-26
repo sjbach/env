@@ -120,14 +120,21 @@ def parse_entry(doc)
       div2.search("sup") do |sup|
         sup.swap("(#{sup.inner_text.strip}) ")
       end
+
       text = div2.inner_text.strip.sub("\t", " ").squeeze(" ")
+
       case text
       when /^Pronunciation/
         # skip -- I'd rather hear it
       when /Etymology/
         puts "Etymology..."
-        content = text.sub(/^Etymology:\s+/, "")
-        puts wrap_text(content, " ")
+        puts wrap_text(text.sub(/^Etymology:\s+/, ""), " ")
+      when /^synonyms/
+        # m-w html is inconsistent -- sometimes this is within
+        # <p class="d">, sometimes not
+        puts "Synonyms..."
+        puts wrap_text(text.sub(/^synonyms\s+/, ""), "  ")
+        div2.swap("")
       else
         puts text
       end
@@ -194,8 +201,8 @@ def parse_entry(doc)
           content = em.inner_text.strip
           next_node = em.next_nonempty_node
           prev_node = em.previous_nonempty_node
-          if ((next_node.class == Hpricot::Elem && next_node.name = "strong") || \
-              (prev_node.class == Hpricot::Elem && prev_node.name = "strong"))
+          if ((next_node.class == Hpricot::Elem && next_node.name == "strong") || \
+              (prev_node.class == Hpricot::Elem && prev_node.name == "strong"))
             content = em.inner_text.strip
             em.swap("#!MODIFIER #{content}!#")
           else
