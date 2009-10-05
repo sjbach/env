@@ -28,6 +28,7 @@ while true; do
   case "$data" in
     k*|*[A) mixer_mod up ;;
     j*|*[B) mixer_mod down ;;
+    q) break ;;
   esac
 done
 
