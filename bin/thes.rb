@@ -9,12 +9,20 @@
 # Tried to do this using scrubyt, didn't work out.
 #
 
+require 'uri'
 require 'rubygems'
 require 'hpricot'
 require 'open-uri'
 
+$stifle_did_you_mean = false
+
+if ARGV[0] == '-q'
+  $stifle_did_you_mean = true
+  ARGV.shift
+end
+
 if ARGV[0].nil?
-  $stderr.puts "Usage: thes <word>"
+  $stderr.puts "Usage: thes [-q] <word>"
   exit 0
 end
 
@@ -35,16 +43,22 @@ def to_terminal_rows(words)
   "  " + rows.join("\n  ")
 end
 
-# From:
-# http://blog.macromates.com/2006/wrapping-text-with-regular-expressions/
-def wrap_text(text)
-  col = terminal_width()
-  text.gsub(/(.{1,#{col}})( +|$)\n?|(.{#{col}})/, "  \\1\\3\n")
+def wrap_text(text, indent="  ", width=terminal_width())
+  # Regex modified from:
+  # http://blog.macromates.com/2006/wrapping-text-with-regular-expressions/
+  width -= indent.length
+  text.gsub(/(.{1,#{width}})( +|$)\n?|(.{#{width}})/, "#{indent}\\1\\3\n")
 end
 
 def terminal_width
   stty_width = %x{stty size}.split[1].to_i - 2
   stty_width < 0 ? 78 : stty_width
+end
+
+def uri_escape(str)
+  # Square brackets are not caught as invalid characters...
+  URI.escape(str).gsub("[", "%5B") \
+                 .gsub("]", "%5D")
 end
 
 rd, wr = IO.pipe
@@ -57,11 +71,10 @@ end
 
 rd.close
 
-term = ARGV[0].gsub(" ", "+")
+term = uri_escape(ARGV[0])
 doc = Hpricot(open("http://thesaurus.reference.com/browse/#{term}"))
 
 doc.search("//table[@class = 'the_content']") do |table|
-
 
   table.search("//td[@valign = 'top']") do |e|
     clause = e.innerText
@@ -114,18 +127,20 @@ doc.search("//table[@class = 'the_content']") do |table|
   wr.puts
 end
 
-wr.puts
-wr.puts "-------------------------"
-wr.puts
-
-doc.search("//div[@class = 'padnearby']") do |nearby|
-  wr.puts "Did you mean..."
-  words = []
-  nearby.search("div/a") do |word|
-    words << word.innerText
-  end
-
-  wr.puts to_terminal_rows(words)
+unless $stifle_did_you_mean
   wr.puts
+  wr.puts "-------------------------"
+  wr.puts
+
+  doc.search("//div[@class = 'padnearby']") do |nearby|
+    wr.puts "Did you mean..."
+    words = []
+    nearby.search("div/a") do |word|
+      words << word.innerText
+    end
+
+    wr.puts to_terminal_rows(words)
+    wr.puts
+  end
 end
 
