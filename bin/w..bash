@@ -17,11 +17,20 @@ function usage {
   exit 1
 }
 
+function get_def {
+  dictionary="$1"
+  word="$2"
+
+  dict -d "$1" "$2" 2>/dev/null | sed '1,2d'
+}
+
 if ! [ "$word" ] || \
      [[ "$word" = "-h" ]] || \
      [[ "$word" = "--help" ]]; then
   usage
 fi
+
+dict_dbs=$(dict --dbs | sed 1d | sed -r 's/^ //; s/[[:space:]]+.*//')
 
 if ! [ -d "$word_dir" ]; then
   if ! dict "$word" >/dev/null 2>&1; then
@@ -30,16 +39,43 @@ if ! [ -d "$word_dir" ]; then
 
   mkdir -p "$word_dir"
 
-  dict "$word" > "$word_dir/dict"
-  thes "$word" > "$word_dir/thes"
+  thes -q "$word" > "$word_dir/thes"
+  mw "$word" > "$word_dir/mw"
   greek "$word" "$word_dir"
+
+  for dict in $dict_dbs; do
+    get_def "$dict" "$word" > "$word_dir/$dict"
+  done
+
   date > "$word_dir/date"
 fi
 
 ( for wav in "$word_dir"/*.wav; do test -e "$wav" && aplay -q "$wav"; done ) &
-( cat "$word_dir/dict"
+( if [ -s "$word_dir/mw" ]; then
+    cat "$word_dir/mw"
+    echo
+    echo "==============================================="
+    echo
+  fi
+  if [ -s "$word_dir/wn" ]; then
+    cat "$word_dir/wn"
+    echo
+    echo "==============================================="
+    echo
+  fi
+
+  cat "$word_dir/thes"
   echo
   echo "==============================================="
   echo
-  cat "$word_dir/thes" ) | less
+
+  for dict in $dict_dbs; do
+    if [ "$dict" != wn ] && [ -s "$word_dir/$dict" ]; then
+      cat "$word_dir/$dict"
+      echo
+      echo "==============================================="
+      echo
+    fi
+  done
+  ) | less
 
