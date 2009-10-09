@@ -63,11 +63,12 @@ fi
     echo "==============================================="
     echo
   fi
-
-  cat "$word_dir/thes"
-  echo
-  echo "==============================================="
-  echo
+  if [ -s "$word_dir/thes" ]; then
+    cat "$word_dir/thes"
+    echo
+    echo "==============================================="
+    echo
+  fi
 
   for dict in $dict_dbs; do
     if [ "$dict" != wn ] && [ -s "$word_dir/$dict" ]; then
