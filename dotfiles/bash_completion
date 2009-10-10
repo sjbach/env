@@ -1,0 +1,12 @@
+# Bash completion for w. script
+#
+_w_dot()
+{
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  cd ~/words
+  COMPREPLY=( $(compgen -f "$cur") )
+  cd $OLDPWD
+}
+complete -F _w_dot w.
+	
+
