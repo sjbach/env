@@ -3,9 +3,11 @@
 _w_dot()
 {
   cur="${COMP_WORDS[COMP_CWORD]}"
-  cd ~/words
-  COMPREPLY=( $(compgen -f "$cur") )
-  cd $OLDPWD
+  old_ifs="$IFS"
+  IFS='
+'
+  COMPREPLY=( $(cd ~/words; compgen -f -- "$cur") )
+  IFS="$old_ifs"
 }
 complete -F _w_dot w.
 	
