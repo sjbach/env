@@ -15,8 +15,8 @@
 "               Rajendra Badapanda, cho45, Simo Salminen, Sami Samhuri,
 "               Matt Tolton
 "
-" Release Date: June 8, 2009
-"      Version: 2.1.0
+" Release Date: October 10, 2009
+"      Version: 2.1.1
 "               Inspired by Viewglob, Emacs, and by Jeff Lanzarotta's Buffer
 "               Explorer plugin.
 "
@@ -902,7 +902,7 @@ class FilesystemExplorer < LustyExplorer
       assert($curwin == @calling_window)
       # Escape for Vim and remove leading ./ for files in pwd.
       escaped = VIM::filename_escape(path_str).sub(/^\.\//,"")
-      sanitized = eva "fnamemodify('#{escaped}', ':p')"
+      sanitized = eva "fnamemodify('#{escaped}', ':.')"
       cmd = case open_mode
             when :current_tab
               "e"
