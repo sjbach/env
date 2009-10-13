@@ -147,6 +147,7 @@ autocmd Filetype c,cpp,h set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
 autocmd Filetype sh set ts=4 shiftwidth=2 expandtab
 autocmd Filetype lisp,ruby,xml,html set ts=8 shiftwidth=2 expandtab
+autocmd Filetype python set ts=4 shiftwidth=4 expandtab
 autocmd Filetype xml,xslt,diff,ruby color desert
 autocmd Filetype xml,xslt,diff,ruby set expandtab
 autocmd BufReadPre viper,.viper set filetype=lisp
