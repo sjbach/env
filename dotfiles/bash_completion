@@ -6,7 +6,7 @@ _w_dot()
   old_ifs="$IFS"
   IFS='
 '
-  COMPREPLY=( $(cd ~/words; compgen -f -- "$cur") )
+  COMPREPLY=( $(cd ~/words && compgen -f -- "$cur") )
   IFS="$old_ifs"
 }
 complete -F _w_dot w.
