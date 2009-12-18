@@ -231,6 +231,7 @@ work on closed parens like one can expect in vi."
     (vimper-define-key map "dp" 'slime-apropos-package)
     (vimper-define-key map "dh" 'slime-hyperspec-lookup)
     (vimper-define-key map "d~" 'common-lisp-hyperspec-format)
+    (vimper-define-key map "dG" 'slime-repl-clear-buffer)
 
     ;; Macro expansion
     (vimper-define-key map "m" 'slime-macroexpand-1)
