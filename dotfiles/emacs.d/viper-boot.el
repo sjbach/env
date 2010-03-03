@@ -43,7 +43,7 @@
 
 ;; Viper is overreaching by caring whether a visited file is under version
 ;; control -- disable this check.
-(defun viper-maybe-checkout (buf)
+(defadvice viper-maybe-checkout (around viper-vcs-check-is-retarded activate)
   nil)
 
 ;; Let ESC disable visual mode.
