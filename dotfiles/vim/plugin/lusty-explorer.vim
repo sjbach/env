@@ -1,4 +1,4 @@
-"    Copyright: Copyright (C) 2007-2009 Stephen Bach
+"    Copyright: Copyright (C) 2007-2010 Stephen Bach
 "               Permission is hereby granted to use and distribute this code,
 "               with or without modifications, provided that this copyright
 "               notice is copied with it. Like anything else that's free,
@@ -13,10 +13,10 @@
 "               Matt Tolton <matt-lusty-explorer@tolton.com>
 " Contributors: Raimon Grau, Sergey Popov, Yuichi Tateno, Bernhard Walle,
 "               Rajendra Badapanda, cho45, Simo Salminen, Sami Samhuri,
-"               Matt Tolton
+"               Matt Tolton, Björn Winckler
 "
-" Release Date: October 10, 2009
-"      Version: 2.1.1
+" Release Date: March 3, 2010
+"      Version: 2.1.2
 "               Inspired by Viewglob, Emacs, and by Jeff Lanzarotta's Buffer
 "               Explorer plugin.
 "
@@ -232,9 +232,12 @@ endfunction
 ruby << EOF
 require 'pathname'
 
-# PROFILING
-#require 'rubygems'
-#require 'ruby-prof'
+$PROFILING = false
+
+if $PROFILING
+  require 'rubygems'
+  require 'ruby-prof'
+end
 
 class String
   def ends_with?(s)
@@ -275,8 +278,25 @@ class File
 end
 
 module VIM
+  def self.zero?(var)
+    # In Vim 7.2 and older, VIM::evaluate returns Strings for boolean
+    # expressions; in later versions, Fixnums.
+    case var
+    when String
+      var == "0"
+    when Fixnum
+      var == 0
+    else
+      assert(false, "unexpected type: #{var.class}")
+    end
+  end
+
+  def self.nonzero?(var)
+    not(self.zero? var)
+  end
+
   def self.has_syntax?
-    eva('has("syntax")') != "0"
+    VIM::nonzero? eva('has("syntax")')
   end
 
   def self.columns
@@ -308,14 +328,14 @@ module VIM
 
   class Buffer
     def modified?
-      eva("getbufvar(#{number()}, '&modified')") != "0"
+      VIM::nonzero? eva("getbufvar(#{number()}, '&modified')")
     end
   end
 end
 
 def lusty_option_set?(opt_name)
   opt_name = "g:LustyExplorer" + opt_name
-  eva("exists('#{opt_name}') && #{opt_name} != '0'") != "0"
+  VIM::nonzero? eva("exists('#{opt_name}') && #{opt_name} != '0'")
 end
 
 # Port of Ryan McGeary's LiquidMetal fuzzy matching algorithm found at:
@@ -346,7 +366,7 @@ class LiquidMetal
     lastIndex = -1
     started = false
 
-    abbrev.downcase().each_byte do |c|
+    abbrev.downcase().each_char do |c|
       index = lower.index(c, lastIndex + 1)
       return scores.fill(@@SCORE_NO_MATCH, 0..-1) if index.nil?
       started = true if index == 0
@@ -403,10 +423,14 @@ class LustyExplorer
     def run
       return if @running
 
+      if $PROFILING
+        RubyProf.measure_mode = RubyProf::WALL_TIME
+      end
+
       @settings.save
       @running = true
       @calling_window = $curwin
-      @saved_alternate_bufnum = if eva("expand('#')").empty?
+      @saved_alternate_bufnum = if VIM::nonzero? eva("expand('#') == ''")
                                   nil
                                 else
                                   eva("bufnr(expand('#'))")
@@ -464,9 +488,12 @@ class LustyExplorer
           exe "silent b #{cur.number}"
         end
 
-        # PROFILING
-        #outfile = File.new('rbprof.txt', 'a')
-        #RubyProf::CallTreePrinter.new(RubyProf.stop).print(outfile)
+        if $PROFILING
+          #outfile = File.new('rbprof.txt', 'a')
+          #RubyProf::CallTreePrinter.new(RubyProf.stop).print(outfile)
+          outfile = File.new('rbprof.html', 'a')
+          RubyProf::GraphHtmlPrinter.new(RubyProf.stop).print(outfile)
+        end
       end
     end
 
@@ -718,15 +745,18 @@ class BufferExplorer < LustyExplorer
 end
 
 def time
-  # PROFILING
-  #RubyProf.resume
+  if $PROFILING
+    RubyProf.resume
+  end
   begin
     yield
   rescue Exception => e
     puts e
     puts e.backtrace
   end
-  #RubyProf.pause
+  if $PROFILING
+    RubyProf.pause
+  end
 end
 
 class FilesystemExplorer < LustyExplorer
@@ -1000,8 +1030,10 @@ class FilesystemPrompt < Prompt
     # We have not typed anything yet or have just typed the final '/' on a
     # directory name in pwd.  This check is interspersed throughout
     # FilesystemExplorer because of the conventions of basename and dirname.
-    input().empty? or \
-    (File.directory?(input()) and input().ends_with?(File::SEPARATOR))
+    input().empty? or input().ends_with?(File::SEPARATOR)
+    # Don't think the File.directory? call is necessary, but leaving this
+    # here as a reminder.
+    #(File.directory?(input()) and input().ends_with?(File::SEPARATOR))
   end
 
   def insensitive?
@@ -1084,10 +1116,10 @@ class SavedSettings
   def save
     @timeoutlen = eva "&timeoutlen"
 
-    @splitbelow = eva("&splitbelow") == "1"
-    @insertmode = eva("&insertmode") == "1"
-    @showcmd = eva("&showcmd") == "1"
-    @list = eva("&list") == "1"
+    @splitbelow = VIM::nonzero? eva("&splitbelow")
+    @insertmode = VIM::nonzero? eva("&insertmode")
+    @showcmd = VIM::nonzero? eva("&showcmd")
+    @list = VIM::nonzero? eva("&list")
 
     @report = eva "&report"
     @sidescroll = eva "&sidescroll"
@@ -1370,14 +1402,15 @@ class FileMasks
 
   public
     def FileMasks.create_glob_masks
-      @@glob_masks = if eva('exists("g:LustyExplorerFileMasks")') != "0"
-                       # Note: this variable deprecated.
-                       eva("g:LustyExplorerFileMasks").split(',')
-                     elsif eva('exists("&wildignore")') != "0"
-                       eva("&wildignore").split(',')
-                     else
-                       []
-                     end
+      @@glob_masks = \
+        if VIM::nonzero? eva('exists("g:LustyExplorerFileMasks")')
+          # Note: this variable deprecated.
+          eva("g:LustyExplorerFileMasks").split(',')
+        elsif VIM::nonzero? eva('exists("&wildignore")')
+          eva("&wildignore").split(',')
+        else
+          []
+        end
     end
 
     def FileMasks.masked?(str)
@@ -1420,6 +1453,11 @@ class VimSwaps
   end
 end
 
+
+def d(s)
+  # (Debug print)
+  $stderr.puts s
+end
 
 # Simple mappings to decrease typing.
 def exe(s)
