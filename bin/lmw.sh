@@ -1,4 +1,4 @@
 #!/bin/sh
 
-mw "$@" | exec less
+~/bin/mw "$@" | exec less
 

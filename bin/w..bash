@@ -4,6 +4,12 @@
 # Stores data to $db_dir for faster subsequent lookup.
 
 db_dir=~/words
+
+if [ "$1" = "-f" ]; then
+  force=yep
+  shift
+fi
+
 word="$1"
 word_dir="$db_dir/$word"
 
@@ -32,8 +38,8 @@ fi
 
 dict_dbs=$(dict --dbs | sed 1d | sed -r 's/^ //; s/[[:space:]]+.*//')
 
-if ! [ -d "$word_dir" ]; then
-  if ! dict "$word" >/dev/null 2>&1; then
+if ! [ -d "$word_dir" ] ; then
+  if ! dict "$word" >/dev/null 2>&1 && [ -z "$force" ]; then
     die "$word is unknown"
   fi
 
