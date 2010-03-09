@@ -162,39 +162,32 @@ nmap <silent> <Leader>lj :LustyJuggler<CR>
 
 " Vim-to-ruby function calls.
 function! s:LustyJugglerStart()
-  ruby $lusty_juggler.run
+  ruby protect() { $lusty_juggler.run }
 endfunction
 
 function! LustyJugglerKeyPressed(code_arg)
-  ruby $lusty_juggler.key_pressed
+  ruby protect() { $lusty_juggler.key_pressed }
 endfunction
 
 function! LustyJugglerCancel()
-  ruby $lusty_juggler.cleanup
+  ruby protect() { $lusty_juggler.cleanup }
 endfunction
 
 function! s:JugglePreviousRun()
-  ruby juggle_previous()
+  ruby protect() { juggle_previous() }
 endfunction
 
 " Setup the autocommands that handle buffer MRU ordering.
 augroup LustyJuggler
   autocmd!
-  autocmd BufEnter * ruby $buffer_stack.push
-  autocmd BufDelete * ruby $buffer_stack.pop
-  autocmd BufWipeout * ruby $buffer_stack.pop
+  autocmd BufEnter * ruby protect() { $buffer_stack.push }
+  autocmd BufDelete * ruby protect() { $buffer_stack.pop }
+  autocmd BufWipeout * ruby protect() { $buffer_stack.pop }
 augroup End
 
 ruby << EOF
 
 require 'pathname'
-
-class AssertionError < StandardError
-end
-
-def assert(condition, message = 'assertion failure')
-  raise AssertionError.new(message) unless condition
-end
 
 module VIM
   def self.zero?(var)
@@ -216,6 +209,10 @@ module VIM
 
   def self.exists?(s)
     self.nonzero? eva("exists('#{s}')")
+  end
+
+  def self.columns
+    eva("&columns").to_i
   end
 end
 
@@ -292,8 +289,9 @@ class LustyJuggler
     def key_pressed()
       c = eva("a:code_arg")
 
-      if (c == @last_pressed) or \
-         (@last_pressed and c == 'ENTER')
+      if @last_pressed.nil? and c == 'ENTER'
+        cleanup()
+      elsif @last_pressed and (c == @last_pressed or c == 'ENTER')
         choose(@@KEYS[@last_pressed])
         cleanup()
       else
@@ -329,10 +327,17 @@ class LustyJuggler
     end
 
   private
-    def print_buffer_list(highlighted_entry=0)
+    def print_buffer_list(highlighted_entry = nil)
       # If the user pressed a key higher than the number of open buffers,
       # highlight the highest (see also BufferStack.num_at_pos()).
-      @name_bar.active = [highlighted_entry, $buffer_stack.length].min
+
+      @name_bar.selected_buffer = \
+        if highlighted_entry
+          # Correct for zero-based array.
+          [highlighted_entry, $buffer_stack.length].min - 1
+        else
+          nil
+        end
 
       @name_bar.print
     end
@@ -373,14 +378,14 @@ class BarItem
 end
 
 class Buffer < BarItem
-  def initialize(str, active)
+  def initialize(str, highlighted)
     @str = str
-    @active = active
+    @highlighted = highlighted
     destructure()
   end
 
   def [](*rest)
-    return Buffer.new(@str[*rest], @active)
+    return Buffer.new(@str[*rest], @highlighted)
   end
 
   def pretty_print_input
@@ -392,14 +397,14 @@ class Buffer < BarItem
     #@@BUFFER_COLOR = "None"
     @@DIR_COLOR = "Directory"
     @@SLASH_COLOR = "Function"
-    @@ACTIVE_COLOR = "Question"
+    @@HIGHLIGHTED_COLOR = "Question"
 
     # Breakdown the string to colourize each part.
     def destructure
-      if @active
-        buf_color = @@ACTIVE_COLOR
-        dir_color = @@ACTIVE_COLOR
-        slash_color = @@ACTIVE_COLOR
+      if @highlighted
+        buf_color = @@HIGHLIGHTED_COLOR
+        dir_color = @@HIGHLIGHTED_COLOR
+        slash_color = @@HIGHLIGHTED_COLOR
       else
         buf_color = @@BUFFER_COLOR
         dir_color = @@DIR_COLOR
@@ -470,17 +475,21 @@ end
 class NameBar
   public
     def initialize
-      @active = nil
+      @selected_buffer = nil
     end
 
-    def active=(i)
-      # Correct for zero-based array.
-      @active = (i > 0) ? i - 1 : nil
-    end
+    attr_writer :selected_buffer
 
     def print
       items = create_items()
-      clipped = clip(items)
+
+      selected_item = \
+        if @selected_buffer
+          # Account for the separators we've added.
+          [@selected_buffer * 2, (items.length - 1)].min
+        end
+
+      clipped = clip(items, selected_item)
       NameBar.do_pretty_print(clipped)
     end
 
@@ -506,57 +515,68 @@ class NameBar
               end
 
         array << Buffer.new("#{key}#{name}",
-                            (@active and name == names[@active]))
+                            (@selected_buffer and \
+                             name == names[@selected_buffer]))
         array << Separator.new
       }
       items.pop   # Remove last separator.
-
-      # Account for the separators.
-      @active and @active = [@active * 2, (items.length - 1)].min
 
       return items
     end
 
     # Clip the given array of items to the available display width.
-    def clip(items)
-      @active = 0 if @active.nil?
+    def clip(items, selected)
+      # This function is pretty hard to follow...
 
-      half_displayable_len = columns() / 2
+      # Note: Vim gives the annoying "Press ENTER to continue" message if we
+      # use the full width.
+      columns = VIM::columns() - 1
 
-      # The active buffer is excluded since it's basically split between
+      if BarItem.full_length(items) <= columns
+        return items
+      end
+
+      selected = 0 if selected.nil?
+      half_displayable_len = columns / 2
+
+      # The selected buffer is excluded since it's basically split between
       # the sides.
-      left_len = BarItem.full_length items[0, @active - 1]
-      right_len = BarItem.full_length items[@active + 1, items.length - 1]
+      left_len = BarItem.full_length items[0, selected - 1]
+      right_len = BarItem.full_length items[selected + 1, items.length - 1]
 
       right_justify = (left_len > half_displayable_len) and \
                       (right_len < half_displayable_len)
 
-      active_str_half_len = (items[@active].length / 2) + \
-                            (items[@active].length % 2 == 0 ? 0 : 1)
+      selected_str_half_len = (items[selected].length / 2) + \
+                              (items[selected].length % 2 == 0 ? 0 : 1)
 
       if right_justify
         # Right justify the bar.
         first_layout = self.method :layout_right
         second_layout = self.method :layout_left
-        first_adjustment = active_str_half_len
-        second_adjustment = -active_str_half_len
+        first_adjustment = selected_str_half_len
+        second_adjustment = -selected_str_half_len
       else
         # Left justify (sort-of more likely).
         first_layout = self.method :layout_left
         second_layout = self.method :layout_right
-        first_adjustment = -active_str_half_len
-        second_adjustment = active_str_half_len
+        first_adjustment = -selected_str_half_len
+        second_adjustment = selected_str_half_len
       end
 
       # Layout the first side.
       allocation = half_displayable_len + first_adjustment
-      first_side, remainder = first_layout.call(items, allocation)
+      first_side, remainder = first_layout.call(items,
+                                                selected,
+                                                allocation)
 
       # Then layout the second side, also grabbing any unused space.
       allocation = half_displayable_len + \
                    second_adjustment + \
                    remainder
-      second_side, remainder = second_layout.call(items, allocation)
+      second_side, remainder = second_layout.call(items,
+                                                  selected,
+                                                  allocation)
 
       if right_justify
         second_side + first_side
@@ -566,10 +586,10 @@ class NameBar
     end
 
     # Clip the given array of items to the given space, counting downwards.
-    def layout_left(items, space)
+    def layout_left(items, selected, space)
       trimmed = []
 
-      i = @active - 1
+      i = selected - 1
       while i >= 0
         m = items[i]
         if space > m.length
@@ -590,10 +610,10 @@ class NameBar
     end
 
     # Clip the given array of items to the given space, counting upwards.
-    def layout_right(items, space)
+    def layout_right(items, selected, space)
       trimmed = []
 
-      i = @active
+      i = selected
       while i < items.length
         m = items[i]
         if space > m.length
@@ -623,8 +643,6 @@ end
 
 
 # Maintain MRU ordering.
-# A little bit different than the LustyExplorer version -- probably they
-# should be unified.
 class BufferStack
   public
     def initialize
@@ -745,18 +763,11 @@ def msg(s)
   VIM.message s
 end
 
-def columns
-  # Vim gives the annoying "Press ENTER to continue" message if we use the
-  # full width.
-  eva("&columns").to_i - 1
-end
-
 def pretty_msg(*rest)
   return if rest.length == 0
   return if rest.length % 2 != 0
 
-  #exe "redraw"
-
+  exe "redraw"  # see :help echo-redraw
   i = 0
   while i < rest.length do
     exe "echohl #{rest[i]}"
@@ -765,6 +776,27 @@ def pretty_msg(*rest)
   end
 
   exe 'echohl None'
+end
+
+def protect
+  # Provide better backtraces when there's an error.
+  begin
+    yield
+  rescue Exception => e
+    puts e
+    puts e.backtrace
+  end
+end
+
+class AssertionError < StandardError ; end
+
+def assert(condition, message = 'assertion failure')
+  raise AssertionError.new(message) unless condition
+end
+
+def d(s)
+  # (Debug print)
+  $stderr.puts s
 end
 
 

@@ -84,9 +84,9 @@ set timeoutlen=300
 "let g:LustyJugglerShowKeys = 2
 let g:LustyExplorerSuppressRubyWarning = 1
 "let g:LustyExplorerAlwaysShowDotFiles = 1
-nmap <silent> <Leader>f :FilesystemExplorer<CR>
-nmap <silent> <Leader>b :BufferExplorer<CR>
-nmap <silent> <Leader>r :FilesystemExplorerFromHere<CR>
+nmap <silent> <Leader>f :LustyFilesystemExplorer<CR>
+nmap <silent> <Leader>b :LustyBufferExplorer<CR>
+nmap <silent> <Leader>r :LustyFilesystemExplorerFromHere<CR>
 nmap <silent> <Leader>g :LustyJuggler<CR>
 nmap <silent> <Leader>j :so ~/.vim/plugin/lusty-explorer.vim<CR>
 nmap <silent> <TAB> :JugglePrevious<CR>
@@ -151,6 +151,8 @@ autocmd Filetype python set ts=4 shiftwidth=4 expandtab
 autocmd Filetype xml,xslt,diff,ruby color desert
 autocmd Filetype xml,xslt,diff,ruby set expandtab
 autocmd BufReadPre viper,.viper set filetype=lisp
+
+autocmd BufRead ~/stellar/* set lbr formatoptions=l
 
 " a.vim
 nmap <silent> <Leader>h :A<CR>
