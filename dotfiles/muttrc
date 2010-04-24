@@ -16,9 +16,6 @@ set charset="utf8"
 ignore *
 unignore date from to cc subject resent-from reply-to organization x-mailer user-agent importance x-label
 
-# Mailbox mask
-set mask='!^(\.[^.]|-i$|\<attach\>|\<postponed\>)'
-
 set pager_stop=yes
 
 bind index x help
@@ -132,7 +129,8 @@ unset reply_self
 set include=yes
 
 #set index_format   = "%4C %Z %{%b %d} %-15.15F (%?l?%4l&%4c?) %s"
-set index_format   = "%4C %Z %{%b %d} %-15.15F %?l?%4l&%4c? %s"
+#set index_format   = "%4C %Z %{%b %d} %-15.15F %?l?%4l&%4c? %s"
+set index_format   = "%Z %{%b %d} %-15.15F %s"
 set to_chars = ""
 set forward_format="Fw: %s"     # subject in forwarded messages
 #set date_format="%d/%m/%y %H:%M %Z"
