@@ -87,8 +87,8 @@ let g:LustyExplorerSuppressRubyWarning = 1
 nmap <silent> <Leader>f :LustyFilesystemExplorer<CR>
 nmap <silent> <Leader>b :LustyBufferExplorer<CR>
 nmap <silent> <Leader>r :LustyFilesystemExplorerFromHere<CR>
-nmap <silent> <Leader>g :LustyJuggler<CR>
-nmap <silent> <Leader>j :so ~/.vim/plugin/lusty-explorer.vim<CR>
+nmap <silent> <Leader>g :LustyGrepExplorer<CR>
+nmap <silent> <Leader>j :LustyJuggler<CR>
 nmap <silent> <TAB> :JugglePrevious<CR>
 
 " Window management
