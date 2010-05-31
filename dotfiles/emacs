@@ -69,5 +69,7 @@
         "viper-boot.el"))
 
 (custom-set-variables
- '(load-home-init-file t t))
+ '(load-home-init-file t t)
+ '(warning-suppress-types (quote ((undo discard-info))))
+ )
 (custom-set-faces)
