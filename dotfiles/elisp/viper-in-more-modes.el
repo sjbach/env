@@ -344,4 +344,21 @@ work on closed parens like one can expect in vi."
 
 ;; End major mode keybinding code
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; C++ Mode
+
+;; Bindings
+
+(defvar vimper-c-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (vimper-define-key map "." 'find-tag)
+    (vimper-define-key map "," 'pop-tag-mark)
+    (when (itap)
+      (vimper-define-key map "g" 'qgrep))
+    map))
+(viper-modify-major-mode 'c-mode 'vi-state
+                         vimper-c-mode-vi-map)
+(viper-modify-major-mode 'c++-mode 'vi-state
+                         vimper-c-mode-vi-map)
+
 (provide 'viper-in-more-modes)
