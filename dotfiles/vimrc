@@ -87,9 +87,9 @@ let g:LustyExplorerSuppressRubyWarning = 1
 nmap <silent> <Leader>f :LustyFilesystemExplorer<CR>
 nmap <silent> <Leader>b :LustyBufferExplorer<CR>
 nmap <silent> <Leader>r :LustyFilesystemExplorerFromHere<CR>
-nmap <silent> <Leader>g :LustyGrepExplorer<CR>
+nmap <silent> <Leader>g :LustyBufferGrep<CR>
 nmap <silent> <Leader>j :LustyJuggler<CR>
-nmap <silent> <TAB> :JugglePrevious<CR>
+nmap <silent> <TAB> :LustyJugglePrevious<CR>
 
 " Window management
 "nmap <silent> <Leader>xo :wincmd j<CR>
@@ -162,4 +162,3 @@ function! DoPrettyXML()
 	1,$!xmllint --format --recover -
 endfunction
 command! PrettyXML call DoPrettyXML()
-
