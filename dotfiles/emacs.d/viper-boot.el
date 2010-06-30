@@ -52,6 +52,25 @@
     (vimpulse-visual-mode 'toggle)
     ad-do-it))
 
+;; Remove read-only property from pasted text -- in newer versions of slime,
+;; output to slime-repl is read-only and I often want to modify text I copied
+;; from there.
+(dolist (fn '(viper-put-back viper-Put-back))
+  (eval `(defadvice ,fn (around steve-remove-read-only activate)
+           (let ((text
+                  ;; Taken from viper-put-back
+                  (if viper-use-register
+                      (cond ((viper-valid-register viper-use-register '(digit))
+                             (current-kill
+                              (- viper-use-register ?1) 'do-not-rotate))
+                            ((viper-valid-register viper-use-register)
+                             (get-register (downcase viper-use-register)))
+                            (t (error viper-InvalidRegister viper-use-register)))
+                      (current-kill 0))))
+             (when text
+               (put-text-property 0 (length text) 'read-only nil text)))
+           ad-do-it)))
+
 ;; Simple Vim command line functions
 
 (defun w (&optional args)
