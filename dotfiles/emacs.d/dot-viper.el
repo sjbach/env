@@ -42,6 +42,7 @@
                                      (lambda ()
                                        (interactive)
                                        (switch-to-buffer (other-buffer))))
+(define-key viper-vi-global-user-map ",h" 'ff-find-other-file)
 (define-key viper-vi-global-user-map ",xo" 'other-window)
 (define-key viper-vi-global-user-map ",x0" 'delete-window)
 (define-key viper-vi-global-user-map ",x1" 'delete-other-windows)
