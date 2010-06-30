@@ -27,6 +27,8 @@
 
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+;(set-scroll-bar-mode 'right)
+(toggle-scroll-bar -1)
 
 (when (>= emacs-major-version 23)
   (set-default-font "Bitstream Vera Sans Mono-9"))
@@ -41,8 +43,6 @@
 
 ;; Enable visual feedback on selections
 (transient-mark-mode t)
-
-(set-scroll-bar-mode 'right)
 
 ;; The completion buffer still shows too much boilerplate, but this helps
 (setq completion-show-help nil)
