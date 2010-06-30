@@ -45,6 +45,8 @@
 (define-key viper-vi-global-user-map ",xo" 'other-window)
 (define-key viper-vi-global-user-map ",x0" 'delete-window)
 (define-key viper-vi-global-user-map ",x1" 'delete-other-windows)
+(define-key viper-vi-global-user-map ",x2" 'split-window-vertically)
+(define-key viper-vi-global-user-map ",x3" 'split-window-horizontally)
 (define-key viper-vi-global-user-map ",A" 'beginning-of-defun)
 
 (defun vimpulse-vim-excursion ()
