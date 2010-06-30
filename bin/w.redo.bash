@@ -1,7 +1,9 @@
 #!/bin/bash
 
+db_dir=~/words
+
 word="$1"
-word_dir=~/words/"$word"
+word_dir=$db_dir/"$word"
 date_file=/tmp/date.$$
 
 if [ ! -d "$word_dir" ]; then
