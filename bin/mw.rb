@@ -97,6 +97,7 @@ end
 
 def parse_entry(doc)
   doc.search("//div[@id = 'mwEntryData']") do |div|
+
     # Leading headers (obsolete HTML?)
     div.search("//ul/li") do |li|
       li.search("sup") do |sup|
@@ -134,7 +135,7 @@ def parse_entry(doc)
         # <p class="d">, sometimes not
         puts "Synonyms..."
         puts wrap_text(text.sub(/^synonyms\s+/, ""), "  ")
-        div2.swap("")
+        div2.swap("<!-- #{div2.to_html} -->")
       else
         puts text
       end
