@@ -77,6 +77,13 @@
       (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-i" 'insert-dp)
       (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-r" 'remove-dp))
 
+    ;; Clojure inherits Lisp's bindings -- mostly correct.
+
+    (when viper-imm-slime-bindings 
+      (viper-modify-major-mode 'clojure-mode
+                               'vi-state
+                               viper-imm-lisp-mode-vi-map))
+
     ;;;; C/C++ Mode
 
     (defcustom viper-imm-c-bindings t

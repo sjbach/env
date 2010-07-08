@@ -138,9 +138,6 @@ work on closed parens like one can expect in vi."
 ;; cursor to be AFTER the ")" to execute functions on S-expressions.
 ;; We use the `do-one-char-forward' utility macro here (see above for
 ;; details on that macro).
-(def-simple-viper-imm-wrapper-ocf viper-imm-eval-print-last-sexp ()
-  (eval-print-last-sexp))
-
 (def-simple-viper-imm-wrapper-ocf viper-imm-eval-last-sexp
     (&optional eval-last-sexp-arg-internal)
   (eval-last-sexp eval-last-sexp-arg-internal))
@@ -177,7 +174,6 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l map "pE" 'pp-eval-expression)
     (viper-imm-defkey-l map "pr" 'viper-imm-pp-eval-region)
     (viper-imm-defkey-l map "e" 'viper-imm-eval-last-sexp)
-    (viper-imm-defkey-l map "j" 'viper-imm-eval-print-last-sexp)
     (viper-imm-defkey-l map "r" 'viper-imm-eval-region)
     (viper-imm-defkey-l map "k" 'eval-buffer)
     (viper-imm-defkey-l map "K" 'eval-buffer)
@@ -209,21 +205,10 @@ work on closed parens like one can expect in vi."
 
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-compile-defun ()
    (slime-compile-defun))
-
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-eval-defun ()
    (slime-eval-defun))
-
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-eval-last-expression ()
    (slime-eval-last-expression))
-
-(defun viper-imm-slime-eval-print-last-expression ()
-  (interactive)
-  (unless (eolp)
-    (forward-char))
-  (let ((string (slime-last-expression)))
-    (insert "\n")
-    (slime-eval-print string)))
-
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-pprint-eval-last-expression
      ()
    (slime-pprint-eval-last-expression))
@@ -252,29 +237,23 @@ work on closed parens like one can expect in vi."
 ;; marker for a category the third key is the activation key.
 (defvar viper-imm-lisp-mode-vi-map
   (let ((map (make-sparse-keymap)))
-
     ;; Compilation commands
     (viper-imm-defkey-l map "k" 'slime-compile-and-load-file)
     (viper-imm-defkey-l map "K" 'slime-compile-file)
     (viper-imm-defkey-l map "c" 'viper-imm-slime-compile-defun)
     (viper-imm-defkey-l map "C" 'slime-remove-notes)
-
     ;; Finding definitions
     (viper-imm-defkey-l map "." 'slime-edit-definition)   
     (viper-imm-defkey-l map "," 'slime-pop-find-definition-stack)
-
     ;; Note handling has the same binding as Slime defaults
-    (viper-imm-defkey-l map "M-n" 'slime-next-note)
-    (viper-imm-defkey-l map "M-p" 'slime-previous-note)
-
+    (viper-imm-defkey-l map "\M-n" 'slime-next-note)
+    (viper-imm-defkey-l map "\M-p" 'slime-previous-note)
     ;; Lisp evaluation
     (viper-imm-defkey-l map "x" 'viper-imm-slime-eval-defun)
     (viper-imm-defkey-l map "e" 'viper-imm-slime-eval-last-expression)
-    (viper-imm-defkey-l map "j" 'viper-imm-slime-eval-print-last-expression)
     (viper-imm-defkey-l map "p" 'viper-imm-slime-pprint-eval-last-expression)
-    ; watch for visual mode!
-    (viper-imm-defkey-l map "r" 'viper-imm-slime-eval-region) 
-
+    (viper-imm-defkey-l             ; watch for visual mode!
+     map "r" 'viper-imm-slime-eval-region)
     ;; Lisp documentation: 3 key sequences
     (viper-imm-defkey-l map "dd" 'slime-describe-symbol) 
     (viper-imm-defkey-l map "da" 'slime-apropos) 
@@ -282,20 +261,16 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l map "dp" 'slime-apropos-package)
     (viper-imm-defkey-l map "dh" 'slime-hyperspec-lookup)
     (viper-imm-defkey-l map "d~" 'common-lisp-hyperspec-format)
-
     ;; Macro expansion
     (viper-imm-defkey-l map "m" 'slime-macroexpand-1)
     (viper-imm-defkey-l map "M" 'slime-macroexpand-all)
     (viper-imm-defkey-l map "t" 'slime-toggle-trace-fdefinition)
-
     ;; Disassembly
     (viper-imm-defkey-l map "D" 'slime-disassemble-symbol)
-
     ;; Abort/recovery
     (viper-imm-defkey-l map "b" 'slime-interrupt)
     (viper-imm-defkey-l map "~" 'slime-sync-package-and-default-directory)
     (viper-imm-defkey-l map "P" 'slime-repl-set-package)
-        
     ;; Cross-reference: 3 key sequences
     (viper-imm-defkey-l map "wc" 'slime-who-calls)
     (viper-imm-defkey-l map "wr" 'slime-who-references)
@@ -304,15 +279,12 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l map "wm" 'slime-who-macroexpands)
     (viper-imm-defkey-l map "<" 'slime-list-callers)
     (viper-imm-defkey-l map ">" 'slime-list-callees)
-
     ;; Inspector
     (viper-imm-defkey-l map "i" 'slime-inspect)
-
     ;; Repl!
     (viper-imm-defkey-l map "R" 'slime-switch-to-output-buffer)
     (viper-imm-defkey-l map "z" 'slime-switch-to-output-buffer)
     (viper-imm-defkey-l map "s" 'slime-scratch)
-        
     ;; Profiler. "p" is already taken as a key, so we use "f" to
     ;; access the profiler functions
     (viper-imm-defkey-l map "ft" 'slime-toggle-profile-fdefinition)
@@ -322,52 +294,39 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l map "fR" 'slime-profile-reset)
     map))
 
-(when viper-imm-slime-bindings 
-  (viper-modify-major-mode 'lisp-mode
-                           'vi-state
-                           viper-imm-lisp-mode-vi-map)
-  (viper-modify-major-mode 'clojure-mode
-                           'vi-state
-                           viper-imm-lisp-mode-vi-map))
-
 ;;;; Slime REPL Mode (Slime)
 
 ;;; Commands
 
-(defun viper-imm-slime-repl-forward ()
+;; In normal mode, take search regex starting from the correct point.
+(def-simple-viper-imm-wrapper-ocf viper-imm-ocf-slime-repl-next-input ()
   (interactive)
-  (slime-repl-history-replace 'forward))
-
-(defun viper-imm-slime-repl-backward ()
+  (slime-repl-next-input))
+(def-simple-viper-imm-wrapper-ocf viper-imm-ocf-slime-repl-previous-input ()
   (interactive)
-  (slime-repl-history-replace 'backward))
+  (slime-repl-previous-input))
 
 ;;; Bindings
 
 (defvar viper-imm-slime-repl-mode-vi-map
   (let ((map (copy-keymap viper-imm-lisp-mode-vi-map)))
-    (viper-imm-defkey-l map "n" 'viper-imm-slime-repl-forward)
-    (viper-imm-defkey-l map "p" 'viper-imm-slime-repl-backward)
+    (viper-imm-defkey-l map "n" 'viper-imm-ocf-slime-repl-next-input)
+    (viper-imm-defkey-l map "p" 'viper-imm-ocf-slime-repl-previous-input)
     (viper-imm-defkey-l map "dG" 'slime-repl-clear-buffer)
-    (define-key map "\C-n" 'viper-imm-slime-repl-forward)
-    (define-key map "\C-p" 'viper-imm-slime-repl-backward)
+    (define-key map "\C-n" 'viper-imm-ocf-slime-repl-next-input)
+    (define-key map "\C-p" 'viper-imm-ocf-slime-repl-previous-input)
     (define-key map (kbd "RET") 'slime-repl-closing-return)
     map))
 
 (defvar viper-imm-slime-repl-mode-insert-map
   (let ((map (make-sparse-keymap)))
+    (viper-imm-defkey-l map "<C-return>" 'slime-repl-closing-return)
+    ;; When Emacs is running from the console, the basic keys below
+    ;; don't seem to work in insert-mode unless redefined here.
     (define-key map (kbd "RET") 'slime-repl-closing-return)
-    (define-key map "\C-n" 'viper-imm-slime-repl-forward)
-    (define-key map "\C-p" 'viper-imm-slime-repl-backward)
+    (define-key map "\C-n" 'slime-repl-next-input)
+    (define-key map "\C-p" 'slime-repl-previous-input)
     map))
-
-(when viper-imm-slime-bindings 
-  (viper-modify-major-mode 'slime-repl-mode
-                           'vi-state
-                           viper-imm-slime-repl-mode-vi-map)
-  (viper-modify-major-mode 'slime-repl-mode
-                           'insert-state
-                           viper-imm-slime-repl-mode-insert-map))
 
 ;;;; Slime REPL Mode (Slime)
 
@@ -392,6 +351,15 @@ work on closed parens like one can expect in vi."
     map))
 
 (when viper-imm-slime-bindings 
+  (viper-modify-major-mode 'lisp-mode
+                           'vi-state
+                           viper-imm-lisp-mode-vi-map)
+  (viper-modify-major-mode 'slime-repl-mode
+                           'vi-state
+                           viper-imm-slime-repl-mode-vi-map)
+  (viper-modify-major-mode 'slime-repl-mode
+                           'insert-state
+                           viper-imm-slime-repl-mode-insert-map)
   (viper-modify-major-mode 'sldb-mode
                            'vi-state
                            viper-imm-sldb-mode-vi-map))
