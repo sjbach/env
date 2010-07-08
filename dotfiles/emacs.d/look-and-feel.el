@@ -13,8 +13,8 @@
     (color-theme-comidia)))
 ;(color-theme-sitaramv-solaris)
 
-; Slime autodoc often expands the minibuffer height, which is annoying.
-(setq resize-mini-windows nil)
+; Slime autodoc used to expand the minibuffer height, which was annoying.
+;(setq resize-mini-windows nil)
 
 ;; Different color for parens
 (require 'parenface)
