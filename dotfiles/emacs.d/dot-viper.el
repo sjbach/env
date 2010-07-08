@@ -68,6 +68,38 @@
 (define-key viper-vi-global-user-map "=" 'indent-according-to-mode)
 (define-key viper-vi-global-user-map ";" 'execute-extended-command)
 
+;; Local modifications to viper-in-more-modes
+;;
+(eval-after-load "viper-in-more-modes"
+  '(progn
+    (when (itap)
+      (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "g" 'qgrep)
+      (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-i" 'insert-dp)
+      (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-r" 'remove-dp))
+
+    ;;;; C/C++ Mode
+
+    (defcustom viper-imm-c-bindings t
+      "C/C++ bindings."
+      :type  'boolean
+      :group 'viper-in-more-modes)
+
+    (defvar viper-imm-c-mode-vi-map
+      (let ((map (make-sparse-keymap)))
+        (viper-imm-defkey-l map "." 'find-tag)
+        (viper-imm-defkey-l map "," 'pop-tag-mark)
+        (when (itap)
+          (viper-imm-defkey-l map "g" 'qgrep))
+        map))
+
+    (when viper-imm-c-bindings
+      (viper-modify-major-mode 'c-mode
+                               'vi-state
+                               viper-imm-c-mode-vi-map)
+      (viper-modify-major-mode 'c++-mode
+                               'vi-state
+                               viper-imm-c-mode-vi-map))))
+
 ;; Add more viper-ified modes
 (setq viper-vi-state-mode-list
       (append viper-vi-state-mode-list
@@ -129,7 +161,8 @@
     (define-key map (kbd "RET") 'slime-show-xref)
     ;; STEVE: vvv doesn't work vvv (overridden by viper)
     (define-key map (kbd "SPACE") 'slime-goto-xref)
-    (define-key map "q" 'slime-xref-quit)
+    ;(define-key map "q" 'slime-xref-quit) ; old SLIME
+    (define-key map "q" 'slime-popup-buffer-quit-function)
     map))
 (viper-modify-major-mode 'slime-xref-mode 'vi-state viper-slime-xref-fixes)
 (add-hook 'slime-xref-mode-hook 'viper-change-state-to-vi)

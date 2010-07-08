@@ -253,12 +253,6 @@ work on closed parens like one can expect in vi."
 (defvar viper-imm-lisp-mode-vi-map
   (let ((map (make-sparse-keymap)))
 
-    ;; ITA
-    (when (itap)
-      (viper-imm-defkey-l map "g" 'qgrep)
-      (viper-imm-defkey-l map "\C-i" 'insert-dp)
-      (viper-imm-defkey-l map "\C-r" 'remove-dp))
-
     ;; Compilation commands
     (viper-imm-defkey-l map "k" 'slime-compile-and-load-file)
     (viper-imm-defkey-l map "K" 'slime-compile-file)
@@ -381,6 +375,7 @@ work on closed parens like one can expect in vi."
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "RET") 'sldb-default-action)
     (define-key map "q" 'sldb-quit)
+    (viper-imm-defkey-l map "q" 'sldb-quit)
     (viper-imm-defkey-l map "0" 'sldb-invoke-restart-0)
     (viper-imm-defkey-l map "1" 'sldb-invoke-restart-1)
     (viper-imm-defkey-l map "2" 'sldb-invoke-restart-2)
@@ -580,30 +575,7 @@ work on closed parens like one can expect in vi."
                            'vi-state
                            viper-imm-inferior-ruby-mode-vi-map))
 
-;;;; C/C++ Mode
-
-(defcustom viper-imm-c-bindings t
-  "Ruby bindings."
-  :type  'boolean
-  :group 'viper-in-more-modes)
-
-(defvar viper-imm-c-mode-vi-map
-  (let ((map (make-sparse-keymap)))
-    (viper-imm-defkey-l map "." 'find-tag)
-    (viper-imm-defkey-l map "," 'pop-tag-mark)
-    (when (itap)
-      (viper-imm-defkey-l map "g" 'qgrep))
-    map))
-
-(when viper-imm-c-bindings
-  (viper-modify-major-mode 'c-mode
-                           'vi-state
-                           viper-imm-c-mode-vi-map)
-  (viper-modify-major-mode 'c++-mode
-                           'vi-state
-                           viper-imm-c-mode-vi-map))
-
-;; End major mode keybinding code
+;;; }}} End major mode keybinding code
 
 (provide 'viper-in-more-modes)
 
