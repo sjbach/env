@@ -161,10 +161,13 @@ work on closed parens like one can expect in vi."
     (&optional eval-last-sexp-arg-internal)
   (pp-eval-last-sexp eval-last-sexp-arg-internal))
 
+;; Macroexpand command (macroexpands last S-expression)
 (def-simple-viper-imm-wrapper-ocf viper-imm-macroexpand ()
   (pp-macroexpand-expression (sexp-at-point)))
+
+;; Macroexpand-all command (macroexpands-all last S-expression)
 (def-simple-viper-imm-wrapper-ocf viper-imm-macroexpand-all ()
-  (message (pp-to-string (macroexpand-all (sexp-at-point)))))
+  (pp-macroexpand-expression (macroexpand-all (sexp-at-point))))
 
 ;;; Bindings
 
@@ -221,7 +224,8 @@ work on closed parens like one can expect in vi."
     (insert "\n")
     (slime-eval-print string)))
 
-(def-simple-viper-imm-wrapper-ocf viper-imm-slime-pprint-eval-last-expression ()
+(def-simple-viper-imm-wrapper-ocf viper-imm-slime-pprint-eval-last-expression
+     ()
    (slime-pprint-eval-last-expression))
 
 (defun viper-imm-slime-eval-region ()
@@ -261,7 +265,7 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l map "c" 'viper-imm-slime-compile-defun)
     (viper-imm-defkey-l map "C" 'slime-remove-notes)
 
-    ;; Finding definitions (they are same as Slime default)
+    ;; Finding definitions
     (viper-imm-defkey-l map "." 'slime-edit-definition)   
     (viper-imm-defkey-l map "," 'slime-pop-find-definition-stack)
 
@@ -404,92 +408,93 @@ work on closed parens like one can expect in vi."
   :type  'boolean
   :group 'viper-in-more-modes)
 
-(setq my-LaTeX-modified-vi-map
-      (let ((map (make-sparse-keymap)))
-        (viper-imm-defkey-l map "pp" 'preview-at-point)
-        (viper-imm-defkey-l map "pw" 'preview-copy-region-as-mml)
-        (viper-imm-defkey-l map "pe" 'preview-environment)
-        (viper-imm-defkey-l map "ps" 'preview-section)
-        (viper-imm-defkey-l map "pr" 'preview-region)
-        (viper-imm-defkey-l map "pb" 'preview-buffer)
-        (viper-imm-defkey-l map "pd" 'preview-document)
-        (viper-imm-defkey-l map "Pp" 'preview-clearout-at-point)
-        (viper-imm-defkey-l map "Ps" 'preview-clearout-section)
-        (viper-imm-defkey-l map "Pr" 'preview-clearout-region)
-        (viper-imm-defkey-l map "Pb" 'preview-clearout-buffer)
-        (viper-imm-defkey-l map "Pd" 'preview-clearout-document)
-        (viper-imm-defkey-l map "pf" 'preview-cache-preamble)
-        (viper-imm-defkey-l map "Pf" 'preview-cache-preamble-off)
-        (viper-imm-defkey-l map "pi" 'preview-goto-info-page)
-        (viper-imm-defkey-l map "p?" 'preview-goto-info-page)
-        (viper-imm-defkey-l map "%" 'TeX-comment-or-uncomment-paragraph)
-        (viper-imm-defkey-l map ";" 'TeX-comment-or-uncomment-region)
-        (viper-imm-defkey-l map "?" 'TeX-doc)
-        (viper-imm-defkey-l map "e" 'LaTeX-environment)
-        (viper-imm-defkey-l map "]" 'LaTeX-close-environment)
-        (viper-imm-defkey-l map "k" 'TeX-kill-job)
-        (viper-imm-defkey-l map "l" 'TeX-recenter-output-buffer)
-        (viper-imm-defkey-l map "^" 'TeX-home-buffer)
-        (viper-imm-defkey-l map "_" 'TeX-master-file-ask)
-        (viper-imm-defkey-l map "d" 'TeX-save-document)
-        (viper-imm-defkey-l map "`" 'TeX-next-error)
-        (viper-imm-defkey-l map "tb" 'TeX-toggle-debug-bad-boxes)
-        (viper-imm-defkey-l map "tw" 'TeX-toggle-debug-warnings)
-        (viper-imm-defkey-l map "c" 'TeX-command-master)
-        (viper-imm-defkey-l map "r" 'TeX-command-region)
-        (viper-imm-defkey-l map "tr" 'TeX-pin-region)
-        (viper-imm-defkey-l map "b" 'TeX-command-buffer)
-        (viper-imm-defkey-l map "tp" 'TeX-PDF-mode)
-        (viper-imm-defkey-l map "ti" 'TeX-interactive-mode)
-        (viper-imm-defkey-l map "ts" 'TeX-source-specials-mode)
-        (viper-imm-defkey-l map "to" 'TeX-Omega-mode)
-        ;; TODO: try to find a way to define "fb" and similar
-        (viper-imm-defkey-l map "f" 'TeX-font)
-        (viper-imm-defkey-l map "N" 'TeX-normal-mode)
-        (viper-imm-defkey-l map "ob" 'TeX-fold-buffer)
-        (viper-imm-defkey-l map "Ob" 'TeX-fold-clearout-buffer)
-        (viper-imm-defkey-l map "or" 'TeX-fold-region)
-        (viper-imm-defkey-l map "Or" 'TeX-fold-clearout-region)
-        (viper-imm-defkey-l map "op" 'TeX-fold-paragraph)
-        (viper-imm-defkey-l map "Op" 'TeX-fold-clearout-paragraph)
-        (viper-imm-defkey-l map "om" 'TeX-fold-macro)
-        (viper-imm-defkey-l map "oe" 'TeX-fold-env)
-        (viper-imm-defkey-l map "oc" 'TeX-fold-comment)
-        (viper-imm-defkey-l map "Oi" 'TeX-fold-clearout-item)
-        (viper-imm-defkey-l map "oo" 'TeX-fold-dwim)
-        (viper-imm-defkey-l map "qe" 'TeX-fill-environment)
-        (viper-imm-defkey-l map "qp" 'TeX-fill-paragraph)
-        (viper-imm-defkey-l map "qr" 'TeX-fill-region)
-        (viper-imm-defkey-l map "qs" 'TeX-fill-section)
-        (viper-imm-defkey-l map "Q" 'TeX-fill-paragraph)
-        (viper-imm-defkey-l map "s" 'LaTeX-section)
-        (viper-imm-defkey-l map "v" 'TeX-view)
-        (viper-imm-defkey-l map "i" 'LaTeX-insert-item)
-        (viper-imm-defkey-l map "qr" 'TeX-fill-region)
-        (viper-imm-defkey-l map "qs" 'TeX-fill-section)
-        (viper-imm-defkey-l map "Q" 'TeX-fill-paragraph)
-        (viper-imm-defkey-l map "s" 'LaTeX-section)
-        (viper-imm-defkey-l map "~" 'LaTeX-math-mode)
-        (viper-imm-defkey-l map "&" 'reftex-view-crossref)
-        (viper-imm-defkey-l map "(" 'reftex-label)
-        (viper-imm-defkey-l map ")" 'reftex-reference)
-        (viper-imm-defkey-l map "-" 'reftex-toc-recenter)
-        (viper-imm-defkey-l map "/" 'reftex-index-selection-or-word)
-        (viper-imm-defkey-l map "<" 'reftex-index)
-        (viper-imm-defkey-l map "=" 'reftex-toc)
-        (viper-imm-defkey-l map ">" 'reftex-display-index)
-        (viper-imm-defkey-l map "[" 'reftex-citation)
-        (viper-imm-defkey-l map "\\" 'reftex-index-phrase)
-        (viper-imm-defkey-l map "|" 'reftex-index-visit-phrases-buffer)
-        map))
+
+(defvar viper-imm-LaTeX-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (viper-imm-defkey-l map "pp" 'preview-at-point)
+    (viper-imm-defkey-l map "pw" 'preview-copy-region-as-mml)
+    (viper-imm-defkey-l map "pe" 'preview-environment)
+    (viper-imm-defkey-l map "ps" 'preview-section)
+    (viper-imm-defkey-l map "pr" 'preview-region)
+    (viper-imm-defkey-l map "pb" 'preview-buffer)
+    (viper-imm-defkey-l map "pd" 'preview-document)
+    (viper-imm-defkey-l map "Pp" 'preview-clearout-at-point)
+    (viper-imm-defkey-l map "Ps" 'preview-clearout-section)
+    (viper-imm-defkey-l map "Pr" 'preview-clearout-region)
+    (viper-imm-defkey-l map "Pb" 'preview-clearout-buffer)
+    (viper-imm-defkey-l map "Pd" 'preview-clearout-document)
+    (viper-imm-defkey-l map "pf" 'preview-cache-preamble)
+    (viper-imm-defkey-l map "Pf" 'preview-cache-preamble-off)
+    (viper-imm-defkey-l map "pi" 'preview-goto-info-page)
+    (viper-imm-defkey-l map "p?" 'preview-goto-info-page)
+    (viper-imm-defkey-l map "%" 'TeX-comment-or-uncomment-paragraph)
+    (viper-imm-defkey-l map ";" 'TeX-comment-or-uncomment-region)
+    (viper-imm-defkey-l map "?" 'TeX-doc)
+    (viper-imm-defkey-l map "e" 'LaTeX-environment)
+    (viper-imm-defkey-l map "]" 'LaTeX-close-environment)
+    (viper-imm-defkey-l map "k" 'TeX-kill-job)
+    (viper-imm-defkey-l map "l" 'TeX-recenter-output-buffer)
+    (viper-imm-defkey-l map "^" 'TeX-home-buffer)
+    (viper-imm-defkey-l map "_" 'TeX-master-file-ask)
+    (viper-imm-defkey-l map "d" 'TeX-save-document)
+    (viper-imm-defkey-l map "`" 'TeX-next-error)
+    (viper-imm-defkey-l map "tb" 'TeX-toggle-debug-bad-boxes)
+    (viper-imm-defkey-l map "tw" 'TeX-toggle-debug-warnings)
+    (viper-imm-defkey-l map "c" 'TeX-command-master)
+    (viper-imm-defkey-l map "r" 'TeX-command-region)
+    (viper-imm-defkey-l map "tr" 'TeX-pin-region)
+    (viper-imm-defkey-l map "b" 'TeX-command-buffer)
+    (viper-imm-defkey-l map "tp" 'TeX-PDF-mode)
+    (viper-imm-defkey-l map "ti" 'TeX-interactive-mode)
+    (viper-imm-defkey-l map "ts" 'TeX-source-specials-mode)
+    (viper-imm-defkey-l map "to" 'TeX-Omega-mode)
+    ;; TODO: try to find a way to define "fb" and similar
+    (viper-imm-defkey-l map "f" 'TeX-font)
+    (viper-imm-defkey-l map "N" 'TeX-normal-mode)
+    (viper-imm-defkey-l map "ob" 'TeX-fold-buffer)
+    (viper-imm-defkey-l map "Ob" 'TeX-fold-clearout-buffer)
+    (viper-imm-defkey-l map "or" 'TeX-fold-region)
+    (viper-imm-defkey-l map "Or" 'TeX-fold-clearout-region)
+    (viper-imm-defkey-l map "op" 'TeX-fold-paragraph)
+    (viper-imm-defkey-l map "Op" 'TeX-fold-clearout-paragraph)
+    (viper-imm-defkey-l map "om" 'TeX-fold-macro)
+    (viper-imm-defkey-l map "oe" 'TeX-fold-env)
+    (viper-imm-defkey-l map "oc" 'TeX-fold-comment)
+    (viper-imm-defkey-l map "Oi" 'TeX-fold-clearout-item)
+    (viper-imm-defkey-l map "oo" 'TeX-fold-dwim)
+    (viper-imm-defkey-l map "qe" 'TeX-fill-environment)
+    (viper-imm-defkey-l map "qp" 'TeX-fill-paragraph)
+    (viper-imm-defkey-l map "qr" 'TeX-fill-region)
+    (viper-imm-defkey-l map "qs" 'TeX-fill-section)
+    (viper-imm-defkey-l map "Q" 'TeX-fill-paragraph)
+    (viper-imm-defkey-l map "s" 'LaTeX-section)
+    (viper-imm-defkey-l map "v" 'TeX-view)
+    (viper-imm-defkey-l map "i" 'LaTeX-insert-item)
+    (viper-imm-defkey-l map "qr" 'TeX-fill-region)
+    (viper-imm-defkey-l map "qs" 'TeX-fill-section)
+    (viper-imm-defkey-l map "Q" 'TeX-fill-paragraph)
+    (viper-imm-defkey-l map "s" 'LaTeX-section)
+    (viper-imm-defkey-l map "~" 'LaTeX-math-mode)
+    (viper-imm-defkey-l map "&" 'reftex-view-crossref)
+    (viper-imm-defkey-l map "(" 'reftex-label)
+    (viper-imm-defkey-l map ")" 'reftex-reference)
+    (viper-imm-defkey-l map "-" 'reftex-toc-recenter)
+    (viper-imm-defkey-l map "/" 'reftex-index-selection-or-word)
+    (viper-imm-defkey-l map "<" 'reftex-index)
+    (viper-imm-defkey-l map "=" 'reftex-toc)
+    (viper-imm-defkey-l map ">" 'reftex-display-index)
+    (viper-imm-defkey-l map "[" 'reftex-citation)
+    (viper-imm-defkey-l map "\\" 'reftex-index-phrase)
+    (viper-imm-defkey-l map "|" 'reftex-index-visit-phrases-buffer)
+    map))
 
 (when viper-imm-latex-bindings
   (viper-modify-major-mode 'LaTeX-mode
                            'vi-state
-                           my-LaTeX-modified-vi-map)
+                           viper-imm-LaTeX-mode-vi-map)
   (viper-modify-major-mode 'latex-mode
                            'vi-state
-                           my-LaTeX-modified-vi-map))
+                           viper-imm-LaTeX-mode-vi-map))
 
 ;;;; Haskell Mode
 
@@ -498,29 +503,29 @@ work on closed parens like one can expect in vi."
   :type  'boolean
   :group 'viper-in-more-modes)
 
-(setq my-haskell-modified-vi-map
-      (let ((map (make-sparse-keymap)))
-        (viper-imm-defkey-l map "t" 'inferior-haskell-type)
-        ;; (viper-imm-defkey-l map "T" 'inferior-haskell-insert-type)
-        (viper-imm-defkey-l map "i" 'inferior-haskell-info)
-        (viper-imm-defkey-l map "h" 'haskell-hoogle)
-        (viper-imm-defkey-l map "l" 'inferior-haskell-load-file)
-        (viper-imm-defkey-l map "d" 'inferior-haskell-find-haddock)
-        (viper-imm-defkey-l map "?" 'inferior-haskell-find-haddock)
-        (viper-imm-defkey-l map "=" 'haskell-indent-insert-equal)
-        (viper-imm-defkey-l map "|" 'haskell-indent-insert-guard)
-        (viper-imm-defkey-l map "o" 'haskell-indent-insert-otherwise)
-        (viper-imm-defkey-l map "w" 'haskell-indent-insert-where)
-        (viper-imm-defkey-l map "." 'haskell-indent-align-guards-and-rhs)
-        (viper-imm-defkey-l map "z" 'switch-to-haskell)
-        (viper-imm-defkey-l map ">" 'haskell-indent-put-region-in-literate)
-        (viper-imm-defkey-l map "\M-." 'inferior-haskell-find-definition)
-        map))
+(defvar viper-imm-haskell-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (viper-imm-defkey-l map "t" 'inferior-haskell-type)
+    ;; (viper-imm-defkey-l map "T" 'inferior-haskell-insert-type)
+    (viper-imm-defkey-l map "i" 'inferior-haskell-info)
+    (viper-imm-defkey-l map "h" 'haskell-hoogle)
+    (viper-imm-defkey-l map "l" 'inferior-haskell-load-file)
+    (viper-imm-defkey-l map "d" 'inferior-haskell-find-haddock)
+    (viper-imm-defkey-l map "?" 'inferior-haskell-find-haddock)
+    (viper-imm-defkey-l map "=" 'haskell-indent-insert-equal)
+    (viper-imm-defkey-l map "|" 'haskell-indent-insert-guard)
+    (viper-imm-defkey-l map "o" 'haskell-indent-insert-otherwise)
+    (viper-imm-defkey-l map "w" 'haskell-indent-insert-where)
+    (viper-imm-defkey-l map "." 'haskell-indent-align-guards-and-rhs)
+    (viper-imm-defkey-l map "z" 'switch-to-haskell)
+    (viper-imm-defkey-l map ">" 'haskell-indent-put-region-in-literate)
+    (viper-imm-defkey-l map "\M-." 'inferior-haskell-find-definition)
+    map))
 
 (when viper-imm-haskell-bindings
   (viper-modify-major-mode 'haskell-mode
                            'vi-state
-                           my-haskell-modified-vi-map))
+                           viper-imm-haskell-mode-vi-map))
 
 ;;;; Prolog Mode
 
@@ -529,17 +534,17 @@ work on closed parens like one can expect in vi."
   :type  'boolean
   :group 'viper-in-more-modes)
 
-(setq my-prolog-modified-vi-map
-      (let ((map (make-sparse-keymap)))
-        (viper-imm-defkey-l map "l" 'inferior-prolog-load-file)
-        (viper-imm-defkey-l map "c" 'inferior-prolog-load-file)
-        (viper-imm-defkey-l map "z" 'switch-to-prolog)
-        map))
+(defvar viper-imm-prolog-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (viper-imm-defkey-l map "l" 'inferior-prolog-load-file)
+    (viper-imm-defkey-l map "c" 'inferior-prolog-load-file)
+    (viper-imm-defkey-l map "z" 'switch-to-prolog)
+    map))
 
 (when viper-imm-prolog-bindings
   (viper-modify-major-mode 'prolog-mode
                            'vi-state
-                           my-prolog-modified-vi-map))
+                           viper-imm-prolog-mode-vi-map))
 
 ;;;; Ruby Mode
 
@@ -548,32 +553,32 @@ work on closed parens like one can expect in vi."
   :type  'boolean
   :group 'viper-in-more-modes)
 
-(setq my-ruby-modified-vi-map
-      (let ((map (make-sparse-keymap)))
-        (viper-imm-defkey-l map "l" 'ruby-load-file)
-        (viper-imm-defkey-l map "r" 'ruby-send-region)
-        (viper-imm-defkey-l map "R" 'ruby-send-region-and-go)
-        (viper-imm-defkey-l map "b" 'ruby-send-block)
-        (viper-imm-defkey-l map "B" 'ruby-send-block-and-go)
-        (viper-imm-defkey-l map "x" 'ruby-send-definition)
-        (viper-imm-defkey-l map "X" 'ruby-send-definition-and-go)
-        (viper-imm-defkey-l map "z" 'switch-to-ruby)
-        (viper-imm-defkey-l map "l" 'ruby-load-file)
-        (viper-imm-defkey-l map "s" 'run-ruby)
-        map))
+(defvar viper-imm-ruby-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (viper-imm-defkey-l map "l" 'ruby-load-file)
+    (viper-imm-defkey-l map "r" 'ruby-send-region)
+    (viper-imm-defkey-l map "R" 'ruby-send-region-and-go)
+    (viper-imm-defkey-l map "b" 'ruby-send-block)
+    (viper-imm-defkey-l map "B" 'ruby-send-block-and-go)
+    (viper-imm-defkey-l map "x" 'ruby-send-definition)
+    (viper-imm-defkey-l map "X" 'ruby-send-definition-and-go)
+    (viper-imm-defkey-l map "z" 'switch-to-ruby)
+    (viper-imm-defkey-l map "l" 'ruby-load-file)
+    (viper-imm-defkey-l map "s" 'run-ruby)
+    map))
 
-(setq my-inferior-ruby-modified-vi-map
-      (let ((map (make-sparse-keymap)))
-        (viper-imm-defkey-l map "l" 'ruby-load-file)
-        map))
+(defvar viper-imm-inferior-ruby-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (viper-imm-defkey-l map "l" 'ruby-load-file)
+    map))
 
 (when viper-imm-ruby-bindings
   (viper-modify-major-mode 'ruby-mode
                            'vi-state
-                           my-ruby-modified-vi-map)
+                           viper-imm-ruby-mode-vi-map)
   (viper-modify-major-mode 'inferior-ruby-mode
                            'vi-state
-                           my-inferior-ruby-modified-vi-map))
+                           viper-imm-inferior-ruby-mode-vi-map))
 
 ;;;; C/C++ Mode
 
