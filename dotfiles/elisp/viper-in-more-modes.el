@@ -320,7 +320,6 @@ work on closed parens like one can expect in vi."
 
 (defvar viper-imm-slime-repl-mode-insert-map
   (let ((map (make-sparse-keymap)))
-    (viper-imm-defkey-l map "<C-return>" 'slime-repl-closing-return)
     ;; When Emacs is running from the console, the basic keys below
     ;; don't seem to work in insert-mode unless redefined here.
     (define-key map (kbd "RET") 'slime-repl-closing-return)
