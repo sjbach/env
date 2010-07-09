@@ -24,7 +24,6 @@
 (viper-set-parsing-style-toggling-macro 'undefine)
 
 ; Vimpulse/Viper modification
-(define-key viper-insert-global-user-map "\C-[" 'viper-intercept-ESC-key)
 (define-key viper-insert-global-user-map "\C-g" 'viper-intercept-ESC-key)
 (define-key viper-vi-global-user-map "\C-d"
                                      'close-buffer-and-window-unless-last)
@@ -66,6 +65,7 @@
 (define-key viper-vi-global-user-map ",xq" 'slime-quit-lisp)
 (define-key viper-vi-global-user-map ",xs" 'slime-selector)
 (define-key viper-vi-global-user-map "=" 'indent-according-to-mode)
+(define-key viper-vi-global-user-map ":" 'execute-extended-command)
 (define-key viper-vi-global-user-map ";" 'execute-extended-command)
 
 ;; Local modifications to viper-in-more-modes
@@ -75,7 +75,10 @@
     (when (itap)
       (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "g" 'qgrep)
       (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-i" 'insert-dp)
-      (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-r" 'remove-dp))
+      (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-r" 'remove-dp)
+      (viper-imm-defkey-l viper-imm-slime-repl-mode-vi-map "g" 'qgrep)
+      (viper-imm-defkey-l viper-imm-slime-repl-mode-vi-map "\C-i" 'insert-dp)
+      (viper-imm-defkey-l viper-imm-slime-repl-mode-vi-map "\C-r" 'remove-dp))
 
     ;; Clojure inherits Lisp's bindings -- mostly correct.
 
@@ -117,39 +120,12 @@
                 slime-xref-mode
                 slime-repl-mode
                 sldb-mode
-                help-mode
-                Info-mode
                 debugger-mode
-                apropos-mode
                 completion-list-mode)))
 
 (setq viper-emacs-state-mode-list
       (set-difference viper-emacs-state-mode-list
-                      '(Info-mode help-mode completion-list-mode)))
-
-;; Help-mode fixes
-(defvar viper-help-mode-fixes
-  (let ((map (make-sparse-keymap)))
-    (define-key map "q" 'View-quit)
-    ;(define-key map [return] 'help-follow)
-    map))
-(viper-modify-major-mode 'help-mode 'vi-state viper-help-mode-fixes)
-
-;; Info-mode fixes
-(defvar viper-info-mode-fixes 
-  (let ((map (make-sparse-keymap)))
-    (define-key map "q" 'Info-exit)
-    (define-key map (kbd "RET") 'Info-follow-nearest-node)
-    map))
-(viper-modify-major-mode 'Info-mode 'vi-state viper-info-mode-fixes)
-
-;; Apropos-mode fixes
-(defvar viper-apropos-mode-fixes
-  (let ((map (make-sparse-keymap)))
-    (define-key map "q" 'quit-window)
-    (define-key map (kbd "RET") 'apropos-follow)
-    map))
-(viper-modify-major-mode 'apropos-mode 'vi-state viper-apropos-mode-fixes)
+                      '(completion-list-mode)))
 
 ;; Debugger-mode fixes
 (defvar viper-debugger-mode-fixes 
@@ -161,19 +137,6 @@
 ;; SLIME Debugger fixes
 (add-hook 'sldb-mode-hook 'viper-change-state-to-vi)
 
-;; SLIME XREF fixes
-(defvar viper-slime-xref-fixes 
-  (let ((map (make-sparse-keymap)))
-    ;; STEVE: vvv doesn't work vvv (or, works by coincidence)
-    (define-key map (kbd "RET") 'slime-show-xref)
-    ;; STEVE: vvv doesn't work vvv (overridden by viper)
-    (define-key map (kbd "SPACE") 'slime-goto-xref)
-    ;(define-key map "q" 'slime-xref-quit) ; old SLIME
-    (define-key map "q" 'slime-popup-buffer-quit-function)
-    map))
-(viper-modify-major-mode 'slime-xref-mode 'vi-state viper-slime-xref-fixes)
-(add-hook 'slime-xref-mode-hook 'viper-change-state-to-vi)
-
 ;; Grep mode fixes
 (defvar viper-grep-mode-fixes 
   (let ((map (make-sparse-keymap)))
@@ -181,11 +144,10 @@
     map))
 (viper-modify-major-mode 'grep-mode 'vi-state viper-grep-mode-fixes)
 
-;; SLIME macroexpansion mode fixes
+;; SLIME macroexpansion mode -- force change to viper
 (defun steve-slime-temp-buffer-fixes ()
-  (when (string-equal (buffer-name) "*SLIME macroexpansion*")
-    (viper-change-state-to-vi)
-    (viper-add-local-keys 'vi-state '(("q" . slime-temp-buffer-quit)))))
+  (when (string-equal (buffer-name) "*SLIME Macroexpansion*")
+    (viper-change-state-to-vi)))
 (add-hook 'lisp-mode-hook 'steve-slime-temp-buffer-fixes)
 (add-hook 'clojure-mode-hook 'steve-slime-temp-buffer-fixes)
 
@@ -200,15 +162,8 @@
               (viper-change-state-to-vi))))
 
 ;TODO:
-; - fixes for slime xref
-; - remember viper-harness-minor-mode
-; - C-j combines lines and also removes spacing when merged line begins with )
-; map ESC to end visual mode (which C-g does)
 ; map ESC to end search mode (which C-g does)
 ; map C-[ to end search mode (which C-g does)
+; - remember viper-harness-minor-mode
+; - C-j combines lines and also removes spacing when merged line begins with )
 ; remember "] register"
-; - in repl, RETURN runs expr unless it's above prompt
-; *grep*:
-;  <SPACE>-r
-; - map key to select *scratch*
-; - try viper-syntax-preference set to extended

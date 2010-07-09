@@ -9,11 +9,8 @@
 (setq viper-mode t)
 (setq viper-custom-file-name
       (convert-standard-filename "~/.emacs.d/dot-viper.el"))
-(require 'viper)
 (require 'vimpulse)
 (require 'viper-in-more-modes)
-(require 'redo)
-(require 'rect-mark)  ; For block visual mode.
 
 ;; Hack to get *Messages* in viper-mode.
 ;; (must be done after loading viper)
@@ -45,12 +42,6 @@
 ;; control -- disable this check.
 (defadvice viper-maybe-checkout (around viper-vcs-check-is-retarded activate)
   nil)
-
-;; Let ESC disable visual mode.
-(defadvice viper-intercept-ESC-key (around steve-visual-mode-ESC activate)
-  (if vimpulse-visual-mode
-    (vimpulse-visual-mode 'toggle)
-    ad-do-it))
 
 ;; Remove read-only property from pasted text -- in newer versions of slime,
 ;; output to slime-repl is read-only and I often want to modify text I copied
