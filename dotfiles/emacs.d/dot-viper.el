@@ -13,9 +13,18 @@
 (setq-default viper-auto-indent t)
 (setq-default viper-keep-point-on-repeat nil)
 (setq-default viper-toggle-key [C-up])
-(setq-default viper-ESC-keyseq-timeout 0)
 (setq-default viper-translate-all-ESC-keysequences nil)
 (setq-default viper-change-notification-threshold 200)
+
+(cond ((boundp 'viper-ESC-keyseq-timeout)
+       (setq-default viper-ESC-keyseq-timeout 0))
+      ((fboundp 'viper-ESC-keyseq-timeout)
+       (setq-default viper-fast-keyseq-timeout 0)
+       (defadvice viper-ESC-keyseq-timeout
+           (around fix-viper-terminal-ESC activate)
+         (setq ad-return-value 0)))
+      (t
+       (error "unknown ESC timeout method")))
 
 ; Allow backspace past start of edit and beginning of line.
 (setq-default viper-ex-style-editing nil)  
