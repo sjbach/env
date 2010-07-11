@@ -3,8 +3,6 @@
 (defun itap ()
   (string-equal (getenv "LOGNAME") "sbach"))
 
-(require 'iswitchb)
-(iswitchb-mode t)
 (setq-default indent-tabs-mode nil)
 
 (require 'hideshow)
@@ -48,8 +46,6 @@
                (not (eq window next)))
       (delete-window window))))
 
-(global-set-key "\C-x\C-m" 'execute-extended-command)
-(global-set-key "\C-c\C-m" 'execute-extended-command)
 (global-set-key "\C-d" 'close-buffer-and-window-unless-last)
 
 ;; Put all backups into a single directory
