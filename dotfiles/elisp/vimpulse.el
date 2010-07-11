@@ -590,16 +590,16 @@
   :link   '(custom-group-link "viper")
   :prefix 'vimpulse-)
 
-(defcustom vimpulse-experimental t
-  "Whether or not to use experimental features.
-Turned on by default, so you will give feedback :P"
-  :group 'vimpulse
-  :type  'boolean)
-
 (defcustom vimpulse-want-change-state nil
   "Whether commands like \"cw\" invoke Replace state, vi-like.
 The default is to delete the text and enter Insert state,
 like in Vim."
+  :group 'vimpulse
+  :type  'boolean)
+
+(defcustom vimpulse-want-change-undo t
+  "Whether commands like \"cw\" are undone in a single step.
+On by default."
   :group 'vimpulse
   :type  'boolean)
 
@@ -908,10 +908,7 @@ In XEmacs, this is an extent.")
   "Overlay encompassing text inserted into the buffer
 to make Block selection at least one column wide.")
 
-(viper-deflocalvar vimpulse-undo-needs-adjust nil
-  "If true, several commands in the undo-list should be connected.")
-
-(defconst vimpulse-buffer-undo-list-mark 'vimpulse
+(viper-deflocalvar vimpulse-undo-list-pointer nil
   "Everything up to this mark is united in the undo-list.")
 
 (defvar vimpulse-visual-height nil
@@ -2580,6 +2577,65 @@ In XEmacs, change the `end-glyph' property."
     (set-extent-end-glyph overlay string))
    (t
     (viper-overlay-put overlay 'after-string string))))
+
+;;; Undo
+
+(defun vimpulse-refresh-undo-step ()
+  "Refresh `buffer-undo-list' entries for current undo step.
+Undo boundaries until `vimpulse-undo-list-pointer' are removed
+to make the entries undoable as a single action.
+See `vimpulse-start-undo-step'."
+  (setq buffer-undo-list
+        (vimpulse-filter-undo-boundaries buffer-undo-list
+                                         vimpulse-undo-list-pointer)))
+
+(defun vimpulse-filter-undo-boundaries (undo-list &optional pointer)
+  "Filter undo boundaries from beginning of UNDO-LIST, until POINTER.
+A boundary is a nil element, typically inserted by `undo-boundary'.
+Return the filtered list."
+  (cond
+   ((null undo-list)
+    nil)
+   ((not (listp undo-list))
+    undo-list)
+   ((eq undo-list pointer)
+    undo-list)
+   ((null (car undo-list))
+    (vimpulse-filter-undo-boundaries (cdr undo-list) pointer))
+   (t
+    (cons (car undo-list)
+          (vimpulse-filter-undo-boundaries (cdr undo-list) pointer)))))
+
+(defun vimpulse-start-undo-step ()
+  "Start a single undo step.
+End the step with `vimpulse-end-undo-step'.
+All intermediate buffer modifications will be undoable as a
+single action."
+  (when (listp buffer-undo-list)
+    (unless (null (car buffer-undo-list))
+      (add-to-list 'buffer-undo-list nil))
+    (setq vimpulse-undo-list-pointer buffer-undo-list)
+    ;; Continually refresh the undo entries for the step,
+    ;; ensuring proper synchronization between `buffer-undo-list'
+    ;; and `buffer-undo-tree'.
+    (add-hook 'post-command-hook 'vimpulse-refresh-undo-step nil t)))
+
+(defun vimpulse-end-undo-step ()
+  "End a single undo step.
+The step must have been started with `vimpulse-start-undo-step'.
+All intermediate buffer modifications will be undoable as a
+single action."
+  (when (memq 'vimpulse-refresh-undo-step post-command-hook)
+    (vimpulse-refresh-undo-step)
+    (remove-hook 'post-command-hook 'vimpulse-refresh-undo-step t)))
+
+(defmacro vimpulse-single-undo (&rest body)
+  "Execute BODY as a single undo step."
+  `(unwind-protect
+       (progn
+         (vimpulse-start-single-undo)
+         ,@body)
+     (vimpulse-end-single-undo)))
 
 ;;; Motion type system
 
@@ -4649,6 +4705,8 @@ If DONT-SAVE is t, just delete it."
   "Change text from BEG to END.
 If DONT-SAVE is non-nil, just delete it."
   (interactive (vimpulse-range))
+  (when vimpulse-want-change-undo
+    (vimpulse-start-undo-step))
   (cond
    ((eq vimpulse-this-motion-type 'block)
     (vimpulse-delete beg end dont-save)
@@ -6334,35 +6392,6 @@ it is more useful to exclude the last newline from the region."
   "Remap FROM to TO in Visual mode."
   (vimpulse-remap vimpulse-visual-basic-map from to))
 
-;; This is currently unused. Its function is to collapse a single edit
-;; like "cwfoo" to a single undo. Will it work with undo-tree.el?
-(defun vimpulse-connect-undos ()
-  "Connects all undo-steps from `buffer-undo-list' up to the
-first occurrence of `vimpulse-buffer-undo-list-mark'."
-  (when (and vimpulse-undo-needs-adjust
-             (listp buffer-undo-list))
-    (setq buffer-undo-list
-          (vimpulse-filter-undos buffer-undo-list)))
-  (setq vimpulse-undo-needs-adjust nil))
-
-(defun vimpulse-filter-undos (undo-list)
-  "Filters all `nil' marks from `undo-list' until the first
-occurrence of `vimpulse-buffer-undo-list-mark'."
-  (cond
-   ((null undo-list)
-    nil)
-   ((eq (car undo-list) 'vimpulse)
-    (cdr undo-list))
-   ((null (car undo-list))
-    (vimpulse-filter-undos (cdr undo-list)))
-   (t
-    (cons (car undo-list)
-          (vimpulse-filter-undos (cdr undo-list))))))
-
-(defun vimpulse-push-buffer-undo-list-mark ()
-  (setq vimpulse-undo-needs-adjust t)
-  (push vimpulse-buffer-undo-list-mark buffer-undo-list))
-
 ;;; Ex
 
 (defun vimpulse-visual-ex (arg)
@@ -6711,7 +6740,7 @@ Returns the insertion point."
               (viper-repeat nil)))))
       (setq vimpulse-visual-insert-coords nil)))
   ;; Update undo-list.
-  (vimpulse-connect-undos))
+  (vimpulse-end-undo-step))
 
 (defalias 'viper-exit-insert-state 'vimpulse-exit-insert-state)
 

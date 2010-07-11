@@ -8,7 +8,7 @@
 ;; Author: Alessandro Piras <laynor at gmail.com>
 ;;      Brad Beveridge <brad.beveridge at gmail.com>
 ;;      Alexey Romanov <alexey.v.romanov at gmail.com>
-;; Maintainer: Vegard Ã˜ye <vegard_oye at hotmail.com>
+;; Maintainer: Vegard Øye <vegard_oye at hotmail.com>
 ;; Version: 0.1.3+git
 ;; URL: http://www.assembla.com/spaces/viper-in-more-modes/
 ;;
@@ -16,19 +16,16 @@
 
 ;;; Commentary:
 
-;; This file is an unofficial add-on to Michael Kifer's Viper-mode.
-;; It provides vi-like keymaps for various major modes, including
+;; This file is an unofficial add-on to Michael Kifer's Viper-mode. It
+;; provides vi-like keymaps for various major modes, including
 ;; emacs-lisp-mode, lisp-mode, lisp-interaction-mode, slime-repl-mode,
 ;; LaTeX-mode, haskell-mode, prolog-mode and ruby-mode. If you have
-;; any questions or comments, please e-mail the authors and
-;; maintainer. We provide no guarantee of help with such early code.
-;; If you extend this file to cover additional modes, we would be very
-;; grateful; please contact us.
+;; any questions or comments, please e-mail the authors and the
+;; maintainer.
 ;;
-;; There are no installation instructions or usage instructions, but
-;; we might be able to help you out if you contact us. If you wrote
-;; such instructions and added them to EmacsWiki, we would appreciate
-;; it!
+;; Load the package with:
+;;
+;; (require 'viper-in-more-modes)
 ;;
 ;; This is alpha-quality code. If it works for you, please let us
 ;; know.
@@ -139,7 +136,7 @@ work on closed parens like one can expect in vi."
 ;; We use the `do-one-char-forward' utility macro here (see above for
 ;; details on that macro).
 (def-simple-viper-imm-wrapper-ocf viper-imm-eval-last-sexp
-    (&optional eval-last-sexp-arg-internal)
+  (&optional eval-last-sexp-arg-internal)
   (eval-last-sexp eval-last-sexp-arg-internal))
 
 (defun viper-imm-eval-region (&optional arg)
@@ -155,7 +152,7 @@ work on closed parens like one can expect in vi."
   (message (pp-to-string (viper-imm-eval-region))))
 
 (def-simple-viper-imm-wrapper-ocf viper-imm-pp-eval-last-sexp
-    (&optional eval-last-sexp-arg-internal)
+  (&optional eval-last-sexp-arg-internal)
   (pp-eval-last-sexp eval-last-sexp-arg-internal))
 
 ;; Macroexpand command (macroexpands last S-expression)
@@ -204,14 +201,14 @@ work on closed parens like one can expect in vi."
 ;;; Commands
 
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-compile-defun ()
-   (slime-compile-defun))
+  (slime-compile-defun))
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-eval-defun ()
-   (slime-eval-defun))
+  (slime-eval-defun))
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-eval-last-expression ()
-   (slime-eval-last-expression))
+  (slime-eval-last-expression))
 (def-simple-viper-imm-wrapper-ocf viper-imm-slime-pprint-eval-last-expression
-     ()
-   (slime-pprint-eval-last-expression))
+  ()
+  (slime-pprint-eval-last-expression))
 
 (defun viper-imm-slime-eval-region ()
   (interactive)
@@ -243,7 +240,7 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l map "c" 'viper-imm-slime-compile-defun)
     (viper-imm-defkey-l map "C" 'slime-remove-notes)
     ;; Finding definitions
-    (viper-imm-defkey-l map "." 'slime-edit-definition)   
+    (viper-imm-defkey-l map "." 'slime-edit-definition)
     (viper-imm-defkey-l map "," 'slime-pop-find-definition-stack)
     ;; Note handling has the same binding as Slime defaults
     (viper-imm-defkey-l map "\M-n" 'slime-next-note)
@@ -255,8 +252,8 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l             ; watch for visual mode!
      map "r" 'viper-imm-slime-eval-region)
     ;; Lisp documentation: 3 key sequences
-    (viper-imm-defkey-l map "dd" 'slime-describe-symbol) 
-    (viper-imm-defkey-l map "da" 'slime-apropos) 
+    (viper-imm-defkey-l map "dd" 'slime-describe-symbol)
+    (viper-imm-defkey-l map "da" 'slime-apropos)
     (viper-imm-defkey-l map "dz" 'slime-apropos-all)
     (viper-imm-defkey-l map "dp" 'slime-apropos-package)
     (viper-imm-defkey-l map "dh" 'slime-hyperspec-lookup)
@@ -349,7 +346,7 @@ work on closed parens like one can expect in vi."
     (viper-imm-defkey-l map "v" 'sldb-show-source)
     map))
 
-(when viper-imm-slime-bindings 
+(when viper-imm-slime-bindings
   (viper-modify-major-mode 'lisp-mode
                            'vi-state
                            viper-imm-lisp-mode-vi-map)
