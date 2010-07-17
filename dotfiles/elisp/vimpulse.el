@@ -608,6 +608,11 @@ On by default."
   :group 'vimpulse
   :type  'boolean)
 
+(defcustom vimpulse-want-C-i-like-Vim t
+  "Whether C-i jumps forward like in Vim, on by default."
+  :group 'vimpulse
+  :type  'boolean)
+
 (defcustom vimpulse-enhanced-paren-matching t
   "Enhanced matching of parentheses, on by default."
   :group 'vimpulse
@@ -2627,6 +2632,7 @@ All intermediate buffer modifications will be undoable as a
 single action."
   (when (memq 'vimpulse-refresh-undo-step post-command-hook)
     (vimpulse-refresh-undo-step)
+    (undo-boundary)
     (remove-hook 'post-command-hook 'vimpulse-refresh-undo-step t)))
 
 (defmacro vimpulse-single-undo (&rest body)
@@ -3366,10 +3372,8 @@ Doesn't indent with a prefix argument."
         (goto-char next-pos)
         (setq vimpulse-mark-list (cdr vimpulse-mark-list))))))
 
-;; Keep <tab> separate from C-i by making an explicit binding for <tab>.
-(define-key viper-vi-basic-map [tab] (or (key-binding [tab])
-                                         (key-binding "\C-i")))
-(define-key viper-vi-basic-map "\C-i" 'vimpulse-jump-forward)
+(when vimpulse-want-C-i-like-Vim
+  (define-key viper-vi-basic-map "\C-i" 'vimpulse-jump-forward))
 (define-key viper-vi-basic-map "\C-o" 'vimpulse-jump-backward)
 
 ;;; Replace backspace
