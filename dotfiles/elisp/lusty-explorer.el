@@ -95,6 +95,12 @@ Can be floating point; 0.05 = 50 milliseconds.  Set to 0 to disable."
   :type 'number
   :group 'lusty-explorer)
 
+(defcustom lusty-buffer-MRU-contribution 0.1
+  "How much influence buffer recency-of-use should have on ordering of
+buffer names in the matches window; 0.10 = %10."
+  :type 'float
+  :group 'lusty-explorer)
+
 (defvar lusty-match-face font-lock-function-name-face)
 (defvar lusty-directory-face font-lock-type-face)
 (defvar lusty-slash-face font-lock-keyword-face)
@@ -250,7 +256,6 @@ Can be floating point; 0.05 = 50 milliseconds.  Set to 0 to disable."
             (setq x (1- n-cols))
             (decf y)
             (unless (lusty--matrix-coord-valid-p x y)
-              ;            (setq y (1- n-rows))
               (while (not (lusty--matrix-coord-valid-p x y))
                 (decf x))))))
 
@@ -580,29 +585,37 @@ does not begin with '.'."
       (fit-window-to-buffer (display-buffer lusty-buffer))
       (set-buffer-modified-p nil))))
 
+(defun lusty-buffer-list ()
+  "Return a list of buffers ordered with those currently visible at the end."
+  (let ((visible-buffers '()))
+    (flet ((add-buffer-maybe (window)
+             (let ((b (window-buffer window)))
+               (unless (memq b visible-buffers)
+                 (push b visible-buffers)))))
+      (walk-windows 'add-buffer-maybe nil 'visible))
+    (let ((non-visible-buffers
+           (loop for b in (buffer-list)
+                 unless (memq b visible-buffers)
+                 collect b)))
+      (nconc non-visible-buffers visible-buffers))))
+
 (defun lusty-buffer-explorer-matches (match-text)
-  (let* ((buffers (lusty-filter-buffers (buffer-list))))
-    (unless (endp (cdr buffers))
-      ;; Put the current buffer at the end of the list, like
-      ;; iswitchb.
-      (setq buffers
-            (append (cdr buffers)
-                    (list (car buffers)))))
+  (let ((buffers (lusty-filter-buffers (lusty-buffer-list))))
     (if (string= match-text "")
+        ;; Sort by MRU.
         buffers
-      ;; Sort first by fuzzy score, then by MRU.
-      (let* ((score-mru-table
-              (loop for b in buffers
-                    for i from 0
+      ;; Sort by fuzzy score and MRU order.
+      (let* ((score-table
+              (loop with MRU-factor-step = (/ lusty-buffer-MRU-contribution
+                                              (length buffers))
+                    for b in buffers
+                    for step from 0.0 by MRU-factor-step
                     for score = (LM-score b match-text)
+                    for MRU-factor = (- 1.0 step)
                     unless (zerop score)
-                    collect (list b score i)))
+                    collect (cons b (* score MRU-factor))))
              (sorted
-              (sort score-mru-table
-                    (lambda (a b)
-                      (if (= (second a) (second b))
-                          (< (third a) (third b))
-                        (> (second a) (second b)))))))
+              (sort* score-table '> :key 'cdr)))
         (mapcar 'car sorted)))))
 
 ;; FIXME: return an array instead of a list?
@@ -862,9 +875,6 @@ Uses `lusty-directory-face', `lusty-slash-face', `lusty-file-face'"
   ;; Re-generated every run so that it can inherit new functions.
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map minibuffer-local-map)
-    ;; TODO: perhaps RET should be:
-    ;; - if buffer explorer, same as \t
-    ;; - if file explorer, opens current name (or recurses if existing dir)
     (define-key map (kbd "RET") 'lusty-open-this)
     (define-key map "\t" 'lusty-select-match)
     (define-key map "\C-n" 'lusty-highlight-next)
