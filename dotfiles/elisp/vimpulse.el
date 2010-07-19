@@ -1174,7 +1174,8 @@ Mark is buffer-local unless GLOBAL."
       (error "Mark is not set in this buffer"))
     (when (= (point) (mark t))
       (pop-mark))
-    (exchange-point-and-mark)
+    (push-mark (prog1 (point)
+                 (goto-char (or (mark t) (point)))) t)
     (setq viper-last-jump (point-marker)
           viper-last-jump-ignore 0)
     (when com
@@ -1187,7 +1188,8 @@ Mark is buffer-local unless GLOBAL."
       (goto-char viper-last-jump))
     (when (= (point) (mark t))
       (pop-mark))
-    (exchange-point-and-mark)
+    (push-mark (prog1 (point)
+                 (goto-char (or (mark t) (point)))) t)
     (setq viper-last-jump (point))
     (back-to-indentation)
     (setq viper-last-jump-ignore (point))
@@ -2454,6 +2456,11 @@ Returns the new position."
                (setq orig (point)))))))
 
 ;;; Region
+
+;; GNU Emacs 22 lacks `region-active-p'.
+(unless (fboundp 'region-active-p)
+  (defun region-active-p ()
+    (and transient-mark-mode mark-active)))
 
 (defun vimpulse-region-face ()
   "Return face of region."
