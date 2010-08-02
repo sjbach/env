@@ -6,12 +6,8 @@
 ;;;   ~/.elisp/viper-in-more-modes.el
 ;;;
 
-(setq-default viper-inhibit-startup-message t)
-(setq-default viper-expert-level '5)
-(setq-default viper-want-ctl-h-help t)
-(setq-default viper-ESC-moves-cursor-back t)
 (setq-default viper-auto-indent t)
-(setq-default viper-keep-point-on-repeat nil)
+(setq-default viper-keep-point-on-repeat nil) ; STEVE check
 (setq-default viper-toggle-key [C-up])
 (setq-default viper-translate-all-ESC-keysequences nil)
 (setq-default viper-change-notification-threshold 200)
@@ -26,13 +22,10 @@
       (t
        (error "unknown ESC timeout method")))
 
-; Allow backspace past start of edit and beginning of line.
-(setq-default viper-ex-style-editing nil)  
-
 ; Non-sluggish paren matching (using "%" key).
 (viper-set-parsing-style-toggling-macro 'undefine)
 
-; Vimpulse/Viper modification
+; Vimpulse/Viper key modifications
 (define-key viper-insert-global-user-map "\C-g" 'viper-intercept-ESC-key)
 (define-key viper-vi-global-user-map "\C-d"
                                      'close-buffer-and-window-unless-last)

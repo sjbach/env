@@ -62,6 +62,18 @@
                (put-text-property 0 (length text) 'read-only nil text)))
            ad-do-it)))
 
+;; S-expression text objects
+(vimpulse-define-text-object vimpulse-sexp (arg)
+  "Select an S-expression."
+  :keys '("ae" "ie")
+  (vimpulse-inner-object-range
+   arg
+   'backward-sexp
+   'forward-sexp))
+
+;; Comment/uncomment Visual selection with ,c
+(vimpulse-vmap ",c" 'comment-dwim)
+
 ;; Simple Vim command line functions
 
 (defun w (&optional args)
