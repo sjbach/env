@@ -2,8 +2,8 @@
 ;;
 ;; Copyright (C) 2008-2010 Stephen Bach <this-file@sjbach.com>
 ;;
-;; Version: 2.3
-;; Created: June 22, 2010
+;; Version: 2.4
+;; Created: July 27, 2010
 ;; Keywords: convenience, files, matching
 ;; Compatibility: GNU Emacs 22 and 23
 ;;
@@ -65,6 +65,7 @@
 ;; Volkan Yazici
 ;; René Kyllingstad
 ;; Alex Schroeder
+;; Tassilo Horn
 ;;
 
 ;;; Code:
@@ -91,7 +92,9 @@ Additional keys can be defined in `lusty-mode-map'."
 
 (defcustom lusty-idle-seconds-per-refresh 0.05
   "Seconds to wait for additional input before updating matches window.
-Can be floating point; 0.05 = 50 milliseconds.  Set to 0 to disable."
+Can be floating point; 0.05 = 50 milliseconds.  Set to 0 to disable.
+Note: only affects `lusty-file-explorer'; `lusty-buffer-explorer' is
+always immediate."
   :type 'number
   :group 'lusty-explorer)
 
@@ -397,7 +400,7 @@ much as possible."
     (loop for buffer in buffers
           for name = (buffer-name buffer)
           unless (ephemeral-p name)
-          collect name)))
+          collect (copy-sequence name))))
 
 ;; Written kind-of silly for performance.
 (defun lusty-filter-files (file-portion files)
@@ -470,7 +473,9 @@ does not begin with '.'."
             (cons 0 0))
 
       ;; Refresh matches.
-      (if (or startup-p (null lusty-idle-seconds-per-refresh)
+      (if (or startup-p
+              (null lusty-idle-seconds-per-refresh)
+              (zerop lusty-idle-seconds-per-refresh)
               (eq lusty--active-mode :buffer-explorer))
           ;; No idle timer on first refresh, and never for buffer explorer.
           (lusty-refresh-matches-buffer)

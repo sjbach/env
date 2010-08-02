@@ -14,17 +14,18 @@
 " Contributors: Raimon Grau, Sergey Popov, Yuichi Tateno, Bernhard Walle,
 "               Rajendra Badapanda, cho45, Simo Salminen, Sami Samhuri,
 "               Matt Tolton, Björn Winckler, sowill, David Brown
-"               Brett DiFrischia, Ali Asad Lotia, Kenneth Love
+"               Brett DiFrischia, Ali Asad Lotia, Kenneth Love, Ben Boeckel
 "
-" Release Date: June 28, 2010
-"      Version: 3.1
+" Release Date: July 21, 2010
+"      Version: 3.1.1
 "
 "        Usage:
 "                 <Leader>lf  - Opens the filesystem explorer.
 "                 <Leader>lr  - Opens the filesystem explorer from the
 "                               directory of the current file.
 "                 <Leader>lb  - Opens the buffer explorer.
-"                 <Leader>lg  - Opens the buffer grep.
+"                 <Leader>lg  - Opens the buffer grep, for searching through
+"                               all loaded buffers
 "
 "               You can also use the commands:
 "
@@ -97,7 +98,7 @@
 "
 " Buffer Grep:
 "
-"  - Searches all currently open buffers.
+"  - Searches all loaded buffers.
 "  - Uses Ruby-style regexes instead of Vim style.  This means:
 "
 "    - \b instead of \< or \> for beginning/end of word.
@@ -406,7 +407,7 @@ module VIM
         return obj if obj.number == n
       end
 
-      LustyE::assert(false, "couldn't find buffer #{n}")
+      return nil
     end
   end
 
@@ -613,6 +614,7 @@ class Entry
 
     $le_buffer_stack.numbers.each do |n|
       o = VIM::Buffer.obj_for_bufnr(n)
+      next if o.nil?
       buffer_entries << self.new(o, n)
     end
 
