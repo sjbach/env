@@ -4617,7 +4617,8 @@ of CMD. Both COUNT and CMD may be nil."
                  (setq char (or (get char 'ascii-character) char))))
              ;; This trick from simple.el's `digit-argument'
              ;; converts keystrokes like C-0 and C-M-1 to digits.
-             (setq digit (- (logand char ?\177) ?0))
+             (when (characterp char)
+               (setq digit (- (logand char ?\177) ?0)))
              (if (keymapp cmd)
                  (setq keys (vconcat keys (vector char)))
                (setq keys (vector char)))
@@ -5015,14 +5016,38 @@ type TYPE. A custom function body may be specified via BODY."
     (when (integerp arg)
       (setq vimpulse-this-motion-type 'line))))
 
+;; Viper quirk: cw only deletes a single character when at whitespace,
+;; dw deletes all of it. Use the latter behavior in both cases.
+(vimpulse-operator-map-define viper-forward-word 'exclusive
+  (interactive "P")
+  (let ((com-alist '((vimpulse-change . ?c)
+                     (vimpulse-delete . ?d)
+                     (vimpulse-yank . ?y))) com)
+    (if (looking-at "[[:space:]]")
+        (setq com ?d)
+      (setq com (or (cdr (assq vimpulse-this-operator com-alist)) ?r)))
+    (viper-forward-word (if (region-active-p)
+                            arg
+                          (cons arg com)))))
+
+(vimpulse-operator-map-define viper-forward-Word 'exclusive
+  (interactive "P")
+  (let ((com-alist '((vimpulse-change . ?c)
+                     (vimpulse-delete . ?d)
+                     (vimpulse-yank . ?y))) com)
+    (if (looking-at "[[:space:]]")
+        (setq com ?d)
+      (setq com (or (cdr (assq vimpulse-this-operator com-alist)) ?r)))
+    (viper-forward-Word (if (region-active-p)
+                            arg
+                          (cons arg com)))))
+
 ;; These motions need wrapper functions to repeat correctly.
 (vimpulse-operator-map-define viper-end-of-Word 'inclusive)
 (vimpulse-operator-map-define viper-end-of-word 'inclusive)
 (vimpulse-operator-map-define viper-find-char-backward 'exclusive)
 (vimpulse-operator-map-define viper-find-char-forward 'inclusive)
-(vimpulse-operator-map-define viper-forward-Word 'exclusive)
 (vimpulse-operator-map-define viper-forward-char 'inclusive)
-(vimpulse-operator-map-define viper-forward-word 'exclusive)
 (vimpulse-operator-map-define viper-goto-char-backward 'exclusive)
 (vimpulse-operator-map-define viper-goto-char-forward 'inclusive)
 (vimpulse-operator-map-define viper-search-backward 'exclusive)
