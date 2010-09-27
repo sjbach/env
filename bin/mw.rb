@@ -2,10 +2,9 @@
 #
 # Merriam-Webster.com scraper
 #
-# Works okay on the 377 words I tried
+# Works okay on the ~1200 words I tried.
 #
-# (Really, really hacky and as soon they change their html slightly
-# everything will break.)
+# Had to be re-written for m-w.com's Aug./Sept. 2010 site relaunch.
 #
 # Setup:
 #  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
@@ -17,7 +16,7 @@ require 'rubygems'
 require 'hpricot'
 require 'open-uri'
 
-$debug = nil
+$debug = false
 
 if ARGV[0].nil?
   $stderr.puts "Usage: m-w <word>"
@@ -37,36 +36,21 @@ def main
     end
   end
 
+  success = true
+
   if entries.empty?
-    parse_entry(doc)
+    success &= parse_entry(doc)
   else
     entries.each do |entry|
       url = uri_escape("http://www.merriam-webster.com#{entry}")
-      parse_entry(Hpricot(open(url)))
+      success &= parse_entry(Hpricot(open(url)))
       puts
     end
   end
-end
 
-module Hpricot
-  class Elem
-    def next_nonempty_node
-      node = self.next_node
-      while node && node.class != Hpricot::Elem && node.inner_text =~ /^\s*$/
-        node = node.next_node
-      end
-
-      return node
-    end
-
-    def previous_nonempty_node
-      node = self.previous_node
-      while node && node.class != Hpricot::Elem && node.inner_text =~ /^\s*$/
-        node = node.previous_node
-      end
-
-      return node
-    end
+  if not success
+    puts "No definition found for '#{ARGV[0]}'"
+    exit 1
   end
 end
 
@@ -75,6 +59,12 @@ def d(str)
   if $debug
     $stderr.puts str
   end
+end
+
+class AssertionError < StandardError ; end
+
+def assert(condition, message = 'assertion failure')
+  raise AssertionError.new(message) unless condition
 end
 
 def wrap_text(text, indent="  ", width=terminal_width())
@@ -96,231 +86,249 @@ def uri_escape(str)
 end
 
 def parse_entry(doc)
-  doc.search("//div[@id = 'mwEntryData']") do |div|
 
-    # Leading headers (obsolete HTML?)
-    div.search("//ul/li") do |li|
-      li.search("sup") do |sup|
-        sup.swap("(#{sup.inner_text.strip}) ")
-      end
-      text = li.inner_text.strip.sub("\t", " ").squeeze(" ")
-      case text
-      when /^Pronunciation/
-        # skip -- I'd rather hear it
-      when /Etymology/
-        puts "Etymology..."
-        content = text.sub(/^Etymology:\s+/, "")
-        puts wrap_text(content, " ")
-      else
-        puts text
-      end
-    end
+  word = nil
+  has_image = false
+  function = nil
+  usage = nil
+  pronunciation = nil
+  etymology = nil
+  first_use = nil
+  related = []
+  synonyms_etc = []
+  synonyms_discussion = nil
+  usage_discussion = nil
+  definitions = []
+  special_definitions = []
+  examples = []
+  transitive_verb = :unset
+  variant = nil
 
-    # Leading headers
-    div.search("div") do |div2|
-      div2.search("sup") do |sup|
-        sup.swap("(#{sup.inner_text.strip}) ")
-      end
+  doc.search("div.definition") do |div_definition|
+    word = (div_definition/"h1").inner_text
 
-      text = div2.inner_text.strip.sub("\t", " ").squeeze(" ")
-
-      case text
-      when /^Pronunciation/
-        # skip -- I'd rather hear it
-      when /Etymology/
-        puts "Etymology..."
-        puts wrap_text(text.sub(/^Etymology:\s+/, ""), " ")
-      when /^synonyms/
-        # m-w html is inconsistent -- sometimes this is within
-        # <p class="d">, sometimes not
-        puts "Synonyms..."
-        puts wrap_text(text.sub(/^synonyms\s+/, ""), "  ")
-        div2.swap("<!-- #{div2.to_html} -->")
-      else
-        puts text
-      end
-    end
-
-    div.search("p[@class = 'd']") do |p|
-      #
-      # Separators are in <strong> -- these don't follow a neat
-      # list/indentation structure that translates well to plain
-      # text, so we need to make one up via an adhoc token stream.
-      #
-      p.search("strong") do |strong|
-        content = strong.inner_text.strip
-        # This case statement is repeated below, kind-of
-        case content
-        when /^(\d+)\s*([[:alpha:]])$/  # "2 a"
-          strong.swap("<strong>#!#{$1}-#{$2}!#</strong>")
-        when /^(\d+)$/  # "2"
-          strong.swap("<strong>#!#{$1}!#</strong>")
-        when /^([[:alpha:]])$/
-          strong.swap("<strong>#!#{$1}!#</strong>")
-        when /^:$/
-          strong.swap("<strong>#!:!#</strong>")
-        when /synonyms/
-          strong.swap("<strong>#!SYNONYMS!#</strong>")
-        when /usage/
-          strong.swap("<strong>#!USAGE!#</strong>")
-        else
-          d("Unknown def. separator: #{content}")
+    div_definition.search("div[@id = 'mwEntryData']") do |div_mwEntryData|
+      div_mwEntryData.search("div.headword") do |div_headword|
+        function = (div_headword/"span.main-fl").inner_text.strip
+        unless (div_headword/"span.usg").empty?
+          usage = (div_headword/"span.usg").inner_text.strip
+        end
+        unless (div_headword/"span.pr").empty?
+          pronunciation = (div_headword/"span.pr").inner_text.strip
         end
       end
 
-      # em class="sn" is a separator like strong
-      p.search("em[@class = 'sn']") do |em|
-        content = em.inner_text.strip
-        if content =~ /^([[:alpha:]])$/
-          em.swap("<strong>#!#{$1}!#</strong>")
-        end
-      end
-
-      # Sometimes verbs are separated into e.g. transitive and
-      # intransitive sections
-      p.search("em[@class = 'v']") do |em|
-        em.swap("#!TYPE #{em.inner_text.strip}!#")
-      end
-
-      p.search("em[@class = 'su']") do |em|
-        # These are for e.g. (1), (2) -- these em confuse
-        # some stuff below.
-        em.swap(em.inner_text)
-      end
-
-      # em@uni is for unicode characters -- sometimes confuses
-      # the parser
-      # STEVE
-#      p.search("em[@class = 'uni']") do |em|
-#        d("removing: #{em.inner_text}")
-#        em.swap("")
-#      end
-
-      # Catch e.g. "archaic"
-      p.search("em") do |em|
-        if em.at("..").name != "span"  # actually, span w/ class=vi
-          content = em.inner_text.strip
-          next_node = em.next_nonempty_node
-          prev_node = em.previous_nonempty_node
-          if ((next_node.class == Hpricot::Elem && next_node.name == "strong") || \
-              (prev_node.class == Hpricot::Elem && prev_node.name == "strong"))
-            content = em.inner_text.strip
-            em.swap("#!MODIFIER #{content}!#")
-          else
-            d("modifier: #{content}?")
-          end
-        end
-      end
-
-      # Matches a sequence of "#!something!#"
-      lines = p.inner_text.gsub(/(:?#![^!]*!#\s*)+/, "\n\\&")
-
-      reformatted = []
-      type_indent = ""
-
-      number = ""
-      letter = ""
-      colon = ""
-      modifier = ""
-
-      prev_number = nil
-      prev_letter = nil
-      prev_colon = nil
-      prev_modifier = nil
-
-      lines.each do |line|
-        if line =~ /((?:#![^!]*!#\s*)+)(.*)/
-          tokens = $1
-          content = $2
-          tokens.split(/!#/).each do |token|
-            token = token.strip.sub(/^#!/,'')
-            case token
-            when /^TYPE (.*)/
-              reformatted << " /#{$1}/"
-              type_indent = " "
-              number = ""
-              letter = ""
-              colon = ""
-              modifier = ""
-            when /^(\d+)-([[:alpha:]])$/  # e.g. "1 a"
-              number = $1
-              letter = $2
-              colon = ""
-              modifier = ""
-            when /^(\d+)$/  # e.g. "2"
-              number = $1
-              letter = ""
-              colon = ""
-              modifier = ""
-            when /^([[:alpha:]])$/  # e.g. "b"
-              letter = $1
-              modifier = ""   # STEVE: is this always the right thing?
-            when /^:$/
-              colon = ":"
-            when /^MODIFIER (.*)/
-              modifier = "#{modifier} #{$1}".strip
-            when /^SYNONYMS/
-              number = ""
-              letter = ""
-              modifier = "Synonyms"
-              colon = ":"
-            when /^USAGE/
-              number = ""
-              letter = ""
-              modifier = "Usage"
-              colon = ":"
-            when /^\s*$/
-              nil
-            else
-              d("unknown token: #{token}")
+      div_definition.search("div.d") do |div_d|
+        div_d.search(">div") do |div|
+          case div.get_attribute('class')
+          when /^(sblk$|sense-block)/
+            d 'sblk'
+            parse_definition(div, transitive_verb, definitions)
+          when /example-sentences/
+            d 'example-sentences'
+            div.search("li") do |li|
+              examples << li.inner_text
             end
-          end
-          lead = " "
-          i = number == prev_number ? (" " * number.length) : number
-          i += " " unless i.empty?
-          lead += i
-          i = modifier == prev_modifier ? (" " * modifier.length) : modifier
-          i += " " unless i.empty?
-          lead += i
-          i = if letter == prev_letter
-                if not modifier.empty?
-                  ""
-                else
-                  (" " * letter.length)
-                end
-              else
-                letter
+          when /etymology/
+            d 'etymology'
+            assert(etymology.nil?)
+            # Sometimes includes a First Use sub div note.
+            extra_text = \
+              (div/">div.content>div").to_a.inject("") { |s,e|
+                s + "\n#{e.inner_text.strip}"
+              }
+            if not extra_text.empty?
+              div.search(">div.content>div") do |div_inner|
+                div_inner.swap('')
               end
-          i += " " unless i.empty?
-          lead += i
-          lead += colon + " "
-          lead = type_indent + lead
-          indent = " " * lead.length
-          content_wrapped = wrap_text(content, indent)
-
-          reformatted << (lead + content_wrapped[lead.length..content_wrapped.length])
-
-          prev_number = number
-          prev_letter = letter
-          prev_colon = colon
-          prev_modifier = modifier
-
-        elsif line !~ /^\s*$/
-          # Assume this is okay -- usually a note on a proper noun
-          d("no match: <<#{line}>>")
-          puts wrap_text(line.strip, " ")
+            end
+            etymology = (div/">div.content").inner_text.strip + extra_text
+          when /first-use/
+            d "first-use"
+            assert(first_use.nil?)
+            first_use = (div/">div.content").inner_text
+          when /synonyms-reference/
+            d 'synonyms-reference'
+            div.search(">div>div>div>div>div") do |div_related|
+              case div_related.get_attribute('class')
+              when /(syn|ant|rel|near)-para/
+                inner_text = div_related.inner_text.strip
+                if inner_text =~ /^(.*): (.*)/
+                  type = $1
+                  words = $2
+                  synonyms_etc << [type, words]
+                else
+                  puts "Could not parse synonyms thing: #{inner_text}"
+                  exit 1
+                end
+              when /see-more/
+                nil # ignore
+              else
+                puts "unknown synonmys: #{div_related.get_attribute('class')}"
+                exit 1
+              end
+            end
+          when /synonyms-discussion/
+            assert(synonyms_discussion.nil?)
+            synonyms_discussion = (div/">div.content").inner_text.strip
+          when /usage-discussion/
+            assert(usage_discussion.nil?)
+            usage_discussion = (div/">div.content").inner_text.strip
+          when /^r$/  # related?
+            d 'r'
+            related << div.inner_text
+          when /^vt$/
+            # transitive verb -- applies to subsequent definitions
+            transitive_verb = (div.inner_text !~ /intransitive/)
+          when /^art$/
+            has_image = true
+          when /^variant$/
+            assert(variant.nil?)
+            variant = (div/">div.content").inner_text.strip
+          when /^dr$/
+            # Special use of word?
+            div.search(">div.d>div") do |div_inner|
+              parse_definition(div_inner, :unset, special_definitions)
+            end
+          when /rhyming-dictionary/
+          when /britannica-entry/
+          when /browse/
+            d "Skipped #{div.get_attribute('class')}"
+          else
+            puts "unknown block: #{div.get_attribute('class')}"
+            puts div
+            exit 1
+          end
         end
       end
 
-      reformatted.each do |definition|
-        puts definition
+    end
+  end
+
+  return false if word.nil? || word.empty?
+
+  #
+  # Print the parsed dictionary entry.
+  # Note: pronunciation skipped.
+  #
+
+  puts "Entry: #{word} #{has_image ? '  (has image)' : ''}"
+  puts "Function: #{function}"
+  if not related.empty?
+    related.each do |r|
+      puts wrap_text(r)
+    end
+  end
+  puts("Usage: #{usage}") if usage
+  if etymology
+    puts "Etymology..."
+    puts wrap_text(etymology, " ")
+  end
+  if first_use
+    puts "First Use: #{first_use}"
+  end
+
+  puts "Definitions..."
+  print_definitions(definitions)
+
+  if not special_definitions.empty?
+    puts "Special Definitions..."
+    print_definitions(special_definitions)
+  end
+
+  if not examples.empty?
+    puts "Examples..."
+    examples.each do |e|
+      wrapped = wrap_text("#{e}", "   ")
+      puts wrapped.sub(/^  /," -")
+    end
+  end
+  if not synonyms_etc.empty?
+    puts "Similar..."
+    synonyms_etc.each do |a|
+      puts " #{a[0]}: "
+      puts wrap_text(a[1], "   ")
+    end
+  end
+  if synonyms_discussion
+    puts "Synonyms Discussion..."
+    puts wrap_text(synonyms_discussion, "  ")
+  end
+  if usage_discussion
+    puts "Usage Discussion..."
+    puts wrap_text(usage_discussion, "  ")
+  end
+  if variant
+    puts "Variant: #{variant}"
+  end
+
+  return true
+end
+
+def parse_definition(div_elem, transitive_verb, array)
+  unless (div_elem/"div.snum").empty?
+    num = (div_elem/"div.snum").inner_text
+  end
+
+  # Sometimes senses include sub-senses with letters as indicators.
+  div_elem.search("div.scnt") do |div_scnt|
+    if (div_scnt/"em.sn").empty?
+      # No lettered sub-senses.
+      definition = div_scnt.inner_text.strip.sub(/^: /,'')
+      array << [num, nil, definition, transitive_verb]
+    else
+      div_scnt.search("span.ssens") do |span_ssens|
+        if (span_ssens/"em.sn").empty?
+          letter = nil
+        else
+          letter = (span_ssens/"em.sn").inner_text.strip
+        end
+        definition = span_ssens.inner_text.strip.sub(/^#{letter}[^:]*: /,'')
+        array << [num, letter, definition, transitive_verb]
       end
     end
+  end
+end
 
-    # Different forms of the word, e.g. adverb or noun for a verb
-    div.search("p[@class = 'r']") do |p|
-      puts wrap_text(p.inner_text, "")
+def print_definitions(definitions)
+  prev_tv = :unset
+  prev_num = :unset
+  has_numbers = definitions.find { |a| a[0] != nil }
+  has_letters = definitions.find { |a| a[1] != nil }
+  definitions.each do |a|
+    num = if a[0]
+            a[0]
+          elsif has_numbers
+            " "
+          else
+            nil
+          end
+    letter = a[1] || " "
+    definition = a[2]
+    tv = a[3]
+    if tv != prev_tv
+      if tv
+        puts " /transitive verb/"
+      else
+        puts " /intransitive verb/"
+      end
+      prev_tv = tv
     end
+    if has_letters
+      if prev_num == num
+        lead = " #{' ' * (num or '').length} #{letter} : "
+      else
+        lead = " #{num} #{letter} : "
+      end
+      prev_num = num
+    elsif num
+      lead = "  #{num} : "
+    else
+      lead = "  : "
+    end
+    wrapped = wrap_text(definition, " " * lead.length)
+    # Insert the lead on the first line
+    puts wrapped.sub(/^ */,lead)
   end
 end
 
