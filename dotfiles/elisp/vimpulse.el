@@ -11,16 +11,18 @@
 ;; Maintainer: Vegard Øye <vegard_oye at hotmail.com>
 ;;      Please send bug reports to the mailing list (see below).
 ;; Created: 23 Aug 2007
-;; Version: 0.4+git
+;; Version: 0.5+git
 ;; Keywords: emulations, viper
 ;; Human-Keywords: vim, visual-mode, rsi, ergonomics, emacs pinky
 ;; URL: http://www.emacswiki.org/emacs/vimpulse.el
-;; Git repository: http://www.assembla.com/spaces/vimpulse/
+;; Gitorious project: http://gitorious.org/vimpulse
+;;      For the latest development version, clone the repo with:
+;;      git clone git://gitorious.org/vimpulse/vimpulse.git
 ;; Mailing list: <implementations-list at lists.ourproject.org>
 ;;      Subscribe: http://tinyurl.com/implementations-list
 ;;      Newsgroup: nntp://news.gmane.org/gmane.emacs.vim-emulation
 ;;      Archives: http://dir.gmane.org/gmane.emacs.vim-emulation
-;;      You don't have to subscribe.  We usually reply within a few
+;;      You don't have to subscribe. We usually reply within a few
 ;;      days and CC our replies back to you.
 ;; Related: viper.el, viper-in-more-modes.el
 ;;
@@ -34,69 +36,69 @@
 ;;; Commentary:
 
 ;; Vimpulse emulates Vim's most popular features, like Visual mode
-;; and text objects.  Vimpulse is a set of modifications to Viper, the
-;; standard library that emulates vi.  Vimpulse is not a minor mode;
+;; and text objects. Vimpulse is a set of modifications to Viper, the
+;; standard library that emulates vi. Vimpulse is not a minor mode;
 ;; as soon as it is loaded, Viper will start working in a more
 ;; Vim-like way.
 ;;
-;; Vimpulse is under active development.  It works quite well with
-;; GNU Emacs 22.3 and 23.2, as well as XEmacs 21.4.22.  Patches and
+;; Vimpulse is under active development. It works quite well with
+;; GNU Emacs 22.3 and 23.2, as well as XEmacs 21.4.22. Patches and
 ;; feature requests are welcome (see also the file CONTRIBUTE in the
 ;; repository).
 
 ;;; Installation:
 
-;; If you checked out from Git, run `make' to produce
-;; vimpulse-big.el.  If on Windows, you can run compile.bat.  Then:
+;; If you checked out from Git but still want the single-file version, run
+;; `make big' to produce `vimpulse.el' in a `bigd' directory.  Then:
 ;;
-;; 1. Copy vimpulse.el (or vimpulse-big.el) to somewhere in your
-;;    `load-path'.
+;; 1. Put vimpulse.el somewhere in your `load-path'.
 ;;
 ;; 2. Add the following to your init file:
 ;;
 ;;        (require 'vimpulse)
 ;;
 ;;    If you use Windows, see
-;;    http://www.gnu.org/software/emacs/windows/faq3.html.
+;;    http://www.gnu.org/software/emacs/windows/faq3.html
 ;;
 ;; The rest is optional:
 ;;
 ;; 3. For linear undo/redo and undo branches, install
-;;    undo-tree.el: http://www.emacswiki.org/emacs/UndoTree.
+;;    undo-tree.el: http://www.emacswiki.org/emacs/UndoTree
 ;;
-;; Vimpulse automatically enables Viper.  You can temporarily disable
-;; Viper (and Vimpulse) with the C-z key.
+;;    Just place it in `load-path', and Vimpulse will load it
+;;    automatically. On XEmacs, you can use redo.el instead.
+;;
+;; Vimpulse automatically enables Viper. You can temporarily disable
+;; Viper (and Vimpulse) with the "C-z" key.
 
 ;;; Usage:
 
-;; To use Visual mode, press v in vi (command) mode.  Then use the
-;; motion commands to expand the selection.  Press d to delete, c to
-;; change, r to replace, or y to copy.  You can use p to paste.  For
-;; Line selection, press V instead of v; then you can copy and paste
-;; whole lines.  For Block selection, press C-v; now you can copy and
-;; paste the selected rectangle.  In Block selection, you may use
-;; I or A to insert or append text before or after the selection on
-;; each line.
+;; To use Visual mode, press "v" in vi (command) mode. Then use the
+;; motion commands to expand the selection. Press "d" to delete, "c"
+;; to change, "r" to replace, or "y" to copy. You can use "p" to
+;; paste. For Line selection, press "V" instead of "v"; then you can
+;; copy and paste whole lines. For Block selection, press "C-v"; now
+;; you can copy and paste the selected rectangle. In Block selection,
+;; you may use "I" or "A" to insert or append text before or after the
+;; selection on each line.
 ;;
 ;; Other features:
 ;;
-;; Vimpulse supports text objects: daw, daW, das, dap, dab, daB, da(,
-;; da[, da{, da<, da", da', as well as diw, diW, dis, etc.  To change
-;; an object: caw, cas, etc.  To yank it: yaw, yas, etc.  To select it:
-;; vaw, vas, etc.
+;; Vimpulse supports text objects: "daw", "daW", "das", "dap", "dab",
+;; "daB", "da(", "da[", "da{", "da<", "da"", "da'", as well as "diw",
+;; "diW", "dis", etc. To change an object: "caw", "cas", etc. To yank
+;; it: "yaw", "yas", etc. To select it: "vaw", "vas", etc.
 ;;
 ;; The extended documentation is still in its early stages, but you
-;; can view drafts at
-;;
-;; http://trac-git.assembla.com/vimpulse/wiki/Documentation
+;; can view drafts at: http://gitorious.org/vimpulse/pages/Home
 ;;
 ;; The documentation that comes with Vim -- which is online at
 ;; http://vimdoc.sf.net/ -- may also be helpful.
 ;;
 ;; Tips:
 ;;
-;; - Vimpulse makes C-r run Redo in command mode, but you can
-;;   still get reverse isearch by pressing C-s and then C-r.
+;; - Vimpulse makes "C-r" run Redo in command mode, but you can
+;;   still get reverse isearch by pressing "C-s" and then "C-r".
 ;;
 ;; - To change the color of search, add something like the following
 ;;   to .emacs:
@@ -107,49 +109,57 @@
 ;; - To change the color of Visual mode (`zmacs-region' in XEmacs):
 ;;
 ;;       (set-face-background 'region "blue")
+;;
+;; For more tips, see: http://gitorious.org/vimpulse/pages/Tips
 
 ;;; News:
 
-;; Version 0.4+git [2010-06-??]
+;; Version 0.5 [2010-09-12]
 ;;  [vegard_oye at hotmail.com:]
+;;  - [NEW] "/" and "?" use isearch. Matches are highlighted while
+;;    typing; also, isearch shortcuts apply, like "M-c" to toggle
+;;    case-sensitivity. Type "C-h k /" for more details.
 ;;  - [NEW] :undolist or :ul shows the undo history as a tree. This
-;;    uses undo-tree.el, which replaces redo.el for undo/redo.
-;;    Get undo-tree.el from: http://www.emacswiki.org/emacs/UndoTree
-;;  - [NEW] / and ? use isearch. Matches are highlighted while typing;
-;;    also, isearch keystrokes applies, like C-w to yank the text
-;;    under cursor. See `isearch-forward' for more details.
-;;  - [NEW] If `viper-auto-indent' is t, RET extends the comment
-;;    prefix to the next line (with `comment-indent-new-line' from
-;;    newcomment.el).
-;;  - [NEW] Keys: gi, g$, g0.
-;;  - [NEW] C-w has its own prefix map, `vimpulse-window-map'.
+;;    uses undo-tree.el, which replaces redo.el for undo/redo
+;;    (see installation instructions).
+;;  - [NEW] Keybinding functions: `vimpulse-global-set-key',
+;;    `vimpulse-local-set-key', `vimpulse-define-key'. State bindings
+;;    can now be assigned to both minor and major Emacs modes,
+;;    which is useful for writing extensions.
+;;  - [NEW] Keys: "gi", "g0", "g$", "]P", "]p".
 ;;  - [NEW] Lower-case marks are buffer-local -- thanks, Štěpán Němec.
+;;  - [NEW] If `viper-auto-indent' is t, then "RET" extends the
+;;    comment prefix to the next line (with `comment-indent-new-line'
+;;    from newcomment.el).
+;;  - [NEW] "C-w" has its own prefix map, `vimpulse-window-map'.
 ;;  - [FIX] Replace mode's appearance is now more similar to Vim's.
 ;;  - [FIX] Byte compilation errors.
 ;;  - [FIX] Various bugs submitted to the mailing list --
 ;;    thanks, everyone.
+;;  -  Operator commands are now defined with the
+;;    `vimpulse-define-operator' macro.
 ;;  - To pacify the compiler, all variables are initially defined
 ;;    in one place.
 ;;  - For readability and consistency, "Yoda conditions" are
 ;;    universally banned: e.g., (= var 0), not (= 0 var).
-;;  - Furthermore, all "level two" comments (;;) are full sentences.
+;;  - "Change Log" is renamed to "News".
 ;;
 ;; Version 0.4 [2010-04-26]
 ;;  [vegard_oye at hotmail.com:]
 ;;  - [NEW] Operator-Pending mode: the cursor's appearance
-;;    changes temporarily after y, d, c, etc.
+;;    changes temporarily after "y", "d", "c", etc.
 ;;  - [NEW] Motion type system: one can change how a motion is
-;;    "interpreted" with v, V and C-v. For example, dvj will
+;;    "interpreted" with "v", "V" and "C-v". For example, "dvj" will
 ;;    delete a characterwise range (the default is linewise).
-;;  - [NEW] Keys: gq, gu, gU, g~, g?.
+;;  - [NEW] Keys: "gq", "gu", "gU", "g~", "g?".
 ;;  - [NEW] Keybinding functions: `vimpulse-omap' and
 ;;    `vimpulse-omap-local'.
 ;;  - [FIX] Vimpulse's text objects handle whitespace
 ;;    more like Vim's.
 ;;  - [FIX] Various bugs submitted to the mailing list --
 ;;    thanks, everyone.
-;;  - The code for applying an "operator" like d to a "motion"
-;;    like w is completely rewritten. Operators are simple
+;;  - The code for applying an "operator" like "d" to a "motion"
+;;    like "w" is completely rewritten. Operators are simple
 ;;    to define (with `vimpulse-range'), and can be applied
 ;;    to regular Emacs movement commands as well.
 ;;  - The text objects have been redefined in terms of the new
@@ -169,9 +179,9 @@
 ;;  - [NEW] Emacs-compatible Visual selection.
 ;;    It is now a Viper state proper, with a user map
 ;;    and a major mode extension map.
-;;    [NEW] Visual keys: u, U, ~, >, <, J, O, gv --
+;;    [NEW] Visual keys: "u", "U", "~", ">", "<", "J", "O", "gv" --
 ;;    thanks, Frank Fischer.
-;;  - [NEW] Movement keys: C-o, C-i, C-w hjkl, gb, gd, N%, +, _.
+;;  - [NEW] Movement keys: "C-o", "C-i", "C-w hjkl", "gb", "gd", "+", "_".
 ;;  - [NEW] Keybinding functions: `vimpulse-map',
 ;;    `vimpulse-imap' and `vimpulse-vmap'.
 ;;  - [NEW] Backspace in Replace mode restores text.
@@ -195,7 +205,7 @@
 ;; Version 0.3.0 [2009-07-03]
 ;;  [laynor at gmail.com:]
 ;;  - [NEW] Register support on text object commands.
-;;  - [NEW] Issuing : in Visual mode has a behavior closer
+;;  - [NEW] Issuing ":" in Visual mode has a behavior closer
 ;;    to Vim's.
 ;;  [jasonspiro3 at gmail.com:]
 ;;  - [FIX] The Enter key now does what it should do -- insert a
@@ -205,16 +215,16 @@
 ;; Version 0.2.6.9 [2009-06-24]
 ;;  [laynor at gmail.com:]
 ;; - [FIX & NEW] Text objects support fixed and integrated with Viper.
-;;   Now count works (e.g., you can do 3caw and it works correctly),
+;;   Now count works (e.g., you can do "3caw" and it works correctly),
 ;;   and it's possible to repeat the commands with ".".
 ;;
 ;; Version 0.2.6.8 [2009-06-22]
 ;;  [laynor at gmail.com:]
 ;; - [NEW] Text object support: paren blocks, sentences, word, Words,
 ;;   quoted expressions, paragraphs. Delete and change commands.
-;;   Example commands: diw, ci(, das, etc.
-;; - [FIX] It's now possible to exit Visual mode by pressing the
-;;   ESC key or ^[.
+;;   Example commands: "diw", "ci(", "das", etc.
+;; - [FIX] It's now possible to exit Visual mode by pressing
+;;   "ESC" or "^[".
 ;;
 ;; Version 0.2.6.7
 ;;  [jasonspiro3 at gmail.com:]
@@ -240,21 +250,21 @@
 ;; Version 0.2.6.4
 ;;  [laynor at gmail.com:]
 ;;  - This can probably be considered a major release.
-;;  - [FIX & NEW] Rewritten Visual mode, v and V variants (no
+;;  - [FIX & NEW] Rewritten Visual mode, "v" and "V" variants (no
 ;;    changes to Visual Block still). It does not use the region like
 ;;    before: highlighting is done through overlays, and the region is
 ;;    set inside the command code before calling the Viper commands.
-;;    = in Visual mode calls `vimpulse-visual-indent-command'. The
+;;    "=" in Visual mode calls `vimpulse-visual-indent-command'. The
 ;;    Visual mode (apart from Block mode) looks and feels like Vim.
 ;;  - [NEW] Enhanced paren-matching. Moving the cursor on a closing
 ;;    paren in Normal mode now highlights the opening paren.
-;;  - [NEW] Pressing RET in Insert mode automatically indents the new
-;;    line.
-;;  - [NEW] ^[ works.
-;;  - [FIX] a<ESC> leaves the cursor in the same location as it was
+;;  - [NEW] Pressing "RET" in Insert mode automatically indents
+;;    the new line.
+;;  - [NEW] "^[" works.
+;;  - [FIX] "a<ESC>" leaves the cursor in the same location as it was
 ;;    before (it advanced the cursor 1 character before --
 ;;    `viper-exit-insert-state's fault).
-;;  - [FIX] cW doesn't suck anymore at the end of a line.
+;;  - [FIX] "cW" doesn't suck anymore at the end of a line.
 ;;
 ;; Version 0.2.6.3:
 ;;  [frank.fischer at s2001.tu-chemnitz.de:]
@@ -263,7 +273,7 @@
 ;;  - Change some Vimpulse and Viper functions to handle Block mode
 ;;    properly.
 ;;  - Update documentation to reflect Visual Block mode.
-;;  - The = key in Visual mode calls `indent-region'.
+;;  - The "=" key in Visual mode calls `indent-region'.
 ;;
 ;; Version 0.2.6.2:
 ;;  [jasonspiro3 at gmail.com:]
@@ -279,9 +289,9 @@
 ;;
 ;; Version 0.2.6.0:
 ;;  [jasonspiro3 at gmail.com:]
-;;  - Merged a patch for the function that powers * and #. Based on
+;;  - Merged a patch for the function that powers "*" and "#". Based on
 ;;    Ryoichi's patch and a cleaned-up version of Weihua's patch --
-;;    thanks. Now * and # will search for entire symbol at point,
+;;    thanks. Now "*" and "#" will search for entire symbol at point,
 ;;    including underscores, not just word at point.
 ;;  - TODO addition.
 ;;
@@ -297,7 +307,7 @@
 ;;  [jasonspiro3 at gmail.com:]
 ;;  I've ignored my local changes for too long. Here they are:
 ;;  - Added keybindings from a Usenet post by Samuel Padgett.
-;;  - Made change (cw, etc.) commands work more like Vim (my code).
+;;  - Made change ("cw", etc.) commands work more like Vim (my code).
 ;;  - I removed (setq ex-cycle-other-window nil); although it is very
 ;;    useful, it merely works around a problem with Viper. I plan to
 ;;    discuss it with the Viper maintainer instead.
@@ -309,13 +319,13 @@
 ;;
 ;; Version 0.2.0.2:
 ;;  [jasonspiro3 at gmail.com:]
-;;  - Small C-w keys and doc fixes.
+;;  - Small "C-w" keys and doc fixes.
 ;;
 ;; Version 0.2.0.1:
 ;;  [cppjavaperl:]
 ;;  - Added support for Visual Block mode (i.e., rectangle selection).
-;;  - Made C-p look for matches *prior* to the cursor and added C-n
-;;    binding to look for matches *before* the cursor. This works more
+;;  - Made "C-p" look for matches PRIOR to the cursor and added "C-n"
+;;    binding to look for matches BEFORE the cursor. This works more
 ;;    like Vim does.
 ;;  [jasonspiro3 at gmail.com:]
 ;;  - Since Vimpulse has no website, I added a prominent pointer at
@@ -324,8 +334,8 @@
 ;; Version 0.2.0.0: Brad merged in several changes, including:
 ;;  - Exit Visual mode when the mark deactivates.
 ;;  - Changed the window manipulation to be global.
-;;  - Added gf (goto file at point).
-;;  - Added \C-] and \C-t, tag jump & pop.
+;;  - Added "gf" (goto file at point).
+;;  - Added "\C-]" and "\C-t", tag jump & pop.
 ;;  - Added a helper function for defining keys.
 ;;  - Commented out `show-paren-function', what is it meant to do?
 ;;
@@ -362,7 +372,7 @@
 ;; and all the other people who have sent in bug reports and feedback.
 ;; Also, thanks to Michael Kifer and Viper's contributors.
 ;;
-;; We love patches.  Would you like to see your name here?
+;; We love patches. Would you like to see your name here?
 ;; Please send code and/or documentation patches to the maintainer.
 ;; Ideas, comments, and test results are appreciated too.
 
@@ -372,29 +382,18 @@
 ;;
 ;; Known bugs:
 ;;
-;; - cw with a count doesn't work quite the same as Vim when the point
-;;   is just before a space between words.
-;;     - Fix plan: try cw with a count, then try dwi with a count; or
-;;       ask on a relevant forum how the commands differ; or check
-;;       how it works in vi/Vim, then check the Vim manual for more
-;;       info; then, decide how to best fix it.
-;;         - Vim's behavior seems inconsistent in this case.  I think
-;;           it would be best to make the fix optional (defaulting to
-;;           standard Vim behavior, though), as I (at least) like
-;;           Vimpulse's behavior better in this case.
-;;
 ;; - Undo has problems in XEmacs.
 
 ;;; Development and documentation TODOs:
 
 ;; - Make sure I have added all stuff in Brad's Viper additions and
-;;   from my collection, then start documenting already.  Once there
+;;   from my collection, then start documenting already. Once there
 ;;   are even the simplest of docs (a nice keymap), people will have a
 ;;   far easier time using Vimpulse and so I bet more will contribute.
 ;;
-;; - Folding.  This should be implemented as a separate Lisp library
-;;   usable for even non-Viper users. Which foldmethods to do first?  I
-;;   personally only use foldmethod=marker, and even that only rarely.
+;; - Folding. This should be implemented as a separate Lisp library
+;;   usable for even non-Viper users. Which foldmethods to do first?
+;;   I personally only use foldmethod=marker, and even that rarely.
 ;;
 ;; - i_C-(I forgot the letter) should do (copy-from-above-command 1)
 ;;   from misc.el.
@@ -404,10 +403,10 @@
 ;; - Add support for tabs.el, a tabs mode that works sensibly (get it
 ;;   from Emacs Lisp List).
 ;;     - Minimum needed: :tabedit, :tabnext, :tabprevious.
-;;     - Since I'm emulating Vim, emulate its tab pages feature.  So a
+;;     - Since I'm emulating Vim, emulate its tab pages feature. So a
 ;;       tab page should be able to hold one or more buffers.
 ;;
-;; - Add Customize option to let users stop C-r from being Redo?
+;; - Add Customize option to let users stop "C-r" from being Redo?
 ;;
 ;; - Copy more features from Brad's work in darcs and from vimpact
 ;;   into Vimpulse.
@@ -423,28 +422,28 @@
 ;;   manual for ideas.
 ;;
 ;; - Modify how tramp works so it also automatically handles URLs
-;;   typed in the netrw syntax, e.g., http:// etc.  But first ask tramp
+;;   typed in the netrw syntax, e.g., http:// etc. But first ask tramp
 ;;   upstream if they could please make those changes themselves.
 ;;
-;; - Improve CTRL-O for jumping back in the jumplist and CTRL-I for
-;;   jumping forwards (for undoing one CTRL-O).  The global mark ring
-;;   is not what I want.  I wonder if Emacs' tags functionality allows
-;;   a jumplist.  I wonder if Viper does tags like nvi does.
+;; - Improve "CTRL-O" for jumping back in the jumplist and "CTRL-I" for
+;;   jumping forwards (for undoing one "CTRL-O"). The global mark ring
+;;   is not what I want. I wonder if Emacs' tags functionality allows
+;;   a jumplist. I wonder if Viper does tags like nvi does.
 ;;     - Try code.google.com/p/ejumplist/source/browse/trunk/jumplist.el
 ;;
 ;; - On my PC (I run Ubuntu), if you start plain Vim and then press
-;;   CTRL-O many times, it starts opening recently opened files.  Is
-;;   that useful?  Should Vimpulse have persistent jump table
+;;   "CTRL-O" many times, it starts opening recently opened files. Is
+;;   that useful? Should Vimpulse have persistent jump table
 ;;   functionality like that, and if so, should it use recentf or
-;;   Vim's .viminfo file or some tag functionality in Emacs?  How will
+;;   Vim's .viminfo file or some tag functionality in Emacs? How will
 ;;   it interact with the fact that in Emacs, it's not traditional to
 ;;   suddenly close files without warning?
 ;;
-;; - Make sentence movement work like in Vim.  I wonder if this can be
+;; - Make sentence movement work like in Vim. I wonder if this can be
 ;;   done by setting Viper options.
 ;;     - In Vim, according to :help sentence, end of sentence is:
-;;         - '.', '?', or '!'
-;;         - then (optionally) one or more '"', ''', ')', and ']'
+;;         - ".", "?", or "!"
+;;         - then (optionally) one or more """, "'", ")", and "]"
 ;;           characters
 ;;         - then a newline, space, or tab.
 ;;         - A paragraph or section boundary is also a sentence
@@ -452,28 +451,28 @@
 ;;           it should.
 ;;             - A paragraph begins after each truly empty line (no
 ;;               whitespace chars on it) or after certain col-1 nroff
-;;               macros.  A sentence begins after a form feed (^L), or
+;;               macros. A sentence begins after a form feed (^L), or
 ;;               certain nroff macros, in column 1.
-;;             - The characters '{' and '}' sometimes affect paragraph
-;;               definitions.  See :help paragraph.
+;;             - The characters "{" and "}" sometimes affect paragraph
+;;               definitions. See :help paragraph.
 ;;     - In Viper, on the other hand, I bet sentences are like in vi,
 ;;       where tabs aren't whitespace, and you need at least two spaces
 ;;       after the punctuation mark.
 ;;
 ;; - Try to get Vimpulse included with upstream Viper; also, ideally,
 ;;   if you pressed "v" in Viper, Viper would offer to load Vimpulse.
-;;   (Likely to happen?  Consider that Michael Kifer, the Viper
-;;   maintainer, told me he doesn't need Vim keys.  Then again, maybe I
+;;   (Likely to happen? Consider that Michael Kifer, the Viper
+;;   maintainer, told me he doesn't need Vim keys. Then again, maybe I
 ;;   could convince him that it's worth it to ship Vim keys, for other
-;;   people's benefit.)  Also, consider that some of the code (like
-;;   Operator-Pending mode) addresses problems mentioned in viper.el.
+;;   people's benefit. Also, consider that some of the code (like
+;;   Operator-Pending mode) addresses problems mentioned in viper.el.)
 ;;
 ;; - E-mail ridip <rdp at inthefaith.net> and ask him for his Vimpulse
 ;;   contribs and his DVORAK stuff.
 ;;
-;; - E-mail to Tromey for upload into ELPA?  We'd have to redo this
-;;   when a new major version comes out.  Or maybe we should just
-;;   contribute some auto-ELPA-management code.  By the way, should we
+;; - E-mail to Tromey for upload into ELPA? We'd have to redo this
+;;   when a new major version comes out. Or maybe we should just
+;;   contribute some auto-ELPA-management code. By the way, should we
 ;;   move Vimpulse into CVS somewhere?
 ;;
 ;; - Maybe merge all feature requests that anyone has ever sent into a
@@ -482,7 +481,7 @@
 ;;; Development plans:
 
 ;; The design plan for Vimpulse is for it to only emulate features
-;; that are in Vim.  Therefore, other features do not belong in
+;; that are in Vim. Therefore, other features do not belong in
 ;; Vimpulse unless one can get the Vim people to implement those
 ;; features too.
 ;;
@@ -492,42 +491,33 @@
 
 ;;; Undecided development questions:
 
-;; - In Vimpulse, like in real Vim, C-r only does Redo in vi (command)
-;;   mode; in Insert mode it does something else.  (In Vimpulse that
-;;   "something else" is reverse isearch.)  Should it do reverse
+;; - In Vimpulse, like in real Vim, "C-r" only does Redo in vi (command)
+;;   mode; in Insert mode it does something else. (In Vimpulse that
+;;   "something else" is reverse isearch.) Should it do reverse
 ;;   isearch in Insert mode too?
 ;;
-;; - In Vim, when a line starts with a "// " or ";; " comment and one
-;;   presses enter, Vim extends the comment onto the next line.  What
-;;   Vim function is it that does this?  Is the function enabled in
-;;   plain vanilla Vim 7 as shipped by vim.org?  (Check by seeing how
-;;   it works on Vim for Windows running on either Windows or Wine.)
-;;   Is it mostly useful or mostly annoying?  Is it worth implementing
-;;   in Emacs, considering there are other easy ways to create
-;;   comments?
-;;
 ;; - With some delete commands, Viper shows a message like "Deleted 50
-;;   characters" in the minibuffer.  Is that annoying?
+;;   characters" in the minibuffer. Is that annoying?
 ;;     - Update 1 month later: I hardly notice the message.
 ;;     - Dear users: Do you think I should disable the message?
 ;;
-;; - I want to allow buffer-switching without using the C-x key, since
-;;   C-x b RET an extremely large amount of times per day is
-;;   uncomfortable for my right pinky, which presses RET.  There's
-;;   already :b which seems to just invoke `switch-to-buffer'.  Is this
-;;   right?  Is it bad if I make Vimpulse emulate set autowrite=on
-;;   then write new multi-buffer code?  What should the code's user
-;;   interface be like?  I really should switch back to Vim for a day,
+;; - I want to allow buffer-switching without using the "C-x" key, since
+;;   "C-x b RET" an extremely large amount of times per day is
+;;   uncomfortable for my right pinky, which presses RET. There's
+;;   already :b, which seems to just invoke `switch-to-buffer'. Is this
+;;   right? Is it bad if I make Vimpulse emulate set autowrite=on
+;;   then write new multi-buffer code? What should the code's user
+;;   interface be like? I really should switch back to Vim for a day,
 ;;   learn more about how it deals with multiple buffers at once (and
 ;;   maybe also with tab pages) and emulate whatever of Vim's is most
-;;   convenient.  What do you think of all the above?\
-;;     - Update: IIRC :set hidden lets you switch buffers w/o saving
+;;   convenient. What do you think of all the above?
+;;     - Update: IIRC, :set hidden lets you switch buffers w/o saving
 ;;     - Update from Sebastien Rocca Serra: :set wildmenu plus
 ;;       tab-completion makes :b very pleasant to use when you have
-;;       50+ buffers open.  Wildmenu is almost like iswitchb or ido.
+;;       50+ buffers open. Wildmenu is almost like iswitchb or ido.
 ;;     - I wonder how well that stuff works with just a few buffers open.
 ;;
-;; - Simulate Vim's set virtualedit=onemore option to make C-x C-e
+;; - Simulate Vim's set virtualedit=onemore option to make "C-x C-e"
 ;;   possible without first advancing to next line?
 ;;
 ;; - Would it be bad to edit users' .viminfo files without asking
@@ -538,7 +528,7 @@
 ;;   [count]dk-can-go-past-top-of-file-without-error functionality (to
 ;;   me, no need) or any related functionality?
 ;;
-;; - What to do about XEmacs?  It doesn't ship with woman.  I wonder
+;; - What to do about XEmacs? It doesn't ship with woman. I wonder
 ;;   if woman is in some XEmacs package?
 
 ;;; License:
@@ -550,7 +540,7 @@
 ;;
 ;; This program is distributed in the hope that it will be useful, but
 ;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 ;; General Public License for more details.
 ;;
 ;; You should have received a copy of the GNU General Public License
@@ -560,21 +550,29 @@
 
 ;;; Code:
 
-(defconst vimpulse-version "0.4+git"
+;;; Compatibility
+(defmacro vimpulse-called-interactively-p ()
+  (if (version< emacs-version "23")
+      '(called-interactively-p)
+    '(called-interactively-p 'any)))
+
+;;; Version
+(defconst vimpulse-version "0.5+git"
   "The current version of Vimpulse")
 
 (defun vimpulse-version ()
   (interactive)
   (message "Vimpulse version is %s" vimpulse-version))
 
-;; Load Viper.
+;; load Viper
 (defvar viper-mode t)
 (defvar viper-inhibit-startup-message t)
 (defvar viper-expert-level 5)
 (defvar viper-want-ctl-h-help t)
+(defvar viper-search-wrap-around t)
 (require 'viper)
 
-;; Load undo-tree.el if available, with redo.el as fall-back.
+;; load undo-tree.el if available, with redo.el as fall-back
 (unless (featurep 'undo-tree)
   (condition-case nil
       (require 'undo-tree)
@@ -636,15 +634,6 @@ Off by default."
   :type  'boolean
   :group 'vimpulse-visual)
 
-(defcustom vimpulse-incremental-search t
-  "Use isearch for / and ?, on by default.")
-
-(defcustom vimpulse-flash-delay 2
-  "Number of seconds to flash search matches.")
-
-(defvar vimpulse-flash-timer nil
-  "Timer for flashing search results.")
-
 (defcustom vimpulse-want-vi-keys-in-apropos t
   "Whether to use vi keys in Apropos mode, on by default."
   :group 'vimpulse
@@ -675,8 +664,8 @@ Off by default."
   :type  'integer
   :group 'vimpulse)
 
-;; The secrets discovered from untold diggings among
-;; the ruins of Customize code.
+;; the secrets discovered from untold diggings among
+;; the ruins of Customize code
 (defun vimpulse-custom-value-p (symbol)
   "Non-nil if SYMBOL has a customized value."
   (or (get symbol 'customized-value)
@@ -690,47 +679,42 @@ Off by default."
        (when (get ',sym 'custom-autoload)
          (custom-load-symbol ',sym))
        (put ',sym 'customized-value (list (custom-quote ,val))))
-     ,@(when body
-         `((vimpulse-setq-custom ,@body)))))
+     ,(when body
+        `(vimpulse-setq-custom ,@body))))
 
 (defmacro vimpulse-setq-custom-default (symbol value &rest body)
   "Set the customized default value of SYMBOL to VALUE."
   `(progn
-     (prog1 ,value                       ; return VALUE
+     (prog1 ,value                      ; return VALUE
        (when (get ',symbol 'custom-autoload)
          (custom-load-symbol ',symbol))
        (put ',symbol 'standard-value (list (custom-quote ,value))))
-     ,@(when body
-         `((vimpulse-setq-custom-default ,@body)))))
+     ,(when body
+        `(vimpulse-setq-custom-default ,@body))))
 
 (defmacro vimpulse-setq (sym val &rest body)
   "Set SYM to VAL, defaults included, unless SYM is customized.
 SYM is unquoted. Returns VAL."
   `(progn
      (cond
-      ;; Customized value: just set custom standard value.
+      ;; customized value: just set custom standard value
       ((vimpulse-custom-value-p ',sym)
        (vimpulse-setq-custom-default ,sym ,val))
-      ;; Customized variable: set custom and regular values.
+      ;; customized variable: set custom and regular values
       ((custom-variable-p ',sym)
        (vimpulse-setq-custom-default ,sym ,val)
        (vimpulse-setq-custom ,sym ,val)
        (setq-default ,sym ,val)
        (setq ,sym ,val))
-      ;; Regular variable; set default and local values.
+      ;; regular variable; set default and local values
       (t
        (setq-default ,sym ,val)
        (setq ,sym ,val)))
      ,@(when body
          `((vimpulse-setq ,@body)))))
 
-;;; Initialize variables
+;;; Declare and/or initialize variables
 
-(defvar dabbrev--last-abbrev-location)
-(defvar dabbrev--last-abbreviation)
-(defvar dabbrev--last-direction)
-(defvar dabbrev--last-expansion)
-(defvar dabbrev--last-expansion-location)
 (defvar isearch-forward)
 (defvar isearch-lazy-highlight-end)
 (defvar isearch-lazy-highlight-last-string)
@@ -738,17 +722,12 @@ SYM is unquoted. Returns VAL."
 (defvar isearch-lazy-highlight-wrapped)
 (defvar isearch-regexp)
 (defvar isearch-string)
-(defvar killed-rectangle nil)
-(defvar saved-echo-keystrokes echo-keystrokes)
-(defvar show-paren-delay)
+(defvar killed-rectangle nil)           ; rect.el
 (defvar undo-tree-visualizer-map)
 (defvar woman-use-own-frame)
 (defvar woman-use-topic-at-point)
 
-(defvar ex-token-alist)
-(defvar viper-mode-string)
-
-(defvar vimpulse-window-map)
+(defvar ex-token-alist)                 ; viper-ex.el
 
 (defvar vimpulse-viper-movement-cmds
   '(viper-backward-Word viper-backward-char viper-backward-paragraph
@@ -809,27 +788,8 @@ The format is (POS . CHAR).")
 (viper-deflocalvar vimpulse-exit-point nil
   "Like `viper-insert-point', but when exiting Insert mode.")
 
-(defvar vimpulse-last-command-event nil
-  "Value for overwriting `last-command-event'.
-Used by `vimpulse-careful-pre-hook'.")
-
-(defvar vimpulse-careful-alist nil
-  "Key bindings for which `vimpulse-careful-pre-hook' is active.
-That is, `last-command-event' and `read-char' work differently
-for these bindings. The format is (KEY-VECTOR . COMMAND).")
-
-(defvar vimpulse-careful-map (make-sparse-keymap)
-  "Keymap of bindings overwritten by `vimpulse-map' et al.")
-
-(defvar vimpulse-paren-overlay-open nil
-  "Overlay used to highlight the opening paren.")
-
-(defvar vimpulse-paren-overlay-close nil
-  "Overlay used to highlight the closing paren.")
-
-(defvar vimpulse-operator-basic-map)
-
-(defvar vimpulse-operator-remap-map (make-sparse-keymap))
+(defvar vimpulse-operator-remap-map (make-sparse-keymap)
+  "FIXME.")
 
 (defvar vimpulse-operator-remap-alist nil
   "Association list of command remappings in Operator-Pending mode.")
@@ -867,74 +827,6 @@ Used by `vimpulse-operator-repeat'.")
   "Last repeated motion.
 Used by `vimpulse-operator-repeat'.")
 
-(defvar vimpulse-visual-basic-map)
-
-(defvar vimpulse-visual-remap-alist nil
-  "Association list of command remappings in Visual mode.")
-
-(put 'vimpulse-visual-basic-map
-     'remap-alist 'vimpulse-visual-remap-alist)
-
-(viper-deflocalvar vimpulse-visual-mode nil
-  "Current Visual mode: may be nil, `char', `line' or `block'.")
-
-(viper-deflocalvar vimpulse-visual-global-vars nil
-  "List of variables that were global.")
-
-(viper-deflocalvar vimpulse-visual-local-vars
-  '(cua-mode
-    mark-active
-    transient-mark-mode
-    zmacs-regions)
-  "System variables that are reset for each Visual session.")
-
-(viper-deflocalvar vimpulse-visual-vars-alist nil
-  "Alist of old variable values.")
-
-(viper-deflocalvar vimpulse-visual-last nil
-  "Last active Visual mode.
-May be `char', `line', `block' or nil.")
-
-(viper-deflocalvar vimpulse-visual-previous-state 'viper-state
-  "Previous state before enabling Visual mode.
-This lets us revert to Emacs state in non-vi buffers.")
-
-(viper-deflocalvar vimpulse-visual-region-expanded nil
-  "Whether region is expanded to the Visual selection.")
-
-(viper-deflocalvar vimpulse-visual-point nil
-  "Last expanded `point' in Visual mode.")
-
-(viper-deflocalvar vimpulse-visual-mark nil
-  "Last expanded `mark' in Visual mode.")
-
-(viper-deflocalvar vimpulse-visual-overlay nil
-  "Overlay for Visual selection.
-In XEmacs, this is an extent.")
-
-(viper-deflocalvar vimpulse-visual-block-overlays nil
-  "Overlays for Visual Block selection.")
-
-(viper-deflocalvar vimpulse-visual-whitespace-overlay nil
-  "Overlay encompassing text inserted into the buffer
-to make Block selection at least one column wide.")
-
-(viper-deflocalvar vimpulse-undo-list-pointer nil
-  "Everything up to this mark is united in the undo-list.")
-
-(defvar vimpulse-visual-height nil
-  "Height of last Visual selection.")
-
-(defvar vimpulse-visual-width nil
-  "Width of last Visual selection.")
-
-(defvar vimpulse-visual-insert-coords nil
-  "List with (I-COM UL-POS COL NLINES), where
-I-COM is the insert command (?i, ?a, ?I or ?A),
-UL-POS is the position of the upper left corner of the region,
-COL is the column of insertion, and
-NLINES is the number of lines in the region.")
-
 (defvar vimpulse-movement-cmds
   '(backward-char backward-list backward-paragraph backward-sentence
     backward-sexp backward-up-list backward-word beginning-of-buffer
@@ -949,9 +841,10 @@ NLINES is the number of lines in the region.")
     vimpulse-end-of-previous-word vimpulse-goto-definition
     vimpulse-goto-first-line vimpulse-goto-line
     vimpulse-visual-block-rotate vimpulse-visual-exchange-corners
+    vimpulse-visual-forward-char vimpulse-visual-goto-eol
     vimpulse-visual-reselect vimpulse-visual-restore
-    vimpulse-visual-toggle-block vimpulse-visual-toggle-line
-    vimpulse-visual-toggle-char viper-backward-Word
+    vimpulse-visual-toggle-block vimpulse-visual-toggle-char
+    vimpulse-visual-toggle-line viper-backward-Word
     viper-backward-char viper-backward-paragraph
     viper-backward-sentence viper-backward-word
     viper-beginning-of-line viper-digit-argument viper-end-of-Word
@@ -1000,24 +893,24 @@ The topmost modes have the highest priority.")
 
 (defun vimpulse-configure-variables ()
   "Set various variables, unless customized."
-  ;; Can backspace past start of insert/line.
+  ;; can backspace past start of insert/line
   (vimpulse-setq viper-ex-style-editing nil)
-  ;; Don't create new frame for manpages.
+  ;; don't create new frame for manpages
   (vimpulse-setq woman-use-own-frame nil)
-  ;; Don't prompt upon K key (manpage display).
+  ;; don't prompt upon K key (manpage display)
   (vimpulse-setq woman-use-topic-at-point t)
-  ;; No start-up message.
+  ;; no start-up message
   (vimpulse-setq viper-inhibit-startup-message t)
-  ;; Viper expert level 5.
+  ;; Viper expert level 5
   (vimpulse-setq viper-expert-level 5)
-  ;; Make cursor color consistent.
+  ;; make cursor color consistent
   (vimpulse-setq viper-insert-state-cursor-color
                  viper-vi-state-cursor-color)
-  ;; Cursor moves backwards when exiting Insert state.
+  ;; cursor moves backwards when exiting Insert state
   (vimpulse-setq viper-ESC-moves-cursor-back t)
-  ;; Not in Vim: C-h is indispensable in Emacs.
+  ;; not in Vim: C-h is indispensable in Emacs
   (vimpulse-setq viper-want-ctl-h-help t)
-  ;; Refresh Viper settings.
+  ;; refresh Viper settings
   (viper-change-state-to-vi))
 
 (if (and (boundp 'after-init-time) after-init-time)
@@ -1025,6 +918,7 @@ The topmost modes have the highest priority.")
   (add-hook 'after-init-hook 'vimpulse-configure-variables))
 
 ;;;; Redefinitions of some of Viper's functions
+
 
 (defalias 'viper-digit-argument 'digit-argument)
 
@@ -1040,9 +934,11 @@ The topmost modes have the highest priority.")
   "Echo keystrokes immediately."
   (setq echo-keystrokes 0.01))
 
+(defvar vimpulse-saved-echo-keystrokes echo-keystrokes)
+
 (defadvice restore-overriding-map (after echo-keystrokes activate)
   "Restore `echo-keystrokes'."
-  (setq echo-keystrokes saved-echo-keystrokes))
+  (setq echo-keystrokes vimpulse-saved-echo-keystrokes))
 
 (defadvice viper-change
   (around vimpulse-want-change-state activate)
@@ -1051,10 +947,11 @@ The topmost modes have the highest priority.")
    (vimpulse-want-change-state
     ad-do-it)
    (t
-    ;; We don't want Viper's Replace mode when changing text;
-    ;; just delete and enter Insert state.
+    ;; we don't want Viper's Replace mode when changing text;
+    ;; just delete and enter Insert state
     (setq viper-began-as-replace t)
     (kill-region beg end)
+    (goto-char beg)
     (viper-change-state-to-insert))))
 
 (defun vimpulse-set-replace-cursor-type ()
@@ -1075,16 +972,16 @@ The topmost modes have the highest priority.")
 
 ;;; Marks
 
-;; The following makes lowercase marks buffer-local.
+;; the following makes lowercase marks buffer-local
 (defun vimpulse-mark-point ()
   "Set Vimpulse mark at point."
   (interactive)
   (let ((char (read-char)))
     (cond
-     ;; Local marks.
+     ;; local marks
      ((and (<= ?a char) (<= char ?z))
       (vimpulse-mark char))
-     ;; Global marks.
+     ;; global marks
      ((and (<= ?A char) (<= char ?Z))
       (vimpulse-mark char t))
      ;; < > . , ^
@@ -1210,8 +1107,8 @@ Mark is buffer-local unless GLOBAL."
 
 ;;; Code for adding extra states
 
-;; State index variables: for keeping track of which modes
-;; belong to which states, et cetera.
+;; state index variables: for keeping track of which modes
+;; belong to which states, et cetera
 (defvar vimpulse-state-vars-alist
   '((vi-state
      (id . viper-vi-state-id)
@@ -1362,20 +1259,20 @@ The first modes get the highest priority.")
 Entries have the form (MODE . MAP-EXPR), where MAP-EXPR is an
 expression for determining the keymap of MODE.")
 
-;; State-changing code: this uses the variables above.
+;; state-changing code: this uses the variables above
 (defun vimpulse-normalize-minor-mode-map-alist ()
   "Normalize state keymaps."
   (let (local-user-mode map mode modes)
-    ;; Refresh `viper--intercept-key-maps'.
+    ;; refresh `viper--intercept-key-maps'
     (setq viper--intercept-key-maps nil)
     (dolist (mode vimpulse-state-vars-alist)
       (add-to-list 'viper--intercept-key-maps
                    (cons (cdr (assq 'intercept-mode mode))
                          (eval (cdr (assq 'intercept-map mode)))) t))
-    ;; Refresh `viper--key-maps'.
+    ;; refresh `viper--key-maps'
     (setq viper--key-maps (vimpulse-make-keymap-alist))
-    ;; Make `minor-mode-map-alist' buffer-local in older Emacs versions
-    ;; lacking `emulation-mode-map-alists'.
+    ;; make `minor-mode-map-alist' buffer-local in older Emacs versions
+    ;; lacking `emulation-mode-map-alists'
     (unless (and (fboundp 'add-to-ordered-list)
                  (boundp 'emulation-mode-map-alists))
       (set (make-local-variable 'minor-mode-map-alist)
@@ -1399,17 +1296,6 @@ and remove duplicates."
       (add-to-list 'result mode t 'eq))
     (setq vimpulse-auxiliary-modes result)))
 
-;; Ensure that mode-specific bindings are refreshed properly.
-(defadvice set-auto-mode (after vimpulse activate)
-  "Refresh mode-specific bindings."
-  (viper-normalize-minor-mode-map-alist)
-  (viper-set-mode-vars-for viper-current-state))
-
-(defadvice set-viper-state-in-major-mode (after vimpulse activate)
-  "Refresh mode-specific bindings."
-  (viper-normalize-minor-mode-map-alist)
-  (viper-set-mode-vars-for viper-current-state))
-
 (defun vimpulse-make-toggle-alist (&optional state &rest excluded-states)
   "Make toggle alist for STATE (current if not specified)."
   (let (mode result toggle)
@@ -1418,17 +1304,17 @@ and remove duplicates."
       (dolist (entry (cdr (assq state vimpulse-state-modes-alist)))
         (setq toggle (cdr entry)
               entry  (car entry))
-        (mapcar
+        (mapc
          (lambda (var)
            (unless (assq (car var) result)
              (if toggle
                  (add-to-list 'result var t)
                (add-to-list 'result (cons (car var) nil)))))
          (cond
-          ;; State reference.
+          ;; state reference
           ((assq entry vimpulse-state-modes-alist)
            (apply 'vimpulse-make-toggle-alist entry state excluded-states))
-          ;; Auxiliary modes.
+          ;; auxiliary modes
           ((rassq entry vimpulse-auxiliary-modes-alist)
            (let (aux result)
              (setq entry (symbol-value entry))
@@ -1444,7 +1330,7 @@ and remove duplicates."
                (unless (assq aux result)
                  (add-to-list 'result (cons aux toggle) t)))
              result))
-          ;; Regular mode.
+          ;; regular mode
           (t
            (unless (assq entry result)
              (list (cons entry toggle))))))))
@@ -1471,6 +1357,7 @@ and remove duplicates."
                        t))))
     result))
 
+(defvar viper-mode-string)
 (defadvice viper-refresh-mode-line (after vimpulse-states activate)
   "Refresh mode line tag for Vimpulse states."
   (let ((id (assq viper-current-state vimpulse-state-vars-alist)))
@@ -1482,9 +1369,9 @@ and remove duplicates."
 (defadvice viper-set-mode-vars-for (after vimpulse-states activate)
   "Toggle Vimpulse state modes."
   (let (enable disable)
-    ;; Determine which modes to enable.
+    ;; determine which modes to enable
     (setq enable (vimpulse-make-toggle-alist state))
-    ;; Determine which modes to disable.
+    ;; determine which modes to disable
     (dolist (entry vimpulse-state-modes-alist)
       (dolist (mode (mapcar 'car (cdr entry)))
         (unless (or (assq mode enable)
@@ -1495,11 +1382,11 @@ and remove duplicates."
       (dolist (aux (mapcar 'cdr (symbol-value (cdr entry))))
         (unless (assq aux enable)
           (add-to-list 'disable aux t))))
-    ;; Enable modes.
+    ;; enable modes
     (dolist (entry enable)
       (when (boundp (car entry))
         (set (car entry) (eval (cdr entry)))))
-    ;; Disable modes.
+    ;; disable modes
     (dolist (entry disable)
       (when (boundp entry)
         (set entry nil)))))
@@ -1573,14 +1460,6 @@ Usage:
 
 (defalias 'viper-add-local-keys 'vimpulse-add-local-keys)
 
-(eval-and-compile
-  (defun vimpulse-unquote (exp)
-    "Return EXP unquoted."
-    (if (and (listp exp)
-             (eq (car exp) 'quote))
-        (eval exp)
-      exp)))
-
 ;; Macro for defining new Viper states. This saves us the trouble of
 ;; defining and indexing all those minor modes manually.
 (defmacro vimpulse-define-state (state doc &rest body)
@@ -1626,7 +1505,8 @@ Following the keywords is optional code to be executed each time
 the state is enabled or disabled. This is stored in a `defadvice'
 of `viper-change-state'. :advice specifies the advice type
 \(default `after'). The advice runs :hook before completing."
-  (declare (debug (&define name stringp
+  (declare (debug (&define name
+                           [&optional stringp]
                            [&rest [keywordp sexp]]
                            def-body))
            (indent defun))
@@ -1636,7 +1516,7 @@ of `viper-change-state'. :advice specifies the advice type
         kbd-mode keyword local-user-map local-user-mode modifier-alist
         modifier-mode name name-string need-local-map prefix
         prefixed-name-string state-name state-name-string)
-    ;; Collect keywords.
+    ;; collect keywords
     (while (keywordp (setq keyword (car body)))
       (setq body (cdr body))
       (cond
@@ -1693,7 +1573,7 @@ of `viper-change-state'. :advice specifies the advice type
         (setq intercept-map (vimpulse-unquote (pop body))))
        (t
         (pop body))))
-    ;; Set up the state name etc.
+    ;; set up the state name etc.
     (setq name-string (replace-regexp-in-string
                        "-state$" "" (symbol-name state)))
     (setq name (intern name-string))
@@ -1711,13 +1591,13 @@ of `viper-change-state'. :advice specifies the advice type
     (unless (and change-func (symbolp change-func))
       (setq change-func
             (intern (concat prefix "change-state-to-" name-string))))
-    ;; Macro expansion.
+    ;; macro expansion
     `(progn
-       ;; Define change function.
+       ;; define change function
        (defun ,change-func ()
          ,(format "Change Viper state to %s." state-name)
          (viper-change-state ',state-name))
-       ;; Define state variables etc.
+       ;; define state variables etc.
        (let* ((advice ',advice)
               (auxiliary-modes ',auxiliary-modes)
               (change-func ',change-func)
@@ -1849,7 +1729,7 @@ mode-specific modifications to %s.\n\n%s" state-name doc) t))
          (defvar ,auxiliary-modes nil)
          (add-to-list 'vimpulse-auxiliary-modes-alist
                       (cons ',state-name ',auxiliary-modes) t)
-         ;; Remove old index entries.
+         ;; remove old index entries
          (dolist (entry (list basic-mode
                               diehard-mode
                               modifier-mode
@@ -1863,7 +1743,7 @@ mode-specific modifications to %s.\n\n%s" state-name doc) t))
                (assq-delete-all state-name vimpulse-state-modes-alist))
          (setq vimpulse-state-vars-alist
                (assq-delete-all state-name vimpulse-state-vars-alist))
-         ;; Index keymaps.
+         ;; index keymaps
          (add-to-list 'vimpulse-state-maps-alist
                       (cons basic-mode basic-map))
          (add-to-list 'vimpulse-state-maps-alist
@@ -1883,8 +1763,8 @@ mode-specific modifications to %s.\n\n%s" state-name doc) t))
                       (cons local-user-mode local-user-map))
          (add-to-list 'vimpulse-state-maps-alist
                       (cons intercept-mode intercept-map))
-         ;; Index minor mode toggling.
-         ;; First, sort lists from symbols in :enable.
+         ;; index minor mode toggling: first, sort lists from symbols
+         ;; in :enable
          (unless (listp enable)
            (setq enable (list enable)))
          (dolist (entry enable)
@@ -1894,8 +1774,8 @@ mode-specific modifications to %s.\n\n%s" state-name doc) t))
                      val  (cadr entry)))
              (when (and mode (symbolp mode))
                (add-to-list 'enable-modes-alist (cons mode val) t))))
-         ;; Then add the state's own modes to the front
-         ;; if they're not already there.
+         ;; then add the state's own modes to the front if they're not
+         ;; already there
          (dolist (mode (list (cons basic-mode t)
                              (cons diehard-mode
                                    '(not (or viper-want-emacs-keys-in-vi
@@ -1908,11 +1788,11 @@ mode-specific modifications to %s.\n\n%s" state-name doc) t))
                              (cons intercept-mode t)))
            (unless (assq (car mode) enable-modes-alist)
              (add-to-list 'enable-modes-alist mode)))
-         ;; Add the result to `vimpulse-state-modes-alist'.
+         ;; add the result to `vimpulse-state-modes-alist'
          (add-to-list 'vimpulse-state-modes-alist
                       (cons state-name enable-modes-alist) t)
          (viper-normalize-minor-mode-map-alist)
-         ;; Index state variables.
+         ;; index state variables
          (setq vars-alist
                (list (cons 'id id)
                      (cons 'hook hook)
@@ -1935,12 +1815,13 @@ mode-specific modifications to %s.\n\n%s" state-name doc) t))
                      (cons 'intercept-map intercept-map)))
          (add-to-list 'vimpulse-state-vars-alist
                       (cons state-name vars-alist) t)
-         ;; Make toggle-advice.
+         ;; make toggle-advice
          (eval `(defadvice viper-change-state (,advice ,state-name activate)
                   ,(format "Toggle %s." state-name)
                   ,',@body
                   (when (eq new-state ',state-name)
-                    (run-hooks ',hook))))))))
+                    (run-hooks ',hook))))
+         ',state))))
 
 (when (fboundp 'font-lock-add-keywords)
   (font-lock-add-keywords
@@ -1994,7 +1875,7 @@ docstring. The variable becomes buffer-local whenever set.")
       (2 font-lock-variable-name-face nil t))
      ("(\\(viper-loop\\)\\>" 1 font-lock-keyword-face))))
 
-;; Search bug: `viper-search' flashes twice when search wraps.
+;; search bug: `viper-search' flashes twice when search wraps
 (defun vimpulse-search
   (string forward arg
           &optional no-offset init-point fail-if-not-found dont-flash)
@@ -2002,19 +1883,13 @@ docstring. The variable becomes buffer-local whenever set.")
       (let ((val (viper-p-val arg))
             (com (viper-getcom arg))
             (offset (not no-offset))
-            (case-fold-search viper-case-fold-search)
             (start-point (or init-point (point))))
         (viper-deactivate-mark)
-        ;; Smartcase searching: upper-case chars disable case folding.
+        ;; smartcase searching: upper-case chars disable case folding
         (when search-upper-case
           (setq case-fold-search
-                (and case-fold-search
-                     (isearch-no-upper-case-p
-                      viper-s-string viper-re-search))))
-        (and search-upper-case
-             (isearch-no-upper-case-p
-              viper-s-string viper-re-search)
-             viper-case-fold-search)
+                (isearch-no-upper-case-p
+                 viper-s-string viper-re-search)))
         (if forward
             (condition-case nil
                 (progn
@@ -2036,20 +1911,20 @@ docstring. The variable becomes buffer-local whenever set.")
                      (viper-search string forward (cons 1 com)
                                    t start-point 'fail)
                      (setq dont-flash t)
-                     ;; Don't wait in macros.
+                     ;; don't wait in macros
                      (or executing-kbd-macro
                          (memq viper-intermediate-command
                                '(viper-repeat
                                  viper-digit-argument
                                  viper-command-argument))
                          (sit-for 2))
-                     ;; Delete the wrap-around message.
+                     ;; delete the wrap-around message
                      (message ""))
                  (goto-char start-point)
                  (error "`%s': %s not found"
                         string
                         (if viper-re-search "Pattern" "String")))))
-          ;; Backward.
+          ;; backward
           (condition-case nil
               (progn
                 (if viper-re-search
@@ -2065,23 +1940,23 @@ docstring. The variable becomes buffer-local whenever set.")
                    (viper-search string forward (cons 1 com)
                                  t start-point 'fail)
                    (setq dont-flash t)
-                   ;; Don't wait in macros.
+                   ;; don't wait in macros
                    (or executing-kbd-macro
                        (memq viper-intermediate-command
                              '(viper-repeat
                                viper-digit-argument
                                viper-command-argument))
                        (sit-for 2))
-                   ;; Delete the wrap-around message.
+                   ;; delete the wrap-around message
                    (message ""))
                (goto-char start-point)
                (error "`%s': %s not found"
                       string
                       (if viper-re-search "Pattern" "String"))))))
-        ;; Pull up or down if at top/bottom of window.
+        ;; pull up or down if at top/bottom of window
         (viper-adjust-window)
-        ;; Highlight the result of search.
-        ;; Don't wait and don't highlight in macros.
+        ;; highlight the result of search;
+        ;; don't wait and don't highlight in macros
         (or dont-flash
             executing-kbd-macro
             (memq viper-intermediate-command
@@ -2092,7 +1967,7 @@ docstring. The variable becomes buffer-local whenever set.")
 
 (defalias 'viper-search 'vimpulse-search)
 
-;; e/E bug: on a single-letter word, ce may change two words.
+;; e/E bug: on a single-letter word, ce may change two words
 (defun vimpulse-end-of-word-kernel ()
   (when (viper-looking-at-separator)
     (viper-skip-all-separators-forward))
@@ -2132,7 +2007,7 @@ docstring. The variable becomes buffer-local whenever set.")
       (viper-move-marker-locally 'viper-com-point (point)))
      ((save-excursion
         (viper-forward-char-carefully)
-        (memq (char-syntax (char-after)) '(?\  ?- nil)))
+        (or (eolp) (memq (char-syntax (char-after)) '(?\  ?- nil))))
       (setq val (1+ val))))
     (viper-loop val
       (viper-end-of-word-kernel)
@@ -2147,6 +2022,16 @@ docstring. The variable becomes buffer-local whenever set.")
 
 ;;;; General utility code used by all of Vimpulse;
 ;;;; may be useful to the end user
+
+
+;; macro helper
+(eval-and-compile
+  (defun vimpulse-unquote (exp)
+    "Return EXP unquoted."
+    (if (and (listp exp)
+             (eq (car exp) 'quote))
+        (cadr exp)
+      exp)))
 
 ;;; Autogenerated vi bindings
 
@@ -2221,8 +2106,8 @@ up in vi keymaps. If REPLACE is non-nil, may overwrite bindings
 in MAP."
   (vimpulse-add-vi-bindings map vimpulse-viper-movement-cmds replace))
 
-;; The default for this function is to replace rather than augment,
-;; as core navigation should be present everywhere.
+;; the default for this function is to replace rather than augment,
+;; as core navigation should be present everywhere
 (defun vimpulse-add-core-movement-cmds (map &optional augment)
   "Add \"core\" movement commands to MAP, forcefully.
 The commands are taken from `vimpulse-core-movement-cmds'.
@@ -2250,7 +2135,7 @@ If REPLACE is non-nil, may overwrite bindings in MAP."
 The commands are taken from `vimpulse-viper-movement-cmds'.
 If REPLACE is non-nil, may overwrite bindings in MAP."
   (let ((cmds vimpulse-viper-movement-cmds))
-    ;; Remove core movement commands.
+    ;; remove core movement commands
     (dolist (cmd vimpulse-core-movement-cmds)
       (setq cmds (delq cmd cmds)))
     (vimpulse-inhibit-cmds map cmds replace)))
@@ -2301,7 +2186,8 @@ in vi state and bind them to TO in KEYMAP."
 
 (defmacro vimpulse-with-state (state &rest body)
   "Execute BODY with Viper state STATE, then restore previous state."
-  (declare (indent defun))
+  (declare (indent defun)
+           (debug t))
   `(let ((new-viper-state ,state)
          (old-viper-state viper-current-state))
      (unwind-protect
@@ -2324,14 +2210,12 @@ in vi state and bind them to TO in KEYMAP."
   "Return a copy of VECTOR truncated to LENGTH.
 If LENGTH is negative, skip last elements of VECTOR.
 If OFFSET is specified, skip first elements of VECTOR."
-  ;; If LENGTH is too large, trim it.
+  ;; if LENGTH is too large, trim it
   (when (> length (length vector))
     (setq length (length vector)))
-  ;; If LENGTH is negative, convert it to the positive equivalent.
+  ;; if LENGTH is negative, convert it to the positive equivalent
   (when (< length 0)
-    (setq length (+ (length vector) length)))
-  (when (< length 0)
-    (setq length 0))
+    (setq length (max 0 (+ (length vector) length))))
   (if offset
       (setq length (- length offset))
     (setq offset 0))
@@ -2343,18 +2227,19 @@ If OFFSET is specified, skip first elements of VECTOR."
 ;; `this-command-keys', to be looked up in `vimpulse-careful-alist'.
 (defun vimpulse-strip-prefix (key-sequence &optional string)
   "Strip any prefix argument keypresses from KEY-SEQUENCE.
-If STRING is t, output a string; otherwise output a vector."
+If STRING is t, output a string if possible.
+Otherwise output a vector."
   (let* ((offset 0)
          (temp-sequence (vconcat key-sequence))
          (key (aref temp-sequence offset))
          (length (length temp-sequence))
          temp-string)
-    ;; If XEmacs, get rid of the event object type.
+    ;; if XEmacs, get rid of the event object type
     (and (featurep 'xemacs) (eventp key)
          (setq key (event-to-character key nil t)))
-    ;; Any keys bound to `universal-argument', `digit-argument' or
+    ;; any keys bound to `universal-argument', `digit-argument' or
     ;; `negative-argument' or bound in `universal-argument-map'
-    ;; are considered prefix keys.
+    ;; are considered prefix keys
     (while (and (or (memq (key-binding (vector key) t)
                           '(universal-argument
                             digit-argument
@@ -2366,18 +2251,16 @@ If STRING is t, output a string; otherwise output a vector."
       (setq key (aref temp-sequence offset))
       (and (featurep 'xemacs) (eventp key)
            (setq key (event-to-character key nil t))))
-    (if string
-        (concat "" (vimpulse-truncate temp-sequence length offset))
+    (if (and string
+             ;; string conversion is impossible if the vector
+             ;; contains a non-numerical element
+             (not (memq nil (mapcar 'integerp (append temp-sequence nil)))))
+        (concat (vimpulse-truncate temp-sequence length offset))
       (vimpulse-truncate temp-sequence length offset))))
 
-(defun vimpulse-memq-recursive (elt tree)
-  "Return non-nil if TREE contains ELT.
-Test for equivalence using `eq'."
-  (cond ((null tree) nil)
-        ((eq (car tree) elt) tree)
-        ((consp (car tree)) (or (vimpulse-memq-recursive elt (car tree))
-                                (vimpulse-memq-recursive elt (cdr tree))))
-        (t (vimpulse-memq-recursive elt (cdr tree)))))
+;; GNU Emacs 22 lacks `characterp'
+(unless (fboundp 'characterp)
+  (defalias 'characterp 'integerp))
 
 ;;; Movement
 
@@ -2400,7 +2283,8 @@ tabs are changed to spaces. (FORCE untabifies regardless.)"
 (defmacro vimpulse-limit (start end &rest body)
   "Eval BODY, but limit point to buffer-positions START and END.
 Both may be nil. Returns position."
-  (declare (indent 2))
+  (declare (indent 2)
+           (debug t))
   `(let ((start (or ,start (point-min)))
          (end   (or ,end   (point-max))))
      (when (> start end)
@@ -2414,7 +2298,8 @@ Both may be nil. Returns position."
 (defmacro vimpulse-skip (dir bounds &rest body)
   "Eval BODY, but limit point to BOUNDS in DIR direction.
 Returns position."
-  (declare (indent 2))
+  (declare (indent 2)
+           (debug t))
   `(let ((dir ,dir) (bounds ,bounds) start end)
      (setq dir (if (and (numberp dir) (< dir 0)) -1 1))
      (dolist (bound bounds)
@@ -2442,7 +2327,7 @@ Returns the new position."
       (when (looking-at regexp)
         (goto-char (match-end 0))))))
 
-;; XEmacs only has `looking-at'.
+;; XEmacs only has `looking-at'
 (unless (fboundp 'looking-back)
   (defun looking-back (regexp &optional limit greedy)
     "Return t if text before point matches regular expression REGEXP."
@@ -2482,7 +2367,7 @@ Returns the new position."
 
 ;;; Region
 
-;; GNU Emacs 22 lacks `region-active-p'.
+;; GNU Emacs 22 lacks `region-active-p'
 (unless (fboundp 'region-active-p)
   (defun region-active-p ()
     (and transient-mark-mode mark-active)))
@@ -2519,7 +2404,8 @@ If POS if specified, set mark at POS instead."
       (unwind-protect
           (and (fboundp 'cua-set-mark)
                (cua-set-mark))
-        (message oldmsg))
+        (if oldmsg (message "%s" oldmsg)
+          (message nil)))
       (goto-char opoint)))
    (t
     (let (this-command)
@@ -2564,15 +2450,15 @@ BEG and END. Returns nil if region is unchanged."
 
 (eval-and-compile
   (cond
-   ((featurep 'xemacs)                   ; XEmacs
+   ((featurep 'xemacs)                  ; XEmacs
     (defalias 'vimpulse-delete-overlay 'delete-extent)
     (defalias 'vimpulse-overlays-at 'extents-at))
-   (t                                    ; GNU Emacs
+   (t                                   ; GNU Emacs
     (defalias 'vimpulse-delete-overlay 'delete-overlay)
     (defalias 'vimpulse-overlays-at 'overlays-at))))
 
 ;; `viper-make-overlay' doesn't handle FRONT-ADVANCE
-;; and REAR-ADVANCE properly in XEmacs.
+;; and REAR-ADVANCE properly in XEmacs
 (defun vimpulse-make-overlay
   (beg end &optional buffer front-advance rear-advance)
   "Create a new overlay with range BEG to END in BUFFER.
@@ -2617,6 +2503,9 @@ In XEmacs, change the `end-glyph' property."
 
 ;;; Undo
 
+(viper-deflocalvar vimpulse-undo-list-pointer nil
+  "Everything up to this mark is united in the undo-list.")
+
 (defun vimpulse-refresh-undo-step ()
   "Refresh `buffer-undo-list' entries for current undo step.
 Undo boundaries until `vimpulse-undo-list-pointer' are removed
@@ -2654,7 +2543,7 @@ single action."
     (setq vimpulse-undo-list-pointer buffer-undo-list)
     ;; Continually refresh the undo entries for the step,
     ;; ensuring proper synchronization between `buffer-undo-list'
-    ;; and `buffer-undo-tree'.
+    ;; and `buffer-undo-tree'
     (add-hook 'post-command-hook 'vimpulse-refresh-undo-step nil t)))
 
 (defun vimpulse-end-undo-step ()
@@ -2669,6 +2558,8 @@ single action."
 
 (defmacro vimpulse-single-undo (&rest body)
   "Execute BODY as a single undo step."
+  (declare (indent 0)
+           (debug t))
   `(unwind-protect
        (progn
          (vimpulse-start-single-undo)
@@ -2708,6 +2599,52 @@ single action."
   "Return the end of RANGE."
   (apply 'max (vimpulse-motion-range range)))
 
+(defun vimpulse-range-height (range &optional normalized)
+  "Return height of RANGE. Normalize unless NORMALIZED.
+
+A block range has height and width, a line range
+has only height, and a character range has only width."
+  (let* ((range (if normalized range
+                  (vimpulse-normalize-motion-range range)))
+         (beg (vimpulse-range-beginning range))
+         (end (vimpulse-range-end range))
+         (type (vimpulse-motion-type range)))
+    (cond
+     ((eq type 'block)
+      (count-lines beg
+                   (save-excursion
+                     (goto-char end)
+                     (if (and (bolp) (not (eobp)))
+                         (1+ end)
+                       end))))
+     ((eq type 'line)
+      (count-lines beg end))
+     (t
+      nil))))
+
+(defun vimpulse-range-width (range &optional normalized)
+  "Return width of RANGE. Normalize unless NORMALIZED.
+
+A block range has height and width, a line range
+has only height, and a character range has only width."
+  (let* ((range (if normalized range
+                  (vimpulse-normalize-motion-range range)))
+         (beg (vimpulse-range-beginning range))
+         (end (vimpulse-range-end range))
+         (type (vimpulse-motion-type range)))
+    (cond
+     ((eq type 'block)
+      (abs (- (save-excursion
+                (goto-char end)
+                (current-column))
+              (save-excursion
+                (goto-char beg)
+                (current-column)))))
+     ((eq type 'line)
+      nil)
+     (t
+      (abs (- end beg))))))
+
 (defun vimpulse-motion-type (object &optional raw)
   "Return motion type of OBJECT.
 The type is one of `exclusive', `inclusive', `line' and `block'.
@@ -2731,7 +2668,7 @@ If NORMALIZE is non-nil, normalize the range with
         (vimpulse-normalize-motion-range range type)
       (cons type range))))
 
-;; This implements section 1 of motion.txt (Vim Reference Manual).
+;; This implements section 1 of motion.txt (Vim Reference Manual)
 (defun vimpulse-normalize-motion-range (range &optional type)
   "Normalize the beginning and end of a motion range (TYPE FROM TO).
 Returns the normalized range.
@@ -2757,9 +2694,9 @@ See also `vimpulse-block-range', `vimpulse-line-range',
      (t
       (vimpulse-exclusive-range from to t)))))
 
-;; Ranges returned by these functions have the form (TYPE BEG END) where TYPE
-;; is one of `inclusive', `exclusive', `line' or `block' and BEG and END are
-;; the buffer positions.
+;; Ranges returned by these functions have the form (TYPE BEG END)
+;; where TYPE is one of `inclusive', `exclusive', `line' or `block'
+;; and BEG and END are the buffer positions.
 (defun vimpulse-block-range (from to)
   "Return a blockwise motion range delimited by FROM and TO.
 Like `vimpulse-inclusive-range', but for rectangles:
@@ -2815,7 +2752,7 @@ That is, the last character is included."
          (end (max from to)))
     (save-excursion
       (goto-char end)
-      (unless (or (eobp) (and (eolp) (not (bolp))))
+      (unless (eobp)
         (setq end (1+ end)))
       (vimpulse-make-motion-range beg end 'inclusive))))
 
@@ -2850,821 +2787,53 @@ beginning of a line, a different type of range is returned:
        (t
         (vimpulse-make-motion-range beg end 'exclusive))))))
 
-;;;; Keybindings
-
-;;; C-u
-
-(unless vimpulse-want-C-u-like-Vim
-  (define-key viper-vi-basic-map "\C-u" 'universal-argument))
-
-;;; vi (command) mode keys
-
-(define-key viper-vi-basic-map "c" 'vimpulse-change)
-(define-key viper-vi-basic-map "d" 'vimpulse-delete)
-(define-key viper-vi-basic-map "g" nil) ; delete `viper-nil' binding
-(define-key viper-vi-basic-map "g?" 'vimpulse-rot13)
-(define-key viper-vi-basic-map "gU" 'vimpulse-upcase)
-(define-key viper-vi-basic-map "gb" 'vimpulse-end-of-previous-word)
-(define-key viper-vi-basic-map "gd" 'vimpulse-goto-definition)
-(define-key viper-vi-basic-map "gf" 'find-file-at-point)
-(define-key viper-vi-basic-map "gg" 'vimpulse-goto-first-line)
-(define-key viper-vi-basic-map "gh" 'backward-char)
-(define-key viper-vi-basic-map "gi" 'vimpulse-resume-insert)
-(define-key viper-vi-basic-map "gj" 'next-line)
-(define-key viper-vi-basic-map "gk" 'previous-line)
-(define-key viper-vi-basic-map "gl" 'forward-char)
-(define-key viper-vi-basic-map "gq" 'vimpulse-fill)
-(define-key viper-vi-basic-map "gu" 'vimpulse-downcase)
-(define-key viper-vi-basic-map "gw" 'vimpulse-fill)
-(define-key viper-vi-basic-map "g~" 'vimpulse-invert-case)
-(define-key viper-vi-basic-map "g0" 'vimpulse-beginning-of-visual-line)
-(define-key viper-vi-basic-map "g$" 'vimpulse-end-of-visual-line)
-(define-key viper-vi-basic-map "J" 'vimpulse-join)
-(define-key viper-vi-basic-map "K" 'woman)
-(define-key viper-vi-basic-map "m" 'vimpulse-mark-point)
-(define-key viper-vi-basic-map "`" 'vimpulse-goto-mark)
-(define-key viper-vi-basic-map "'" 'vimpulse-goto-mark-and-skip-white)
-(define-key viper-vi-basic-map "r" 'vimpulse-replace)
-(define-key viper-vi-basic-map "y" 'vimpulse-yank)
-(define-key viper-vi-basic-map "zb" 'viper-line-to-bottom)
-(define-key viper-vi-basic-map "zh" 'scroll-right)
-(define-key viper-vi-basic-map "zl" 'scroll-left)
-(define-key viper-vi-basic-map "zt" 'viper-line-to-top)
-(define-key viper-vi-basic-map "zz" 'viper-line-to-middle)
-(define-key viper-vi-basic-map "\C-]" 'vimpulse-jump-to-tag-at-point)
-(define-key viper-vi-basic-map "\C-t" 'pop-tag-mark)
-(define-key viper-vi-basic-map "]" nil) ; delete `viper-ket-function' binding
-(define-key viper-vi-basic-map "]P" 'vimpulse-Put-and-indent)
-(define-key viper-vi-basic-map "]p" 'vimpulse-put-and-indent)
-(define-key viper-vi-basic-map "=" 'vimpulse-indent)
-(define-key viper-vi-basic-map "+" 'vimpulse-previous-line-skip-white)
-(define-key viper-vi-basic-map "_" 'vimpulse-next-line-skip-white)
-(define-key viper-vi-basic-map "#" 'vimpulse-search-backward-for-symbol-at-point)
-(define-key viper-vi-basic-map "*" 'vimpulse-search-forward-for-symbol-at-point)
-(define-key viper-vi-basic-map "<" 'vimpulse-shift-left)
-(define-key viper-vi-basic-map ">" 'vimpulse-shift-right)
-(define-key viper-vi-basic-map "~" 'vimpulse-invert-char)
-(define-key viper-vi-basic-map "\"" 'vimpulse-read-register)
-
-;; Visual bindings.
-(define-key viper-vi-basic-map "v" 'vimpulse-visual-toggle-char)
-(define-key viper-vi-basic-map "V" 'vimpulse-visual-toggle-line)
-(define-key viper-vi-basic-map "\C-v" 'vimpulse-visual-toggle-block)
-(define-key viper-vi-basic-map "gv" 'vimpulse-visual-restore)
-
-;; Map undo and redo.
-(define-key viper-vi-basic-map "u" 'undo)
-(cond
- ((fboundp 'undo-tree-redo)
-  (define-key viper-vi-basic-map "\C-r" 'undo-tree-redo))
- ((fboundp 'redo)
-  (define-key viper-vi-basic-map "\C-r" 'redo)))
-
-;; Window manipulation.
-(define-prefix-command 'vimpulse-window-map)
-(define-key viper-vi-basic-map "\C-w" 'vimpulse-window-map)
-(define-key vimpulse-window-map "\C-w" 'vimpulse-cycle-windows)
-(define-key vimpulse-window-map "w" 'vimpulse-cycle-windows)
-(define-key vimpulse-window-map "o" 'delete-other-windows)
-(define-key vimpulse-window-map "c" 'delete-window)
-(define-key vimpulse-window-map "s" 'split-window-vertically)
-(define-key vimpulse-window-map "v" 'split-window-horizontally)
-
-(when (fboundp 'windmove-left)
-  (define-key vimpulse-window-map "h" 'windmove-left)
-  (define-key vimpulse-window-map "j" 'windmove-down)
-  (define-key vimpulse-window-map "k" 'windmove-up)
-  (define-key vimpulse-window-map "l" 'windmove-right))
-
-;;; Insert mode keys
-
-;; Vim-like completion keys.
-(define-key viper-insert-basic-map "\C-p" 'vimpulse-abbrev-expand-before)
-(define-key viper-insert-basic-map "\C-n" 'vimpulse-abbrev-expand-after)
-(define-key viper-insert-basic-map "\C-x\C-p" 'vimpulse-expand-line)
-(define-key viper-insert-basic-map "\C-x\C-n" 'vimpulse-expand-line)
-(define-key viper-insert-basic-map [delete] 'delete-char) ; <delete> key
-;; Make ^[ work.
-(define-key viper-insert-basic-map (kbd "ESC") 'viper-exit-insert-state)
-
-;; His code (Brad).
-(defun vimpulse-cycle-windows ()
-  "Cycle point to another window."
-  (interactive)
-  (select-window (next-window)))
-
-;;; r, J, =, >, <
-
-(defun vimpulse-replace (beg end)
-  "Replace all selected characters with ARG."
-  (interactive (vimpulse-range nil t nil t 'forward-char))
-  (let (endpos length visual-p)
-    (setq endpos (max beg (1- end)))
-    (unless (and (eq viper-intermediate-command 'viper-repeat)
-                 viper-d-char)
-      (unwind-protect
-          (progn
-            (vimpulse-set-replace-cursor-type)
-            (save-excursion
-              (viper-special-read-and-insert-char))
-            (setq viper-d-char (char-after))
-            (delete-char 1))
-        (viper-restore-cursor-type)
-        (when vimpulse-visual-mode
-          (vimpulse-visual-mode -1)
-          (setq endpos beg))))
-    (cond
-     ((eq vimpulse-this-motion-type 'block)
-      (setq length (abs (- (save-excursion
-                             (goto-char beg)
-                             (current-column))
-                           (save-excursion
-                             (goto-char end)
-                             (current-column)))))
-      (vimpulse-apply-on-block
-       (lambda (beg end)
-         (goto-char beg)
-         (delete-region beg end)
-         (insert (make-string length viper-d-char)))
-       beg end))
-     (t
-      (goto-char beg)
-      (while (< (point) end)
-        (if (looking-at "\n")
-            (forward-char)
-          (delete-char 1)
-          (insert-char viper-d-char 1)))
-      (goto-char endpos)))))
-
-(defun vimpulse-join (beg end)
-  "Join the selected lines."
-  (interactive (vimpulse-range nil nil t nil 'vimpulse-line))
-  (let ((num (count-lines beg end)))
-    (unless (> num 2)
-      (setq num 2))
-    (viper-join-lines num)))
-
-(defun vimpulse-indent (beg end)
-  "Indent text according to mode."
-  (interactive (vimpulse-range t nil t))
-  (indent-region beg end nil)
-  (when viper-auto-indent
-    (back-to-indentation)))
-
-(defun vimpulse-shift-left (beg end)
-  "Shift all selected lines to the left."
-  (interactive (vimpulse-range))
-  (let ((nlines (count-lines beg end)))
-    (viper-next-line (cons (1- nlines) ?<))))
-
-(defun vimpulse-shift-right (beg end)
-  "Shift all selected lines to the right."
-  (interactive (vimpulse-range))
-  (let ((nlines (count-lines beg end)))
-    (viper-next-line (cons (1- nlines) ?>))))
-
-;;; g0, g$
-
-(defun vimpulse-beginning-of-visual-line (arg)
-  "Go to beginning of `visual-line-mode' line."
-  (interactive "p")
-  (if (and (boundp 'visual-line-mode) visual-line-mode)
-      (beginning-of-visual-line arg)
-    ;; Using `move-beginning-of-line' instead of `beginning-of-line'
-    ;; handles longlines-mode properly.
-    (move-beginning-of-line arg)))
-
-(defun vimpulse-end-of-visual-line (arg)
-  "Go to end of `visual-line-mode' line."
-  (interactive "p")
-  (if (and (boundp 'visual-line-mode) visual-line-mode)
-      (end-of-visual-line arg)
-    ;; Using `move-end-of-line' instead of `end-of-line'
-    ;; handles longlines-mode properly.
-    (move-end-of-line arg))
-  (unless (bolp)
-    (backward-char)))
-
-;;; gg
-
-(defun vimpulse-goto-first-line (arg)
-  "Go to first line."
-  (interactive "P")
-  (let ((val (viper-P-val arg))
-        (com (viper-getCom arg)))
-    (when (eq com ?c) (setq com ?C))
-    (viper-move-marker-locally 'viper-com-point (point))
-    (viper-deactivate-mark)
-    (push-mark nil t)
-    (cond
-     ((null val)
-      (goto-char (point-min)))
-     (t
-      (viper-goto-line val)))
-    (when com
-      (viper-execute-com 'vimpulse-goto-line val com))))
-
-;;; gb
-
-(defun vimpulse-beginning-of-Word-p ()
-  (save-excursion
-    (or (bobp)
-        (when (viper-looking-at-alpha)
-          (backward-char)
-          (not (viper-looking-at-alpha))))))
-
-(defun vimpulse-end-of-previous-word (arg)
-  "Move point to end of previous word."
-  (interactive "P")
-  (viper-leave-region-active)
-  (let ((val (viper-p-val arg))
-        (com (viper-getcom arg)))
-    (when com
-      (viper-move-marker-locally 'viper-com-point (point)))
-    (unless (vimpulse-beginning-of-Word-p)
-      (viper-backward-Word 1))
-    (viper-backward-Word val)
-    (viper-end-of-Word '(1 . ?r))
-    (unless com
-      (backward-char))
-    (when com
-      (viper-execute-com 'viper-end-of-word val com))))
-
-;;; gd
-
-(defun vimpulse-goto-definition ()
-  "Go to definition or first occurrence of symbol under cursor."
-  (interactive)
-  (let ((str (vimpulse-search-string (point) 'symbol))
-        ientry ipos)
-    (cond
-     ((string= str "")
-      (error "No string under cursor"))
-     ;; If imenu is available, try it.
-     ((or (fboundp 'imenu--make-index-alist)
-          (load "imenu" t))
-      (setq ientry
-            (condition-case nil
-                (and (fboundp 'imenu--make-index-alist)
-                     (imenu--make-index-alist))
-              (error nil)))
-      (setq ientry (assoc str ientry))
-      (setq ipos (cdr ientry))
-      (unless (markerp ipos)
-        (setq ipos (cadr ientry)))
-      (cond
-       ;; imenu found a position, so go there and
-       ;; highlight the occurrence.
-       ((and (markerp ipos)
-             (eq (marker-buffer ipos) (current-buffer)))
-        (vimpulse-search-for-symbol nil ipos str))
-       ;; imenu failed, so just go to first occurrence in buffer.
-       (t
-        (vimpulse-search-for-symbol nil (point-min)))))
-     ;; No imenu, so just go to first occurrence in buffer.
-     (t
-      (vimpulse-search-for-symbol nil (point-min))))))
-
-(defun vimpulse-jump-to-tag-at-point ()
-  (interactive)
-  (let ((tag (thing-at-point 'word)))
-    (find-tag tag)))
-
-;;; gi
-
-(defun vimpulse-resume-insert (arg)
-  "Insert at previous insert position."
-  (interactive "P")
-  (when (markerp vimpulse-exit-point)
-    (goto-char vimpulse-exit-point))
-  (viper-insert arg))
-
-;;; gq, gu, gU
-
-(defun vimpulse-fill (beg end)
-  "Fill text."
-  (interactive (vimpulse-range t t))
-  (setq end (save-excursion
-              (goto-char end)
-              (skip-chars-backward " ")
-              (point)))
-  (save-excursion
-    (fill-region beg end)))
-
-(defun vimpulse-downcase (beg end)
-  "Convert text to lower case."
-  (interactive (vimpulse-range))
-  (if (eq vimpulse-this-motion-type 'block)
-      (vimpulse-apply-on-block 'downcase-region beg end)
-    (downcase-region beg end))
-  (when (and viper-auto-indent
-             (looking-back "^[ \f\t\v]*"))
-    (back-to-indentation)))
-
-(defun vimpulse-upcase (beg end)
-  "Convert text to upper case."
-  (interactive (vimpulse-range))
-  (if (eq vimpulse-this-motion-type 'block)
-      (vimpulse-apply-on-block 'upcase-region beg end)
-    (upcase-region beg end)
-    (when (and viper-auto-indent
-               (looking-back "^[ \f\t\v]*"))
-      (back-to-indentation))))
-
-(defun vimpulse-invert-case (beg end)
-  "Convert text to inverted case."
-  (interactive (vimpulse-range))
-  (let (char)
-    (save-excursion
-      (cond
-       ((eq vimpulse-this-motion-type 'block)
-        (let (vimpulse-this-motion-type)
-          (vimpulse-apply-on-block 'vimpulse-invert-case beg end)))
-       (t
-        (goto-char beg)
-        (while (< beg end)
-          (setq char (following-char))
-          (delete-char 1 nil)
-          (if (eq (upcase char) char)
-              (insert-char (downcase char) 1)
-            (insert-char (upcase char) 1))
-          (setq beg (1+ beg))))))
-    (when (and viper-auto-indent
-               (looking-back "^[ \f\t\v]*"))
-      (back-to-indentation))))
-
-(defun vimpulse-invert-char (beg end)
-  "Invert case of character."
-  (interactive (vimpulse-range nil nil nil t 'forward-char))
-  (vimpulse-invert-case beg end)
-  (cond
-   (vimpulse-visual-mode
-    (goto-char beg)
-    (vimpulse-visual-mode -1))
-   (t
-    (goto-char end))))
-
-(defun vimpulse-rot13 (beg end)
-  "ROT13 encrypt text."
-  (interactive (vimpulse-range))
-  (rot13-region beg end))
-
-;;; +, _
-
-(defun vimpulse-previous-line-skip-white (&optional arg)
-  "Go ARG lines backward and to the first non-blank character."
-  (interactive "P")
-  (let ((val (viper-p-val arg))
-        (com (viper-getcom arg)))
-    (when com
-      (viper-move-marker-locally 'viper-com-point (point)))
-    (forward-line (- val))
-    (back-to-indentation)
-    (when com
-      (viper-execute-com 'vimpulse-previous-line-nonblank val com))))
-
-(defun vimpulse-next-line-skip-white (&optional arg)
-  "Go ARG lines forward and to the first non-blank character."
-  (interactive "P")
-  (let ((val (viper-p-val arg))
-        (com (viper-getcom arg)))
-    (when com
-      (viper-move-marker-locally 'viper-com-point (point)))
-    (forward-line val)
-    (back-to-indentation)
-    (when com
-      (viper-execute-com 'vimpulse-next-line-nonblank val com))))
-
-;;; *, #
-
-(defun vimpulse-search-string (&optional pos thing backward regexp)
-  "Find something to search for near POS or point.
- THING is a `thing-at-point', default `symbol'.
- BACKWARD, if t, specifies reverse direction.
- REGEXP, if t, means the string is `regexp-quote'd.
- Returns the empty string if nothing is found."
-  (save-excursion
-    (setq pos (or pos (point))
-          thing (or thing 'symbol))
-    (goto-char pos)
-    (let ((str (thing-at-point thing)))
-      ;; If there's nothing under point, go forwards
-      ;; (or backwards) to find it.
-      (while (and (not str) (or (and backward (not (bobp)))
-                                (and (not backward) (not (eobp)))))
-        (if backward (backward-char) (forward-char))
-        (setq str (thing-at-point 'symbol)))
-      (setq str (or str ""))
-      ;; No text properties, thank you very much.
-      (set-text-properties 0 (length str) nil str)
-      (when regexp
-        (setq str (regexp-quote str)))
-      str)))
-
-(defun vimpulse-search-for-symbol (&optional backward pos search)
-  "Search forwards or backwards for the symbol under point.
- If BACKWARD is t, search in the reverse direction.
- SEARCH is a regular expression to use for searching instead of
- the symbol under point; it is wrapped in \"\\\\_<\" and \"\\\\_>\".
- POS specifies an alternative position to search from. Note that
- if POS is specified and at the beginning of a match, that match
- is highlighted rather than skipped past."
-  (setq search (or search (vimpulse-search-string
-                           (point) 'symbol backward t)))
-  (cond
-   ((string= search "")
-    (error "No string under cursor"))
-   (t
-    (setq viper-s-string  (concat "\\_<" search "\\_>")
-          viper-s-forward (not backward))
-    (cond
-     (pos
-      (unless (region-active-p)
-        (push-mark nil t))
-      (goto-char pos)
-      (cond
-       ((looking-at search)
-        (save-excursion
-          (search-forward search))
-        (viper-flash-search-pattern))
-       (t
-        (viper-search viper-s-string (not backward) 1)
-        (unless (region-active-p)
-          (pop-mark)))))
-     (t
-      (viper-search viper-s-string (not backward) 1))))))
-
-(defun vimpulse-search-forward-for-symbol-at-point ()
-  (interactive)
-  (vimpulse-search-for-symbol))
-
-(defun vimpulse-search-backward-for-symbol-at-point ()
-  (interactive)
-  (vimpulse-search-for-symbol t))
-
-;;; Auto-indent
-
-(defun vimpulse-autoindent ()
-  "Auto Indentation, Vim-style."
-  (interactive)
-  (let ((col (current-indentation)))
-    (when abbrev-mode
-      (expand-abbrev))
-    (if viper-preserve-indent
-        (setq viper-preserve-indent nil)
-      (setq viper-current-indent col))
-    ;; Don't leave whitespace lines around.
-    (if (memq last-command
-              '(viper-autoindent
-                viper-open-line viper-Open-line
-                viper-replace-state-exit-cmd))
-        (indent-to-left-margin))
-    (when viper-auto-indent
-      (setq viper-cted t)
-      (if (and viper-electric-mode
-               (not (memq major-mode
-                          '(fundamental-mode
-                            text-mode
-                            paragraph-indent-text-mode))))
-          (if (fboundp 'comment-indent-new-line)
-              (comment-indent-new-line)
-            (newline-and-indent))
-        (newline)
-        (indent-to col)))))
-
-(defun vimpulse-Put-and-indent (&optional arg)
-  "Put before point/line and indent to current line.
-Doesn't indent with a prefix argument."
-  (interactive "P")
-  (viper-Put-back nil)
-  (unless arg
-    (indent-region (region-beginning) (region-end))))
-
-(defun vimpulse-put-and-indent (&optional arg)
-  "Put after point/line and indent to current line.
-Doesn't indent with a prefix argument."
-  (interactive "P")
-  (viper-put-back nil)
-  (unless arg
-    (indent-region (region-beginning) (region-end))))
-
-(defalias 'viper-autoindent 'vimpulse-autoindent)
-
-;;; C-o, C-i
-
-(defadvice set-mark (after vimpulse activate)
-  "Clear `vimpulse-mark-list'."
-  (mapc (lambda (marker)
-          (set-marker marker nil))
-        vimpulse-mark-list)
-  (setq vimpulse-mark-list nil))
-
-(defadvice push-mark (after vimpulse activate)
-  "Clear `vimpulse-mark-list'."
-  (mapc (lambda (marker)
-          (set-marker marker nil))
-        vimpulse-mark-list)
-  (setq vimpulse-mark-list nil))
-
-(defun vimpulse-jump-backward (arg)
-  "Go to older position in jump list.
- To go the other way, press \\[vimpulse-jump-forward]."
-  (interactive "p")
-  (let ((current-pos (make-marker)) i)
-    (unless vimpulse-mark-list
-      (move-marker current-pos (point))
-      (add-to-list 'vimpulse-mark-list current-pos))
-    (dotimes (arg arg)
-      (setq current-pos (make-marker))
-      ;; Skip past duplicate entries in the mark ring.
-      (setq i (length mark-ring))
-      (while (progn (move-marker current-pos (point))
-                    (let (vimpulse-mark-list)
-                      ;; Protect `vimpulse-mark-list'.
-                      (set-mark-command 0))
-                    (setq i (1- i))
-                    (and (= (point) current-pos) (> i 0))))
-      ;; Already there?
-      (move-marker current-pos (point))
-      (unless (= (car vimpulse-mark-list) current-pos)
-        (setq vimpulse-mark-list
-              (cons current-pos vimpulse-mark-list))))))
-
-(defun vimpulse-jump-backward-globally (arg)
-  (interactive "p")
-  (let ((current-pos (make-marker))
-        global-buffer global-mark global-pos)
-    ;; Store current position.
-    (move-marker current-pos (point))
-    (add-to-list 'vimpulse-mark-list current-pos)
-    ;; Determine global mark, if any.
-    (vimpulse-remove-minibuffer-marks)
-    (setq global-mark (car global-mark-ring))
-    (when (markerp global-mark)
-      (setq global-pos    (marker-position global-mark)
-            global-buffer (marker-buffer   global-mark)))
-    (cond
-     ((not (eq (current-buffer) global-buffer))
-      (switch-to-buffer global-buffer))
-     ((eq (mark t) global-pos)
-      (pop-global-mark))
-     (t
-      (vimpulse-jump-backward 1)))))
-
-(defun vimpulse-remove-minibuffer-marks ()
-  "Remove minibuffer marks from `global-mark-ring'."
-  (let (result)
-    (dolist (mark global-mark-ring)
-      (unless (and (marker-buffer mark)
-                   (minibufferp (marker-buffer mark)))
-        (add-to-list 'result mark t)))
-    (setq global-mark-ring result)))
-
-(defun vimpulse-jump-forward (arg)
-  "Go to newer position in jump list.
-To go the other way, press \\[vimpulse-jump-backward]."
-  (interactive "p")
-  (let (current-pos next-pos)
-    (dotimes (arg arg)
-      (setq current-pos (car vimpulse-mark-list)
-            next-pos (cadr vimpulse-mark-list))
-      (when next-pos
-        ;; Protect `vimpulse-mark-list'.
-        (let (vimpulse-mark-list)
-          (push-mark current-pos t nil))
-        (unless (eq (marker-buffer next-pos) (current-buffer))
-          (switch-to-buffer (marker-buffer next-pos)))
-        (goto-char next-pos)
-        (setq vimpulse-mark-list (cdr vimpulse-mark-list))))))
-
-(when vimpulse-want-C-i-like-Vim
-  (define-key viper-vi-basic-map "\C-i" 'vimpulse-jump-forward))
-(define-key viper-vi-basic-map "\C-o" 'vimpulse-jump-backward)
-
-;;; Replace backspace
-
-(defcustom vimpulse-backspace-restore t
-  "Whether Backspace restores the original text in Replace mode.
- On by default."
-  :group 'vimpulse
-  :type  'boolean)
-
-(defun vimpulse-replace-pre-command ()
-  "Remember the character under point."
-  (cond
-   (viper-replace-minor-mode
-    (unless (assq (point) vimpulse-replace-alist)
-      (add-to-list 'vimpulse-replace-alist
-                   (cons (point) (char-after)))))
-   ;; If not in Replace mode, remove itself.
-   (t
-    (remove-hook 'pre-command-hook 'vimpulse-replace-pre-command))))
-
-(add-hook 'viper-replace-state-hook
-          (lambda ()
-            (setq vimpulse-replace-alist nil)
-            (vimpulse-replace-pre-command)
-            (add-hook 'pre-command-hook
-                      'vimpulse-replace-pre-command)))
-
-(defun vimpulse-replace-backspace ()
-  "Restore character under cursor.
- If `vimpulse-backspace-restore' is nil,
- call `viper-del-backward-char-in-replace' instead."
-  (interactive)
-  (cond
-   (vimpulse-backspace-restore
-    (backward-char)
-    (let ((oldchar (cdr (assq (point) vimpulse-replace-alist))))
-      (when oldchar
-        (save-excursion
-          (delete-char 1)
-          (insert oldchar)))))
-   (t
-    (viper-del-backward-char-in-replace))))
-
-(defadvice viper-adjust-keys-for (after vimpulse activate)
-  "Map <backspace> to `vimpulse-replace-backspace' in Replace mode."
-  (define-key viper-replace-map [backspace] 'vimpulse-replace-backspace))
-
-(defun vimpulse-abbrev-expand-before ()
-  "Expand to the nearest preceding word.
-Search forwards if a match isn't found."
-  (interactive)
-  (if (minibufferp)
-      (minibuffer-complete)
-    (dabbrev-expand nil)))
-
-;; Getting dabbrev to search forwards first and then backwards
-;; is tricky, because (dabbrev-expand -1) just fails when it
-;; doesn't find a following match.
-(defun vimpulse-abbrev-expand-after ()
-  "Expand to the nearest following word.
-Search backwards if a match isn't found."
-  (interactive)
-  ;; Back up global variables.
-  (let ((abbrev (and (boundp 'dabbrev--last-abbreviation)
-                     dabbrev--last-abbreviation))
-        (abbrev-loc (and (boundp 'dabbrev--last-abbrev-location)
-                         dabbrev--last-abbrev-location))
-        (expansion (and (boundp 'dabbrev--last-expansion)
-                        dabbrev--last-expansion))
-        (expansion-loc (and (boundp 'dabbrev--last-expansion-location)
-                            dabbrev--last-expansion-location)))
-    ;; Expand in same direction as previously,
-    ;; initially forward.
-    (if (minibufferp)
-        (minibuffer-complete)
-      (condition-case nil
-          (if (eq last-command this-command)
-              (dabbrev-expand nil)
-            (setq dabbrev--last-direction -1)
-            (dabbrev-expand -1))
-        ;; Restore dabbrev variables if version < 23.2.
-        (error (progn
-                 (when (version< emacs-version "23.2")
-                   (setq dabbrev--last-abbreviation abbrev
-                         dabbrev--last-abbrev-location abbrev-loc
-                         dabbrev--last-expansion expansion
-                         dabbrev--last-expansion-location expansion-loc))
-                 (setq dabbrev--last-direction 1)
-                 (dabbrev-expand nil) nil))))))
-
-(defun vimpulse-expand-line (&optional arg)
-  "Expand a whole line."
-  (interactive "P")
-  (let ((hippie-expand-try-functions-list
-         '(try-expand-line
-           try-expand-line-all-buffers)))
-    (hippie-expand arg)))
-
 ;;;; Modal keybinding functions
 
-;; This provides the functions `vimpulse-map', `vimpulse-imap',
-;; `vimpulse-vmap' and `vimpulse-omap', which mimic :map, :imap, :vmap
-;; and :omap in Vim, as well as `vimpulse-make-careful-binding', which
-;; makes bindings "on top of" previous bindings.
+;; Functions for making state bindings (modal bindings).
 ;;
-;; BACKGROUND
+;; Global state bindings (seen in all buffers):
+;;     `vimpulse-global-set-key', `vimpulse-map', `vimpulse-imap',
+;;     `vimpulse-vmap', `vimpulse-omap'
+;; Buffer-local state bindings (seen only in the current buffer):
+;;     `vimpulse-local-set-key', `vimpulse-map-local',
+;;     `vimpulse-imap-local', `vimpulse-vmap-local',
+;;     `vimpulse-omap-local'
+;; State bindings for Emacs modes (minor and major):
+;;     `vimpulse-define-key'
 ;;
-;; The :map, :imap, :vmap and :omap commands of Vim let one make two
-;; key mappings starting with the same sequence of characters without
-;; one overwriting the other. For example:
+;; `vimpulse-map' etc. mimic Vim's :map, :imap, :vmap and :omap
+;; commands; `vimpulse-map-local' etc. are similar, but buffer-local.
 ;;
-;;     :imap aa foo
-;;     :imap aaa bar
+;; `vimpulse-define-key' associates state bindings with an Emacs mode,
+;; and is useful for grouping bindings:
 ;;
-;; When Vim has read "aa" in Insert mode, it will wait for another
-;; character to decide whether to insert "foo" or "bar". If the user
-;; types "a", "bar" is inserted; if another letter, "foo" plus that
-;; letter.
+;;     (define-minor-mode foo-mode)
+;;     (vimpulse-define-key 'foo-mode 'vi-state "a" 'bar)
+;;     (vimpulse-define-key 'foo-mode 'visual-state "b" 'baz)
 ;;
-;; Compare with the analogous use of Emacs' `global-set-key' function:
+;; These bindings are only seen in buffers where foo-mode is enabled.
+;; You can also augment existing modes, of course.
 ;;
-;;     (global-set-key "aa" 'foo)
-;;     (global-set-key "aaa" 'bar)
-;;
-;; Here, the first binding is simply overwritten by the more specific
-;; second. The end result is that "aaa" is bound to `bar', while any
-;; other sequence starting with "aa" is not bound to anything.
-;;
-;; The solution is a set of Vim-like or "modal" functions for making
-;; new key bindings "on top of" previous bindings. They are
-;; `vimpulse-map', `vimpulse-imap', `vimpulse-vmap' and
-;; `vimpulse-omap', which mimic Vim's commands, and
-;; `vimpulse-make-careful-binding', a general function for specifying
-;; the keymap. Returning to the example:
-;;
-;;     (vimpulse-imap "aa" 'foo)
-;;     (vimpulse-imap "aaa" 'bar)
-;;
-;; This will bind "aaa" to `bar', and "aa" + any other key to `foo'.
-;; The syntax is the same as that of `global-set-key'. The key
-;; sequence may be specified as a string, like above, as a vector
-;; (like [?a ?b ?c]), or as a call to `kbd' (like (kbd "a b c")).
-;;
-;; To make a binding in vi (command) mode, use `vimpulse-map'; in
-;; Insert mode, `vimpulse-imap'; in Visual mode, `vimpulse-vmap'; in
-;; Operator-Pending mode, `vimpulse-omap'. The more general
-;; `vimpulse-make-careful-binding' function lets one specify the
-;; keymap to store the binding in, as when using `define-key':
-;;
-;;     (vimpulse-make-careful-binding keymap "abc" 'command)
-;;
-;; IMPLEMENTATION
-;;
-;; The code depends on a little-known GNU Emacs feature called
-;; "default key bindings". A default key binding is a binding ending
-;; with the Lisp symbol t, which roughly stands for "any other key".
-;; Default bindings allow a keymap to bind all possibilities without
-;; having to enumerate them. For example, we may bind the sequence
-;; "AB" + any key as such:
-;;
-;;     (global-set-key (kbd "A B <t>") 'foo)
-;;
-;; This means that "ABA" will execute `foo', as will "ABB", "ABC",
-;; and so on. For more on default key bindings, see the GNU Emacs
-;; Lisp Reference Manual, chapter 22.3: "Format of Keymaps".
-;;
-;; What is done by functions like `vimpulse-make-careful-binding' and
-;; `vimpulse-map' (which depends on the former) is to generate these
-;; default bindings automatically. If "AB" is already bound to `foo'
-;; and we carefully bind "ABC" to `bar', the old binding is first
-;; replaced by a default binding, as if we issued the following:
-;;
-;;     (global-set-key (kbd "A B") nil) ; delete old binding
-;;     (global-set-key (kbd "A B <t>") 'foo)
-;;     (global-set-key (kbd "A B C") 'bar)
-;;
-;; Then, "ABC" runs `bar', while "AB" + any other key than C
-;; runs `foo'.
-;;
-;; This almost gets us where we want with regard to Vimpulse, but not
-;; quite. The problem is that quite a few commands must necessarily
-;; read and parse keyboard input to decide what to do. For instance,
-;; Viper binds "d" to the general command `viper-command-argument',
-;; which, depending on the next key-presses, deletes a line, two
-;; words, or any motion entered by the user. What happens if we decide
-;; to carefully bind, say, "dq" to a custom command `foo' of our own?
-;;
-;;     (global-set-key (kbd "d") nil) ; delete old binding
-;;     (global-set-key (kbd "d <t>") 'viper-command-argument)
-;;     (global-set-key (kbd "d q") 'foo)
-;;
-;; Now, if the user enters "dq", `foo' is called. But when the user
-;; enters "dw" to delete a word, `viper-command-argument' is called
-;; only after the "w" is entered. This destroys the logic of the
-;; command, which depends on "d" being the last key-press (stored in
-;; `last-command-event') before "w" is read through `read-char'. It
-;; obviously won't work as intended with a single "w" missing a
-;; preceding "d", which is what it sees.
-;;
-;; So, we need to find a way to pass "d" and "w" along in the proper
-;; manner; that is, to make the default binding appear the same as the
-;; old binding it replaces. This is done by
-;; `vimpulse-careful-pre-hook', which unreads "w" (so it can be read
-;; again) and changes `last-command-event' to "d". Of course, this
-;; behavior is only needed for default key bindings, and only for
-;; default key bindings made by careful bindings. To that end, every
-;; time `vimpulse-make-careful-binding' makes a default binding, the
-;; binding is listed in `vimpulse-careful-alist' for future reference.
-;; Checking against the list, `vimpulse-careful-pre-hook' only does
-;; its thing if the current binding comes back positive.
-;;
-;; XEmacs is somewhat fuzzy about its command loop variables, not
-;; allowing direct modification of `last-command-event'. However,
-;; shadowing it with a `let' binding is possible, and a wrap-around
-;; advice of the current command is employed to accomplish this. Also,
-;; XEmacs does not have default key bindings in quite the same way as
-;; GNU Emacs; `vimpulse-default-binding' takes care of the
-;; differences.
-;;
-;; LIMITATIONS
-;;
-;; Vim has a `timeout' option which lets one specify the time in
-;; milliseconds that is waited for a key code or mapped key sequence
-;; to complete. Emacs, on the other hand, will wait indefinitely. This
-;; behavior is probably not implementable.
+;; Vimpulse provides "careful" bindings, which are bindings that can
+;; be safely stacked on top of pre-existing bindings. They can be made
+;; with `vimpulse-make-careful-binding' (see its docstring for more
+;; details), or by passing a non-nil value for the CAREFUL argument of
+;; `vimpulse-global-set-key', `vimpulse-local-set-key' or
+;; `vimpulse-define-key'. `vimpulse-map' etc. are always careful.
+
+
+;;; Variables
+(defvar vimpulse-last-command-event nil
+  "Value for overwriting `last-command-event'.
+Used by `vimpulse-careful-pre-hook'.")
+
+(defvar vimpulse-careful-alist nil
+  "Key bindings for which `vimpulse-careful-pre-hook' is active.
+That is, `last-command-event' and `read-char' work differently
+for these bindings. The format is (KEY-VECTOR . COMMAND).")
+
+(defvar vimpulse-careful-map (make-sparse-keymap)
+  "Keymap of bindings overwritten by `vimpulse-map' et al.")
 
 ;;; Advice
 
@@ -3672,7 +2841,7 @@ Search backwards if a match isn't found."
 ;; shadowing the read-only command loop variables with a
 ;; `let' binding.
 (defmacro vimpulse-advice-command (command)
-  "Make wrap-around advice for shadowing `last-command-event'.
+  "Define an around advice for COMMAND to shadow `last-command-event'.
 XEmacs does not allow us to change its command loop variables
 directly, but shadowing them with a `let' binding works."
   `(defadvice ,command (around vimpulse-careful activate)
@@ -3695,7 +2864,7 @@ directly, but shadowing them with a `let' binding works."
 but only for bindings listed in `vimpulse-careful-alist'."
   (let ((temp-sequence (vimpulse-strip-prefix key-sequence)))
     (setq temp-sequence (vimpulse-truncate temp-sequence -1))
-    (and this-command ; may be nil
+    (and this-command                     ; may be nil
          (not (key-binding key-sequence)) ; only default bindings
          (eq (cdr (assoc temp-sequence vimpulse-careful-alist))
              this-command))))
@@ -3726,8 +2895,7 @@ non-nil, advice DEF by means of `vimpulse-advice-command'."
     (and (> (length temp-sequence) 1)
          (eq (aref temp-sequence (1- (length temp-sequence))) t)
          (setq temp-sequence (vimpulse-truncate temp-sequence -1)))
-    ;; The following is from
-    ;; http://tracker.xemacs.org/XEmacs/its/msg2021.
+    ;; from http://tracker.xemacs.org/XEmacs/its/msg2021
     (unless (keymapp submap)
       (setq submap (make-sparse-keymap)))
     (when (fboundp 'set-keymap-default-binding)
@@ -3751,7 +2919,8 @@ the binding is listed in `vimpulse-careful-alist'."
       (funcall define-func keymap temp-sequence def)))
     (when careful-binding
       (add-to-list 'vimpulse-careful-alist
-                   (cons (vimpulse-truncate temp-sequence -1) def)))))
+                   (cons (vimpulse-truncate temp-sequence -1) def)))
+    def))
 
 ;;; Hook run before each command
 
@@ -3767,19 +2936,19 @@ via the `last-command-event' variable and the `read-char'
 functions, respectively."
   (setq vimpulse-last-command-event nil)
   (let ((key-sequence (vconcat (this-command-keys))))
-    ;; If XEmacs, get rid of the event object type.
+    ;; if XEmacs, get rid of the event object type
     (when (featurep 'xemacs)
       (setq key-sequence (events-to-keys key-sequence)))
     (while (and (> (length key-sequence) 1)
                 (vimpulse-careful-check key-sequence))
-      ;; Unread last event.
+      ;; unread last event
       (setq vimpulse-last-command-event
             (elt key-sequence (1- (length key-sequence))))
       (when (featurep 'xemacs)
         (setq vimpulse-last-command-event
               (character-to-event vimpulse-last-command-event)))
       (add-to-list 'unread-command-events vimpulse-last-command-event)
-      ;; Change command loop variables
+      ;; change command loop variables
       (setq vimpulse-last-command-event
             (elt key-sequence (1- (1- (length key-sequence)))))
       (unless (featurep 'xemacs)      ; if XEmacs, do this with advice
@@ -3793,7 +2962,7 @@ functions, respectively."
 
 ;;; Hook run after each command
 
-;; This merely ensures `vimpulse-last-command-event' is reset.
+;; this merely ensures `vimpulse-last-command-event' is reset
 (defun vimpulse-careful-post-hook ()
   "Erase `vimpulse-last-command-event'."
   (setq vimpulse-last-command-event nil))
@@ -3803,9 +2972,6 @@ functions, respectively."
 
 ;;; Modal binding functions
 
-;; `vimpulse-make-careful-binding' is general; `vimpulse-map',
-;; `vimpulse-imap', `vimpulse-vmap' and `vimpulse-omap' imitate Vim's
-;; :map, :imap, :vmap and :omap, respectively.
 (defun vimpulse-make-careful-binding
   (keymap key def &optional dont-list define-func)
   "Carefully bind KEY to DEF in KEYMAP.
@@ -3817,15 +2983,16 @@ overwrite the old. E.g., if we want to carefully bind \"A B C\" to
     \"A B C\"   => `foo'
     \"A B <t>\" => `bar'
 
-which means that \"A B D\", for example, defaults to `bar'. (For
-more on default bindings, see `define-key'.) The default binding
-gets listed in `vimpulse-careful-alist', so that, with regard to
-command loop variables, it appears exactly the same as the
-binding it replaced. To override this, use DONT-LIST.
-DEFINE-FUNC specifies a function to be used in place of
-`define-key'.
+Thus, \"A B C\" runs `foo', while \"A B\" + any key other than \"C\"
+defaults to `bar'. To remove a careful binding, bind it to nil.
 
-To remove a binding, bind it to nil.
+The default binding gets listed in `vimpulse-careful-alist', so
+that, with regard to command loop variables, it appears exactly
+the same as the binding it replaced. In the example above, `bar'
+will see a `last-command-event' of \"B\", and will automatically
+obtain the last key by calling `read-char'. To make a regular
+default binding, use DONT-LIST. DEFINE-FUNC specifies a function
+to be used in place of `define-key'.
 
 NOTE: If the original binding \"A B\" is not stored in KEYMAP,
 but in some other map which is active only in a certain
@@ -3837,29 +3004,24 @@ only if called in the same state. The functions `vimpulse-map',
     ;; the binding (stored in `current-binding'); if it isn't bound,
     ;; use `previous-binding'.
     (setq define-func (or define-func 'define-key))
-    (setq key-vector key)
-    (when (stringp key-vector)
-      (condition-case nil
-          (setq key-vector (eval `(kbd ,key-vector)))
-        (error nil))
-      (when (memq key-vector '("" [] nil))
-        (setq key-vector key)))
-    (setq key-vector (vconcat key-vector))
+    (setq key-vector (if (stringp key)
+                         (read-kbd-macro key t)
+                       key))
     (cond
-     ;; nil unbinds the key-sequence.
+     ;; nil unbinds the key-sequence
      ((not def)
       (funcall define-func keymap key-vector def)
       (while (and (> (length key-vector) 1)
                   (not (lookup-key keymap key-vector)))
         (vimpulse-careful-remove key-vector t)
         (setq key-vector (vimpulse-truncate key-vector -1))))
-     ;; `undefined' also unbinds, but less forcefully.
+     ;; `undefined' also unbinds, but less forcefully
      ((eq def 'undefined)
       (if (keymapp (lookup-key keymap key-vector))
           (vimpulse-default-binding keymap key-vector nil t define-func)
         (funcall define-func keymap key-vector def))
       (vimpulse-careful-remove key-vector))
-     ;; Regular binding: convert previous bindings to default bindings.
+     ;; regular binding: convert previous bindings to default bindings
      (t
       (dotimes (i (1- (length key-vector)))
         (setq temp-sequence (vimpulse-truncate key-vector (1+ i)))
@@ -3869,7 +3031,7 @@ only if called in the same state. The functions `vimpulse-map',
                 (or (key-binding temp-sequence t) previous-binding)))
         (setq previous-binding current-binding)
         ;; If `current-binding' is a keymap, do nothing, since our
-        ;; careful binding can exist happily as part of that keymap.
+        ;; careful binding can happily exist as part of that keymap.
         ;; However, if `current-binding' is a command, we need to make
         ;; room for the careful binding by creating a default binding.
         (unless (keymapp current-binding)
@@ -3918,7 +3080,7 @@ If CAREFUL is non-nil, make a careful binding with
   (let* ((entry (cdr (assq state vimpulse-auxiliary-modes-alist)))
          (aux   (cdr (assq mode (symbol-value entry))))
          (map   (eval (cdr (assq aux vimpulse-state-maps-alist)))))
-    ;; If no auxiliary mode exists, create one.
+    ;; if no auxiliary mode exists, create one
     (unless (keymapp map)
       (setq aux (intern (format "vimpulse-%s-%s" state mode))
             map (intern (format "vimpulse-%s-%s-map" state mode)))
@@ -3926,22 +3088,26 @@ If CAREFUL is non-nil, make a careful binding with
                ,(format "Auxiliary %s mode for `%s'." state mode)))
       (eval `(defvar ,map (make-sparse-keymap)
                ,(format "Auxiliary %s keymap for `%s'." state mode)))
-      (eval `(defadvice ,mode (after vimpulse-modal activate)
-               (viper-normalize-minor-mode-map-alist)))
+      (when (fboundp mode)
+        (eval `(defadvice ,mode (after vimpulse-modal activate)
+                 (when viper-mode
+                   (viper-normalize-minor-mode-map-alist)
+                   (viper-set-mode-vars-for viper-current-state)))))
       (add-to-list 'vimpulse-state-maps-alist (cons aux map) t)
       (add-to-list entry (cons mode aux) t)
       (add-to-list 'vimpulse-auxiliary-modes mode)
       (vimpulse-normalize-auxiliary-modes)
       (setq map (eval map)))
-    ;; Define key.
+    ;; define key
     (if careful
         (vimpulse-with-state state
           (vimpulse-make-careful-binding map key def))
       (define-key map key def))))
 
 ;; This modifies the major mode extension keymap, i.e., it's
-;; a reuseable front-end to `viper-modify-major-mode'.
+;; a reusable front-end to `viper-modify-major-mode'.
 ;; (By itself, `viper-modify-major-mode' discards the previous keymap.)
+;; Don't use this; use `vimpulse-define-key' instead.
 (defun vimpulse-define-major-key (mode state key def &optional careful)
   "Modally bind KEY to DEF in STATE for major mode MODE.
 STATE is one of `vi-state', `insert-state', `visual-state' or
@@ -3952,7 +3118,8 @@ with `vimpulse-make-careful-binding'."
         (vimpulse-with-state state
           (vimpulse-make-careful-binding modifier-map key def))
       (define-key modifier-map key def))
-    (viper-modify-major-mode mode state modifier-map)))
+    (viper-modify-major-mode mode state modifier-map)
+    def))
 
 (defalias 'vimpulse-define-minor-key 'vimpulse-define-key)
 
@@ -3970,7 +3137,8 @@ If CAREFUL is non-nil, don't overwrite previous bindings."
 (defun vimpulse-local-set-key (state key def)
   "Modally bind KEY to DEF in STATE, locally.
 STATE is one of `vi-state', `insert-state', `visual-state' or `operator-state'."
-  (viper-add-local-keys state `((,key . ,def))))
+  (viper-add-local-keys state `((,key . ,def)))
+  def)
 
 (defun vimpulse-map-state (state key def &optional modes)
   "Modally bind KEY to DEF in STATE.
@@ -4100,7 +3268,7 @@ binding, use `vimpulse-omap'."
 
 ;;;; Ex commands
 
-;; All this code is taken from Brad Beveridge's extended viper.
+
 (defvar vimpulse-extra-ex-commands
   '(("b" "buffer")
     ("bdelete" (vimpulse-kill-current-buffer))
@@ -4111,7 +3279,7 @@ binding, use `vimpulse-omap'."
     ("only" (delete-other-windows))
     ("split" (split-window))
     ("syntax" (global-font-lock-mode))
-    ;; Emacs and Vim use inverted naming conventions for splits.
+    ;; Emacs and Vim use inverted naming conventions for splits
     ("vsplit" (split-window-horizontally)))
   "Extra Ex commands, added to `ex-token-alist' when Vimpulse loads.")
 
@@ -4124,12 +3292,14 @@ binding, use `vimpulse-omap'."
   (interactive)
   (kill-buffer nil))
 
-;; Additional Ex mode features: `ex-token-alist' is defined as a
-;; constant, but it appears I can safely push values to it!
 (dolist (entry vimpulse-extra-ex-commands)
   (setq ex-token-alist
         (delete (assoc (car entry) ex-token-alist) ex-token-alist))
-  (add-to-list 'ex-token-alist entry t))
+  (push entry ex-token-alist))
+
+;; `ex-cmd-read-exit', bound by Viper to SPC, is buggy: e.g.,
+;; ":s/foo/set bar" exits the minibuffer before "bar" is typed.
+(define-key viper-ex-cmd-map " " nil)
 
 ;;;; Paren matching
 
@@ -4142,9 +3312,18 @@ binding, use `vimpulse-omap'."
 ;;
 ;; In Insert mode, Emacs' scheme is deemed best and kept as is.
 ;;
-;; Custom paren-matching LOADED BY DEFAULT.
+;; This code is LOADED BY DEFAULT.
 ;; To avoid loading it, set `vimpulse-enhanced-paren-matching' to nil
 ;; in your .emacs before loading Vimpulse.
+
+
+
+(defvar show-paren-delay)
+(defvar vimpulse-paren-overlay-open nil
+  "Overlay used to highlight the opening paren.")
+
+(defvar vimpulse-paren-overlay-close nil
+  "Overlay used to highlight the closing paren.")
 
 ;; Load and enable paren.el if available.
 (unless (featurep 'paren)
@@ -4153,7 +3332,7 @@ binding, use `vimpulse-omap'."
     (error nil)))
 (and (fboundp 'show-paren-mode)
      (not (vimpulse-custom-value-p 'show-paren-mode))
-     ;; Fast paren-matching.
+     ;; fast paren-matching
      (vimpulse-setq show-paren-delay 0)
      (show-paren-mode 1))
 
@@ -4209,7 +3388,7 @@ nil otherwise."
     (viper-overlay-put ovl 'face face)
     (viper-move-overlay ovl pos (1+ pos))))
 
-;; FIXME: this description sucks.
+;; FIXME: this description sucks
 (defun vimpulse-paren-highlight-pair (&optional pos)
   "Highlight paren pair.
 Highlights the paren at point (or POS) and eventual matching
@@ -4233,7 +3412,7 @@ or mismatched paren."
 
 (defadvice show-paren-function (around vimpulse-paren activate)
   "Use custom highlighting if `vimpulse-enhanced-paren-matching' is t."
-  ;; Define overlays if they don't exist.
+  ;; define overlays if they don't exist
   (cond
    (vimpulse-enhanced-paren-matching
     (unless (viper-overlay-live-p vimpulse-paren-overlay-open)
@@ -4244,1391 +3423,26 @@ or mismatched paren."
       (vimpulse-delete-overlay vimpulse-paren-overlay-open)
       (vimpulse-delete-overlay vimpulse-paren-overlay-close))
     (cond
-     ;; Viper not in Insert, Replace or Emacs state.
+     ;; Viper not in Insert, Replace or Emacs state
      ((and (not (eq viper-current-state 'insert-state))
            (not (eq viper-current-state 'replace-state))
            (not (eq viper-current-state 'emacs-state))
            show-paren-mode viper-mode)
-      ;; Safely delete the overlays used by `show-paren-function'
-      ;; and call our custom function instead.
+      ;; safely delete the overlays used by `show-paren-function'
+      ;; and call our custom function instead
       (and (viper-overlay-live-p show-paren-overlay)
            (vimpulse-delete-overlay show-paren-overlay))
       (and (viper-overlay-live-p show-paren-overlay-1)
            (vimpulse-delete-overlay show-paren-overlay-1))
       (vimpulse-paren-highlight-pair))
-     ;; Viper in Insert mode.
+     ;; Viper in Insert mode
      (t
-      ;; Delete the overlays used by our custom function.
+      ;; delete the overlays used by our custom function
       (vimpulse-delete-overlay vimpulse-paren-overlay-open)
       (vimpulse-delete-overlay vimpulse-paren-overlay-close)
       ad-do-it)))
    (t
     ad-do-it)))
-
-;;;; Operator-Pending mode
-
-;; This provides a framework for combining "motions" and "operators".
-;; A motion is any command moving point. An operator is a command
-;; acting on the text moved over by a motion.
-;;
-;; Defining operator commands is similar to defining commands acting
-;; on the region. That is, both must have two arguments, BEG and END,
-;; and an `interactive' specification that stores the relevant range
-;; in those arguments:
-;;
-;;     (defun foo-region (beg end)
-;;       (interactive "r")
-;;       ;; Do stuff from BEG to END
-;;       )
-;;
-;;     (defun foo-operator (beg end)
-;;       (interactive (vimpulse-range))
-;;       ;; Do stuff from BEG to END
-;;       )
-;;
-;; (If you like, you can convert any region command to an operator
-;; with `vimpulse-convert-to-operator'.)
-;;
-;; When the latter command above is run in vi state, `vimpulse-range'
-;; will query the user for a motion and determine the resulting range
-;; to pass on to the command's arguments. In Visual mode, however,
-;; it simply uses the selection boundaries (no querying).
-;;
-;; While a motion is read from the keyboard, a temporary Viper state,
-;; Operator-Pending mode, is entered. This state inherits bindings
-;; from the regular vi state, but it may also define its own, for
-;; instance text objects. Text objects are like motions, but define a
-;; starting point as well as an ending point. They are implemented
-;; simply as selection commands.
-;;
-;; As in Vim, a motion may specify a motion type, such as `line',
-;; stored in the `motion-type' symbol property:
-;;
-;;   * `line': the motion range is extended to whole lines.
-;;   * `inclusive': the ending character is included.
-;;   * `exclusive' (default): the ending character is excluded.
-;;
-;; For example, (put 'foo 'motion-type 'line) gives `foo' a type of
-;; `line'. If unspecified, the motion is considered `exclusive'.
-;; You can override the type with v, V and C-v: for instance,
-;; dvj will delete an exclusive range rather than a linewise.
-;;
-;; The benefit of a dedicated state when an "operator" is "pending" is
-;; code separation. In the original scheme, every Viper motion must
-;; manually do the work of deleting/changing/yanking the text moved
-;; over, making that action repeatable, etc. The new framework handles
-;; everything automatically and orthogonally, enabling the use of
-;; plain Emacs movement commands (like S-exp navigation) as motions.
-;;
-;; A smattering of compatibility macros ensure that certain Viper
-;; motions are repeated correctly. In the long run, Viper's motions
-;; should be rewritten; I'll have to contact Michael Kifer and hear
-;; what he thinks about this. For what it's worth, the following code
-;; addresses "TODO item #1" in viper.el.
-
-(vimpulse-define-state operator
-  "Operator-pending mode is when an operator is pending,
-awaiting a motion (after \"d\", \"y\", \"c\", etc.)."
-  :id "<OP> "
-  :hook '(vimpulse-set-operator-cursor-type)
-  :enable '(vimpulse-operator-remap-minor-mode
-            (viper-vi-kbd-minor-mode nil)
-            vi-state vimpulse-careful-minor-mode)
-  (cond
-   ((eq viper-current-state 'operator-state)
-    (vimpulse-careful-minor-mode 1))
-   (t
-    (vimpulse-careful-minor-mode -1))))
-
-;; This is a short-lived state, only used for calculating
-;; motion ranges. If anything goes wrong and we enter the
-;; command loop, exit to vi state immediately.
-(defun vimpulse-operator-exit-hook ()
-  "Exit Operator-Pending mode."
-  (when (eq viper-current-state 'operator-state)
-    (save-excursion (viper-change-state-to-vi))))
-
-(add-hook 'pre-command-hook 'vimpulse-operator-exit-hook)
-(add-hook 'post-command-hook 'vimpulse-operator-exit-hook)
-
-;; We place all remap bindings in a keymap of their own.
-;; This enables Visual mode only to inherit text object
-;; bindings from Operator-Pending mode, not any remapping.
-(define-minor-mode vimpulse-operator-remap-minor-mode
-  "Minor mode of bindings overwritten by `vimpulse-map' et al."
-  :keymap vimpulse-operator-remap-map)
-
-(put 'vimpulse-operator-remap-map
-     'remap-alist 'vimpulse-operator-remap-alist)
-
-(when (featurep 'xemacs)
-  ;; XEmacs shows the tag before the modes, so truncate it to a
-  ;; constant length to avoid excessive flickering.
-  (setq vimpulse-operator-state-id "<OP>") ; 4 characters
-  ;; XEmacs lacks a horizontal bar cursor option.
-  (setq vimpulse-want-operator-pending-cursor nil))
-
-(defun vimpulse-set-operator-cursor-type ()
-  "Change cursor appearance in Operator-Pending mode."
-  (when vimpulse-want-operator-pending-cursor
-    (vimpulse-half-height-cursor)))
-
-;; The half-height "Operator-Pending cursor" cannot be specified
-;; as a static `cursor-type' value, since its height depends on
-;; the current font size; a function is needed.
-(defun vimpulse-half-height-cursor ()
-  "Change cursor to a half-height box.
-\(This is really just a thick horizontal bar.)"
-  (unless (featurep 'xemacs)
-    (condition-case nil
-        (let (height)
-          (redisplay)
-          (setq height (window-line-height))
-          (setq height (+ (nth 0 height) (nth 3 height)))
-          ;; Cut cursor height in half.
-          (setq height (/ height 2))
-          (setq cursor-type (cons 'hbar height))
-          ;; Ensure the cursor is redisplayed.
-          (force-window-update (selected-window))
-          (redisplay))
-      (error nil))))
-
-(defun vimpulse-range
-  (&optional no-repeat dont-move-point whole-lines keep-visual custom-motion)
-  "Read a motion and return a range (BEG END).
-In Visual mode, returns the beginning and end of the selection.
-This can be used in the `interactive' form of a command:
-
-    (defun foo (beg end)
-      (interactive (vimpulse-range))
-      ;; Do foo from BEG to END
-      )
-
-When such a command is called interactively, a motion is read from
-the keyboard and the resulting range is stored in BEG and END.
-The command then proceeds to do whatever it wants to do on the
-text between those buffer positions. The optional arguments allow
-for some customization:
-
-NO-REPEAT: don't let \\[viper-repeat] repeat the command.
-DONT-MOVE-POINT: don't move to beginning of range in vi state.
-WHOLE-LINES: extend the range to include whole lines.
-KEEP-VISUAL: don't disable Visual selection.
-CUSTOM-MOTION: predefined motion to use in vi state.
-
-If CUSTOM-MOTION is specified, the command will not read a motion
-from the keyboard. This has no effect in Visual mode."
-  (let ((range (list (point) (point)))
-        (type-alist '((vimpulse-visual-toggle-char . inclusive)
-                      (vimpulse-visual-toggle-line . line)
-                      (vimpulse-visual-toggle-block . block)))
-        (type (when whole-lines 'line))
-        ;; For restoration of the echo area. We bind `message-log-max' to nil
-        ;; to prevent `oldmsg' from messing up the *Messages* buffer.
-        (oldmsg (current-message))
-        message-log-max)
-    (setq vimpulse-this-motion-type nil
-          vimpulse-this-count nil
-          vimpulse-this-motion nil
-          vimpulse-this-operator this-command)
-    (cond
-     ;; If text is selected, use selection boundaries as range.
-     ((or vimpulse-visual-mode (region-active-p))
-      (when (and whole-lines
-                 (not (eq vimpulse-visual-mode 'line)))
-        (vimpulse-visual-activate 'line)
-        (vimpulse-set-visual-dimensions))
-      ;; Determine range and go to beginning.
-      (setq range (vimpulse-visual-range))
-      (setq vimpulse-this-motion-type (vimpulse-motion-type range)
-            range (vimpulse-motion-range range))
-      (setq vimpulse-this-motion 'vimpulse-visual-reselect)
-      (if keep-visual
-          (if (eq vimpulse-visual-mode 'line)
-              (vimpulse-visual-restore)
-            (vimpulse-visual-contract-region))
-        (if (eq vimpulse-this-motion-type 'block)
-            (vimpulse-visual-block-rotate
-             'upper-left
-             (vimpulse-range-beginning range)
-             (vimpulse-range-end range))
-          (goto-char (vimpulse-range-beginning range))
-          (set-mark  (vimpulse-range-end range)))
-        ;; Disable selection.
-        (if (and vimpulse-visual-mode
-                 (fboundp 'vimpulse-visual-mode))
-            (vimpulse-visual-mode -1)
-          (vimpulse-deactivate-region))))
-     ;; Not in Visual mode: use CUSTOM-MOTION if specified,
-     ;; or read motion and return motion range.
-     (t
-      (if custom-motion
-          (setq vimpulse-this-motion custom-motion)
-        (vimpulse-change-state-to-operator)
-        (while (progn
-                 (setq vimpulse-this-motion
-                       (vimpulse-keypress-parser t))
-                 (setq vimpulse-this-count
-                       (if vimpulse-this-count
-                           (if (numberp (cadr vimpulse-this-motion))
-                               (string-to-number
-                                (concat (number-to-string
-                                         vimpulse-this-count)
-                                        (number-to-string
-                                         (cadr vimpulse-this-motion))))
-                             vimpulse-this-count)
-                         (cadr vimpulse-this-motion))
-                       vimpulse-this-motion
-                       (car vimpulse-this-motion))
-                 (when (assq vimpulse-this-motion type-alist)
-                   (setq type (cdr (assq vimpulse-this-motion
-                                         type-alist))))))
-        ;; Motion reading done: restore the echo area.
-        (message oldmsg)
-        ;; With doubled operator ("gqgq" or "gqq"), set motion to current line.
-        (if (or (eq vimpulse-this-motion vimpulse-this-operator)
-                (member (vimpulse-strip-prefix (this-command-keys) t)
-                        '("g??" "gUU" "gqq" "guu" "gww" "g~~")))
-            (setq vimpulse-this-motion 'vimpulse-line)
-          (setq vimpulse-this-motion
-                (vimpulse-operator-remapping vimpulse-this-motion))))
-      (cond
-       ;; Quit if motion reading failed.
-       ((or (not vimpulse-this-motion)
-            (memq vimpulse-this-motion '(viper-nil keyboard-quit))
-            (vimpulse-operator-cmd-p vimpulse-this-motion))
-        (save-excursion (viper-change-state-to-vi))
-        (setq quit-flag t))
-       (t
-        ;; Multiply operator count and motion count together.
-        (when (or current-prefix-arg vimpulse-this-count)
-          (setq vimpulse-this-count
-                (* (prefix-numeric-value current-prefix-arg)
-                   (prefix-numeric-value vimpulse-this-count))))
-        ;; Determine type to use for type conversion.
-        (when (and (eq type 'inclusive)
-                   (memq (vimpulse-motion-type vimpulse-this-motion)
-                         '(line inclusive)))
-          (setq type 'exclusive))
-        (setq range (vimpulse-calculate-motion-range
-                     vimpulse-this-count vimpulse-this-motion type))
-        (setq vimpulse-this-motion-type (vimpulse-motion-type range)
-              range (vimpulse-motion-range range))
-        (unless dont-move-point
-          (goto-char (vimpulse-range-beginning range))
-          (when (and viper-auto-indent
-                     (looking-back "^[ \f\t\v]*"))
-            (back-to-indentation)))
-        (save-excursion (viper-change-state-to-vi))))))
-    ;; Set up repeat.
-    (unless no-repeat
-      (setq vimpulse-last-operator vimpulse-this-operator
-            vimpulse-last-motion vimpulse-this-motion
-            vimpulse-last-motion-type
-            (when type vimpulse-this-motion-type))
-      (viper-set-destructive-command
-       (list 'vimpulse-operator-repeat
-             vimpulse-this-count nil viper-use-register nil nil)))
-    range))
-
-(defun vimpulse-calculate-motion-range (count motion &optional type refresh)
-  "Derive motion range (TYPE BEG END) from MOTION and COUNT.
-MOTION can move point or select some text (a text object).
-TYPE may specify the motion type for normalizing the resulting
-range. If REFRESH is t, this function changes point,
-`viper-com-point' and `vimpulse-this-motion-type'."
-  (cond
-   ;; REFRESH is nil, so bind global variables.
-   ((not refresh)
-    (let (viper-com-point vimpulse-this-motion-type)
-      (save-excursion
-        (vimpulse-calculate-motion-range count motion type t))))
-   (t
-    (let ((current-prefix-arg count)
-          (viper-intermediate-command 'viper-command-argument)
-          (viper-current-state 'operator-state)
-          (vimpulse-operator-basic-minor-mode t)
-          (motion-type (vimpulse-motion-type motion t))
-          (already-selection (or vimpulse-visual-mode
-                                 (region-active-p)))
-          (range (list 'exclusive (point) (point)))
-          vimpulse-visual-vars-alist)
-      (setq vimpulse-this-motion-type
-            (or type motion-type 'exclusive))
-      (viper-move-marker-locally 'viper-com-point (point))
-      ;; Enable Transient Mark mode so we can reliably
-      ;; detect selection commands.
-      (vimpulse-transient-mark)
-      ;; Whatever happens next, we must restore Transient Mark mode
-      ;; to its original state afterwards!
-      (unwind-protect
-          ;; `vimpulse-visual-vars-alist' is used for restoring,
-          ;; so protect it.
-          (let (vimpulse-visual-vars-alist)
-            (if (commandp motion)
-                (call-interactively motion)
-              (funcall motion count))
-            (cond
-             ;; If text has been selected (i.e., it's a text object),
-             ;; return the selection.
-             ((and (not already-selection)
-                   (or vimpulse-visual-mode (region-active-p)))
-              (setq range (vimpulse-visual-range))
-              (cond
-               ((and motion-type (not (eq (car range) motion-type)))
-                (setcar range motion-type))
-               ((and type (not (eq (car range) type)))
-                (setcar range type)
-                (setq range (vimpulse-normalize-motion-range range))))
-              ;; Deactivate Visual mode/region.
-              (if (and vimpulse-visual-mode
-                       (fboundp 'vimpulse-visual-mode))
-                  (vimpulse-visual-mode -1)
-                (vimpulse-deactivate-region)))
-             ;; Otherwise, range is defined by `viper-com-point'
-             ;; and point (Viper type motion).
-             (t
-              (setq range (vimpulse-make-motion-range
-                           (marker-position viper-com-point)
-                           (point)
-                           (or type vimpulse-this-motion-type) t)))))
-        (vimpulse-transient-restore))
-      range))))
-
-;; A keypress parser of some kind is unavoidable because we need to
-;; know what we are executing beforehand (like when multiplying the
-;; counts in "2d3w"). We try to avoid hard-coding where possible by
-;; inspecting commands rather than the keys themselves.
-(defun vimpulse-keypress-parser (&optional no-remap)
-  "Read from keyboard and build a command description.
-Returns (CMD COUNT), where COUNT is the numeric prefix argument
-of CMD. Both COUNT and CMD may be nil."
-  (let ((inhibit-quit t)
-        (echo-keystrokes 0.01)
-        char digit keys cmd count)
-    (while (progn
-             ;; Read a keypress, respecting Emacs version,
-             ;; and convert it to ASCII representation.
-             (if (featurep 'xemacs)
-                 (setq char (event-to-character
-                             (next-command-event) nil t))
-               (setq char (read-event))
-               (when (symbolp char)
-                 (setq char (or (get char 'ascii-character) char))))
-             ;; This trick from simple.el's `digit-argument'
-             ;; converts keystrokes like C-0 and C-M-1 to digits.
-             (when (characterp char)
-               (setq digit (- (logand char ?\177) ?0)))
-             (if (keymapp cmd)
-                 (setq keys (vconcat keys (vector char)))
-               (setq keys (vector char)))
-             (if no-remap              ; XEmacs doesn't have remapping
-                 (setq cmd (key-binding keys t))
-               (setq cmd (key-binding keys t t)))
-             ;; This `cond' form determines whether
-             ;; the reading loop will continue.
-             (cond
-              ;; If calling itself ("cc"), return current command.
-              ((eq (vimpulse-strip-prefix
-                    (vconcat (this-command-keys))) keys)
-               (setq cmd this-command)
-               nil)
-              ;; If CMD is a keymap, we need to read more.
-              ((keymapp cmd)
-               t)
-              ;; Numeric prefix argument.
-              ((or (memq cmd '(viper-digit-argument digit-argument))
-                   ;; The 0 key runs `viper-beginning-of-line',
-                   ;; so ignore it unless preceded by other digits.
-                   (and (eq (length keys) 1)
-                        (not (keymapp cmd))
-                        count
-                        ;; Probably overkill: only 0 bound this way.
-                        (memq digit '(0 1 2 3 4 5 6 7 8 9))))
-               ;; Store digits in a string, which is easily converted
-               ;; to a number afterwards.
-               (setq count (concat (or count "")
-                                   (number-to-string digit)))
-               t)
-              ;; Catch middle digits like "da2w".
-              ((and (not cmd)
-                    (> (length keys) 1)
-                    (memq digit '(0 1 2 3 4 5 6 7 8 9)))
-               (setq count (concat (or count "")
-                                   (number-to-string digit)))
-               ;; Remove the digit from the key sequence
-               ;; so we can see if the previous one goes anywhere.
-               (setq keys (vimpulse-truncate keys -1))
-               (setq cmd (key-binding keys))
-               t)
-              ;; We might as well accept negative numbers using
-              ;; Emacs' C--. Best of both worlds, right?
-              ((eq cmd 'negative-argument)
-               (unless count
-                 (setq count "-")))
-              ;; User pressed C-g, so return nil for CMD.
-              ((eq cmd 'keyboard-quit)
-               (setq cmd nil))
-              ;; We are done, exit the `while' loop.
-              (t
-               nil))))
-    ;; Determine COUNT.
-    (when (stringp count)
-      (if (string= count "-")
-          (setq count nil)
-        (setq count (string-to-number count))))
-    ;; Return command description.
-    (list cmd count)))
-
-;;; Repeat an operator/motion combination
-
-;; This is used in `viper-d-com' (read by `viper-repeat').
-(defun vimpulse-operator-repeat (arg)
-  "Repeat an operator-motion combination.
-ARG is a list of the form (COUNT . COM).
-COM is discarded."
-  (let ((val (viper-P-val arg)))
-    (cond
-     ((region-active-p)
-      (funcall vimpulse-last-operator
-               (region-beginning) (region-end)))
-     (t
-      (vimpulse-operator-apply
-       vimpulse-last-operator vimpulse-last-motion val
-       vimpulse-last-motion-type)))))
-
-(defun vimpulse-operator-apply (operator motion count &optional type)
-  "Apply OPERATOR on MOTION. COUNT is the motion count.
-TYPE is the motion type."
-  (let ((vimpulse-this-operator operator)
-        (vimpulse-this-motion motion)
-        (vimpulse-this-motion-type (or type vimpulse-this-motion-type))
-        beg end range)
-    (setq range (vimpulse-calculate-motion-range count motion type)
-          beg   (vimpulse-range-beginning range)
-          end   (vimpulse-range-end range)
-          vimpulse-this-motion-type (vimpulse-motion-type range))
-    (funcall operator beg end)))
-
-(defun vimpulse-region-cmd-p (cmd)
-  "Return t if CMD is a region command."
-  (let ((spec (car (cdr (interactive-form cmd)))))
-    (and (stringp spec)
-         (not (not (string-match "r" spec))))))
-
-(defun vimpulse-operator-cmd-p (cmd)
-  "Return t if CMD is an operator command."
-  (vimpulse-memq-recursive 'vimpulse-range (interactive-form cmd)))
-
-;;; Operators (yank, delete, change)
-
-(defvar killed-rectangle nil)
-
-(defun vimpulse-yank (beg end)
-  "Yank text from BEG to END."
-  (interactive (vimpulse-range t t))
-  (let ((length (abs (- beg end)))
-        last-command)
-    (cond
-     ((eq vimpulse-this-motion-type 'block)
-      (setq killed-rectangle (extract-rectangle beg end))
-      ;; Associate the rectangle with the last entry in the kill-ring.
-      (unless kill-ring
-        (copy-region-as-kill beg end))
-      (put 'killed-rectangle 'previous-kill (current-kill 0))
-      (vimpulse-operator-message "Saved <N>" beg end)
-      (vimpulse-visual-block-rotate 'upper-left beg end))
-     (t
-      (vimpulse-store-in-current-register beg end)
-      (copy-region-as-kill beg end)
-      (unless (eq vimpulse-this-motion-type 'line)
-        (goto-char beg))
-      (when (and (eolp) (not (bolp)))
-        (backward-char))
-      (vimpulse-operator-message "Saved <N>" beg end)))))
-
-(defun vimpulse-delete (beg end &optional dont-save)
-  "Delete text from BEG to END.
-If DONT-SAVE is t, just delete it."
-  (interactive (vimpulse-range))
-  (let ((length (if (eq vimpulse-this-motion-type 'line)
-                    (count-lines beg end)
-                  (abs (- end beg))))
-        last-command)
-    (cond
-     (dont-save
-      (cond
-       ((eq vimpulse-this-motion-type 'block)
-        (delete-rectangle beg end))
-       (t
-        (delete-region beg end))))
-     ((eq vimpulse-this-motion-type 'block)
-      (let ((orig (make-marker)))
-        ;; Associate the rectangle with the last entry in the kill-ring
-        (viper-move-marker-locally
-         'orig (vimpulse-visual-block-position 'upper-left beg end))
-        (unless kill-ring
-          (copy-region-as-kill beg end))
-        (kill-rectangle beg end)
-        (put 'killed-rectangle 'previous-kill (current-kill 0))
-        (goto-char orig)
-        (set-marker orig nil)
-        (vimpulse-operator-message "Deleted <N>" beg end)))
-     (t
-      (vimpulse-store-in-current-register beg end)
-      (kill-region beg end)
-      (when (and (eolp) (not (bolp)))
-        (backward-char))
-      (vimpulse-operator-message "Deleted <N>" beg end length)))))
-
-(defun vimpulse-change (beg end &optional dont-save)
-  "Change text from BEG to END.
-If DONT-SAVE is non-nil, just delete it."
-  (interactive (vimpulse-range))
-  (when vimpulse-want-change-undo
-    (vimpulse-start-undo-step))
-  (cond
-   ((eq vimpulse-this-motion-type 'block)
-    (vimpulse-delete beg end dont-save)
-    (goto-char
-     (vimpulse-visual-create-coords
-      'block ?i
-      (min vimpulse-visual-point vimpulse-visual-mark)
-      (1+ (max vimpulse-visual-point vimpulse-visual-mark))))
-    (viper-insert nil))
-   ((eq 'viper-repeat viper-intermediate-command)
-    (if dont-save
-        (delete-region beg end)
-      (kill-region beg end))
-    (when (eq vimpulse-this-motion-type 'line)
-      (save-excursion (newline))
-      (when viper-auto-indent
-        (indent-according-to-mode)))
-    (viper-yank-last-insertion))
-   ((eq vimpulse-this-motion-type 'line)
-    (setq viper-began-as-replace t)
-    (if dont-save
-        (delete-region beg end)
-      (vimpulse-store-in-current-register beg end)
-      (kill-region beg end))
-    (save-excursion (newline))
-    (when viper-auto-indent
-      (indent-according-to-mode))
-    (viper-change-state-to-insert))
-   (t
-    (if dont-save
-        (delete-region beg end)
-      (vimpulse-store-in-current-register beg end)
-      (viper-change beg end)))))
-
-(defun vimpulse-operator-message
-  (template &optional beg end length type)
-  "Echo a message like \"Deleted 2 characters\".
-TEMPLATE is a string like \"Deleted <N>\", where <N>
-is substituted with the amount of characters or lines.
-BEG and END are the range of text. If you specify LENGTH,
-they are ignored.
-
-This function respects `viper-change-notification-threshold'."
-  (let* ((beg (or beg (vimpulse-visual-beginning) 1))
-         (end (or end (vimpulse-visual-end) 1))
-         (height (or vimpulse-visual-height 1))
-         (width (or vimpulse-visual-width 1))
-         (type (or type vimpulse-this-motion-type))
-         (length (if (eq type 'line)
-                     (or length (count-lines beg end))
-                   (or length (abs (- end beg)))))
-         (template (replace-regexp-in-string
-                    "<N>"
-                    (apply 'format
-                           (if (eq type 'block)
-                               `("%s row%s and %s column%s"
-                                 ,height
-                                 ,(if (/= 1 (abs height)) "s" "")
-                                 ,width
-                                 ,(if (/= 1 (abs width)) "s" ""))
-                             `(,(if (eq type 'line)
-                                    "%s line%s" "%s character%s")
-                               ,length
-                               ,(if (/= 1 (abs length)) "s" ""))))
-                    template)))
-    (when (and (> length viper-change-notification-threshold)
-               (not (viper-is-in-minibuffer)))
-      (message template))))
-
-(defun vimpulse-store-in-register (register start end)
-  "Store text from START to END in REGISTER."
-  (cond
-   ((viper-valid-register register '(Letter))
-    (viper-append-to-register
-     (downcase register) start end))
-   (t
-    (copy-to-register register start end))))
-
-(defun vimpulse-store-in-current-register (start end)
-  "Store text from START to END in current register, if any.
-Resets `viper-use-register'."
-  (when viper-use-register
-    (vimpulse-store-in-register viper-use-register start end)
-    (setq viper-use-register nil)))
-
-(defun vimpulse-read-register (&optional register command)
-  "Use COMMAND with REGISTER.
-If called interactively, read REGISTER and COMMAND from keyboard."
-  (interactive)
-  (setq register (or register (read-char)))
-  (when (viper-valid-register register)
-    (setq command (or command (key-binding (read-key-sequence nil))))
-    (when (commandp command)
-      (let ((this-command command)
-            (viper-use-register register))
-        (call-interactively command)))))
-
-;;; Remap non-motion commands to `viper-nil'
-
-(defun vimpulse-operator-remap (from to)
-  "Remap FROM to TO in Operator-Pending mode."
-  (vimpulse-remap vimpulse-operator-remap-map from to))
-
-(defun vimpulse-operator-remapping (cmd)
-  "Return Operator-Pending remapping for CMD."
-  (if (featurep 'xemacs)
-      (or (cdr (assq cmd vimpulse-operator-remap-alist)) cmd)
-    (or (command-remapping cmd) cmd)))
-
-(vimpulse-operator-remap 'undo 'viper-nil)
-(vimpulse-operator-remap 'undo-tree-redo 'viper-nil)
-(vimpulse-operator-remap 'redo 'viper-nil)
-(vimpulse-operator-remap 'vimpulse-put-and-indent 'viper-nil)
-(vimpulse-operator-remap 'vimpulse-Put-and-indent 'viper-nil)
-(vimpulse-operator-remap 'viper-Put-back 'viper-nil)
-(vimpulse-operator-remap 'viper-put-back 'viper-nil)
-(vimpulse-operator-remap 'viper-delete-backward-char 'viper-nil)
-(vimpulse-operator-remap 'viper-delete-char 'viper-nil)
-(vimpulse-operator-remap 'viper-insert 'viper-nil)
-(vimpulse-operator-remap 'viper-intercept-ESC-key 'viper-nil)
-(vimpulse-operator-remap 'viper-line-to-bottom 'viper-nil)
-(vimpulse-operator-remap 'viper-line-to-middle 'viper-nil)
-(vimpulse-operator-remap 'viper-line-to-top 'viper-nil)
-(vimpulse-operator-remap 'viper-repeat 'viper-nil)
-(vimpulse-operator-remap 'viper-substitute 'viper-nil)
-
-;;; Utility macro for converting region commands to operators
-
-(defmacro vimpulse-convert-to-operator (region-cmd &rest args)
-  "Convert a region command to an operator command.
-Defines a new command with the name REGION-CMD-operator.
-ARGS is passed to `vimpulse-range'."
-  (let ((region-cmd (eval region-cmd)))
-    `(defun ,(intern (concat (symbol-name region-cmd) "-operator"))
-       (beg end)
-       ,(format "Operator-wrapper for `%s'.\n\n%s"
-                region-cmd (documentation region-cmd t))
-       (interactive (vimpulse-range ,@args))
-       (,region-cmd beg end))))
-
-;;; Compatibility code allowing old-style Viper motions to work
-
-;; Postpone operator execution by disabling `viper-execute-com'.
-;; In the old scheme, the operator was executed inside the motion
-;; (by a call to this function), rather than after it; the following
-;; advice removes this behavior. However, some motions, like f and /,
-;; need to access `viper-d-com' for negative count and command-keys
-;; while repeating, so certain parts must be carefully retained.
-(defadvice viper-execute-com (around vimpulse-operator activate)
-  "Disable in Operator-Pending mode."
-  (cond
-   ((eq 'operator-state viper-current-state)
-    ;; ?r is Viper's "dummy operator", associated with
-    ;; `viper-exec-dummy' in `viper-exec-array'.
-    (setq com ?r)
-    ad-do-it
-    ;; While repeating, put needed values in `viper-d-com'.
-    (unless (or (eq 'viper-repeat this-command)
-                (eq 'viper-repeat viper-intermediate-command))
-      (unless viper-d-com
-        (setq viper-d-com (list nil nil nil nil nil nil)))
-      (unless (eq vimpulse-this-motion
-                  (vimpulse-operator-remapping m-com))
-        (setq vimpulse-this-motion (vimpulse-operator-remapping m-com))
-        (setcar (nthcdr 2 viper-d-com) com))
-      (setq vimpulse-this-count val)
-      (setcar (nthcdr 5 viper-d-com)
-              (viper-array-to-string
-               (if (arrayp viper-this-command-keys)
-                   viper-this-command-keys
-                 (this-command-keys))))))
-   (t
-    ad-do-it)))
-
-;; This separates the operator-pending part of a Viper motion from the
-;; rest, defining a new command called vimpulse-operator-MOTION.
-(defmacro vimpulse-operator-map-define
-  (viper-motion &optional type &rest body)
-  "Define a new command for the Operator-Pending part of VIPER-MOTION.
-The new command is named VIMPULSE-OPERATOR-MOTION and has motion
-type TYPE. A custom function body may be specified via BODY."
-  (declare (indent 2))
-  `(let* ((viper-motion ',viper-motion)
-          (type ,type)
-          (body ',body)
-          (motion-name (symbol-name viper-motion))
-          (docstring (documentation viper-motion t)))
-     (setq type (or type (vimpulse-motion-type viper-motion)))
-     (unless (memq type '(inclusive line block))
-       (setq type 'exclusive))
-     (setq motion-name (replace-regexp-in-string
-                        "^viper-\\\|^vimpulse-" "" motion-name))
-     (setq motion-name
-           (concat "vimpulse-operator-" motion-name))
-     (setq motion-name (intern motion-name))
-     (add-to-list 'vimpulse-movement-cmds motion-name)
-     (vimpulse-operator-remap viper-motion motion-name)
-     (eval `(defun ,motion-name (arg)
-              ,(format "Operator-pending %s part of `%s'.\n\n%s"
-                       type viper-motion (or docstring ""))
-              ,@(if body body
-                  `((interactive "P")
-                    (let (com com-alist)
-                      (setq com-alist
-                            '((vimpulse-change . ?c)
-                              (vimpulse-delete . ?d)
-                              (vimpulse-yank . ?y)))
-                      (setq com
-                            (or (cdr (assq vimpulse-this-operator
-                                           com-alist))
-                                ?r))
-                      (,viper-motion (if (region-active-p)
-                                         arg
-                                       (cons arg com)))
-                      ,@(unless (eq 'exclusive type)
-                          '((viper-backward-char-carefully))))))))
-     (put motion-name 'motion-type type)
-     `(quote ,motion-name)))
-
-;; d%: when point is before the parenthetical expression,
-;; include it in the resulting range.
-(vimpulse-operator-map-define viper-paren-match 'inclusive
-  (interactive "P")
-  (let ((orig (point)))
-    (viper-paren-match arg)
-    (viper-move-marker-locally 'viper-com-point orig)
-    (when (integerp arg)
-      (setq vimpulse-this-motion-type 'line))))
-
-;; Viper quirk: cw only deletes a single character when at whitespace,
-;; dw deletes all of it. Use the latter behavior in both cases.
-(vimpulse-operator-map-define viper-forward-word 'exclusive
-  (interactive "P")
-  (let ((com-alist '((vimpulse-change . ?c)
-                     (vimpulse-delete . ?d)
-                     (vimpulse-yank . ?y))) com)
-    (if (looking-at "[[:space:]]")
-        (setq com ?d)
-      (setq com (or (cdr (assq vimpulse-this-operator com-alist)) ?r)))
-    (viper-forward-word (if (region-active-p)
-                            arg
-                          (cons arg com)))))
-
-(vimpulse-operator-map-define viper-forward-Word 'exclusive
-  (interactive "P")
-  (let ((com-alist '((vimpulse-change . ?c)
-                     (vimpulse-delete . ?d)
-                     (vimpulse-yank . ?y))) com)
-    (if (looking-at "[[:space:]]")
-        (setq com ?d)
-      (setq com (or (cdr (assq vimpulse-this-operator com-alist)) ?r)))
-    (viper-forward-Word (if (region-active-p)
-                            arg
-                          (cons arg com)))))
-
-;; These motions need wrapper functions to repeat correctly.
-(vimpulse-operator-map-define viper-end-of-Word 'inclusive)
-(vimpulse-operator-map-define viper-end-of-word 'inclusive)
-(vimpulse-operator-map-define viper-find-char-backward 'exclusive)
-(vimpulse-operator-map-define viper-find-char-forward 'inclusive)
-(vimpulse-operator-map-define viper-forward-char 'inclusive)
-(vimpulse-operator-map-define viper-goto-char-backward 'exclusive)
-(vimpulse-operator-map-define viper-goto-char-forward 'inclusive)
-(vimpulse-operator-map-define viper-search-backward 'exclusive)
-(vimpulse-operator-map-define viper-search-forward 'exclusive)
-
-;; Set up motion types for remaining Viper motions.
-(put 'vimpulse-goto-first-line 'motion-type 'line)
-(put 'vimpulse-goto-mark-and-skip-white 'motion-type 'line)
-(put 'vimpulse-end-of-visual-line 'motion-type 'inclusive)
-(put 'viper-backward-Word 'motion-type 'exclusive)
-(put 'viper-backward-char 'motion-type 'exclusive)
-(put 'viper-backward-paragraph 'motion-type 'exclusive)
-(put 'viper-backward-sentence 'motion-type 'exclusive)
-(put 'viper-backward-word 'motion-type 'exclusive)
-(put 'viper-beginning-of-line 'motion-type 'exclusive)
-(put 'viper-forward-paragraph 'motion-type 'exclusive)
-(put 'viper-forward-sentence 'motion-type 'exclusive)
-(put 'viper-goto-eol 'motion-type 'inclusive)
-(put 'viper-goto-line 'motion-type 'line)
-(put 'viper-goto-mark 'motion-type 'exclusive)
-(put 'viper-goto-mark-and-skip-white 'motion-type 'line)
-(put 'viper-next-line 'motion-type 'line)
-(put 'viper-previous-line 'motion-type 'line)
-(put 'viper-search-Next 'motion-type 'exclusive)
-(put 'viper-search-next 'motion-type 'exclusive)
-(put 'viper-window-bottom 'motion-type 'line)
-(put 'viper-window-middle 'motion-type 'line)
-(put 'viper-window-top 'motion-type 'line)
-(put 'next-line 'motion-type 'line)
-(put 'previous-line 'motion-type 'line)
-
-;;;; Text objects support
-
-;; The following code implements support for text objects and commands
-;; like diw, daw, ciw, caw. Currently, the most common objects are
-;; supported:
-;;
-;;   - paren-blocks: b B { [ ( < > ) ] }
-;;   - sentences: s
-;;   - paragraphs: p
-;;   - quoted expressions: " and '
-;;   - words: w and W
-;;
-;; Vimpulse's text objects are fairly close to Vim's, and are based on
-;; Viper's movement commands. More objects are easily added with
-;; `vimpulse-define-text-object'.
-
-(defmacro vimpulse-define-text-object (object args &rest body)
-  "Define a text object OBJECT.
-ARGS is the argument list, which must contain at least one argument:
-the count. It is followed by an optional docstring and optional
-keywords:
-
-:keys KEYS      A key or a list of keys to bind the command to.
-:map MAP        Keymap to bind :keys in, default
-                `vimpulse-operator-basic-map'.
-:type TYPE      The object's motion type.
-
-The keywords are followed by the object's body, which must return
-a pure range (BEG END) or a motion range (TYPE BEG END). Thus,
-a simple example may look somewhat like:
-
-    (vimpulse-define-text-object test (arg)
-      \"Test object.\"
-      :keys \"t\"
-      (list 'exclusive (point) (+ arg (point))))
-
-Here, the count is stored in ARG. Note that the body must be able
-to handle a negative value, which specifies reverse direction."
-  (declare (indent defun))
-  (let ((map 'vimpulse-operator-basic-map)
-        count doc keys keyword type)
-    ;; Collect COUNT argument.
-    (setq args (or args (list 'arg))
-          count (car args))
-    ;; Collect docstring, if any.
-    (when (stringp (car body))
-      (setq doc  (list (car body))      ; for splicing
-            body (cdr body)))
-    ;; Collect keywords.
-    (while (keywordp (setq keyword (car body)))
-      (setq body (cdr body))
-      (cond
-       ((eq keyword :keys)
-        (setq keys (vimpulse-unquote (pop body))))
-       ((eq keyword :map)
-        (setq map (vimpulse-unquote (pop body))))
-       ((eq keyword :type)
-        (setq type (vimpulse-unquote (pop body))))
-       (t
-        (pop body))))
-    (unless (listp keys)
-      (setq keys (list keys)))
-    (when type
-      (setq type `(',type)))
-    ;; Macro expansion: define key bindings, set motion type
-    ;; and define command.
-    `(progn
-       (dolist (key ',keys)
-         (define-key ,map key ',object))
-       ,@(when type
-           `((put ',object 'motion-type ,@type)))
-       (defun ,object ,args
-         ,@doc
-         (interactive "p")
-         (let ((,count (if (numberp ,count) ,count 1))
-               range)
-           (cond
-            ((region-active-p)
-             (when (< (point) (mark t))
-               (setq ,count (- ,count)))
-             (when (memq vimpulse-visual-mode '(line block))
-               (vimpulse-visual-activate 'char))
-             (when (and vimpulse-visual-mode
-                        (not vimpulse-visual-region-expanded))
-               (vimpulse-visual-expand-region))
-             (setq range (progn ,@body))
-             (unless (vimpulse-mark-range range t ,@type)
-               ;; Are we stuck (unchanged region)?
-               ;; Move forward and try again.
-               (viper-forward-char-carefully (if (< ,count 0) -1 1))
-               (setq range (progn ,@body))
-               (vimpulse-mark-range range t ,@type)))
-            (t
-             (setq range (progn ,@body))
-             (vimpulse-mark-range range nil ,@type))))))))
-
-(when (fboundp 'font-lock-add-keywords)
-  (font-lock-add-keywords
-   'emacs-lisp-mode
-   '(("(\\(vimpulse-define-text-object\\)\\>[ \f\t\n\r\v]*\\(\\sw+\\)?"
-      (1 font-lock-keyword-face)
-      (2 font-lock-function-name-face nil t)))))
-
-(defun vimpulse-mark-range (range &optional widen type)
-  "Mark RANGE, which has the form (BEG END) or (TYPE BEG END).
-If WIDEN is non-nil, expands existing region. If the TYPE
-argument is specified, it overrides the type of RANGE."
-  (let* ((type  (or type (vimpulse-motion-type range)))
-         (range (vimpulse-motion-range range))
-         (beg (vimpulse-range-beginning range))
-         (end (vimpulse-range-end range)))
-    (cond
-     ((eq type 'exclusive)
-      (if vimpulse-visual-mode
-          (vimpulse-visual-select beg end widen)
-        (vimpulse-set-region beg end widen)))
-     (t
-      (when vimpulse-visual-mode
-        (unless (memq type '(line block))
-          (setq type 'char))
-        (unless (eq type vimpulse-visual-mode)
-          (vimpulse-visual-activate type)))
-      (vimpulse-visual-select beg end widen)))))
-
-;;; Text object range functions
-
-;; Word-like expressions (words, sentences, paragraphs).
-(defun vimpulse-object-range
-  (count backward-func forward-func &optional type)
-  "Return a text object range (TYPE BEG END).
-BACKWARD-FUNC moves point to the object's beginning,
-FORWARD-FUNC moves to its end. Schematically,
-
-\(vimpulse-object-range <num> <beg-of-object> <end-of-object>)
-
-COUNT is the number of objects. If positive, go forwards and
-then backwards; if negative, go backwards and then forwards.
-
-The type of the object (`exclusive', `inclusive' or `line')
-may be specified with TYPE. Otherwise, the type is inferred
-from the motion types of BACKWARD-FUNC and FORWARD-FUNC."
-  (let ((types '(exclusive inclusive line block))
-        beg end forward-range backward-range
-        viper-com-point
-        vimpulse-visual-vars-alist
-        vimpulse-this-motion
-        vimpulse-this-motion-type)
-    (save-excursion
-      (setq count (or (if (eq count 0) 1 count) 1))
-      (if (< count 0)
-          (setq backward-range
-                (vimpulse-calculate-motion-range
-                 (abs count) backward-func type t)
-                forward-range
-                (vimpulse-calculate-motion-range
-                 (abs count) forward-func type t))
-        (setq forward-range
-              (vimpulse-calculate-motion-range
-               (abs count) forward-func type t)
-              backward-range
-              (vimpulse-calculate-motion-range
-               (abs count) backward-func type t)))
-      (setq beg (apply 'min (vimpulse-motion-range backward-range))
-            end (apply 'max (vimpulse-motion-range forward-range)))
-      (unless type
-        (setq type 'exclusive)
-        (dolist (elt types)
-          (when (or (eq elt (vimpulse-motion-type backward-range))
-                    (eq elt (vimpulse-motion-type forward-range)))
-            (setq type elt))))
-      (list type beg end))))
-
-(defun vimpulse-an-object-range
-  (count backward-func forward-func &optional include-newlines regexp)
-  "Return a text object range (BEG END) with whitespace.
-Unless INCLUDE-NEWLINES is t, whitespace inclusion is restricted
-to the line(s) the object is on. REGEXP is a regular expression
-for matching whitespace; the default is \"[ \\f\\t\\n\\r\\v]+\".
-See `vimpulse-object-range' for more details."
-  (let (range beg end line-beg line-end mark-active-p)
-    (save-excursion
-      (setq count (or (if (eq count 0) 1 count) 1))
-      (setq regexp (or regexp "[ \f\t\n\r\v]+"))
-      (setq range (vimpulse-motion-range
-                   (vimpulse-object-range
-                    count backward-func forward-func)))
-      ;; Let `end' be the boundary furthest from point,
-      ;; based on the direction we are going.
-      (if (< count 0)
-          (setq beg (cadr range)
-                end (car range))
-        (setq beg (car range)
-              end (cadr range)))
-      ;; If INCLUDE-NEWLINES is nil, never move past
-      ;; the line boundaries of the text object.
-      (unless include-newlines
-        (setq line-beg (line-beginning-position)
-              line-end (line-end-position))
-        (when (> (* count beg)
-                 (max (* count line-beg) (* count line-end)))
-          (setq count (- count))
-          (setq range (vimpulse-motion-range
-                       (vimpulse-object-range
-                        count backward-func forward-func)))
-          (if (< count 0)
-              (setq beg (cadr range)
-                    end (car range))
-            (setq beg (car range)
-                  end (cadr range))))
-        (setq line-beg (save-excursion
-                         (goto-char (min beg end))
-                         (line-beginning-position))
-              line-end (save-excursion
-                         (goto-char (max beg end))
-                         (line-end-position))))
-      ;; Generally only include whitespace at one side (but see below).
-      ;; If we are before the object, include leading whitespace;
-      ;; if we are inside the object, include trailing whitespace.
-      ;; If trailing whitespace inclusion fails, include leading.
-      (setq count (if (< count 0) -1 1))
-      (when (or (< (* count (point)) (* count beg))
-                (eq end (setq end (save-excursion
-                                    (goto-char end)
-                                    (vimpulse-skip-regexp
-                                     regexp count line-beg line-end)))))
-        (setq beg (save-excursion
-                    (goto-char beg)
-                    (if (and (not include-newlines)
-                             (looking-back "^[ \t]*"))
-                        beg
-                      (vimpulse-skip-regexp
-                       regexp (- count) line-beg line-end))))
-        ;; Before/after adjustment for whole lines: if the object is
-        ;; followed by a blank line, include that as trailing
-        ;; whitespace and subtract a line from the leading whitespace.
-        (when include-newlines
-          (goto-char end)
-          (forward-line count)
-          (when (looking-at "[ \t]*$")
-            (setq end (line-beginning-position))
-            (goto-char beg)
-            (when (looking-at "[ \t]*$")
-              (forward-line count)
-              (setq beg (line-beginning-position))))))
-      ;; Return the range.
-      (list (min beg end) (max beg end)))))
-
-(defun vimpulse-inner-object-range
-  (count backward-func forward-func)
-  "Return a text object range (BEG END) including point.
-If point is outside the object, it is included in the range.
-To include whitespace, use `vimpulse-an-object-range'.
-See `vimpulse-object-range' for more details."
-  (let (range beg end line-beg line-end)
-    (setq count (or (if (eq count 0) 1 count) 1))
-    (setq range (vimpulse-motion-range
-                 (vimpulse-object-range
-                  count backward-func forward-func)))
-    (setq beg (car range)
-          end (cadr range))
-    (setq line-beg (line-beginning-position)
-          line-end (line-end-position))
-    (when (> (min (* count beg) (* count end))
-             (max (* count line-beg) (* count line-end)))
-      (setq count (- count))
-      (setq range (vimpulse-motion-range
-                   (vimpulse-object-range
-                    count backward-func forward-func))
-            beg (car range)
-            end (cadr range)))
-    ;; Return the range, including point.
-    (list (min beg (point)) (max end (point)))))
-
-;; Parenthetical expressions.
-(defun vimpulse-paren-range (count &optional open close include-parentheses)
-  "Return a parenthetical expression range (BEG END).
-The type of parentheses may be specified with OPEN and CLOSE,
-which must be characters. INCLUDE-PARENTHESES specifies
-whether to include the parentheses in the range."
-  (let ((beg (point)) (end (point))
-        line-beg line-end)
-    (setq count (if (eq count 0) 1 (abs count)))
-    (save-excursion
-      (setq open  (if (characterp open)
-                      (regexp-quote (string open)) "")
-            close (if (characterp close)
-                      (regexp-quote (string close)) ""))
-      (when (and (not (string= open ""))
-                 (looking-at open))
-        (forward-char))
-      ;; Find opening and closing paren with
-      ;; Emacs' S-exp facilities.
-      (while (progn
-               (vimpulse-backward-up-list 1)
-               (not (when (looking-at open)
-                      (when (save-excursion
-                              (forward-sexp)
-                              (when (looking-back close)
-                                (setq end (point))))
-                        (if (>= count 0)
-                            (setq beg (point))
-                          (setq count (1- count)) nil))))))
-      (if include-parentheses
-          (list beg end)
-        (setq beg (prog1 (min (1+ beg) end)
-                    (setq end (max (1- end) beg))))
-        (if (<= (count-lines beg end) 1)
-            (list beg end)
-          ;; Multi-line inner range: select whole lines.
-          (goto-char beg)
-          (when (looking-at "[ \f\t\n\r\v]*$")
-            (forward-line)
-            ;; Include indentation?
-            (if (and viper-auto-indent
-                     (not (eq vimpulse-this-operator
-                              'vimpulse-delete)))
-                (back-to-indentation)
-              (beginning-of-line))
-            (setq beg (point)))
-          (goto-char end)
-          (when (and (looking-back "^[ \f\t\n\r\v]*")
-                     (not (eq vimpulse-this-operator
-                              'vimpulse-delete)))
-            (setq end (line-end-position 0))
-            (goto-char end))
-          (list (min beg end) (max beg end)))))))
-
-;; Quoted expressions.
-(defun vimpulse-quote-range (count &optional quote include-quotes)
-  "Return a quoted expression range (BEG END).
-QUOTE is a quote character (default ?\\\"). INCLUDE-QUOTES
-specifies whether to include the quote marks in the range."
-  (let ((beg (point)) (end (point))
-        regexp)
-    (save-excursion
-      (setq count (if (eq count 0) 1 (abs count)))
-      (setq quote (or quote ?\"))
-      (setq quote (if (characterp quote)
-                      (regexp-quote (string quote)) "")
-            regexp (concat "\\([^\\\\]\\|^\\)" quote))
-      (when (and (not (string= quote ""))
-                 (looking-at quote))
-        (forward-char))
-      ;; Search forward for a closing quote.
-      (while (and (> count 0)
-                  (re-search-forward regexp nil t))
-        (setq count (1- count))
-        (setq end (point))
-        ;; Find the matching opening quote.
-        (condition-case nil
-            (progn
-              (setq beg (scan-sexps end -1))
-              ;; Emacs' S-exp logic doesn't work in text mode.
-              (save-excursion
-                (goto-char beg)
-                (unless (looking-at quote)
-                  (re-search-backward regexp)
-                  (unless (looking-at quote)
-                    (forward-char))
-                  (setq beg (point)))))
-          ;; Finding the opening quote failed. Maybe we're already at
-          ;; the opening quote and should look for the closing instead?
-          (error (condition-case nil
-                     (progn
-                       (viper-backward-char-carefully)
-                       (setq beg (point))
-                       (setq end (scan-sexps beg 1))
-                       (unless (looking-back quote)
-                         (re-search-forward regexp)
-                         (unless (looking-back quote)
-                           (backward-char))
-                         (setq end (point))))
-                   (error (setq end beg))))))
-      (if include-quotes
-          (list beg end)
-        (list (min (1+ beg) end) (max (1- end) beg))))))
-
-;;; Text object definitions
-
-(vimpulse-define-text-object vimpulse-line (arg)
-  "Select ARG lines."
-  :type 'line
-  (setq arg (1- arg))
-  (vimpulse-line-range
-   (point)
-   (save-excursion
-     (when (> arg 0)
-       (viper-next-line-carefully arg))
-     (point))))
-
-(vimpulse-define-text-object vimpulse-a-word (arg)
-  "Select a word."
-  :keys "aw"
-  (vimpulse-an-object-range
-   arg
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (viper-backward-word (cons arg ?r))))
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (viper-end-of-word (cons arg ?r))))))
-
-(vimpulse-define-text-object vimpulse-inner-word (arg)
-  "Select inner word."
-  :keys "iw"
-  (vimpulse-inner-object-range
-   arg
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (viper-backward-word (cons arg ?r))))
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (backward-char)
-       (viper-end-of-word (cons arg ?r))))))
-
-(vimpulse-define-text-object vimpulse-a-Word (arg)
-  "Select a Word."
-  :keys "aW"
-  (vimpulse-an-object-range
-   arg
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (viper-backward-Word (cons arg ?r))))
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (viper-end-of-Word (cons arg ?r))))))
-
-(vimpulse-define-text-object vimpulse-inner-Word (arg)
-  "Select inner Word."
-  :keys "iW"
-  (vimpulse-inner-object-range
-   arg
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (viper-backward-Word (cons arg ?r))))
-   (lambda (arg)
-     (vimpulse-limit (line-beginning-position) (line-end-position)
-       (viper-end-of-Word (cons arg ?r))))))
-
-(vimpulse-define-text-object vimpulse-a-sentence (arg)
-  "Select a sentence."
-  :keys "as"
-  (vimpulse-an-object-range
-   arg
-   (lambda (arg)
-     (viper-backward-sentence arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
-   (lambda (arg)
-     (viper-forward-sentence arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1))))
-
-(vimpulse-define-text-object vimpulse-inner-sentence (arg)
-  "Select inner sentence."
-  :keys "is"
-  (vimpulse-inner-object-range
-   arg
-   (lambda (arg)
-     (viper-backward-sentence arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
-   (lambda (arg)
-     (viper-forward-sentence arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1))))
-
-(vimpulse-define-text-object vimpulse-a-paragraph (arg)
-  "Select a paragraph."
-  :keys "ap"
-  (vimpulse-an-object-range
-   arg
-   (lambda (arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1)
-     (viper-backward-paragraph arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
-   (lambda (arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1)
-     (viper-forward-paragraph arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1)) t))
-
-(vimpulse-define-text-object vimpulse-inner-paragraph (arg)
-  "Select inner paragraph."
-  :keys "ip"
-  (vimpulse-inner-object-range
-   arg
-   (lambda (arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1)
-     (viper-backward-paragraph arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
-   (lambda (arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1)
-     (viper-forward-paragraph arg)
-     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1))))
-
-(vimpulse-define-text-object vimpulse-a-paren (arg)
-  "Select a parenthesis."
-  :keys '("ab" "a(" "a)")
-  (vimpulse-paren-range arg ?\( nil t))
-
-(vimpulse-define-text-object vimpulse-inner-paren (arg)
-  "Select inner parenthesis."
-  :keys '("ib" "i(" "i)")
-  (vimpulse-paren-range arg ?\())
-
-(vimpulse-define-text-object vimpulse-a-bracket (arg)
-  "Select a bracket parenthesis."
-  :keys '("a[" "a]")
-  (vimpulse-paren-range arg ?\[ nil t))
-
-(vimpulse-define-text-object vimpulse-inner-bracket (arg)
-  "Select inner bracket parenthesis."
-  :keys '("i[" "i]")
-  (vimpulse-paren-range arg ?\[))
-
-(vimpulse-define-text-object vimpulse-a-curly (arg)
-  "Select a curly parenthesis."
-  :keys '("aB" "a{" "a}")
-  (vimpulse-paren-range arg ?{ nil t))
-
-(vimpulse-define-text-object vimpulse-inner-curly (arg)
-  "Select inner curly parenthesis."
-  :keys '("iB" "i{" "i}")
-  (vimpulse-paren-range arg ?{))
-
-(vimpulse-define-text-object vimpulse-an-angle (arg)
-  "Select an angle bracket."
-  :keys '("a<" "a>")
-  (vimpulse-paren-range arg ?< nil t))
-
-(vimpulse-define-text-object vimpulse-inner-angle (arg)
-  "Select inner angle bracket."
-  :keys '("i<" "i>")
-  (vimpulse-paren-range arg ?<))
-
-(vimpulse-define-text-object vimpulse-a-single-quote (arg)
-  "Select a single quoted expression."
-  :keys "a'"
-  (vimpulse-quote-range arg ?' t))
-
-(vimpulse-define-text-object vimpulse-inner-single-quote (arg)
-  "Select inner single quoted expression."
-  :keys "i'"
-  (vimpulse-quote-range arg ?'))
-
-(vimpulse-define-text-object vimpulse-a-double-quote (arg)
-  "Select a double quoted expression."
-  :keys "a\""
-  (vimpulse-quote-range arg ?\" t))
-
-(vimpulse-define-text-object vimpulse-inner-double-quote (arg)
-  "Select inner double quoted expression."
-  :keys "i\""
-  (vimpulse-quote-range arg ?\"))
 
 ;;;; Visual mode
 
@@ -5656,6 +3470,153 @@ specifies whether to include the quote marks in the range."
 ;; write your own utilities using the rect.el library. Alternatively,
 ;; use the `vimpulse-apply-on-block' function.
 
+
+
+(defgroup vimpulse-visual nil
+  "Visual mode for Viper."
+  :prefix "vimpulse-visual-"
+  :group  'vimpulse)
+
+(defvar vimpulse-visual-remap-alist nil
+  "Association list of command remappings in Visual mode.")
+
+(viper-deflocalvar vimpulse-visual-vars-alist nil
+  "Association list of pre-Visual variable values.
+When Visual mode is entered, it enables Transient Mark mode.
+When it is exited, it restores Transient Mark mode to whatever it was
+before entering Visual mode. To that end, this variable stores the
+\"old\" value of `transient-mark-mode' (and some other variables)
+before Visual mode changed them.")
+
+(viper-deflocalvar vimpulse-visual-global-vars nil
+  "List of variables that were global before Visual mode.
+Visual mode's toggling of Transient Mark mode is constrained to the
+current buffer by temporarily making `transient-mark-mode' (and other
+variables) buffer-local. When Visual mode is exited, the variables
+listed here are passed to `kill-local-variable'.")
+
+(viper-deflocalvar vimpulse-visual-local-vars
+  '(cua-mode
+    mark-active
+    transient-mark-mode
+    zmacs-regions)
+  "System variables that are reset for each Visual session.")
+
+(viper-deflocalvar vimpulse-visual-last nil
+  "Last active Visual mode.
+May be `char', `line', `block' or nil.")
+
+(viper-deflocalvar vimpulse-visual-previous-state 'viper-state
+  "Previous state before enabling Visual mode.
+This lets us revert to Emacs state in non-vi buffers.")
+
+(viper-deflocalvar vimpulse-visual-region-expanded nil
+  "Whether region is expanded to the Visual selection.")
+
+(viper-deflocalvar vimpulse-visual-point nil
+  "Last expanded `point' in Visual mode.")
+
+(viper-deflocalvar vimpulse-visual-mark nil
+  "Last expanded `mark' in Visual mode.")
+
+(viper-deflocalvar vimpulse-visual-overlay nil
+  "Overlay for Visual selection.
+In XEmacs, this is an extent.")
+
+(viper-deflocalvar vimpulse-visual-block-overlays nil
+  "Overlays for Visual Block selection.")
+
+(viper-deflocalvar vimpulse-visual-whitespace-overlay nil
+  "Overlay encompassing text inserted into the buffer
+to make Block selection at least one column wide.")
+
+(defvar vimpulse-visual-height nil
+  "Height of last Visual selection.")
+
+(defvar vimpulse-visual-width nil
+  "Width of last Visual selection.")
+
+(defvar vimpulse-visual-insert-coords nil
+  "List of the form (I-COM UL-POS COL NLINES), where
+I-COM is the insert command (?i, ?a, ?I or ?A),
+UL-POS is the position of the upper left corner of the region,
+COL is the column of insertion, and
+NLINES is the number of lines in the region.")
+
+;;; Key bindings
+
+(defvar vimpulse-visual-basic-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "v" 'vimpulse-visual-toggle-char)
+    (define-key map "V" 'vimpulse-visual-toggle-line)
+    (define-key map "\C-v" 'vimpulse-visual-toggle-block)
+    (define-key map "x" 'vimpulse-delete)
+    (define-key map "D" 'vimpulse-delete)
+    (define-key map "Y" 'vimpulse-yank)
+    (define-key map "R" 'vimpulse-change)
+    (define-key map "C" 'vimpulse-change)
+    (define-key map "s" 'vimpulse-change)
+    (define-key map "S" 'vimpulse-change)
+    (define-key map "o" 'exchange-point-and-mark)
+    (define-key map "O" 'vimpulse-visual-exchange-corners)
+    (define-key map "I" 'vimpulse-visual-insert)
+    (define-key map "A" 'vimpulse-visual-append)
+    (define-key map "U" 'vimpulse-upcase)
+    (define-key map "u" 'vimpulse-downcase)
+    (define-key map ":" 'vimpulse-visual-ex)
+    map)
+  "Vimpulse Visual mode keymap.")
+
+(put 'vimpulse-visual-basic-map 'remap-alist 'vimpulse-visual-remap-alist)
+(vimpulse-remap vimpulse-visual-basic-map 'viper-repeat 'viper-nil)
+(vimpulse-remap vimpulse-visual-basic-map 'viper-forward-char 'vimpulse-visual-forward-char)
+(vimpulse-remap vimpulse-visual-basic-map 'viper-goto-eol 'vimpulse-visual-goto-eol)
+
+(viper-deflocalvar vimpulse-visual-mode nil
+  "Current Visual mode: may be nil, `char', `line' or `block'.")
+
+;; Visual mode comprises three "submodes": characterwise, linewise
+;; and blockwise selection. We implement this by setting the mode
+;; variable `vimpulse-visual-mode' to either `char', `line'
+;; or `block'.
+(define-minor-mode vimpulse-visual-mode
+  "Toggles Visual mode in Viper."
+  :initial-value nil
+  :keymap vimpulse-visual-basic-map
+  :group 'vimpulse-visual
+  (cond
+   (vimpulse-visual-mode
+    (unless (memq vimpulse-visual-mode '(char line block))
+      (vimpulse-visual-activate 'char)))
+   (t
+    ;; This is executed when we do (vimpulse-visual-mode -1).
+    ;; It must run without error even if Visual mode is not active.
+    (vimpulse-visual-highlight -1)
+    ;; clean up local variables
+    (dolist (var vimpulse-visual-local-vars)
+      (when (assq var vimpulse-visual-vars-alist)
+        (set var (cdr (assq var vimpulse-visual-vars-alist))))
+      (when (memq var vimpulse-visual-global-vars)
+        (kill-local-variable var)))
+    (setq vimpulse-visual-region-expanded nil)
+    ;; deactivate mark
+    (when vimpulse-visual-vars-alist
+      (vimpulse-deactivate-mark t))
+    (vimpulse-transient-restore)
+    (kill-local-variable 'vimpulse-visual-vars-alist)
+    (kill-local-variable 'vimpulse-visual-global-vars)
+    ;; if Viper state is not already changed,
+    ;; change it to vi (command) state
+    (when (eq viper-current-state 'visual-state)
+      (cond
+       ((eq vimpulse-visual-previous-state 'emacs-state)
+        (viper-change-state-to-emacs))
+       (t
+        (let (abbrev-mode)
+          (save-excursion
+            (viper-change-state-to-vi))))))
+    (kill-local-variable 'vimpulse-visual-previous-state))))
+
 (vimpulse-define-state visual
   "Visual mode is a flexible and easy way to select text.
 To use Visual mode, press v in vi (command) mode. Then use the
@@ -5679,51 +3640,6 @@ selection on each line."
    (t
     (vimpulse-visual-mode -1))))
 
-(defgroup vimpulse-visual nil
-  "Visual mode for Viper."
-  :prefix "vimpulse-visual-"
-  :group  'vimpulse)
-
-;; Visual mode comprises three "submodes": characterwise, linewise
-;; and blockwise selection. We implement this by setting the mode
-;; variable `vimpulse-visual-mode' to either `char', `line'
-;; or `block'.
-(define-minor-mode vimpulse-visual-mode
-  "Toggles Visual mode in Viper."
-  :initial-value nil
-  :keymap vimpulse-visual-basic-map
-  :group 'vimpulse-visual
-  (cond
-   (vimpulse-visual-mode
-    (unless (memq vimpulse-visual-mode '(char line block))
-      (vimpulse-visual-activate 'char)))
-   (t
-    ;; This is executed when we do (vimpulse-visual-mode -1).
-    ;; It must run without error even if Visual mode is not active.
-    (vimpulse-visual-highlight -1)
-    ;; Clean up local variables.
-    (dolist (var vimpulse-visual-local-vars)
-      (when (assq var vimpulse-visual-vars-alist)
-        (set var (cdr (assq var vimpulse-visual-vars-alist))))
-      (when (memq var vimpulse-visual-global-vars)
-        (kill-local-variable var)))
-    (setq vimpulse-visual-region-expanded nil)
-    ;; Deactivate mark.
-    (when vimpulse-visual-vars-alist
-      (vimpulse-deactivate-mark t))
-    (vimpulse-transient-restore)
-    (kill-local-variable 'vimpulse-visual-vars-alist)
-    (kill-local-variable 'vimpulse-visual-global-vars)
-    ;; If Viper state is not already changed,
-    ;; change it to vi (command) state.
-    (when (eq viper-current-state 'visual-state)
-      (cond
-       ((eq vimpulse-visual-previous-state 'emacs-state)
-        (viper-change-state-to-emacs))
-       (t
-        (save-excursion (viper-change-state-to-vi)))))
-    (kill-local-variable 'vimpulse-visual-previous-state))))
-
 ;;; Activation
 
 (eval-and-compile
@@ -5734,32 +3650,32 @@ selection on each line."
   "Activate Visual mode. MODE is `char', `line' or `block'.
 May also be used to change the Visual mode."
   (unless (memq vimpulse-visual-mode '(char line block))
-    ;; We are activating Visual mode for the first time.
+    ;; we are activating Visual mode for the first time
     (kill-local-variable 'vimpulse-visual-vars-alist)
     (kill-local-variable 'vimpulse-visual-global-vars)
     (setq vimpulse-visual-previous-state viper-current-state)
-    ;; Make global variables buffer-local.
+    ;; make global variables buffer-local
     (setq vimpulse-visual-vars-alist nil)
     (vimpulse-visual-block-cleanup-whitespace)
     (vimpulse-transient-remember)
     (dolist (var vimpulse-visual-local-vars)
       (when (and (boundp var)
                  (not (assq var vimpulse-visual-vars-alist)))
-        ;; Remember old value.
+        ;; remember old value
         (add-to-list 'vimpulse-visual-vars-alist
                      (cons var (eval var))))
       (unless (assoc var (buffer-local-variables))
         (make-local-variable var)
         (add-to-list 'vimpulse-visual-global-vars var)))
     (setq vimpulse-visual-region-expanded nil)
-    ;; Re-add hooks in case they were cleared.
+    ;; re-add hooks in case they were cleared
     (add-hook 'pre-command-hook 'vimpulse-visual-pre-command)
     (add-hook 'post-command-hook 'vimpulse-visual-post-command)
     (if (featurep 'xemacs)
         (add-hook 'zmacs-deactivate-region-hook
                   'vimpulse-visual-deactivate-hook)
       (add-hook 'deactivate-mark-hook 'vimpulse-visual-deactivate-hook))
-    ;; Activate mark at point.
+    ;; activate mark at point
     (cond
      ((eq mode 'block)
       (set-mark (point))
@@ -5767,7 +3683,7 @@ May also be used to change the Visual mode."
       (vimpulse-transient-mark -1))
      (t
       (vimpulse-transient-mark 1)
-      ;; Convert active Emacs region to Visual selection, if any.
+      ;; convert active Emacs region to Visual selection, if any
       (cond
        ((region-active-p)
         (vimpulse-visual-contract-region
@@ -5775,21 +3691,20 @@ May also be used to change the Visual mode."
        (t
         (vimpulse-activate-mark (point))))
       (vimpulse-visual-highlight))))
-  ;; Set the Visual mode.
+  ;; set the Visual mode
   (setq mode (or mode 'char))
   (setq vimpulse-visual-mode mode
         vimpulse-visual-last mode)
   (viper-change-state 'visual-state)
   (viper-restore-cursor-type)           ; use vi cursor
-  ;; Reactivate mark.
+  ;; reactivate mark
   (cond
    ((eq mode 'block)
     (vimpulse-deactivate-mark t)
     (vimpulse-transient-mark -1))
    (t
     (vimpulse-transient-mark 1)
-    (vimpulse-activate-mark)))
-  (vimpulse-set-visual-dimensions))
+    (vimpulse-activate-mark))))
 
 (defun vimpulse-visual-toggle (mode)
   "Enable Visual MODE if this is not the current mode.
@@ -5843,6 +3758,15 @@ Otherwise disable Visual mode."
     (when vimpulse-visual-mode
       (message "-- VISUAL BLOCK --"))))
 
+(defun vimpulse-visual-old-value (var)
+  "Return pre-Visual value of VAR.
+This function returns the \"old\" value listed in
+`vimpulse-visual-vars-alist', if any. Otherwise it returns the
+current value."
+  (if (assq var vimpulse-visual-vars-alist)
+      (cdr (assq var vimpulse-visual-vars-alist))
+    (and (boundp var) var)))
+
 ;;; Visualization
 
 (defun vimpulse-deactivate-mark (&optional now)
@@ -5865,7 +3789,7 @@ Saves the previous state of Transient Mark mode in
        (setq mark-active (region-active-p)))
   (let (deactivate-mark)
     (cond
-     ;; Disable Transient Mark/Cua.
+     ;; disable Transient Mark/Cua
      ((and (integerp arg) (< arg 1))
       (and (fboundp 'cua-mode)
            cua-mode
@@ -5875,12 +3799,12 @@ Saves the previous state of Transient Mark mode in
            (transient-mark-mode -1))
       (and (boundp 'zmacs-regions)
            (setq zmacs-regions nil)))
-     ;; Enable Transient Mark/Cua.
+     ;; enable Transient Mark/Cua
      (t
       (vimpulse-transient-remember)
       (cond
        ((and (fboundp 'cua-mode)
-             (vimpulse-visual-before (eq cua-mode t))
+             (vimpulse-visual-old-value 'cua-mode)
              (or (not cua-mode) (numberp arg)))
         (cua-mode 1))
        ((and (fboundp 'transient-mark-mode)
@@ -5909,29 +3833,18 @@ Saves the previous state of Transient Mark mode in
  Also restores Cua mode."
   (when vimpulse-visual-vars-alist
     (when (boundp 'transient-mark-mode)
-      (if (vimpulse-visual-before transient-mark-mode)
+      (if (vimpulse-visual-old-value 'transient-mark-mode)
           (transient-mark-mode 1)
         (transient-mark-mode -1)))
     (when (boundp 'cua-mode)
-      ;; Prevent Cua mode from setting `deactivate-mark' to t.
+      ;; prevent Cua mode from setting `deactivate-mark' to t
       (let (deactivate-mark)
-        (if (vimpulse-visual-before cua-mode)
+        (if (vimpulse-visual-old-value 'cua-mode)
             (cua-mode 1)
           (cua-mode -1))))
     (when (boundp 'zmacs-regions)
-      (let ((oldval (vimpulse-visual-before zmacs-regions)))
-        (setq zmacs-regions oldval)))))
-
-;; Should be replaced with something more readable,
-;; like (vimpulse-visual-historical-value 'transient-mark-mode).
-(defmacro vimpulse-visual-before (&rest body)
-  "Evaluate BODY with original system values from before Visual mode.
-This is based on `vimpulse-visual-vars-alist'."
-  ;; This needs to be expanded at runtime, obviously.
-  `(eval `(let ,(mapcar (lambda (elt)
-                          `(,(car elt) (quote ,(cdr elt))))
-                        vimpulse-visual-vars-alist)
-            ,',@body)))
+      (setq zmacs-regions
+            (vimpulse-visual-old-value 'zmacs-regions)))))
 
 (defun vimpulse-visual-beginning (&optional mode force)
   "Return beginning of Visual selection.
@@ -5986,7 +3899,7 @@ The boundaries of the Visual selection are deduced from these and
 the current Visual mode via `vimpulse-visual-beginning' and
 `vimpulse-visual-end'."
   (cond
-   ;; In Visual mode, protect the value of `mark-active'.
+   ;; in Visual mode, protect the value of `mark-active'
    (vimpulse-visual-mode
     (let (mark-active)
       (vimpulse-set-region
@@ -6051,15 +3964,15 @@ See also `vimpulse-visual-reselect'."
   (setq vimpulse-visual-region-expanded nil)
   (let ((last vimpulse-visual-last))
     (cond
-     ;; If no previous selection, try a quick C-x C-x.
+     ;; if no previous selection, try a quick C-x C-x
      ((or (not vimpulse-visual-point)
           (not vimpulse-visual-mark))
       (vimpulse-activate-mark nil)
       (vimpulse-visual-mode 1))
      (t
       (unless vimpulse-visual-mode
-        ;; Protect the previous values of `vimpulse-visual-mark'
-        ;; and `vimpulse-visual-point'.
+        ;; protect the previous values of `vimpulse-visual-mark'
+        ;; and `vimpulse-visual-point'
         (let (vimpulse-visual-mark vimpulse-visual-point)
           (cond
            ((eq last 'line)
@@ -6070,17 +3983,13 @@ See also `vimpulse-visual-reselect'."
             (vimpulse-visual-activate-char)))))
       (set-mark vimpulse-visual-mark)
       (goto-char vimpulse-visual-point)
-      (unless (save-excursion
-                (goto-char (max vimpulse-visual-mark
-                                vimpulse-visual-point))
-                (bolp))
-        (vimpulse-visual-contract-region))
+      (vimpulse-visual-contract-region)
       (vimpulse-visual-highlight)))))
 
 (defun vimpulse-visual-reselect (&optional mode height width pos)
   "Create a Visual MODE selection of dimensions HEIGHT and WIDTH.
 When called interactively, uses dimensions of previous selection.
-If specified, selects about POS; otherwise selects about point.
+If POS is specified, selects about POS; otherwise about point.
 See also `vimpulse-visual-restore'."
   (interactive)
   (when pos
@@ -6124,30 +4033,13 @@ See also `vimpulse-visual-restore'."
 (defun vimpulse-set-visual-dimensions (&optional beg end mode)
   "Refresh `vimpulse-visual-height' and `vimpulse-visual-width'."
   (vimpulse-set-visual-markers beg end)
-  (setq mode (or mode vimpulse-visual-mode)
-        beg (or beg (vimpulse-visual-beginning mode))
-        end (or end (vimpulse-visual-end mode)))
-  (cond
-   ((eq mode 'block)
-    (setq vimpulse-visual-height
-          (count-lines beg
-                       (save-excursion
-                         (goto-char end)
-                         (if (and (bolp) (not (eobp)))
-                             (1+ end)
-                           end)))
-          vimpulse-visual-width (abs (- (save-excursion
-                                          (goto-char end)
-                                          (current-column))
-                                        (save-excursion
-                                          (goto-char beg)
-                                          (current-column))))))
-   ((eq mode 'line)
-    (setq vimpulse-visual-height (count-lines beg end)
-          vimpulse-visual-width nil))
-   (t
-    (setq vimpulse-visual-height nil
-          vimpulse-visual-width (abs (- end beg))))))
+  (let* ((range (vimpulse-visual-range mode))
+         (beg   (or beg (vimpulse-range-beginning range)))
+         (end   (or end (vimpulse-range-end range)))
+         (type  (vimpulse-motion-type range))
+         (range (vimpulse-make-motion-range beg end type)))
+    (setq vimpulse-visual-height (vimpulse-range-height range t)
+          vimpulse-visual-width  (vimpulse-range-width range t))))
 
 (defun vimpulse-visual-highlight (&optional arg)
   "Highlight Visual selection, depending on region and Visual mode.
@@ -6158,15 +4050,15 @@ With negative ARG, removes highlighting."
       (vimpulse-delete-overlay vimpulse-visual-overlay))
     (mapc 'vimpulse-delete-overlay vimpulse-visual-block-overlays)
     (setq vimpulse-visual-block-overlays nil)
-    ;; Clean up unreferenced overlays.
+    ;; clean up unreferenced overlays
     (dolist (overlay (vimpulse-overlays-at (point)))
       (when (eq (viper-overlay-get overlay 'face) (vimpulse-region-face))
         (vimpulse-delete-overlay overlay))))
    ((eq vimpulse-visual-mode 'block)
-    ;; Remove any char/line highlighting.
+    ;; remove any char/line highlighting
     (when (viper-overlay-live-p vimpulse-visual-overlay)
       (vimpulse-delete-overlay vimpulse-visual-overlay))
-    ;; Block highlighting isn't perfect.
+    ;; block highlighting isn't perfect
     (condition-case nil
         (vimpulse-visual-highlight-block
          (vimpulse-visual-beginning)
@@ -6175,10 +4067,10 @@ With negative ARG, removes highlighting."
    (vimpulse-visual-mode                ; char or line
     (let ((beg (vimpulse-visual-beginning))
           (end (vimpulse-visual-end)))
-      ;; Remove any block highlighting.
+      ;; remove any block highlighting
       (mapc 'vimpulse-delete-overlay vimpulse-visual-block-overlays)
       (setq vimpulse-visual-block-overlays nil)
-      ;; Reuse overlay if possible.
+      ;; reuse overlay if possible
       (if (viper-overlay-live-p vimpulse-visual-overlay)
           (viper-move-overlay vimpulse-visual-overlay beg end)
         (setq vimpulse-visual-overlay
@@ -6219,23 +4111,23 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
               end (save-excursion (goto-char end)
                                   (vimpulse-move-to-column end-col 1)
                                   (point))))
-      ;; Force a redisplay so we can do reliable
-      ;; windows BEG/END calculations.
+      ;; force a redisplay so we can do reliable
+      ;; windows BEG/END calculations
       (sit-for 0)
       (setq window-beg (max (window-start) beg)
             window-end (min (window-end) (1+ end))
             nlines (count-lines window-beg
                                 (min window-end (point-max))))
-      ;; Iterate over those lines of the rectangle which are
-      ;; visible in the currently selected window.
+      ;; iterate over those lines of the rectangle which are
+      ;; visible in the currently selected window
       (goto-char window-beg)
       (dotimes (i nlines)
         (let (row-beg row-end bstring astring)
-          ;; Beginning of row.
+          ;; beginning of row
           (vimpulse-move-to-column beg-col)
           (when (< (current-column) beg-col)
-            ;; Prepend overlay with virtual spaces if we are unable to
-            ;; move directly to the first column.
+            ;; prepend overlay with virtual spaces if we are unable to
+            ;; move directly to the first column
             (setq bstring
                   (propertize
                    (make-string
@@ -6244,11 +4136,11 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
                    (or (get-text-property (1- (point)) 'face)
                        'default))))
           (setq row-beg (point))
-          ;; End of row.
+          ;; end of row
           (vimpulse-move-to-column end-col)
           (when (< (current-column) end-col)
-            ;; Append overlay with virtual spaces if we are unable to
-            ;; move directly to the last column.
+            ;; append overlay with virtual spaces if we are unable to
+            ;; move directly to the last column
             (setq astring
                   (propertize
                    (make-string
@@ -6256,8 +4148,8 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
                         (- end-col beg-col)
                       (- end-col (current-column)))
                     ?\ ) 'face (vimpulse-region-face)))
-            ;; Place cursor on one of the virtual spaces
-            ;; (only works in GNU Emacs).
+            ;; place cursor on one of the virtual spaces
+            ;; (only works in GNU Emacs)
             (if (= opoint row-beg)
                 (put-text-property
                  0 (min (length astring) 1)
@@ -6267,20 +4159,20 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
                'cursor t astring)))
           (setq row-end (min (point) (line-end-position)))
           ;; XEmacs bug: zero-length extents display
-          ;; end-glyph before start-glyph.
+          ;; end-glyph before start-glyph
           (and (featurep 'xemacs)
                bstring astring
                (= row-beg row-end)
                (setq bstring (prog1 astring
                                (setq astring bstring))))
-          ;; Trim old leading overlays.
+          ;; trim old leading overlays
           (while (and old
                       (setq overlay (car old))
                       (< (viper-overlay-start overlay) row-beg)
                       (/= (viper-overlay-end overlay) row-end))
             (vimpulse-delete-overlay overlay)
             (setq old (cdr old)))
-          ;; Reuse an overlay if possible, otherwise create one.
+          ;; reuse an overlay if possible, otherwise create one
           (cond
            ((and old (setq overlay (car old))
                  (or (= (viper-overlay-start overlay) row-beg)
@@ -6298,26 +4190,26 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
             (viper-overlay-put overlay 'priority 99)
             (setq new (cons overlay new)))))
         (forward-line 1))
-      ;; Trim old trailing overlays.
+      ;; trim old trailing overlays
       (mapc 'vimpulse-delete-overlay old)
       (setq vimpulse-visual-block-overlays (nreverse new)))))
 
 (defun vimpulse-visual-pre-command ()
   "Run before each command in Visual mode."
   (when vimpulse-visual-mode
-    ;; Refresh Visual restore markers and marks.
+    ;; refresh Visual restore markers and marks
     (vimpulse-set-visual-dimensions)
     (cond
-     ;; Movement command: don't expand region.
+     ;; movement command: don't expand region
      ((vimpulse-movement-cmd-p this-command)
       (setq vimpulse-visual-region-expanded nil))
      (t
-      ;; Add whitespace if necessary for making a rectangle.
+      ;; add whitespace if necessary for making a rectangle
       (and (eq vimpulse-visual-mode 'block)
            (vimpulse-visual-block-add-whitespace))
       (vimpulse-visual-expand-region
-       ;; If in Line mode, don't include trailing newline
-       ;; unless the command has real need of it.
+       ;; if in Line mode, don't include trailing newline
+       ;; unless the command has real need of it
        nil (and (eq vimpulse-visual-mode 'line)
                 (not (vimpulse-needs-newline-p this-command))))))))
 
@@ -6325,7 +4217,7 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
   "Run after each command in Visual mode."
   (cond
    (vimpulse-visual-mode
-    ;; Quitting: exit to vi (command) mode.
+    ;; quitting: exit to vi (command) mode
     (cond
      (quit-flag                         ; C-g
       (vimpulse-visual-mode -1))
@@ -6334,7 +4226,7 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
      ((and (not (region-active-p))
            (not (eq vimpulse-visual-mode 'block)))
       (vimpulse-visual-mode -1))
-     ;; Region was expanded, so contract it.
+     ;; region was expanded, so contract it
      (vimpulse-visual-region-expanded
       (when (eq vimpulse-visual-mode 'block)
         (vimpulse-visual-block-cleanup-whitespace))
@@ -6365,18 +4257,6 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
               'vimpulse-visual-deactivate-hook)
   (add-hook 'deactivate-mark-hook 'vimpulse-visual-deactivate-hook))
 
-;; Advise viper-intercept-ESC-key to exit Visual mode with ESC.
-(defadvice viper-intercept-ESC-key
-  (around vimpulse-ESC-exit-visual-mode activate)
-  "Exit Visual mode with ESC."
-  (let ((viper-ESC-moves-cursor-back (unless (region-active-p)
-                                       viper-ESC-moves-cursor-back))
-        deactivate-mark)
-    (if (and vimpulse-visual-mode
-             (not (input-pending-p)))
-        (vimpulse-visual-mode -1)
-      ad-do-it)))
-
 (defadvice viper-Put-back (around vimpulse-visual activate)
   "Delete selection before pasting in Visual mode."
   (let (inserted-text replaced-text mode)
@@ -6385,7 +4265,7 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
      (vimpulse-visual-mode
       (setq mode vimpulse-visual-mode)
       (unless (eq mode 'block)
-        ;; Add replaced text to the kill-ring before the current kill.
+        ;; add replaced text to the kill-ring before the current kill
         (setq inserted-text (current-kill 0))
         (setq replaced-text
               (buffer-substring (region-beginning) (region-end)))
@@ -6455,7 +4335,7 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
                        viper-window-top)))
     ad-do-it))
 
-;; Block selection disables Transient Mark mode.
+;; block selection disables Transient Mark mode
 (defadvice deactivate-mark (after vimpulse-visual activate)
   "Deactivate Visual Block mode."
   (when (eq vimpulse-visual-mode 'block)
@@ -6467,8 +4347,8 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
      "Enable Visual mode in vi (command) state."
      (let ((w (posn-window (event-start (ad-get-arg 0)))))
        (cond
-        ;; If Visual mode is enabled in the window clicked in,
-        ;; adjust region afterwards.
+        ;; if Visual mode is enabled in the window clicked in,
+        ;; adjust region afterwards
         ((with-selected-window w
            vimpulse-visual-mode)
          (vimpulse-visual-highlight -1)
@@ -6476,7 +4356,7 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
          (when (eq (selected-window) w)
            (vimpulse-visual-contract-region t)
            (vimpulse-visual-highlight)))
-        ;; Otherwise, if in vi (command) state, enable Visual mode.
+        ;; otherwise, if in vi (command) state, enable Visual mode
         ((with-selected-window w
            (eq viper-current-state 'vi-state))
          ad-do-it
@@ -6502,7 +4382,7 @@ Adapted from: `rm-highlight-rectangle' in rect-mark.el."
 (defun vimpulse-movement-cmd-p (command)
   "Whether COMMAND is a \"movement\" command.
 That is, whether it is listed in `vimpulse-movement-cmds'."
-  ;; We use `member' rather than `memq' to allow lambdas.
+  ;; we use `member' rather than `memq' to allow lambdas
   (member command vimpulse-movement-cmds))
 
 (defun vimpulse-needs-newline-p (command)
@@ -6512,16 +4392,33 @@ it is more useful to exclude the last newline from the region."
   (or (member command vimpulse-newline-cmds)
       (vimpulse-operator-cmd-p command)))
 
-(defun vimpulse-visual-remap (from to)
-  "Remap FROM to TO in Visual mode."
-  (vimpulse-remap vimpulse-visual-basic-map from to))
-
 ;;; Ex
 
 (defun vimpulse-visual-ex (arg)
   "Call `viper-ex' on region."
   (interactive "p")
   (viper-ex arg))
+
+;;; Movement
+
+(defun vimpulse-visual-forward-char (arg)
+  "Move point, stopping at very end of line in Visual mode."
+  (interactive "P")
+  (cond
+   (vimpulse-visual-mode
+    (let ((val (viper-p-val arg)))
+      (forward-char val)
+      (when (and viper-ex-style-motion (bolp))
+        (backward-char))))
+   (t
+    (viper-forward-char arg))))
+
+(defun vimpulse-visual-goto-eol (arg)
+  "Go to the very end of the line in Visual mode."
+  (interactive "P")
+  (viper-goto-eol arg)
+  (when vimpulse-visual-mode
+    (end-of-line 1)))
 
 ;;; Insert/append
 
@@ -6579,15 +4476,15 @@ each line. Extra arguments to FUNC may be passed via ARGS."
     (save-excursion
       (setq beg (or beg (vimpulse-visual-beginning))
             end (or end (vimpulse-visual-end)))
-      ;; Ensure BEG < END.
+      ;; ensure BEG < END
       (setq beg (prog1 (min beg end)
                   (setq end (max beg end))))
-      ;; Calculate columns.
+      ;; calculate columns
       (goto-char end)
       (setq end-col (current-column))
       (goto-char beg)
       (setq beg-col (current-column))
-      ;; Ensure BEG-COL < END-COL.
+      ;; ensure BEG-COL < END-COL
       (when (> beg-col end-col)
         (setq beg-col (prog1 end-col
                         (setq end-col beg-col)))
@@ -6595,7 +4492,7 @@ each line. Extra arguments to FUNC may be passed via ARGS."
                     (goto-char end)
                     (move-to-column end-col)
                     (point))))
-      ;; Apply FUNC on each line.
+      ;; apply FUNC on each line
       (while (< (point) end)
         (apply func
                (save-excursion
@@ -6806,20 +4703,20 @@ insertion will be chosen according to this command.
 Returns the insertion point."
   (setq vimpulse-visual-insert-coords nil)
   (let ((nlines (count-lines upper-left lower-right))
-        (col 0))               ; for ?I and ?A, trivial: column is 0
+        (col 0))                 ; for ?I and ?A, trivial: column is 0
     (when (memq i-com '(?a ?c ?i))
-      ;; For ?i and ?a, choose the left (the right) rectangle column.
+      ;; for ?i and ?a, choose the left (the right) rectangle column
       (let ((beg-col (save-excursion
                        (goto-char upper-left)
                        (current-column)))
             (end-col (save-excursion
                        (goto-char lower-right)
                        (current-column))))
-        ;; Decide if we use the left or right column.
+        ;; decide if we use the left or right column
         (setq col (max 0 (if (memq i-com '(?c ?i))
                              beg-col
                            (1- end-col))))))
-    ;; Save the information.
+    ;; save the information
     (setq vimpulse-visual-insert-coords
           (list mode i-com upper-left col nlines))
     (save-excursion
@@ -6836,7 +4733,7 @@ Returns the insertion point."
   (viper-move-marker-locally 'vimpulse-exit-point (point))
   (viper-change-state-to-vi)
   (when vimpulse-visual-insert-coords
-    ;; Get the saved info about the Visual selection.
+    ;; get the saved info about the Visual selection
     (let ((mode   (nth 0 vimpulse-visual-insert-coords))
           (i-com  (nth 1 vimpulse-visual-insert-coords))
           (pos    (nth 2 vimpulse-visual-insert-coords))
@@ -6847,9 +4744,9 @@ Returns the insertion point."
         (dotimes (i (1- nlines))
           (forward-line 1)
           (let ((cur-col (vimpulse-move-to-column col)))
-            ;; If we are in Block mode, this line, but do not hit the
+            ;; if we are in Block mode, this line, but do not hit the
             ;; correct column, we check if we should convert tabs
-            ;; and/or append spaces.
+            ;; and/or append spaces
             (if (and (eq mode 'block)
                      (or (/= col cur-col) ; wrong column or
                          (eolp)))         ; end of line
@@ -6863,34 +4760,2157 @@ Returns the insertion point."
                        (viper-repeat nil)))
               (viper-repeat nil)))))
       (setq vimpulse-visual-insert-coords nil)))
-  ;; Update undo-list.
+  ;; update undo-list
   (vimpulse-end-undo-step))
 
 (defalias 'viper-exit-insert-state 'vimpulse-exit-insert-state)
 
-;;; Key bindings
+;;;; Operator-Pending mode
 
-(define-key vimpulse-visual-basic-map "v" 'vimpulse-visual-toggle-char)
-(define-key vimpulse-visual-basic-map "V" 'vimpulse-visual-toggle-line)
-(define-key vimpulse-visual-basic-map "\C-v" 'vimpulse-visual-toggle-block)
-(define-key vimpulse-visual-basic-map "x" 'vimpulse-delete)
-(define-key vimpulse-visual-basic-map "D" 'vimpulse-delete)
-(define-key vimpulse-visual-basic-map "Y" 'vimpulse-yank)
-(define-key vimpulse-visual-basic-map "R" 'vimpulse-change)
-(define-key vimpulse-visual-basic-map "C" 'vimpulse-change)
-(define-key vimpulse-visual-basic-map "s" 'vimpulse-change)
-(define-key vimpulse-visual-basic-map "S" 'vimpulse-change)
-(define-key vimpulse-visual-basic-map "o" 'exchange-point-and-mark)
-(define-key vimpulse-visual-basic-map "O" 'vimpulse-visual-exchange-corners)
-(define-key vimpulse-visual-basic-map "I" 'vimpulse-visual-insert)
-(define-key vimpulse-visual-basic-map "A" 'vimpulse-visual-append)
-(define-key vimpulse-visual-basic-map "U" 'vimpulse-upcase)
-(define-key vimpulse-visual-basic-map "u" 'vimpulse-downcase)
-(define-key vimpulse-visual-basic-map ":" 'vimpulse-visual-ex)
-;; Keys that have no effect in Visual mode.
-(vimpulse-visual-remap 'viper-repeat 'viper-nil)
+;; This provides a framework for combining "motions" and "operators".
+;; A motion is any command moving point. An operator is a command
+;; acting on the text moved over by a motion.
+;;
+;; Defining operator commands is similar to defining commands acting
+;; on the region. That is, both must have two arguments, BEG and END,
+;; and an `interactive' specification that stores the relevant range
+;; in those arguments. The `vimpulse-define-operator' macro takes care
+;; of this. (If you like, you can also convert any region command to
+;; an operator with `vimpulse-convert-to-operator'.)
+;;
+;; When an operator command is run in vi state, it queries the user
+;; for a motion and determines the resulting range to store in BEG and
+;; END. In Visual mode, it skips the querying and uses the selection
+;; boundaries.
+;;
+;; While a motion is read from the keyboard, a temporary Viper state,
+;; Operator-Pending mode, is entered. This state inherits bindings
+;; from the regular vi state, but it may also define its own, for
+;; instance text objects. Text objects are like motions, but define a
+;; starting point as well as an ending point. They are implemented
+;; simply as selection commands.
+;;
+;; As in Vim, a motion may specify a motion type, such as `line',
+;; stored in the `motion-type' symbol property:
+;;
+;;   * `line': the motion range is extended to whole lines.
+;;   * `inclusive': the ending character is included.
+;;   * `exclusive' (default): the ending character is excluded.
+;;
+;; For example, (put 'foo 'motion-type 'line) gives `foo' a type of
+;; `line'. If unspecified, the motion is considered `exclusive'.
+;; You can override the type with v, V and C-v: for instance,
+;; dvj will delete an exclusive range rather than a linewise.
+;;
+;; The benefit of a dedicated state when an "operator" is "pending" is
+;; code separation. In the original scheme, every Viper motion had to
+;; manually do the work of deleting/changing/yanking the text moved
+;; over, making that action repeatable, etc. The new framework handles
+;; everything automatically and orthogonally, enabling the use of
+;; plain Emacs movement commands (like S-exp navigation) as motions.
+;;
+;; A smattering of compatibility macros ensure that certain Viper
+;; motions are repeated correctly. In the long run, Viper's motions
+;; should be rewritten; I'll have to contact Michael Kifer and hear
+;; what he thinks about this. For what it's worth, the following code
+;; addresses "TODO item #1" in viper.el.
+
+
+(vimpulse-define-state operator
+  "Operator-pending mode is when an operator is pending,
+awaiting a motion (after \"d\", \"y\", \"c\", etc.)."
+  :id "<OP> "
+  :hook '(vimpulse-set-operator-cursor-type)
+  :enable '(vimpulse-operator-remap-minor-mode
+            (viper-vi-kbd-minor-mode nil)
+            vi-state vimpulse-careful-minor-mode)
+  (cond
+   ((eq viper-current-state 'operator-state)
+    (vimpulse-careful-minor-mode 1))
+   (t
+    (vimpulse-careful-minor-mode -1))))
+
+;; This is a short-lived state, only used for calculating
+;; motion ranges. If anything goes wrong and we enter the
+;; command loop, exit to vi state immediately.
+(defun vimpulse-operator-exit-hook ()
+  "Exit Operator-Pending mode."
+  (when (eq viper-current-state 'operator-state)
+    (let (abbrev-mode)
+      (save-excursion
+        (viper-change-state-to-vi)))))
+
+(add-hook 'pre-command-hook 'vimpulse-operator-exit-hook)
+(add-hook 'post-command-hook 'vimpulse-operator-exit-hook)
+
+;; We place all remap bindings in a keymap of their own.
+;; This enables Visual mode only to inherit text object
+;; bindings from Operator-Pending mode, not any remapping.
+(define-minor-mode vimpulse-operator-remap-minor-mode
+  "Minor mode of bindings overwritten by `vimpulse-map' et al."
+  :keymap vimpulse-operator-remap-map)
+
+(put 'vimpulse-operator-remap-map
+     'remap-alist 'vimpulse-operator-remap-alist)
+
+(defun vimpulse-operator-remap (from to)
+  "Remap FROM to TO in Operator-Pending mode."
+  (vimpulse-remap vimpulse-operator-remap-map from to))
+
+(defun vimpulse-operator-remapping (cmd)
+  "Return Operator-Pending remapping for CMD."
+  (if (featurep 'xemacs)
+      (or (cdr (assq cmd vimpulse-operator-remap-alist)) cmd)
+    (or (command-remapping cmd) cmd)))
+
+(when (featurep 'xemacs)
+  ;; XEmacs shows the tag before the modes, so truncate it to a
+  ;; constant length to avoid excessive flickering
+  (setq vimpulse-operator-state-id "<OP>") ; 4 characters
+  ;; XEmacs lacks a horizontal bar cursor option
+  (setq vimpulse-want-operator-pending-cursor nil))
+
+(defun vimpulse-set-operator-cursor-type ()
+  "Change cursor appearance in Operator-Pending mode."
+  (when vimpulse-want-operator-pending-cursor
+    (vimpulse-half-height-cursor)))
+
+;; The half-height "Operator-Pending cursor" cannot be specified
+;; as a static `cursor-type' value, since its height depends on
+;; the current font size; a function is needed.
+(defun vimpulse-half-height-cursor ()
+  "Change cursor to a half-height box.
+\(This is really just a thick horizontal bar.)"
+  (unless (featurep 'xemacs)
+    (condition-case nil
+        (let (height)
+          ;; make `window-line-height' reliable
+          (redisplay)
+          (setq height (window-line-height))
+          (setq height (+ (nth 0 height) (nth 3 height)))
+          ;; cut cursor height in half
+          (setq height (/ height 2))
+          (setq cursor-type (cons 'hbar height))
+          ;; ensure the cursor is redisplayed
+          (force-window-update (selected-window))
+          (redisplay))
+      (error nil))))
+
+(defvar vimpulse-operators nil
+  "Operator commands defined with `vimpulse-define-operator'.")
+
+(viper-deflocalvar vimpulse-inhibit-operator nil
+  "Inhibit current operator.
+If an operator calls a motion and the motion sets this variable
+to t, the operator code is not executed.")
+
+(defmacro vimpulse-define-operator (operator args &rest body)
+  "Define an operator command OPERATOR.
+ARGS is the argument list, which must contain at least two
+arguments: the beginning and end of the range. It is followed by
+an optional docstring and optional keywords:
+
+:repeat BOOLEAN         Let \\[viper-repeat] repeat the command (default).
+:move-point BOOLEAN     Move to beg. of range in vi state (default).
+:whole-lines BOOLEAN    Extend the range to include whole lines.
+:keep-visual BOOLEN     Don't disable Visual selection.
+:motion MOTION          Predefined motion to use in vi state.
+:keys KEYS              A key or a list of keys to bind the command to.
+:map MAP                Keymap to bind :keys in, defaults to
+                        `viper-vi-basic-map'.
+
+The keywords are followed by the operator's body. Thus, a simple
+example may look like:
+
+    (vimpulse-define-operator test (beg end)
+      \"Test operator.\"
+      :repeat nil
+      :whole-lines t
+      (delete-region beg end))
+
+When this command is called interactively, a motion is read from
+the keyboard and the resulting range is stored in BEG and END.
+In Visual mode, the beginning and end of the selection are used.
+The command then proceeds to do whatever it wants to do on the
+text between those buffer positions, like delete it in this case.
+
+If :motion is specified, the operator will use that motion
+instead of reading one from the keyboard. This has no effect
+in Visual mode."
+  (declare (indent defun)
+           (debug (&define name lambda-list
+                           [&optional stringp]
+                           [&rest keywordp sexp]
+                           def-body)))
+  (let ((repeat t) (move-point t)
+        (map 'viper-vi-basic-map)
+        beg end doc keep-visual keys keyword motion whole-lines)
+    ;; collect BEG and END arguments
+    (setq beg (or (pop args) 'beg)
+          end (or (pop args) 'end))
+    ;; collect docstring, if any
+    (when (stringp (car body))
+      (setq doc (pop body)))
+    ;; collect keywords
+    (while (keywordp (setq keyword (car body)))
+      (setq body (cdr body))
+      (cond
+       ((eq keyword :repeat)
+        (setq repeat (vimpulse-unquote (pop body))))
+       ((eq keyword :move-point)
+        (setq move-point (vimpulse-unquote (pop body))))
+       ((eq keyword :whole-lines)
+        (setq whole-lines (vimpulse-unquote (pop body))))
+       ((eq keyword :keep-visual)
+        (setq keep-visual (vimpulse-unquote (pop body))))
+       ((eq keyword :motion)
+        (setq motion (vimpulse-unquote (pop body))))
+       ((eq keyword :map)
+        (setq map (vimpulse-unquote (pop body))))
+       ((eq keyword :keys)
+        (setq keys (vimpulse-unquote (pop body))))
+       (t
+        (pop body))))
+    (unless (listp keys)
+      (setq keys (list keys)))
+    ;; macro expansion: define key bindings and define command
+    `(progn
+       (add-to-list 'vimpulse-operators ',operator)
+       (dolist (key ',keys)
+         (define-key ,map key ',operator))
+       (defun ,operator (,beg ,end ,@args)
+         ,doc
+         (interactive
+          (vimpulse-range
+           ,(not repeat) ,(not move-point)
+           ,whole-lines ,keep-visual ',motion))
+         (if (and vimpulse-inhibit-operator
+                  (vimpulse-called-interactively-p))
+             (setq vimpulse-inhibit-operator nil)
+           ,@body)))))
+
+(when (fboundp 'font-lock-add-keywords)
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   '(("(\\(vimpulse-define-operator\\)\\>[ \f\t\n\r\v]*\\(\\sw+\\)?"
+      (1 font-lock-keyword-face)
+      (2 font-lock-function-name-face nil t)))))
+
+(defun vimpulse-range
+  (&optional no-repeat dont-move-point whole-lines keep-visual custom-motion)
+  "Read a motion and return a range (BEG END).
+Belongs in the `interactive' form of a command. Don't use this
+function directly; see `vimpulse-define-operator' instead."
+  (let ((range (list (point) (point)))
+        (type-alist '((vimpulse-visual-toggle-char . inclusive)
+                      (vimpulse-visual-toggle-line . line)
+                      (vimpulse-visual-toggle-block . block)))
+        (type (when whole-lines 'line))
+        ;; For restoration of the echo area. We bind `message-log-max' to nil
+        ;; to prevent `oldmsg' from messing up the *Messages* buffer.
+        (oldmsg (current-message))
+        message-log-max)
+    (setq vimpulse-this-motion-type nil
+          vimpulse-this-count nil
+          vimpulse-this-motion nil
+          vimpulse-this-operator this-command
+          vimpulse-inhibit-operator nil)
+    (cond
+     ;; if text is selected, use selection boundaries as range
+     ((or vimpulse-visual-mode (region-active-p))
+      (when (and whole-lines
+                 (not (eq vimpulse-visual-mode 'line)))
+        (vimpulse-visual-activate 'line)
+        (vimpulse-set-visual-dimensions))
+      ;; determine range and go to beginning
+      (setq range (vimpulse-visual-range))
+      (setq vimpulse-this-motion-type (vimpulse-motion-type range)
+            range (vimpulse-motion-range range))
+      (setq vimpulse-this-motion 'vimpulse-visual-reselect)
+      (if keep-visual
+          (if (eq vimpulse-visual-mode 'line)
+              (vimpulse-visual-restore)
+            (vimpulse-visual-contract-region))
+        (if (eq vimpulse-this-motion-type 'block)
+            (vimpulse-visual-block-rotate
+             'upper-left
+             (vimpulse-range-beginning range)
+             (vimpulse-range-end range))
+          (goto-char (vimpulse-range-beginning range))
+          (set-mark  (vimpulse-range-end range)))
+        ;; disable selection
+        (if (and vimpulse-visual-mode
+                 (fboundp 'vimpulse-visual-mode))
+            (vimpulse-visual-mode -1)
+          (vimpulse-deactivate-region))))
+     ;; Not in Visual mode: use CUSTOM-MOTION if specified,
+     ;; or read motion and return motion range.
+     (t
+      (if custom-motion
+          (setq vimpulse-this-motion custom-motion)
+        (vimpulse-change-state-to-operator)
+        (while (progn
+                 (setq vimpulse-this-motion
+                       (vimpulse-keypress-parser t))
+                 (setq vimpulse-this-count
+                       (if vimpulse-this-count
+                           (if (numberp (cadr vimpulse-this-motion))
+                               (string-to-number
+                                (concat (number-to-string
+                                         vimpulse-this-count)
+                                        (number-to-string
+                                         (cadr vimpulse-this-motion))))
+                             vimpulse-this-count)
+                         (cadr vimpulse-this-motion))
+                       vimpulse-this-motion
+                       (car vimpulse-this-motion))
+                 (when (assq vimpulse-this-motion type-alist)
+                   (setq type (cdr (assq vimpulse-this-motion
+                                         type-alist))))))
+        ;; motion reading done: restore the echo area
+        (if oldmsg (message "%s" oldmsg)
+          (message nil))
+        ;; with doubled operator ("gqgq" or "gqq"), set motion to current line
+        (if (or (eq vimpulse-this-motion vimpulse-this-operator)
+                (member (vimpulse-strip-prefix (this-command-keys) t)
+                        '("g??" "gUU" "gqq" "guu" "gww" "g~~")))
+            (setq vimpulse-this-motion 'vimpulse-line)
+          (setq vimpulse-this-motion
+                (vimpulse-operator-remapping vimpulse-this-motion))))
+      (cond
+       ;; quit if motion reading failed
+       ((or (not vimpulse-this-motion)
+            (memq vimpulse-this-motion '(viper-nil keyboard-quit))
+            (vimpulse-operator-cmd-p vimpulse-this-motion))
+        (let (abbrev-mode)
+          (save-excursion
+            (viper-change-state-to-vi)))
+        (setq quit-flag t))
+       (t
+        ;; multiply operator count and motion count together
+        (when (or current-prefix-arg vimpulse-this-count)
+          (setq vimpulse-this-count
+                (* (prefix-numeric-value current-prefix-arg)
+                   (prefix-numeric-value vimpulse-this-count))))
+        ;; determine type to use for type conversion
+        (when (and (eq type 'inclusive)
+                   (memq (vimpulse-motion-type vimpulse-this-motion)
+                         '(line inclusive)))
+          (setq type 'exclusive))
+        (setq range (vimpulse-calculate-motion-range
+                     vimpulse-this-count vimpulse-this-motion type))
+        (setq vimpulse-this-motion-type (vimpulse-motion-type range)
+              range (vimpulse-motion-range range))
+        (unless dont-move-point
+          (goto-char (vimpulse-range-beginning range))
+          (when (and viper-auto-indent
+                     (looking-back "^[ \f\t\v]*"))
+            (back-to-indentation)))
+        (let (abbrev-mode)
+          (save-excursion
+            (viper-change-state-to-vi)))))))
+    ;; set up repeat
+    (unless no-repeat
+      (setq vimpulse-last-operator vimpulse-this-operator
+            vimpulse-last-motion vimpulse-this-motion
+            vimpulse-last-motion-type
+            (when type vimpulse-this-motion-type))
+      (viper-set-destructive-command
+       (list 'vimpulse-operator-repeat
+             vimpulse-this-count nil viper-use-register nil nil)))
+    range))
+
+(defun vimpulse-calculate-motion-range (count motion &optional type refresh)
+  "Derive motion range (TYPE BEG END) from MOTION and COUNT.
+MOTION can move point or select some text (a text object).
+TYPE may specify the motion type for normalizing the resulting
+range. If REFRESH is t, this function changes point,
+`viper-com-point' and `vimpulse-this-motion-type'."
+  (cond
+   ;; REFRESH is nil, so bind global variables
+   ((not refresh)
+    (let ((opoint   (point))
+          (omark    (mark t))
+          (omactive (and (boundp 'mark-active) mark-active))
+          (obuffer  (current-buffer))
+          viper-com-point vimpulse-this-motion-type)
+      (unwind-protect (vimpulse-calculate-motion-range count motion type t)
+        ;; restore point and mark like `save-excursion',
+        ;; but only if the motion hasn't disabled the operator
+        (unless vimpulse-inhibit-operator
+          (set-buffer obuffer)
+          (let (mark-active) (set-mark omark))
+          (and (boundp 'mark-active) (setq mark-active omactive))
+          (goto-char opoint)))))
+   (t
+    (let ((current-prefix-arg count)
+          (viper-intermediate-command 'viper-command-argument)
+          (viper-current-state 'operator-state)
+          (vimpulse-operator-basic-minor-mode t)
+          (motion-type (vimpulse-motion-type motion t))
+          (already-selection (or vimpulse-visual-mode
+                                 (region-active-p)))
+          (range (list 'exclusive (point) (point)))
+          vimpulse-visual-vars-alist)
+      (setq vimpulse-this-motion-type
+            (or type motion-type 'exclusive))
+      (viper-move-marker-locally 'viper-com-point (point))
+      ;; enable Transient Mark mode so we can reliably
+      ;; detect selection commands
+      (vimpulse-transient-mark)
+      ;; Whatever happens next, we must restore Transient Mark mode
+      ;; to its original state afterwards!
+      (unwind-protect
+          ;; `vimpulse-visual-vars-alist' is used for restoring,
+          ;; so protect it
+          (let (vimpulse-visual-vars-alist)
+            (if (commandp motion)
+                (call-interactively motion)
+              (funcall motion count))
+            (cond
+             ;; if text has been selected (i.e., it's a text object),
+             ;; return the selection
+             ((and (not already-selection)
+                   (or vimpulse-visual-mode (region-active-p)))
+              (setq range (vimpulse-visual-range))
+              (cond
+               ((and motion-type (not (eq (car range) motion-type)))
+                (setcar range motion-type))
+               ((and type (not (eq (car range) type)))
+                (setcar range type)
+                (setq range (vimpulse-normalize-motion-range range))))
+              ;; deactivate Visual mode/region
+              (if (and vimpulse-visual-mode
+                       (fboundp 'vimpulse-visual-mode))
+                  (vimpulse-visual-mode -1)
+                (vimpulse-deactivate-region)))
+             ;; otherwise, range is defined by `viper-com-point'
+             ;; and point (Viper type motion)
+             (t
+              (setq range (vimpulse-make-motion-range
+                           (marker-position viper-com-point)
+                           (point)
+                           (or type vimpulse-this-motion-type) t)))))
+        (vimpulse-transient-restore))
+      range))))
+
+;; A keypress parser of some kind is unavoidable because we need to
+;; know what we are executing beforehand (like when multiplying the
+;; counts in "2d3w"). We try to avoid hard-coding where possible by
+;; inspecting commands rather than the keys themselves.
+(defun vimpulse-keypress-parser (&optional no-remap)
+  "Read from keyboard and build a command description.
+Returns (CMD COUNT), where COUNT is the numeric prefix argument
+of CMD. Both COUNT and CMD may be nil."
+  (let ((inhibit-quit t)
+        (echo-keystrokes 0.01)
+        char digit keys cmd count)
+    (while (progn
+             ;; read a keypress, respecting Emacs version,
+             ;; and convert it to ASCII representation
+             (if (featurep 'xemacs)
+                 (setq char (event-to-character
+                             (next-command-event) nil t))
+               (setq char (read-event))
+               (when (symbolp char)
+                 (setq char (or (get char 'ascii-character) char))))
+             ;; this trick from simple.el's `digit-argument'
+             ;; converts keystrokes like C-0 and C-M-1 to digits
+             (if (or (characterp char) (integerp char))
+                 (setq digit (- (logand char ?\177) ?0))
+               (setq digit nil))
+             (if (keymapp cmd)
+                 (setq keys (vconcat keys (vector char)))
+               (setq keys (vector char)))
+             (if no-remap              ; XEmacs doesn't have remapping
+                 (setq cmd (key-binding keys t))
+               (setq cmd (key-binding keys t t)))
+             ;; this `cond' form determines whether
+             ;; the reading loop will continue
+             (cond
+              ;; if calling itself ("cc"), return current command
+              ((eq (vimpulse-strip-prefix
+                    (vconcat (this-command-keys))) keys)
+               (setq cmd this-command)
+               nil)
+              ;; if CMD is a keymap, we need to read more
+              ((keymapp cmd)
+               t)
+              ;; numeric prefix argument
+              ((or (memq cmd '(viper-digit-argument digit-argument))
+                   ;; the 0 key runs `viper-beginning-of-line',
+                   ;; so ignore it unless preceded by other digits
+                   (and (eq (length keys) 1)
+                        (not (keymapp cmd))
+                        count
+                        ;; probably overkill: only 0 bound this way
+                        (memq digit '(0 1 2 3 4 5 6 7 8 9))))
+               ;; store digits in a string, which is easily converted
+               ;; to a number afterwards
+               (setq count (concat (or count "")
+                                   (number-to-string digit)))
+               t)
+              ;; catch middle digits like "da2w"
+              ((and (not cmd)
+                    (> (length keys) 1)
+                    (memq digit '(0 1 2 3 4 5 6 7 8 9)))
+               (setq count (concat (or count "")
+                                   (number-to-string digit)))
+               ;; remove the digit from the key sequence
+               ;; so we can see if the previous one goes anywhere
+               (setq keys (vimpulse-truncate keys -1))
+               (setq cmd (key-binding keys))
+               t)
+              ;; We might as well accept negative numbers using
+              ;; Emacs' C--. Best of both worlds, right?
+              ((eq cmd 'negative-argument)
+               (unless count
+                 (setq count "-")))
+              ;; user pressed C-g, so return nil for CMD
+              ((eq cmd 'keyboard-quit)
+               (setq cmd nil))
+              ;; we are done, exit the `while' loop
+              (t
+               nil))))
+    ;; determine COUNT
+    (when (stringp count)
+      (if (string= count "-")
+          (setq count nil)
+        (setq count (string-to-number count))))
+    ;; return command description
+    (list cmd count)))
+
+(defmacro vimpulse-with-operator-message (beg end template &rest body)
+  "Echo an operator message after executing BODY.
+BEG and END specify the text range acted upon.
+TEMPLATE is a string like \"Deleted <N>\", where <N>
+is substituted with the amount of characters or lines,
+which is determined before executing BODY. The range type
+is read from `vimpulse-this-motion-type'.
+
+This macro respects `viper-change-notification-threshold'."
+  (declare (indent defun)
+           (debug (sexp sexp sexp body)))
+  `(let* ((range (vimpulse-make-motion-range
+                  ,beg ,end vimpulse-this-motion-type))
+          (height (vimpulse-range-height range t))
+          (width  (vimpulse-range-width range t))
+          (template (replace-regexp-in-string
+                     "<N>"
+                     (apply 'format
+                            (cond
+                             ((eq vimpulse-this-motion-type 'block)
+                              (list "%s row%s and %s column%s"
+                                    height
+                                    (if (/= (abs height) 1) "s" "")
+                                    width
+                                    (if (/= (abs width) 1) "s" "")))
+                             ((eq vimpulse-this-motion-type 'line)
+                              (list "%s line%s"
+                                    height
+                                    (if (/= (abs height) 1) "s" "")))
+                             (t
+                              (list "%s character%s"
+                                    width
+                                    (if (/= (abs width) 1) "s" "")))))
+                     ,template)))
+     (prog1 (progn ,@body)
+       (when (and template
+                  (not (viper-is-in-minibuffer))
+                  (or (> (or height width)
+                         viper-change-notification-threshold)
+                      (> (or width height)
+                         viper-change-notification-threshold)))
+         (message "%s" template)))))
+
+(when (fboundp 'font-lock-add-keywords)
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   '(("(\\(vimpulse-with-operator-message\\)\\>" 1 font-lock-keyword-face))))
+
+;; utility macro for converting region commands to operators
+(defmacro vimpulse-convert-to-operator (region-cmd &rest args)
+  "Convert a region command to an operator command.
+Defines a new command with the name REGION-CMD-operator.
+ARGS is passed to `vimpulse-range'."
+  `(vimpulse-define-operator
+     ,(intern (concat (symbol-name region-cmd) "-operator"))
+     (beg end)
+     ,(format "Operator-wrapper for `%s'.\n\n%s"
+              region-cmd (documentation region-cmd t))
+     (,region-cmd beg end)))
+
+(defun vimpulse-operator-cmd-p (cmd)
+  "Return non-nil if CMD is an operator command."
+  (memq cmd vimpulse-operators))
+
+;;; Repeat an operator/motion combination
+
+;; this is used in `viper-d-com' (read by `viper-repeat')
+(defun vimpulse-operator-repeat (arg)
+  "Repeat an operator-motion combination.
+ARG is a list of the form (COUNT . COM).
+COM is discarded."
+  (let ((val (viper-P-val arg)))
+    (cond
+     ((region-active-p)
+      (funcall vimpulse-last-operator
+               (region-beginning) (region-end)))
+     (t
+      (vimpulse-operator-apply
+       vimpulse-last-operator vimpulse-last-motion val
+       vimpulse-last-motion-type)))))
+
+(defun vimpulse-operator-apply (operator motion count &optional type)
+  "Apply OPERATOR on MOTION. COUNT is the motion count.
+TYPE is the motion type."
+  (let ((vimpulse-this-operator operator)
+        (vimpulse-this-motion motion)
+        (vimpulse-this-motion-type (or type vimpulse-this-motion-type))
+        vimpulse-inhibit-operator beg end range)
+    (setq range (vimpulse-calculate-motion-range count motion type)
+          beg   (vimpulse-range-beginning range)
+          end   (vimpulse-range-end range)
+          vimpulse-this-motion-type (vimpulse-motion-type range))
+    (unless vimpulse-inhibit-operator
+      (funcall operator beg end))))
+
+;;; Registers
+
+(defun vimpulse-store-in-register (register start end)
+  "Store text from START to END in REGISTER."
+  (cond
+   ((viper-valid-register register '(Letter))
+    (viper-append-to-register
+     (downcase register) start end))
+   (t
+    (copy-to-register register start end))))
+
+(defun vimpulse-store-in-current-register (start end)
+  "Store text from START to END in current register, if any.
+  Resets `viper-use-register'."
+  (when viper-use-register
+    (vimpulse-store-in-register viper-use-register start end)
+    (setq viper-use-register nil)))
+
+;;; Operators
+
+;; yank, delete, change
+(vimpulse-define-operator vimpulse-yank (beg end)
+  "Yank text from BEG to END."
+  :repeat nil
+  :move-point nil
+  (let (last-command)
+    (vimpulse-with-operator-message beg end "Saved <N>"
+      (cond
+       ((eq vimpulse-this-motion-type 'block)
+        (setq killed-rectangle (extract-rectangle beg end))
+        ;; associate the rectangle with the last entry in the kill-ring
+        (unless kill-ring
+          (copy-region-as-kill beg end))
+        (put 'killed-rectangle 'previous-kill (current-kill 0))
+        (vimpulse-visual-block-rotate 'upper-left beg end))
+       (t
+        (vimpulse-store-in-current-register beg end)
+        (copy-region-as-kill beg end)
+        (unless (eq vimpulse-this-motion-type 'line)
+          (goto-char beg))
+        (when (and (eolp) (not (bolp)))
+          (backward-char)))))))
+
+(vimpulse-define-operator vimpulse-delete (beg end &optional dont-save)
+  "Delete text from BEG to END.
+If DONT-SAVE is non-nil, don't store the deleted text on `kill-ring'."
+  (let (last-command)
+    (vimpulse-with-operator-message beg end "Deleted <N>"
+      (cond
+       (dont-save
+        (if (eq vimpulse-this-motion-type 'block)
+            (delete-rectangle beg end)
+          (delete-region beg end)))
+       ((eq vimpulse-this-motion-type 'block)
+        (let ((orig (make-marker)))
+          ;; associate the rectangle with the last entry in the kill-ring
+          (viper-move-marker-locally
+           'orig (vimpulse-visual-block-position 'upper-left beg end))
+          (unless kill-ring
+            (copy-region-as-kill beg end))
+          (kill-rectangle beg end)
+          (put 'killed-rectangle 'previous-kill (current-kill 0))
+          (goto-char orig)
+          (set-marker orig nil)))
+       (t
+        (vimpulse-store-in-current-register beg end)
+        (kill-region beg end)
+        (when (and (eolp) (not (bolp)))
+          (backward-char)))))))
+
+(vimpulse-define-operator vimpulse-change (beg end &optional dont-save)
+  "Change text from BEG to END.
+If DONT-SAVE is non-nil, don't store the deleted text on `kill-ring'."
+  (when vimpulse-want-change-undo
+    (vimpulse-start-undo-step))
+  (cond
+   ((eq vimpulse-this-motion-type 'block)
+    (vimpulse-delete beg end dont-save)
+    (goto-char
+     (vimpulse-visual-create-coords
+      'block ?i
+      (min vimpulse-visual-point vimpulse-visual-mark)
+      (1+ (max vimpulse-visual-point vimpulse-visual-mark))))
+    (viper-insert nil))
+   ((eq viper-intermediate-command 'viper-repeat)
+    (if dont-save
+        (delete-region beg end)
+      (kill-region beg end))
+    (goto-char beg)
+    (when (eq vimpulse-this-motion-type 'line)
+      (save-excursion (newline))
+      (when viper-auto-indent
+        (indent-according-to-mode)))
+    (viper-yank-last-insertion))
+   ((eq vimpulse-this-motion-type 'line)
+    (setq viper-began-as-replace t)
+    (if dont-save
+        (delete-region beg end)
+      (vimpulse-store-in-current-register beg end)
+      (kill-region beg end))
+    (save-excursion (newline))
+    (when viper-auto-indent
+      (indent-according-to-mode))
+    (viper-change-state-to-insert))
+   (t
+    (if dont-save
+        (progn
+          (delete-region beg end)
+          (viper-change-state-to-insert))
+      (vimpulse-store-in-current-register beg end)
+      (viper-change beg end)))))
+
+;; r, J, =, >, <
+(vimpulse-define-operator vimpulse-replace (beg end)
+  "Replace all selected characters with ARG."
+  :move-point nil
+  :keep-visual t
+  :motion 'forward-char
+  (let (endpos length visual-p)
+    (setq endpos (max beg (1- end)))
+    (unless (and (eq viper-intermediate-command 'viper-repeat)
+                 viper-d-char)
+      (unwind-protect
+          (progn
+            (vimpulse-set-replace-cursor-type)
+            (save-excursion
+              (viper-special-read-and-insert-char))
+            (setq viper-d-char (char-after))
+            (delete-char 1))
+        (viper-restore-cursor-type)
+        (when vimpulse-visual-mode
+          (vimpulse-visual-mode -1)
+          (setq endpos beg))))
+    (cond
+     ((eq vimpulse-this-motion-type 'block)
+      (setq length (abs (- (save-excursion
+                             (goto-char beg)
+                             (current-column))
+                           (save-excursion
+                             (goto-char end)
+                             (current-column)))))
+      (vimpulse-apply-on-block
+       (lambda (beg end)
+         (goto-char beg)
+         (delete-region beg end)
+         (insert (make-string length viper-d-char)))
+       beg end))
+     (t
+      (goto-char beg)
+      (while (< (point) end)
+        (if (looking-at "\n")
+            (forward-char)
+          (delete-char 1)
+          (insert-char viper-d-char 1)))
+      (goto-char endpos)))))
+
+(vimpulse-define-operator vimpulse-join (beg end)
+  "Join the selected lines."
+  :whole-lines t
+  :motion 'vimpulse-line
+  (let ((num (count-lines beg end)))
+    (unless (> num 2)
+      (setq num 2))
+    (viper-join-lines num)))
+
+(vimpulse-define-operator vimpulse-indent (beg end)
+  "Indent text according to mode."
+  :repeat nil
+  :whole-lines t
+  (indent-region beg end nil)
+  (when viper-auto-indent
+    (back-to-indentation)))
+
+(vimpulse-define-operator vimpulse-shift-left (beg end)
+  "Shift all selected lines to the left."
+  (let ((nlines (count-lines beg end)))
+    (viper-next-line (cons (1- nlines) ?<))))
+
+(vimpulse-define-operator vimpulse-shift-right (beg end)
+  "Shift all selected lines to the right."
+  (let ((nlines (count-lines beg end)))
+    (viper-next-line (cons (1- nlines) ?>))))
+
+;; gq, gu, gU
+(vimpulse-define-operator vimpulse-fill (beg end)
+  "Fill text."
+  :repeat nil
+  :move-point nil
+  (setq end (save-excursion
+              (goto-char end)
+              (skip-chars-backward " ")
+              (point)))
+  (save-excursion
+    (fill-region beg end)))
+
+(vimpulse-define-operator vimpulse-downcase (beg end)
+  "Convert text to lower case."
+  (if (eq vimpulse-this-motion-type 'block)
+      (vimpulse-apply-on-block 'downcase-region beg end)
+    (downcase-region beg end))
+  (when (and viper-auto-indent
+             (looking-back "^[ \f\t\v]*"))
+    (back-to-indentation)))
+
+(vimpulse-define-operator vimpulse-upcase (beg end)
+  "Convert text to upper case."
+  (if (eq vimpulse-this-motion-type 'block)
+      (vimpulse-apply-on-block 'upcase-region beg end)
+    (upcase-region beg end)
+    (when (and viper-auto-indent
+               (looking-back "^[ \f\t\v]*"))
+      (back-to-indentation))))
+
+(vimpulse-define-operator vimpulse-invert-case (beg end)
+  "Convert text to inverted case."
+  (let (char)
+    (save-excursion
+      (cond
+       ((eq vimpulse-this-motion-type 'block)
+        (let (vimpulse-this-motion-type)
+          (vimpulse-apply-on-block 'vimpulse-invert-case beg end)))
+       (t
+        (goto-char beg)
+        (while (< beg end)
+          (setq char (following-char))
+          (delete-char 1 nil)
+          (if (eq (upcase char) char)
+              (insert-char (downcase char) 1)
+            (insert-char (upcase char) 1))
+          (setq beg (1+ beg))))))
+    (when (and viper-auto-indent
+               (looking-back "^[ \f\t\v]*"))
+      (back-to-indentation))))
+
+(vimpulse-define-operator vimpulse-invert-char (beg end)
+  "Invert case of character."
+  :keep-visual t
+  :motion 'forward-char
+  (vimpulse-invert-case beg end)
+  (cond
+   (vimpulse-visual-mode
+    (goto-char beg)
+    (vimpulse-visual-mode -1))
+   (t
+    (goto-char end))))
+
+(vimpulse-define-operator vimpulse-rot13 (beg end)
+  "ROT13 encrypt text."
+  (rot13-region beg end))
+
+;;; Compatibility code allowing old-style Viper motions to work
+
+;; Postpone operator execution by disabling `viper-execute-com'.
+;; In the old scheme, the operator was executed inside the motion
+;; (by a call to this function), rather than after it; the following
+;; advice removes this behavior. However, some motions, like f and /,
+;; need to access `viper-d-com' for negative count and command-keys
+;; while repeating, so certain parts must be carefully retained.
+(defadvice viper-execute-com (around vimpulse-operator activate)
+  "Disable in Operator-Pending mode."
+  (cond
+   ((eq viper-current-state 'operator-state)
+    ;; ?r is Viper's "dummy operator", associated with
+    ;; `viper-exec-dummy' in `viper-exec-array'
+    (setq com ?r)
+    ad-do-it
+    ;; while repeating, put needed values in `viper-d-com'
+    (unless (or (eq this-command 'viper-repeat)
+                (eq viper-intermediate-command 'viper-repeat))
+      (unless viper-d-com
+        (setq viper-d-com (list nil nil nil nil nil nil)))
+      (unless (eq vimpulse-this-motion
+                  (vimpulse-operator-remapping m-com))
+        (setq vimpulse-this-motion (vimpulse-operator-remapping m-com))
+        (setcar (nthcdr 2 viper-d-com) com))
+      (setq vimpulse-this-count val)
+      (setcar (nthcdr 5 viper-d-com)
+              (viper-array-to-string
+               (if (arrayp viper-this-command-keys)
+                   viper-this-command-keys
+                 (this-command-keys))))))
+   (t
+    ad-do-it)))
+
+;; this separates the operator-pending part of a Viper motion from the
+;; rest, defining a new command called vimpulse-operator-MOTION
+(defmacro vimpulse-operator-map-define
+  (viper-motion &optional type &rest body)
+  "Define a new command for the Operator-Pending part of VIPER-MOTION.
+The new command is named VIMPULSE-OPERATOR-MOTION and has motion
+type TYPE. A custom function body may be specified via BODY."
+  (declare (indent 2))
+  `(let* ((viper-motion ',viper-motion)
+          (type ,type)
+          (body ',body)
+          (motion-name (symbol-name viper-motion))
+          (docstring (documentation viper-motion t)))
+     (setq type (or type (vimpulse-motion-type viper-motion)))
+     (unless (memq type '(inclusive line block))
+       (setq type 'exclusive))
+     (setq motion-name (replace-regexp-in-string
+                        "^viper-\\\|^vimpulse-" "" motion-name))
+     (setq motion-name
+           (concat "vimpulse-operator-" motion-name))
+     (setq motion-name (intern motion-name))
+     (add-to-list 'vimpulse-movement-cmds motion-name)
+     (vimpulse-operator-remap viper-motion motion-name)
+     (eval `(defun ,motion-name (arg)
+              ,(format "Operator-pending %s part of `%s'.\n\n%s"
+                       type viper-motion (or docstring ""))
+              ,@(if body body
+                  `((interactive "P")
+                    (let (com com-alist)
+                      (setq com-alist
+                            '((vimpulse-change . ?c)
+                              (vimpulse-delete . ?d)
+                              (vimpulse-yank . ?y)))
+                      (setq com
+                            (or (cdr (assq vimpulse-this-operator
+                                           com-alist))
+                                ?r))
+                      (,viper-motion (if (region-active-p)
+                                         arg
+                                       (cons arg com)))
+                      ,(unless (eq type 'exclusive)
+                         '(viper-backward-char-carefully)))))))
+     (put motion-name 'motion-type type)
+     `(quote ,motion-name)))
+
+;; d%: when point is before the parenthetical expression,
+;; include it in the resulting range
+(vimpulse-operator-map-define viper-paren-match 'inclusive
+  (interactive "P")
+  (let ((orig (point)))
+    (viper-paren-match arg)
+    (viper-move-marker-locally 'viper-com-point orig)
+    (when (integerp arg)
+      (setq vimpulse-this-motion-type 'line))))
+
+;; Viper quirk: cw only deletes a single character when at whitespace,
+;; dw deletes all of it. Use the latter behavior in both cases.
+(vimpulse-operator-map-define viper-forward-word 'exclusive
+  (interactive "P")
+  (let ((com-alist '((vimpulse-change . ?c)
+                     (vimpulse-delete . ?d)
+                     (vimpulse-yank . ?y))) com)
+    (if (looking-at "[[:space:]]")
+        (setq com ?d)
+      (setq com (or (cdr (assq vimpulse-this-operator com-alist)) ?r)))
+    (viper-forward-word (if (region-active-p)
+                            arg
+                          (cons arg com)))))
+
+(vimpulse-operator-map-define viper-forward-Word 'exclusive
+  (interactive "P")
+  (let ((com-alist '((vimpulse-change . ?c)
+                     (vimpulse-delete . ?d)
+                     (vimpulse-yank . ?y))) com)
+    (if (looking-at "[[:space:]]")
+        (setq com ?d)
+      (setq com (or (cdr (assq vimpulse-this-operator com-alist)) ?r)))
+    (viper-forward-Word (if (region-active-p)
+                            arg
+                          (cons arg com)))))
+
+;;; remap non-motion commands to `viper-nil'
+(vimpulse-operator-remap 'undo 'viper-nil)
+(vimpulse-operator-remap 'undo-tree-redo 'viper-nil)
+(vimpulse-operator-remap 'redo 'viper-nil)
+(vimpulse-operator-remap 'vimpulse-put-and-indent 'viper-nil)
+(vimpulse-operator-remap 'vimpulse-Put-and-indent 'viper-nil)
+(vimpulse-operator-remap 'viper-Put-back 'viper-nil)
+(vimpulse-operator-remap 'viper-put-back 'viper-nil)
+(vimpulse-operator-remap 'viper-delete-backward-char 'viper-nil)
+(vimpulse-operator-remap 'viper-delete-char 'viper-nil)
+(vimpulse-operator-remap 'viper-insert 'viper-nil)
+(vimpulse-operator-remap 'viper-intercept-ESC-key 'viper-nil)
+(vimpulse-operator-remap 'viper-line-to-bottom 'viper-nil)
+(vimpulse-operator-remap 'viper-line-to-middle 'viper-nil)
+(vimpulse-operator-remap 'viper-line-to-top 'viper-nil)
+(vimpulse-operator-remap 'viper-repeat 'viper-nil)
+(vimpulse-operator-remap 'viper-substitute 'viper-nil)
+
+;; these motions need wrapper functions to repeat correctly
+(vimpulse-operator-map-define viper-end-of-Word 'inclusive)
+(vimpulse-operator-map-define viper-end-of-word 'inclusive)
+(vimpulse-operator-map-define viper-find-char-backward 'exclusive)
+(vimpulse-operator-map-define viper-find-char-forward 'inclusive)
+(vimpulse-operator-map-define viper-forward-char 'inclusive)
+(vimpulse-operator-map-define viper-goto-char-backward 'exclusive)
+(vimpulse-operator-map-define viper-goto-char-forward 'inclusive)
+(vimpulse-operator-map-define viper-search-backward 'exclusive)
+(vimpulse-operator-map-define viper-search-forward 'exclusive)
+
+;; set up motion types for remaining Viper motions
+(put 'vimpulse-goto-first-line 'motion-type 'line)
+(put 'vimpulse-goto-mark-and-skip-white 'motion-type 'line)
+(put 'vimpulse-end-of-visual-line 'motion-type 'inclusive)
+(put 'viper-backward-Word 'motion-type 'exclusive)
+(put 'viper-backward-char 'motion-type 'exclusive)
+(put 'viper-backward-paragraph 'motion-type 'exclusive)
+(put 'viper-backward-sentence 'motion-type 'exclusive)
+(put 'viper-backward-word 'motion-type 'exclusive)
+(put 'viper-beginning-of-line 'motion-type 'exclusive)
+(put 'viper-forward-paragraph 'motion-type 'exclusive)
+(put 'viper-forward-sentence 'motion-type 'exclusive)
+(put 'viper-goto-eol 'motion-type 'inclusive)
+(put 'viper-goto-line 'motion-type 'line)
+(put 'viper-goto-mark 'motion-type 'exclusive)
+(put 'viper-goto-mark-and-skip-white 'motion-type 'line)
+(put 'viper-next-line 'motion-type 'line)
+(put 'viper-previous-line 'motion-type 'line)
+(put 'viper-search-Next 'motion-type 'exclusive)
+(put 'viper-search-next 'motion-type 'exclusive)
+(put 'viper-window-bottom 'motion-type 'line)
+(put 'viper-window-middle 'motion-type 'line)
+(put 'viper-window-top 'motion-type 'line)
+(put 'next-line 'motion-type 'line)
+(put 'previous-line 'motion-type 'line)
+
+;;;; Text objects support
+
+;; The following code implements support for text objects and commands
+;; like diw, daw, ciw, caw. Currently, the most common objects are
+;; supported:
+;;
+;;   - bracket-blocks: b B { [ ( < > ) ] }
+;;   - sentences: s
+;;   - paragraphs: p
+;;   - quoted expressions: " and '
+;;   - words: w and W
+;;
+;; Vimpulse's text objects are fairly close to Vim's, and are based on
+;; Viper's movement commands. More objects are easily added with
+;; `vimpulse-define-text-object'.
+
+
+
+(defvar vimpulse-operator-basic-map)    ; defined programmatically by `v-define-state'
+
+(defmacro vimpulse-define-text-object (object args &rest body)
+  "Define a text object OBJECT.
+ARGS is the argument list, which must contain at least one argument:
+the count. It is followed by an optional docstring and optional
+keywords:
+
+:keys KEYS      A key or a list of keys to bind the command to.
+:map MAP        Keymap to bind :keys in, defaults to
+                `vimpulse-operator-basic-map'.
+:type TYPE      The object's motion type.
+
+The keywords are followed by the object's body, which must return
+a pure range (BEG END) or a motion range (TYPE BEG END). Thus,
+a simple example may look somewhat like:
+
+    (vimpulse-define-text-object test (arg)
+      \"Test object.\"
+      :keys \"t\"
+      (list 'exclusive (point) (+ arg (point))))
+
+Here, the count is stored in ARG. Note that the body must be able
+to handle a negative value, which specifies reverse direction."
+  (declare (indent defun)
+           (debug (&define name lambda-list
+                           [&optional stringp]
+                           [&rest keywordp sexp]
+                           def-body)))
+  (let ((map 'vimpulse-operator-basic-map)
+        count doc keys keyword type)
+    ;; collect COUNT argument
+    (setq args (or args (list 'arg))
+          count (car args))
+    ;; collect docstring, if any
+    (when (stringp (car body))
+      (setq doc  (car body)
+            body (cdr body)))
+    ;; collect keywords
+    (while (keywordp (setq keyword (car body)))
+      (setq body (cdr body))
+      (cond
+       ((eq keyword :keys)
+        (setq keys (vimpulse-unquote (pop body))))
+       ((eq keyword :map)
+        (setq map (vimpulse-unquote (pop body))))
+       ((eq keyword :type)
+        (setq type (vimpulse-unquote (pop body))))
+       (t
+        (pop body))))
+    (unless (listp keys)
+      (setq keys (list keys)))
+    (when type
+      (setq type `(',type)))
+    ;; macro expansion: define key bindings, set motion type
+    ;; and define command
+    `(progn
+       (dolist (key ',keys)
+         (define-key ,map key ',object))
+       ,(when type
+          `(put ',object 'motion-type ,@type))
+       (defun ,object ,args
+         ,doc
+         (interactive "p")
+         (let ((,count (if (numberp ,count) ,count 1))
+               range)
+           (cond
+            ((region-active-p)
+             (when (< (point) (mark t))
+               (setq ,count (- ,count)))
+             (when (memq vimpulse-visual-mode '(line block))
+               (vimpulse-visual-activate 'char))
+             (when (and vimpulse-visual-mode
+                        (not vimpulse-visual-region-expanded))
+               (vimpulse-visual-expand-region))
+             (setq range (progn ,@body))
+             (unless (vimpulse-mark-range range t ,@type)
+               ;; Are we stuck (unchanged region)?
+               ;; Move forward and try again.
+               (viper-forward-char-carefully (if (< ,count 0) -1 1))
+               (setq range (progn ,@body))
+               (vimpulse-mark-range range t ,@type)))
+            (t
+             (setq range (progn ,@body))
+             (vimpulse-mark-range range nil ,@type))))))))
+
+(when (fboundp 'font-lock-add-keywords)
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   '(("(\\(vimpulse-define-text-object\\)\\>[ \f\t\n\r\v]*\\(\\sw+\\)?"
+      (1 font-lock-keyword-face)
+      (2 font-lock-function-name-face nil t)))))
+
+(defun vimpulse-mark-range (range &optional widen type)
+  "Mark RANGE, which has the form (BEG END) or (TYPE BEG END).
+If WIDEN is non-nil, expands existing region. If the TYPE
+argument is specified, it overrides the type of RANGE."
+  (let* ((type  (or type (vimpulse-motion-type range)))
+         (range (vimpulse-motion-range range))
+         (beg (vimpulse-range-beginning range))
+         (end (vimpulse-range-end range)))
+    (cond
+     ((eq type 'exclusive)
+      (if vimpulse-visual-mode
+          (vimpulse-visual-select beg end widen)
+        (vimpulse-set-region beg end widen)))
+     (t
+      (when vimpulse-visual-mode
+        (unless (memq type '(line block))
+          (setq type 'char))
+        (unless (eq type vimpulse-visual-mode)
+          (vimpulse-visual-activate type)))
+      (vimpulse-visual-select beg end widen)))))
+
+;;; Text object range functions
+
+;; word-like expressions (words, sentences, paragraphs)
+(defun vimpulse-object-range
+  (count backward-func forward-func &optional type)
+  "Return a text object range (TYPE BEG END).
+BACKWARD-FUNC moves point to the object's beginning,
+FORWARD-FUNC moves to its end. Schematically,
+
+\(vimpulse-object-range <num> <beg-of-object> <end-of-object>)
+
+COUNT is the number of objects. If positive, go forwards and
+then backwards; if negative, go backwards and then forwards.
+
+The type of the object (`exclusive', `inclusive' or `line')
+may be specified with TYPE. Otherwise, the type is inferred
+from the motion types of BACKWARD-FUNC and FORWARD-FUNC."
+  (let ((types '(exclusive inclusive line block))
+        beg end forward-range backward-range
+        viper-com-point
+        vimpulse-visual-vars-alist
+        vimpulse-this-motion
+        vimpulse-this-motion-type)
+    (save-excursion
+      (setq count (or (if (eq count 0) 1 count) 1))
+      (if (< count 0)
+          (setq backward-range
+                (vimpulse-calculate-motion-range
+                 (abs count) backward-func type t)
+                forward-range
+                (vimpulse-calculate-motion-range
+                 (abs count) forward-func type t))
+        (setq forward-range
+              (vimpulse-calculate-motion-range
+               (abs count) forward-func type t)
+              backward-range
+              (vimpulse-calculate-motion-range
+               (abs count) backward-func type t)))
+      (setq beg (apply 'min (vimpulse-motion-range backward-range))
+            end (apply 'max (vimpulse-motion-range forward-range)))
+      (unless type
+        (setq type 'exclusive)
+        (dolist (elt types)
+          (when (or (eq elt (vimpulse-motion-type backward-range))
+                    (eq elt (vimpulse-motion-type forward-range)))
+            (setq type elt))))
+      (list type beg end))))
+
+(defun vimpulse-an-object-range
+  (count backward-func forward-func &optional include-newlines regexp)
+  "Return a text object range (BEG END) with whitespace.
+Unless INCLUDE-NEWLINES is t, whitespace inclusion is restricted
+to the line(s) the object is on. REGEXP is a regular expression
+for matching whitespace; the default is \"[ \\f\\t\\n\\r\\v]+\".
+See `vimpulse-object-range' for more details."
+  (let (range beg end line-beg line-end mark-active-p)
+    (save-excursion
+      (setq count (or (if (eq count 0) 1 count) 1))
+      (setq regexp (or regexp "[ \f\t\n\r\v]+"))
+      (setq range (vimpulse-motion-range
+                   (vimpulse-object-range
+                    count backward-func forward-func)))
+      ;; let `end' be the boundary furthest from point,
+      ;; based on the direction we are going
+      (if (< count 0)
+          (setq beg (cadr range)
+                end (car range))
+        (setq beg (car range)
+              end (cadr range)))
+      ;; if INCLUDE-NEWLINES is nil, never move past
+      ;; the line boundaries of the text object
+      (unless include-newlines
+        (setq line-beg (line-beginning-position)
+              line-end (line-end-position))
+        (when (> (* count beg)
+                 (max (* count line-beg) (* count line-end)))
+          (setq count (- count))
+          (setq range (vimpulse-motion-range
+                       (vimpulse-object-range
+                        count backward-func forward-func)))
+          (if (< count 0)
+              (setq beg (cadr range)
+                    end (car range))
+            (setq beg (car range)
+                  end (cadr range))))
+        (setq line-beg (save-excursion
+                         (goto-char (min beg end))
+                         (line-beginning-position))
+              line-end (save-excursion
+                         (goto-char (max beg end))
+                         (line-end-position))))
+      ;; Generally only include whitespace at one side (but see below).
+      ;; If we are before the object, include leading whitespace;
+      ;; if we are inside the object, include trailing whitespace.
+      ;; If trailing whitespace inclusion fails, include leading.
+      (setq count (if (< count 0) -1 1))
+      (when (or (< (* count (point)) (* count beg))
+                (eq end (setq end (save-excursion
+                                    (goto-char end)
+                                    (vimpulse-skip-regexp
+                                     regexp count line-beg line-end)))))
+        (setq beg (save-excursion
+                    (goto-char beg)
+                    (if (and (not include-newlines)
+                             (looking-back "^[ \t]*"))
+                        beg
+                      (vimpulse-skip-regexp
+                       regexp (- count) line-beg line-end))))
+        ;; Before/after adjustment for whole lines: if the object is
+        ;; followed by a blank line, include that as trailing
+        ;; whitespace and subtract a line from the leading whitespace.
+        (when include-newlines
+          (goto-char end)
+          (forward-line count)
+          (when (looking-at "[ \t]*$")
+            (setq end (line-beginning-position))
+            (goto-char beg)
+            (when (looking-at "[ \t]*$")
+              (forward-line count)
+              (setq beg (line-beginning-position))))))
+      ;; return the range
+      (list (min beg end) (max beg end)))))
+
+(defun vimpulse-inner-object-range
+  (count backward-func forward-func)
+  "Return a text object range (BEG END) including point.
+If point is outside the object, it is included in the range.
+To include whitespace, use `vimpulse-an-object-range'.
+See `vimpulse-object-range' for more details."
+  (let (range beg end line-beg line-end)
+    (setq count (or (if (eq count 0) 1 count) 1))
+    (setq range (vimpulse-motion-range
+                 (vimpulse-object-range
+                  count backward-func forward-func)))
+    (setq beg (car range)
+          end (cadr range))
+    (setq line-beg (line-beginning-position)
+          line-end (line-end-position))
+    (when (> (min (* count beg) (* count end))
+             (max (* count line-beg) (* count line-end)))
+      (setq count (- count))
+      (setq range (vimpulse-motion-range
+                   (vimpulse-object-range
+                    count backward-func forward-func))
+            beg (car range)
+            end (cadr range)))
+    ;; return the range, including point
+    (list (min beg (point)) (max end (point)))))
+
+;; parenthetical expressions
+(defun vimpulse-paren-range (count &optional open close include-parentheses)
+  "Return a parenthetical expression range (BEG END).
+The type of parentheses may be specified with OPEN and CLOSE,
+which must be characters. INCLUDE-PARENTHESES specifies
+whether to include the parentheses in the range."
+  (let ((beg (point)) (end (point))
+        line-beg line-end)
+    (setq count (if (eq count 0) 1 (abs count)))
+    (save-excursion
+      (setq open  (if (characterp open)
+                      (regexp-quote (string open)) "")
+            close (if (characterp close)
+                      (regexp-quote (string close)) ""))
+      (when (and (not (string= open ""))
+                 (looking-at open))
+        (forward-char))
+      ;; find opening and closing paren with Emacs' S-exp facilities
+      (while (progn
+               (vimpulse-backward-up-list 1)
+               (not (when (looking-at open)
+                      (when (save-excursion
+                              (forward-sexp)
+                              (when (looking-back close)
+                                (setq end (point))))
+                        (if (>= count 0)
+                            (setq beg (point))
+                          (setq count (1- count)) nil))))))
+      (if include-parentheses
+          (list beg end)
+        (setq beg (prog1 (min (1+ beg) end)
+                    (setq end (max (1- end) beg))))
+        (if (<= (count-lines beg end) 1)
+            (list beg end)
+          ;; multi-line inner range: select whole lines
+          (goto-char beg)
+          (when (looking-at "[ \f\t\n\r\v]*$")
+            (forward-line)
+            ;; Include indentation?
+            (if (and viper-auto-indent
+                     (not (eq vimpulse-this-operator
+                              'vimpulse-delete)))
+                (back-to-indentation)
+              (beginning-of-line))
+            (setq beg (point)))
+          (goto-char end)
+          (when (and (looking-back "^[ \f\t\n\r\v]*")
+                     (not (eq vimpulse-this-operator
+                              'vimpulse-delete)))
+            (setq end (line-end-position 0))
+            (goto-char end))
+          (list (min beg end) (max beg end)))))))
+
+;; quoted expressions
+(defun vimpulse-quote-range (count &optional quote include-quotes)
+  "Return a quoted expression range (BEG END).
+QUOTE is a quote character (default ?\\\"). INCLUDE-QUOTES
+specifies whether to include the quote marks in the range."
+  (let ((beg (point)) (end (point))
+        regexp)
+    (save-excursion
+      (setq count (if (eq count 0) 1 (abs count)))
+      (setq quote (or quote ?\"))
+      (setq quote (if (characterp quote)
+                      (regexp-quote (string quote)) "")
+            regexp (concat "\\([^\\\\]\\|^\\)" quote))
+      (when (and (not (string= quote ""))
+                 (looking-at quote))
+        (forward-char))
+      ;; search forward for a closing quote
+      (while (and (> count 0)
+                  (re-search-forward regexp nil t))
+        (setq count (1- count))
+        (setq end (point))
+        ;; find the matching opening quote
+        (condition-case nil
+            (progn
+              (setq beg (scan-sexps end -1))
+              ;; Emacs' S-exp logic doesn't work in text mode
+              (save-excursion
+                (goto-char beg)
+                (unless (looking-at quote)
+                  (re-search-backward regexp)
+                  (unless (looking-at quote)
+                    (forward-char))
+                  (setq beg (point)))))
+          ;; Finding the opening quote failed. Maybe we're already at
+          ;; the opening quote and should look for the closing instead?
+          (error (condition-case nil
+                     (progn
+                       (viper-backward-char-carefully)
+                       (setq beg (point))
+                       (setq end (scan-sexps beg 1))
+                       (unless (looking-back quote)
+                         (re-search-forward regexp)
+                         (unless (looking-back quote)
+                           (backward-char))
+                         (setq end (point))))
+                   (error (setq end beg))))))
+      (if include-quotes
+          (list beg end)
+        (list (min (1+ beg) end) (max (1- end) beg))))))
+
+;;; Text object definitions
+
+(vimpulse-define-text-object vimpulse-line (arg)
+  "Select ARG lines."
+  :type 'line
+  (setq arg (1- arg))
+  (vimpulse-line-range
+   (point)
+   (save-excursion
+     (when (> arg 0)
+       (viper-next-line-carefully arg))
+     (point))))
+
+(vimpulse-define-text-object vimpulse-a-word (arg)
+  "Select a word."
+  :keys "aw"
+  (vimpulse-an-object-range
+   arg
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (viper-backward-word (cons arg ?r))))
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (viper-end-of-word (cons arg ?r))))))
+
+(vimpulse-define-text-object vimpulse-inner-word (arg)
+  "Select inner word."
+  :keys "iw"
+  (vimpulse-inner-object-range
+   arg
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (viper-backward-word (cons arg ?r))))
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (backward-char)
+       (viper-end-of-word (cons arg ?r))))))
+
+(vimpulse-define-text-object vimpulse-a-Word (arg)
+  "Select a Word."
+  :keys "aW"
+  (vimpulse-an-object-range
+   arg
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (viper-backward-Word (cons arg ?r))))
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (viper-end-of-Word (cons arg ?r))))))
+
+(vimpulse-define-text-object vimpulse-inner-Word (arg)
+  "Select inner Word."
+  :keys "iW"
+  (vimpulse-inner-object-range
+   arg
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (viper-backward-Word (cons arg ?r))))
+   (lambda (arg)
+     (vimpulse-limit (line-beginning-position) (line-end-position)
+       (viper-end-of-Word (cons arg ?r))))))
+
+(vimpulse-define-text-object vimpulse-a-sentence (arg)
+  "Select a sentence."
+  :keys "as"
+  (vimpulse-an-object-range
+   arg
+   (lambda (arg)
+     (viper-backward-sentence arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
+   (lambda (arg)
+     (viper-forward-sentence arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1))))
+
+(vimpulse-define-text-object vimpulse-inner-sentence (arg)
+  "Select inner sentence."
+  :keys "is"
+  (vimpulse-inner-object-range
+   arg
+   (lambda (arg)
+     (viper-backward-sentence arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
+   (lambda (arg)
+     (viper-forward-sentence arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1))))
+
+(vimpulse-define-text-object vimpulse-a-paragraph (arg)
+  "Select a paragraph."
+  :keys "ap"
+  (vimpulse-an-object-range
+   arg
+   (lambda (arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1)
+     (viper-backward-paragraph arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
+   (lambda (arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1)
+     (viper-forward-paragraph arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1)) t))
+
+(vimpulse-define-text-object vimpulse-inner-paragraph (arg)
+  "Select inner paragraph."
+  :keys "ip"
+  (vimpulse-inner-object-range
+   arg
+   (lambda (arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1)
+     (viper-backward-paragraph arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1))
+   (lambda (arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" 1)
+     (viper-forward-paragraph arg)
+     (vimpulse-skip-regexp "[ \f\t\n\r\v]+" -1))))
+
+(vimpulse-define-text-object vimpulse-a-paren (arg)
+  "Select a parenthesis."
+  :keys '("ab" "a(" "a)")
+  (vimpulse-paren-range arg ?\( nil t))
+
+(vimpulse-define-text-object vimpulse-inner-paren (arg)
+  "Select inner parenthesis."
+  :keys '("ib" "i(" "i)")
+  (vimpulse-paren-range arg ?\())
+
+(vimpulse-define-text-object vimpulse-a-bracket (arg)
+  "Select a square bracket."
+  :keys '("a[" "a]")
+  (vimpulse-paren-range arg ?\[ nil t))
+
+(vimpulse-define-text-object vimpulse-inner-bracket (arg)
+  "Select inner square bracket."
+  :keys '("i[" "i]")
+  (vimpulse-paren-range arg ?\[))
+
+(vimpulse-define-text-object vimpulse-a-curly (arg)
+  "Select a curly bracket (\"brace\")."
+  :keys '("aB" "a{" "a}")
+  (vimpulse-paren-range arg ?{ nil t))
+
+(vimpulse-define-text-object vimpulse-inner-curly (arg)
+  "Select inner curly bracket (\"brace\")."
+  :keys '("iB" "i{" "i}")
+  (vimpulse-paren-range arg ?{))
+
+(vimpulse-define-text-object vimpulse-an-angle (arg)
+  "Select an angle bracket."
+  :keys '("a<" "a>")
+  (vimpulse-paren-range arg ?< nil t))
+
+(vimpulse-define-text-object vimpulse-inner-angle (arg)
+  "Select inner angle bracket."
+  :keys '("i<" "i>")
+  (vimpulse-paren-range arg ?<))
+
+(vimpulse-define-text-object vimpulse-a-single-quote (arg)
+  "Select a single-quoted expression."
+  :keys "a'"
+  (vimpulse-quote-range arg ?' t))
+
+(vimpulse-define-text-object vimpulse-inner-single-quote (arg)
+  "Select inner single-quoted expression."
+  :keys "i'"
+  (vimpulse-quote-range arg ?'))
+
+(vimpulse-define-text-object vimpulse-a-double-quote (arg)
+  "Select a double-quoted expression."
+  :keys "a\""
+  (vimpulse-quote-range arg ?\" t))
+
+(vimpulse-define-text-object vimpulse-inner-double-quote (arg)
+  "Select inner double-quoted expression."
+  :keys "i\""
+  (vimpulse-quote-range arg ?\"))
+
+;;;; Keybindings
+
+
+
+;;; C-u
+
+(unless vimpulse-want-C-u-like-Vim
+  (define-key viper-vi-basic-map "\C-u" 'universal-argument))
+
+;;; vi (command) mode keys
+
+(define-key viper-vi-basic-map "c" 'vimpulse-change)
+(define-key viper-vi-basic-map "d" 'vimpulse-delete)
+(define-key viper-vi-basic-map "g" nil) ; delete `viper-nil' binding
+(define-key viper-vi-basic-map "g?" 'vimpulse-rot13)
+(define-key viper-vi-basic-map "gU" 'vimpulse-upcase)
+(define-key viper-vi-basic-map "gb" 'vimpulse-end-of-previous-word)
+(define-key viper-vi-basic-map "gd" 'vimpulse-goto-definition)
+(define-key viper-vi-basic-map "gf" 'find-file-at-point)
+(define-key viper-vi-basic-map "gg" 'vimpulse-goto-first-line)
+(define-key viper-vi-basic-map "gh" 'backward-char)
+(define-key viper-vi-basic-map "gi" 'vimpulse-resume-insert)
+(define-key viper-vi-basic-map "gj" 'next-line)
+(define-key viper-vi-basic-map "gk" 'previous-line)
+(define-key viper-vi-basic-map "gl" 'forward-char)
+(define-key viper-vi-basic-map "gq" 'vimpulse-fill)
+(define-key viper-vi-basic-map "gu" 'vimpulse-downcase)
+(define-key viper-vi-basic-map "gw" 'vimpulse-fill)
+(define-key viper-vi-basic-map "g~" 'vimpulse-invert-case)
+(define-key viper-vi-basic-map "g0" 'vimpulse-beginning-of-visual-line)
+(define-key viper-vi-basic-map "g$" 'vimpulse-end-of-visual-line)
+(define-key viper-vi-basic-map "J" 'vimpulse-join)
+(define-key viper-vi-basic-map "K" 'woman)
+(define-key viper-vi-basic-map "m" 'vimpulse-mark-point)
+(define-key viper-vi-basic-map "`" 'vimpulse-goto-mark)
+(define-key viper-vi-basic-map "'" 'vimpulse-goto-mark-and-skip-white)
+(define-key viper-vi-basic-map "r" 'vimpulse-replace)
+(define-key viper-vi-basic-map "y" 'vimpulse-yank)
+(define-key viper-vi-basic-map "zb" 'viper-line-to-bottom)
+(define-key viper-vi-basic-map "zh" 'scroll-right)
+(define-key viper-vi-basic-map "zl" 'scroll-left)
+(define-key viper-vi-basic-map "zt" 'viper-line-to-top)
+(define-key viper-vi-basic-map "zz" 'viper-line-to-middle)
+(define-key viper-vi-basic-map "\C-]" 'vimpulse-jump-to-tag-at-point)
+(define-key viper-vi-basic-map "\C-t" 'pop-tag-mark)
+(define-key viper-vi-basic-map "]" nil) ; delete `viper-ket-function' binding
+(define-key viper-vi-basic-map "]P" 'vimpulse-Put-and-indent)
+(define-key viper-vi-basic-map "]p" 'vimpulse-put-and-indent)
+(define-key viper-vi-basic-map "=" 'vimpulse-indent)
+(define-key viper-vi-basic-map "+" 'vimpulse-previous-line-skip-white)
+(define-key viper-vi-basic-map "_" 'vimpulse-next-line-skip-white)
+(define-key viper-vi-basic-map "#" 'vimpulse-search-backward-for-symbol-at-point)
+(define-key viper-vi-basic-map "*" 'vimpulse-search-forward-for-symbol-at-point)
+(define-key viper-vi-basic-map "<" 'vimpulse-shift-left)
+(define-key viper-vi-basic-map ">" 'vimpulse-shift-right)
+(define-key viper-vi-basic-map "~" 'vimpulse-invert-char)
+(define-key viper-vi-basic-map "\"" 'vimpulse-read-register)
+(define-key viper-vi-basic-map "/" 'vimpulse-search-forward)
+(define-key viper-vi-basic-map "?" 'vimpulse-search-backward)
+(define-key viper-vi-kbd-map "/" nil)
+
+;; Visual bindings
+(define-key viper-vi-basic-map "v" 'vimpulse-visual-toggle-char)
+(define-key viper-vi-basic-map "V" 'vimpulse-visual-toggle-line)
+(define-key viper-vi-basic-map "\C-v" 'vimpulse-visual-toggle-block)
+(define-key viper-vi-basic-map "gv" 'vimpulse-visual-restore)
+
+;; map undo and redo
+(define-key viper-vi-basic-map "u" 'undo)
+(cond
+ ((fboundp 'undo-tree-redo)
+  (define-key viper-vi-basic-map "\C-r" 'undo-tree-redo))
+ ((fboundp 'redo)
+  (define-key viper-vi-basic-map "\C-r" 'redo)))
+
+;; window manipulation
+(defvar vimpulse-window-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\C-w" 'other-window)
+    (define-key map "w" 'other-window)
+    (define-key map "o" 'delete-other-windows)
+    (define-key map "c" 'delete-window)
+    (define-key map "s" 'split-window-vertically)
+    (define-key map "v" 'split-window-horizontally)
+    (when (fboundp 'windmove-left)
+      (define-key map "h" 'windmove-left)
+      (define-key map "j" 'windmove-down)
+      (define-key map "k" 'windmove-up)
+      (define-key map "l" 'windmove-right))
+    map)
+  "Keymap for window-related commands.
+Equivalent to Vim's C-w prefix.")
+
+(define-key viper-vi-basic-map "\C-w" vimpulse-window-map)
+
+;;; Insert mode keys
+
+;; Vim-like completion keys
+(define-key viper-insert-basic-map "\C-p" 'vimpulse-abbrev-expand-before)
+(define-key viper-insert-basic-map "\C-n" 'vimpulse-abbrev-expand-after)
+(define-key viper-insert-basic-map "\C-x\C-p" 'vimpulse-expand-line)
+(define-key viper-insert-basic-map "\C-x\C-n" 'vimpulse-expand-line)
+(define-key viper-insert-basic-map [delete] 'delete-char) ; <delete> key
+;; make ^[ work
+(define-key viper-insert-basic-map (kbd "ESC") 'viper-exit-insert-state)
+
+;;; "
+
+(defun vimpulse-read-register (&optional register command)
+  "Use COMMAND with REGISTER.
+  If called interactively, read REGISTER and COMMAND from keyboard."
+  (interactive)
+  (setq register (or register (read-char)))
+  (when (viper-valid-register register)
+    (setq command (or command (key-binding (read-key-sequence nil))))
+    (when (commandp command)
+      (let ((this-command command)
+            (viper-use-register register))
+        (call-interactively command)))))
+
+;;; g0, g$
+
+(defun vimpulse-beginning-of-visual-line (arg)
+  "Go to beginning of `visual-line-mode' line."
+  (interactive "p")
+  (if (and (boundp 'visual-line-mode) visual-line-mode)
+      (beginning-of-visual-line arg)
+    ;; `move-beginning-of-line' instead of `beginning-of-line'
+    ;; handles longlines-mode properly
+    (move-beginning-of-line arg)))
+
+(defun vimpulse-end-of-visual-line (arg)
+  "Go to end of `visual-line-mode' line."
+  (interactive "p")
+  (if (and (boundp 'visual-line-mode) visual-line-mode)
+      (end-of-visual-line arg)
+    ;; `move-end-of-line' instead of `end-of-line'
+    ;; handles longlines-mode properly
+    (move-end-of-line arg))
+  (unless (bolp)
+    (backward-char)))
+
+;;; gg
+
+(defun vimpulse-goto-first-line (arg)
+  "Go to ARGth line (first line by default)."
+  (interactive "P")
+  (let ((val (viper-P-val arg))
+        (com (viper-getCom arg)))
+    (when (eq com ?c) (setq com ?C))
+    (viper-move-marker-locally 'viper-com-point (point))
+    (viper-deactivate-mark)
+    (push-mark nil t)
+    (cond
+     ((null val)
+      (goto-char (point-min)))
+     (t
+      (viper-goto-line val)))
+    (when com
+      (viper-execute-com 'vimpulse-goto-line val com))))
+
+;;; gb
+
+(defun vimpulse-beginning-of-Word-p ()
+  (save-excursion
+    (or (bobp)
+        (when (viper-looking-at-alpha)
+          (backward-char)
+          (not (viper-looking-at-alpha))))))
+
+(defun vimpulse-end-of-previous-word (arg)
+  "Move point to end of previous word."
+  (interactive "P")
+  (viper-leave-region-active)
+  (let ((val (viper-p-val arg))
+        (com (viper-getcom arg)))
+    (when com
+      (viper-move-marker-locally 'viper-com-point (point)))
+    (unless (vimpulse-beginning-of-Word-p)
+      (viper-backward-Word 1))
+    (viper-backward-Word val)
+    (viper-end-of-Word '(1 . ?r))
+    (unless com
+      (backward-char))
+    (when com
+      (viper-execute-com 'viper-end-of-word val com))))
+
+;;; gd
+
+(defun vimpulse-goto-definition ()
+  "Go to definition or first occurrence of symbol under cursor."
+  (interactive)
+  (let ((str (vimpulse-search-string (point) 'symbol))
+        ientry ipos)
+    (cond
+     ((string= str "")
+      (error "No string under cursor"))
+     ;; if imenu is available, try it
+     ((or (fboundp 'imenu--make-index-alist)
+          (load "imenu" t))
+      (setq ientry
+            (condition-case nil
+                (and (fboundp 'imenu--make-index-alist)
+                     (imenu--make-index-alist))
+              (error nil)))
+      (setq ientry (assoc str ientry))
+      (setq ipos (cdr ientry))
+      (unless (markerp ipos)
+        (setq ipos (cadr ientry)))
+      (cond
+       ;; imenu found a position, so go there and
+       ;; highlight the occurrence
+       ((and (markerp ipos)
+             (eq (marker-buffer ipos) (current-buffer)))
+        (vimpulse-search-for-symbol nil ipos str))
+       ;; imenu failed, so just go to first occurrence in buffer
+       (t
+        (vimpulse-search-for-symbol nil (point-min)))))
+     ;; no imenu, so just go to first occurrence in buffer
+     (t
+      (vimpulse-search-for-symbol nil (point-min))))))
+
+(defun vimpulse-jump-to-tag-at-point ()
+  (interactive)
+  (let ((tag (thing-at-point 'word)))
+    (find-tag tag)))
+
+;;; gi
+
+(defun vimpulse-resume-insert (arg)
+  "Insert at previous insert position."
+  (interactive "P")
+  (when (markerp vimpulse-exit-point)
+    (goto-char vimpulse-exit-point))
+  (viper-insert arg))
+
+;;; +, _
+
+(defun vimpulse-previous-line-skip-white (&optional arg)
+  "Go ARG lines backward and to the first non-blank character."
+  (interactive "P")
+  (let ((val (viper-p-val arg))
+        (com (viper-getcom arg)))
+    (when com
+      (viper-move-marker-locally 'viper-com-point (point)))
+    (forward-line (- val))
+    (back-to-indentation)
+    (when com
+      (viper-execute-com 'vimpulse-previous-line-nonblank val com))))
+
+(defun vimpulse-next-line-skip-white (&optional arg)
+  "Go ARG lines forward and to the first non-blank character."
+  (interactive "P")
+  (let ((val (viper-p-val arg))
+        (com (viper-getcom arg)))
+    (when com
+      (viper-move-marker-locally 'viper-com-point (point)))
+    (forward-line val)
+    (back-to-indentation)
+    (when com
+      (viper-execute-com 'vimpulse-next-line-nonblank val com))))
+
+;;; *, #
+
+(defun vimpulse-search-string (&optional pos thing backward regexp)
+  "Find something to search for near POS or point.
+THING is a `thing-at-point', default `symbol'.
+BACKWARD, if t, specifies reverse direction.
+REGEXP, if t, means the string is `regexp-quote'd.
+Returns the empty string if nothing is found."
+  (save-excursion
+    (setq pos (or pos (point))
+          thing (or thing 'symbol))
+    (goto-char pos)
+    (let ((str (thing-at-point thing)))
+      ;; if there's nothing under point, go forwards
+      ;; (or backwards) to find it
+      (while (and (not str) (or (and backward (not (bobp)))
+                                (and (not backward) (not (eobp)))))
+        (if backward (backward-char) (forward-char))
+        (setq str (thing-at-point 'symbol)))
+      (setq str (or str ""))
+      ;; no text properties, thank you very much
+      (set-text-properties 0 (length str) nil str)
+      (when regexp
+        (setq str (regexp-quote str)))
+      str)))
+
+(defun vimpulse-search-for-symbol (&optional backward pos search)
+  "Search forwards or backwards for the symbol under point.
+If BACKWARD is t, search in the reverse direction.
+SEARCH is a regular expression to use for searching instead of
+the symbol under point; it is wrapped in \"\\\\_<\" and \"\\\\_>\".
+POS specifies an alternative position to search from. Note that
+if POS is specified and at the beginning of a match, that match
+is highlighted rather than skipped past."
+  (setq search (or search (vimpulse-search-string
+                           (point) 'symbol backward t)))
+  (cond
+   ((string= search "")
+    (error "No string under cursor"))
+   (t
+    (setq viper-s-string  (concat "\\_<" search "\\_>")
+          viper-s-forward (not backward))
+    (cond
+     (pos
+      (unless (region-active-p)
+        (push-mark nil t))
+      (goto-char pos)
+      (cond
+       ((looking-at search)
+        (save-excursion
+          (search-forward search))
+        (viper-flash-search-pattern))
+       (t
+        (viper-search viper-s-string (not backward) 1)
+        (unless (region-active-p)
+          (pop-mark)))))
+     (t
+      (viper-search viper-s-string (not backward) 1))))))
+
+(defun vimpulse-search-forward-for-symbol-at-point ()
+  (interactive)
+  (cond
+   ((and (stringp viper-s-string)
+         (not (string= viper-s-string ""))
+         (memq last-command
+               '(vimpulse-search-backward-for-symbol-at-point
+                 vimpulse-search-forward-for-symbol-at-point)))
+    (setq viper-s-forward t)
+    (viper-search-next 1))
+   (t
+    (vimpulse-search-for-symbol))))
+
+(defun vimpulse-search-backward-for-symbol-at-point ()
+  (interactive)
+  (cond
+   ((and (stringp viper-s-string)
+         (not (string= viper-s-string ""))
+         (memq last-command
+               '(vimpulse-search-backward-for-symbol-at-point
+                 vimpulse-search-forward-for-symbol-at-point)))
+    (setq viper-s-forward nil)
+    (viper-search-next 1))
+   (t
+    (vimpulse-search-for-symbol t))))
+
+;;; Auto-indent
+
+(defun vimpulse-autoindent ()
+  "Auto Indentation, Vim-style."
+  (interactive)
+  (let ((col (current-indentation)))
+    (if viper-preserve-indent
+        (setq viper-preserve-indent nil)
+      (setq viper-current-indent col))
+    ;; don't leave whitespace lines around
+    (if (memq last-command
+              '(viper-autoindent
+                viper-open-line viper-Open-line
+                viper-replace-state-exit-cmd))
+        (indent-to-left-margin))
+    (when viper-auto-indent
+      (setq viper-cted t)
+      (if (and viper-electric-mode
+               (not (memq major-mode
+                          '(fundamental-mode
+                            text-mode
+                            paragraph-indent-text-mode))))
+          (if (fboundp 'comment-indent-new-line)
+              (comment-indent-new-line)
+            (newline-and-indent))
+        (newline)
+        (indent-to col)))))
+
+(defun vimpulse-Put-and-indent (&optional arg)
+  "Put before point/line and indent to current line.
+Doesn't indent with a prefix argument."
+  (interactive "P")
+  (viper-Put-back nil)
+  (unless arg
+    (indent-region (region-beginning) (region-end))))
+
+(defun vimpulse-put-and-indent (&optional arg)
+  "Put after point/line and indent to current line.
+Doesn't indent with a prefix argument."
+  (interactive "P")
+  (viper-put-back nil)
+  (unless arg
+    (indent-region (region-beginning) (region-end))))
+
+(defalias 'viper-autoindent 'vimpulse-autoindent)
+
+;;; C-o, C-i
+
+(defadvice set-mark (after vimpulse activate)
+  "Clear `vimpulse-mark-list'."
+  (mapc (lambda (marker)
+          (set-marker marker nil))
+        vimpulse-mark-list)
+  (setq vimpulse-mark-list nil))
+
+(defadvice push-mark (after vimpulse activate)
+  "Clear `vimpulse-mark-list'."
+  (mapc (lambda (marker)
+          (set-marker marker nil))
+        vimpulse-mark-list)
+  (setq vimpulse-mark-list nil))
+
+(defun vimpulse-jump-backward (arg)
+  "Go to older position in jump list.
+To go the other way, press \\[vimpulse-jump-forward]."
+  (interactive "p")
+  (let ((current-pos (make-marker)) i)
+    (unless vimpulse-mark-list
+      (move-marker current-pos (point))
+      (add-to-list 'vimpulse-mark-list current-pos))
+    (dotimes (arg arg)
+      (setq current-pos (make-marker))
+      ;; skip past duplicate entries in the mark ring
+      (setq i (length mark-ring))
+      (while (progn (move-marker current-pos (point))
+                    (let (vimpulse-mark-list)
+                      ;; protect `vimpulse-mark-list'
+                      (set-mark-command 0))
+                    (setq i (1- i))
+                    (and (= (point) current-pos) (> i 0))))
+      ;; Already there?
+      (move-marker current-pos (point))
+      (unless (= (car vimpulse-mark-list) current-pos)
+        (setq vimpulse-mark-list
+              (cons current-pos vimpulse-mark-list))))))
+
+(defun vimpulse-jump-forward (arg)
+  "Go to newer position in jump list.
+To go the other way, press \\[vimpulse-jump-backward]."
+  (interactive "p")
+  (let (current-pos next-pos)
+    (dotimes (arg arg)
+      (setq current-pos (car vimpulse-mark-list)
+            next-pos (cadr vimpulse-mark-list))
+      (when next-pos
+        ;; protect `vimpulse-mark-list'
+        (let (vimpulse-mark-list)
+          (push-mark current-pos t nil))
+        (unless (eq (marker-buffer next-pos) (current-buffer))
+          (switch-to-buffer (marker-buffer next-pos)))
+        (goto-char next-pos)
+        (setq vimpulse-mark-list (cdr vimpulse-mark-list))))))
+
+(when vimpulse-want-C-i-like-Vim
+  (define-key viper-vi-basic-map "\C-i" 'vimpulse-jump-forward))
+(define-key viper-vi-basic-map "\C-o" 'vimpulse-jump-backward)
+
+;;; Replace backspace
+
+(defcustom vimpulse-backspace-restore t
+  "Whether Backspace restores the original text in Replace mode.
+On by default."
+  :group 'vimpulse
+  :type  'boolean)
+
+(defun vimpulse-replace-pre-command ()
+  "Remember the character under point."
+  (cond
+   (viper-replace-minor-mode
+    (unless (assq (point) vimpulse-replace-alist)
+      (add-to-list 'vimpulse-replace-alist
+                   (cons (point) (char-after)))))
+   ;; if not in Replace mode, remove itself
+   (t
+    (remove-hook 'pre-command-hook 'vimpulse-replace-pre-command))))
+
+(add-hook 'viper-replace-state-hook
+          (lambda ()
+            (setq vimpulse-replace-alist nil)
+            (vimpulse-replace-pre-command)
+            (add-hook 'pre-command-hook
+                      'vimpulse-replace-pre-command)))
+
+(defun vimpulse-replace-backspace ()
+  "Restore character under cursor.
+If `vimpulse-backspace-restore' is nil,
+call `viper-del-backward-char-in-replace' instead."
+  (interactive)
+  (cond
+   (vimpulse-backspace-restore
+    (backward-char)
+    (let ((oldchar (cdr (assq (point) vimpulse-replace-alist))))
+      (when oldchar
+        (save-excursion
+          (delete-char 1)
+          (insert oldchar)))))
+   (t
+    (viper-del-backward-char-in-replace))))
+
+(defadvice viper-adjust-keys-for (after vimpulse activate)
+  "Map <backspace> to `vimpulse-replace-backspace' in Replace mode."
+  (define-key viper-replace-map [backspace] 'vimpulse-replace-backspace))
+
+(defvar dabbrev--last-abbrev-location)
+(defvar dabbrev--last-abbreviation)
+(defvar dabbrev--last-direction)
+(defvar dabbrev--last-expansion)
+(defvar dabbrev--last-expansion-location)
+
+(defun vimpulse-abbrev-expand-before ()
+  "Expand to the nearest preceding word.
+Search forwards if a match isn't found."
+  (interactive)
+  (if (minibufferp)
+      (minibuffer-complete)
+    (dabbrev-expand nil)))
+
+;; Getting dabbrev to search forwards first and then backwards
+;; is tricky, because (dabbrev-expand -1) just fails when it
+;; doesn't find a following match.
+(defun vimpulse-abbrev-expand-after ()
+  "Expand to the nearest following word.
+Search backwards if a match isn't found."
+  (interactive)
+  ;; back up global variables
+  (let ((abbrev (and (boundp 'dabbrev--last-abbreviation)
+                     dabbrev--last-abbreviation))
+        (abbrev-loc (and (boundp 'dabbrev--last-abbrev-location)
+                         dabbrev--last-abbrev-location))
+        (expansion (and (boundp 'dabbrev--last-expansion)
+                        dabbrev--last-expansion))
+        (expansion-loc (and (boundp 'dabbrev--last-expansion-location)
+                            dabbrev--last-expansion-location)))
+    ;; expand in same direction as previously, initially forward
+    (if (minibufferp)
+        (minibuffer-complete)
+      (condition-case nil
+          (if (eq last-command this-command)
+              (dabbrev-expand nil)
+            (setq dabbrev--last-direction -1)
+            (dabbrev-expand -1))
+        ;; restore dabbrev variables if version < 23.2
+        (error (progn
+                 (when (version< emacs-version "23.2")
+                   (setq dabbrev--last-abbreviation abbrev
+                         dabbrev--last-abbrev-location abbrev-loc
+                         dabbrev--last-expansion expansion
+                         dabbrev--last-expansion-location expansion-loc))
+                 (setq dabbrev--last-direction 1)
+                 (dabbrev-expand nil) nil))))))
+
+(defun vimpulse-expand-line (&optional arg)
+  "Expand a whole line."
+  (interactive "P")
+  (let ((hippie-expand-try-functions-list
+         '(try-expand-line
+           try-expand-line-all-buffers)))
+    (hippie-expand arg)))
 
 ;;;; This code integrates Viper with the outside world
+
 
 ;;; undo-tree.el
 
@@ -6931,6 +6951,19 @@ Returns the insertion point."
 
 ;;; Isearch
 
+(defcustom vimpulse-incremental-search t
+  "Use isearch for / and ?, on by default."
+  :type 'boolean
+  :group 'vimpulse)
+
+(defcustom vimpulse-flash-delay 2
+  "Number of seconds to flash search matches."
+  :type 'integer
+  :group 'vimpulse)
+
+(defvar vimpulse-flash-timer nil
+  "Timer for flashing search results.")
+
 (defadvice isearch-message-prefix (around vimpulse-search activate)
   "Use vi prefix if appropriate."
   (if vimpulse-search-prompt
@@ -6943,6 +6976,10 @@ Returns the insertion point."
            (string= isearch-string ""))
       (isearch-exit)
     ad-do-it))
+
+(defvar viper-re-search)
+(defvar viper-s-forward)
+(defvar viper-s-string)
 
 (defadvice isearch-update-ring (after vimpulse-search activate)
   "Update `viper-s-string'."
@@ -6958,29 +6995,27 @@ Returns the insertion point."
   "Update isearch history."
   (isearch-update-ring string viper-re-search))
 
-;; If `viper-search-wrap-around' is t, we want the search to wrap.
-(defun vimpulse-search-fun-function (&optional regexp forward)
+;; if `viper-search-wrap-around' is t, we want the search to wrap
+(defun vimpulse-search-fun-function ()
   "Return a wrapping search function.
 Based on `viper-re-search' and `viper-s-forward'."
-  (let* ((regexp (or regexp viper-re-search))
-         (forward (or forward viper-s-forward))
-         (search-fun (if regexp
-                         (if forward
-                             're-search-forward
-                           're-search-backward)
-                       (if forward
-                           'search-forward
-                         'search-backward))))
-    (eval `(lambda (regexp &optional bound noerror count)
-             (let ((orig (point)) retval)
-               (setq retval (,search-fun regexp bound t count))
-               (when (and (not retval) viper-search-wrap-around)
-                 (goto-char ,@(if forward '((point-min))
-                                '((point-max))))
-                 (setq retval (,search-fun regexp bound t count))
-                 (unless retval
-                   (goto-char orig)))
-               retval)))))
+  `(lambda (regexp &optional bound noerror count)
+     (let ((orig (point))
+           (search-fun (if isearch-regexp
+                           (if isearch-forward
+                               're-search-forward
+                             're-search-backward)
+                         (if isearch-forward
+                             'search-forward
+                           'search-backward)))
+           retval)
+       (setq retval (funcall search-fun regexp bound t count))
+       (when (and (not retval) viper-search-wrap-around)
+         (goto-char (if isearch-forward (point-min) (point-max)))
+         (setq retval (funcall search-fun regexp bound t count))
+         (unless retval
+           (goto-char orig)))
+       retval)))
 
 (defun vimpulse-search-backward (arg)
   "Search backward for user-entered text.
@@ -7003,10 +7038,22 @@ Searches for regular expression if `viper-re-search' is t."
                (not (string= isearch-string "")))
       (isearch-repeat-backward)
       (isearch-exit))
-    (message oldmsg)
+    (if oldmsg (message "%s" oldmsg)
+      (message nil))
     (unless (string= isearch-string "")
       (vimpulse-flash-search-pattern t))
     (setq vimpulse-this-motion 'viper-search-next)))
+
+(put 'vimpulse-search-backward 'function-documentation
+     (format "Search backward for user-entered text.
+Searches for regular expression if `viper-re-search' is t.
+
+%s" (if (and (fboundp 'isearch-forward)
+             (documentation 'isearch-forward))
+        (format "Below is the documentation string for `isearch-forward',
+which lists available keys:
+
+%s" (documentation 'isearch-forward)))))
 
 (defun vimpulse-search-forward (arg)
   "Search forward for user-entered text.
@@ -7030,15 +7077,28 @@ Searches for regular expression if `viper-re-search' is t."
       (isearch-repeat-forward)
       (isearch-exit))
     (and isearch-other-end (goto-char isearch-other-end))
-    (message oldmsg)
+    (if oldmsg (message "%s" oldmsg)
+      (message nil))
     (unless (string= isearch-string "")
       (vimpulse-flash-search-pattern t))
     (setq vimpulse-this-motion 'viper-search-next)))
+
+(put 'vimpulse-search-forward 'function-documentation
+     (format "Search forward for user-entered text.
+Searches for regular expression if `viper-re-search' is t.
+
+%s" (if (and (fboundp 'isearch-forward)
+             (documentation 'isearch-forward))
+        (format "Below is the documentation string for `isearch-forward',
+which lists available keys:
+
+%s" (documentation 'isearch-forward)))))
 
 (defun vimpulse-flash-search-pattern (&optional only-current)
   "Flash search matches for duration of `vimpulse-flash-delay'."
   (let ((lazy-highlight-initial-delay 0)
         (isearch-search-fun-function 'vimpulse-search-fun-function)
+        (isearch-case-fold-search case-fold-search)
         (disable (lambda (&optional arg) (vimpulse-flash-hook t))))
     (when vimpulse-flash-timer
       (if (fboundp 'disable-timeout)
@@ -7069,8 +7129,8 @@ Searches for regular expression if `viper-re-search' is t."
   "Disable hightlighting if `this-command' is not search.
 Disable anyway if FORCE is t."
   (when (or force
-            ;; To avoid flicker, don't disable highlighting if the
-            ;; next command is also a search command.
+            ;; to avoid flicker, don't disable highlighting if the
+            ;; next command is also a search command
             (not (memq this-command
                        '(viper-exec-mapped-kbd-macro
                          viper-search
@@ -7093,13 +7153,14 @@ Disable anyway if FORCE is t."
   (remove-hook 'pre-command-hook 'vimpulse-flash-hook))
 
 (when vimpulse-incremental-search
+  (defvaralias 'viper-case-fold-search 'case-fold-search)
   (defalias 'viper-search-backward 'vimpulse-search-backward)
   (defalias 'viper-search-forward 'vimpulse-search-forward)
   (defalias 'viper-flash-search-pattern 'vimpulse-flash-search-pattern))
 
 ;;; Add vi navigation to help buffers
 
-;; Apropos.
+;; Apropos
 (eval-after-load 'apropos
   '(when vimpulse-want-vi-keys-in-apropos
      (add-to-list 'viper-vi-state-mode-list 'apropos-mode)
@@ -7108,7 +7169,7 @@ Disable anyway if FORCE is t."
        (vimpulse-inhibit-destructive-cmds map)
        (viper-modify-major-mode 'apropos-mode 'vi-state map))))
 
-;; Buffer-menu.
+;; Buffer-menu
 (eval-after-load "buff-menu"
   '(when vimpulse-want-vi-keys-in-buffmenu
      (setq viper-emacs-state-mode-list
@@ -7119,7 +7180,7 @@ Disable anyway if FORCE is t."
        (vimpulse-inhibit-destructive-cmds map)
        (viper-modify-major-mode 'Buffer-menu-mode 'vi-state map))))
 
-;; Dired.
+;; Dired
 (eval-after-load 'dired
   '(when vimpulse-want-vi-keys-in-dired
      (setq viper-emacs-state-mode-list
@@ -7130,7 +7191,7 @@ Disable anyway if FORCE is t."
        (vimpulse-inhibit-destructive-cmds map)
        (viper-modify-major-mode 'dired-mode 'vi-state map))))
 
-;; Info.
+;; Info
 (eval-after-load 'info
   '(when vimpulse-want-vi-keys-in-Info
      (setq viper-emacs-state-mode-list
@@ -7147,7 +7208,7 @@ Disable anyway if FORCE is t."
        (define-key map [backspace] 'Info-scroll-down)
        (viper-modify-major-mode 'Info-mode 'vi-state map))))
 
-;; Help.
+;; Help
 (eval-after-load 'help-mode
   '(when vimpulse-want-vi-keys-in-help
      (setq viper-emacs-state-mode-list
@@ -7159,7 +7220,7 @@ Disable anyway if FORCE is t."
        (define-key map "q" 'View-quit)
        (viper-modify-major-mode 'help-mode 'vi-state map))))
 
-;; Slime.
+;; Slime
 (eval-after-load 'slime
   '(defadvice slime-popup-buffer-mode (after vimpulse activate)
      (when slime-popup-buffer-mode
