@@ -304,7 +304,7 @@ def print_definitions(definitions)
             nil
           end
     letter = a[1] || " "
-    definition = a[2]
+    definition = a[2].gsub(/ +/, ' ')
     tv = a[3]
     if tv != prev_tv
       if tv
