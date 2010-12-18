@@ -91,6 +91,9 @@ nmap <silent> <Leader>g :LustyBufferGrep<CR>
 nmap <silent> <Leader>j :LustyJuggler<CR>
 nmap <silent> <TAB> :LustyJugglePrevious<CR>
 
+"let g:LustyJugglerAltTabMode=1
+"noremap <silent> <A-s> :LustyJuggler<CR>
+
 " Window management
 "nmap <silent> <Leader>xo :wincmd j<CR>
 
