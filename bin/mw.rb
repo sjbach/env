@@ -193,6 +193,7 @@ def parse_entry(doc)
           when /rhyming-dictionary/
           when /britannica-entry/
           when /browse/
+          when /learners-link/
             d "Skipped #{div.get_attribute('class')}"
           else
             puts "unknown block: #{div.get_attribute('class')}"
