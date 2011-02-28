@@ -81,7 +81,7 @@ doc.search("//table[@class = 'the_content']") do |table|
 
     case clause
     when /Entry/
-      wr.puts "Entry: #{e.next_sibling.innerText}"
+      wr.puts "Entry: #{e.next_sibling.innerText.strip}"
 
     when /Speech/
       e.next_sibling.search("span") do |speech|
