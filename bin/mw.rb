@@ -194,7 +194,8 @@ def parse_entry(doc)
           when /britannica-entry/
           when /browse/
           when /learners-link/
-            d "Skipped #{div.get_attribute('class')}"
+          when nil
+            d "Skipped: #{div}"
           else
             puts "unknown block: #{div.get_attribute('class')}"
             puts div
