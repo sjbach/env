@@ -194,6 +194,7 @@ def parse_entry(doc)
           when /britannica-entry/
           when /browse/
           when /learners-link/
+          when /wcentral-link/
           when nil
             d "Skipped: #{div}"
           else
