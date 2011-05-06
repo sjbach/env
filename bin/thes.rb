@@ -72,7 +72,8 @@ end
 rd.close
 
 term = uri_escape(ARGV[0])
-doc = Hpricot(open("http://thesaurus.reference.com/browse/#{term}"))
+doc = Hpricot(open("http://thesaurus.com/browse/#{term}",
+                   "User-Agent" => "Ruby/#{RUBY_VERSION}"))
 
 doc.search("//table[@class = 'the_content']") do |table|
 
