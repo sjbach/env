@@ -120,6 +120,15 @@ def parse_entry(doc)
 
       div_definition.search("div.d") do |div_d|
         div_d.search(">div") do |div|
+
+          # Open the KonaBody container, if needed.
+          if div.get_attribute('class') == "KonaBody"
+            d "Saw KonaBody"
+            kona_divs = div.search('>div')
+            assert(kona_divs.length == 1)
+            div = kona_divs[0]
+          end
+
           case div.get_attribute('class')
           when /^(sblk$|sense-block)/
             d 'sblk'
