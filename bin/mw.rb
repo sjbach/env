@@ -118,102 +118,107 @@ def parse_entry(doc)
         end
       end
 
-      div_definition.search("div.d") do |div_d|
-        div_d.search(">div") do |div|
+      div_processor = lambda { |div|
 
-          # Open the KonaBody container, if needed.
-          if div.get_attribute('class') == "KonaBody"
-            d "Saw KonaBody"
-            kona_divs = div.search('>div')
-            assert(kona_divs.length == 1)
-            div = kona_divs[0]
+        case div.get_attribute('class')
+        when /^(sblk$|sense-block)/
+          d 'sblk'
+          parse_definition(div, transitive_verb, definitions)
+        when /example-sentences/
+          d 'example-sentences'
+          div.search("li") do |li|
+            examples << li.inner_text
           end
-
-          case div.get_attribute('class')
-          when /^(sblk$|sense-block)/
-            d 'sblk'
-            parse_definition(div, transitive_verb, definitions)
-          when /example-sentences/
-            d 'example-sentences'
-            div.search("li") do |li|
-              examples << li.inner_text
+        when /etymology/
+          d 'etymology'
+          assert(etymology.nil?)
+          # Sometimes includes a First Use sub div note.
+          extra_text = \
+            (div/">div.content>div").to_a.inject("") { |s,e|
+              s + "\n#{e.inner_text.strip}"
+            }
+          if not extra_text.empty?
+            div.search(">div.content>div") do |div_inner|
+              div_inner.swap('')
             end
-          when /etymology/
-            d 'etymology'
-            assert(etymology.nil?)
-            # Sometimes includes a First Use sub div note.
-            extra_text = \
-              (div/">div.content>div").to_a.inject("") { |s,e|
-                s + "\n#{e.inner_text.strip}"
-              }
-            if not extra_text.empty?
-              div.search(">div.content>div") do |div_inner|
-                div_inner.swap('')
-              end
-            end
-            etymology = (div/">div.content").inner_text.strip + extra_text
-          when /first-use/
-            d "first-use"
-            assert(first_use.nil?)
-            first_use = (div/">div.content").inner_text
-          when /synonyms-reference/
-            d 'synonyms-reference'
-            div.search(">div>div>div>div>div") do |div_related|
-              case div_related.get_attribute('class')
-              when /(syn|ant|rel|near)-para/
-                inner_text = div_related.inner_text.strip
-                if inner_text =~ /^(.*): (.*)/
-                  type = $1
-                  words = $2
-                  synonyms_etc << [type, words]
-                else
-                  puts "Could not parse synonyms thing: #{inner_text}"
-                  exit 1
-                end
-              when /see-more/
-                nil # ignore
+          end
+          etymology = (div/">div.content").inner_text.strip + extra_text
+        when /first-use/
+          d "first-use"
+          assert(first_use.nil?)
+          first_use = (div/">div.content").inner_text
+        when /synonyms-reference/
+          d 'synonyms-reference'
+          div.search(">div>div>div>div>div") do |div_related|
+            case div_related.get_attribute('class')
+            when /(syn|ant|rel|near)-para/
+              inner_text = div_related.inner_text.strip
+              if inner_text =~ /^(.*): (.*)/
+                type = $1
+                words = $2
+                synonyms_etc << [type, words]
               else
-                puts "unknown synonmys: #{div_related.get_attribute('class')}"
+                puts "Could not parse synonyms thing: #{inner_text}"
                 exit 1
               end
+            when /see-more/
+              nil # ignore
+            else
+              puts "unknown synonmys: #{div_related.get_attribute('class')}"
+              exit 1
             end
-          when /synonyms-discussion/
-            assert(synonyms_discussion.nil?)
-            synonyms_discussion = (div/">div.content").inner_text.strip
-          when /usage-discussion/
-            assert(usage_discussion.nil?)
-            usage_discussion = (div/">div.content").inner_text.strip
-          when /^r$/  # related?
-            d 'r'
-            related << div.inner_text
-          when /^vt$/
-            # transitive verb -- applies to subsequent definitions
-            transitive_verb = (div.inner_text !~ /intransitive/)
-          when /^art$/
-            has_image = true
-          when /^variant$/
-            assert(variant.nil?)
-            variant = (div/">div.content").inner_text.strip
-          when /^dr$/
-            # Special use of word?
-            div.search(">div.d>div") do |div_inner|
-              parse_definition(div_inner, :unset, special_definitions)
+          end
+        when /synonyms-discussion/
+          assert(synonyms_discussion.nil?)
+          synonyms_discussion = (div/">div.content").inner_text.strip
+        when /usage-discussion/
+          assert(usage_discussion.nil?)
+          usage_discussion = (div/">div.content").inner_text.strip
+        when /^r$/  # related?
+          d 'r'
+          related << div.inner_text
+        when /^vt$/
+          # transitive verb -- applies to subsequent definitions
+          transitive_verb = (div.inner_text !~ /intransitive/)
+        when /^art$/
+          has_image = true
+        when /^variant$/
+          assert(variant.nil?)
+          variant = (div/">div.content").inner_text.strip
+        when /^dr$/
+          # Special use of word?
+          div.search(">div.d>div") do |div_inner|
+            parse_definition(div_inner, :unset, special_definitions)
+          end
+        when /rhyming-dictionary/
+        when /britannica-entry/
+        when /browse/
+        when /learners-link/
+        when /wcentral-link/
+        when nil
+          d "Skipped: #{div}"
+        else
+          puts "unknown block: #{div.get_attribute('class')}"
+          puts div
+          exit 1
+        end
+      }
+
+      div_definition.search("div.d") do |div_d|
+        div_d.search(">div") do |div1|
+
+          # Open the KonaBody container, if needed.
+          if div1.get_attribute('class') == "KonaBody"
+            d "Saw KonaBody"
+            div1.search(">div") do |div2|
+              d "KonaBody iter"
+              div_processor.call(div2)
             end
-          when /rhyming-dictionary/
-          when /britannica-entry/
-          when /browse/
-          when /learners-link/
-          when /wcentral-link/
-          when nil
-            d "Skipped: #{div}"
           else
-            puts "unknown block: #{div.get_attribute('class')}"
-            puts div
-            exit 1
+            div_processor.call(div1)
           end
         end
       end
-
     end
   end
 
