@@ -1,4 +1,4 @@
-"    Copyright: Copyright (C) 2008-2010 Stephen Bach
+"    Copyright: Copyright (C) 2008-2011 Stephen Bach
 "               Permission is hereby granted to use and distribute this code,
 "               with or without modifications, provided that this copyright
 "               notice is copied with it. Like anything else that's free,
@@ -11,10 +11,10 @@
 "  Description: Dynamic Buffer Switcher Vim Plugin
 "   Maintainer: Stephen Bach <this-file@sjbach.com>
 " Contributors: Juan Frias, Bartosz Leper, Marco Barberis, Vincent Driessen,
-"               Martin Wache, Johannes Holzfuß
+"               Martin Wache, Johannes Holzfuß, Adam Rutkowski, Carlo Teubner
 "
-" Release Date: December 16, 2010
-"      Version: 1.2
+" Release Date: April 29, 2011
+"      Version: 1.3
 "
 "        Usage:
 "                 <Leader>lj  - Opens the buffer juggler.
@@ -74,13 +74,13 @@
 "               immediately switch to your previously used buffer:
 "
 "                 ":LustyJugglePrevious"
-"               
+"
 "               This is similar to the ":b#" command, but accounts for the
 "               common situation where the previously used buffer (#) has
 "               been killed and is thus inaccessible.  In that case, it will
 "               instead switch to the buffer used before that one (and on down
 "               the line if that buffer has been killed too).
-"               
+"
 "
 " Install Details:
 "
@@ -116,7 +116,6 @@
 " GetLatestVimScripts: 2050 1 :AutoInstall: lusty-juggler.vim
 "
 " TODO:
-" - save and restore mappings
 " - Add TAB recognition back.
 " - Add option to open buffer immediately when mapping is pressed (but not
 "   release the juggler until the confirmation press).
@@ -155,7 +154,7 @@ if !has("ruby")
   if !exists("g:LustyExplorerSuppressRubyWarning") ||
       \ g:LustyExplorerSuppressRubyWarning == "0"
   if !exists("g:LustyJugglerSuppressRubyWarning") ||
-      \ g:LustyJugglerSuppressRubyWarning == "0" 
+      \ g:LustyJugglerSuppressRubyWarning == "0"
     echohl ErrorMsg
     echon "Sorry, LustyJuggler requires ruby.  "
     echon "Here are some tips for adding it:\n"
@@ -241,6 +240,7 @@ augroup End
 
 " Used to work around a flaw in Vim's ruby bindings.
 let s:maparg_holder = 0
+let s:maparg_dict_holder = { }
 
 ruby << EOF
 
@@ -289,6 +289,11 @@ module VIM
     nonzero? evaluate('has("syntax")')
   end
 
+  def self.has_ext_maparg?
+    # The 'dict' parameter to mapargs() was introduced in Vim 7.3.32
+    nonzero? evaluate('v:version > 703 || (v:version == 703 && has("patch32"))')
+  end
+
   def self.columns
     evaluate("&columns").to_i
   end
@@ -316,8 +321,9 @@ module VIM
   end
 
   def self.filename_escape(s)
-    # Escape slashes, open square braces, spaces, sharps, and double quotes.
-    s.gsub(/\\/, '\\\\\\').gsub(/[\[ #"]/, '\\\\\0')
+    # Escape slashes, open square braces, spaces, sharps, double quotes and
+    # percent signs.
+    s.gsub(/\\/, '\\\\\\').gsub(/[\[ #"%]/, '\\\\\0')
   end
 
   def self.regex_escape(s)
@@ -560,6 +566,7 @@ class LustyJuggler
       map_key("<Tab>", ":call <SID>LustyJugglerKeyPressed('TAB')<CR>")
 
       # Cancel keys.
+      map_key("i", ":call <SID>LustyJugglerCancel()<CR>")
       map_key("q", ":call <SID>LustyJugglerCancel()<CR>")
       map_key("<Esc>", ":call <SID>LustyJugglerCancel()<CR>")
       map_key("<C-c>", ":call <SID>LustyJugglerCancel()<CR>")
@@ -600,6 +607,7 @@ class LustyJuggler
       unmap_key("<CR>")
       unmap_key("<Tab>")
 
+      unmap_key("i")
       unmap_key("q")
       unmap_key("<Esc>")
       unmap_key("<C-c>")
@@ -642,7 +650,18 @@ class LustyJuggler
       ['n','v','o','i','c','l'].each do |mode|
         VIM::command "let s:maparg_holder = maparg('#{key}', '#{mode}')"
         if VIM::evaluate_bool("s:maparg_holder != ''")
-          @key_mappings_map[key] << [mode, VIM::evaluate('s:maparg_holder')]
+          orig_rhs = VIM::evaluate("s:maparg_holder")
+          if VIM::has_ext_maparg?
+            VIM::command "let s:maparg_dict_holder = maparg('#{key}', '#{mode}', 0, 1)"
+            nore    = VIM::evaluate_bool("s:maparg_dict_holder['noremap']") ? 'nore'      : ''
+            silent  = VIM::evaluate_bool("s:maparg_dict_holder['silent']")  ? ' <silent>' : ''
+            expr    = VIM::evaluate_bool("s:maparg_dict_holder['expr']")    ? ' <expr>'   : ''
+            buffer  = VIM::evaluate_bool("s:maparg_dict_holder['buffer']")  ? ' <buffer>' : ''
+            restore_cmd = "#{mode}#{nore}map#{silent}#{expr}#{buffer} #{key} #{orig_rhs}"
+          else
+            restore_cmd = "#{mode}noremap <silent> #{key} #{orig_rhs}"
+          end
+          @key_mappings_map[key] << [ mode, restore_cmd ]
         end
         VIM::command "#{mode}noremap <silent> #{key} #{action}"
       end
@@ -659,9 +678,8 @@ class LustyJuggler
 
       if @key_mappings_map.has_key?(key)
         @key_mappings_map[key].each do |a|
-          mode = a[0]
-          action = a[1]
-          VIM::command "#{mode}noremap <silent> #{key} #{action}"
+          mode, restore_cmd = *a
+          VIM::command restore_cmd
           modes_with_mappings_for_key[mode] = true
         end
       end
@@ -739,7 +757,7 @@ class BufferItem < BarItem
         slash_color = @@SLASH_COLOR
       end
 
-      pieces = @str.split(File::SEPARATOR, -1) 
+      pieces = @str.split(File::SEPARATOR, -1)
 
       @array = []
       @array << dir_color
