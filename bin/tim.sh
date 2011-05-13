@@ -22,6 +22,10 @@ fi
 
 run_vim () {
   params="+set nowrap buftype=nofile bufhidden=hide titlestring=$title"
+  if echo "$title" | grep -q 'diff'; then
+    # hack
+    params="$params filetype=diff"
+  fi
   [ "$1" ] && exec $vim "$params" -
   $vim "$params" -
 }
