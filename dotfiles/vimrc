@@ -134,6 +134,9 @@ set wildmenu
 set wildmode=list:longest
 set wildignore=*.o,*.fasl
 
+autocmd BufRead *.xfa set filetype=xml
+autocmd BufRead *.xru set filetype=xml
+autocmd BufRead *.xna set filetype=xml
 autocmd BufRead *.qcf set filetype=lisp
 autocmd BufRead qpx.inc set filetype=make
 autocmd BufRead letter* set filetype=mail
