@@ -103,6 +103,7 @@ def parse_entry(doc)
   examples = []
   transitive_verb = :unset
   variant = nil
+  encyclopedia = nil
 
   doc.search("div.definition") do |div_definition|
     word = (div_definition/"h1").inner_text
@@ -185,6 +186,13 @@ def parse_entry(doc)
         when /^variant$/
           assert(variant.nil?)
           variant = (div/">div.content").inner_text.strip
+        when /^concise-link$/
+          # td class blurb
+          encyclopedia = (div/">table>tr>td").inner_text.strip
+          # Strip initial "<word> ? " before entry.
+          encyclopedia = encyclopedia.sub(/^\s*#{word}\s*\W*\s*/,'')
+          # Strip everything after READ ARTICLE.
+          encyclopedia = encyclopedia.sub(/\s*READ.*/,'')
         when /^dr$/
           # Special use of word?
           div.search(">div.d>div") do |div_inner|
@@ -277,6 +285,10 @@ def parse_entry(doc)
   end
   if variant
     puts "Variant: #{variant}"
+  end
+  if encyclopedia
+    puts "Encyclopedia..."
+    puts wrap_text(encyclopedia, "  ")
   end
 
   return true
