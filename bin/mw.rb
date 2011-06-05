@@ -8,7 +8,7 @@
 #
 # Setup:
 #  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
-#  sudo gem install hpricot
+#  sudo gem install --version 0.6.164 hpricot
 #
 
 require 'uri'
