@@ -82,7 +82,14 @@ doc.search("//table[@class = 'the_content']") do |table|
 
     case clause
     when /Entry/
-      wr.puts "Entry: #{e.next_sibling.innerText.strip}"
+      # The first entry has some extra stuff that we need to avoid
+      # printing.
+      top_entry = e.next_sibling.search("//span[@id = 'queryn']").first
+      if top_entry
+        wr.puts "Entry: #{top_entry.innerText.strip}"
+      else
+        wr.puts "Entry: #{e.next_sibling.innerText.strip}"
+      end
 
     when /Speech/
       e.next_sibling.search("span") do |speech|
