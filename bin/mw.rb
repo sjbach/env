@@ -175,6 +175,9 @@ def parse_entry(doc)
         when /usage-discussion/
           assert(usage_discussion.nil?)
           usage_discussion = (div/">div.content").inner_text.strip
+        when /^us$/
+          assert(usage_discussion.nil?)
+          usage_discussion = div.inner_text.strip
         when /^r$/  # related?
           d 'r'
           related << div.inner_text
