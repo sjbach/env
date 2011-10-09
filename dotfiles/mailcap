@@ -1,0 +1,1 @@
+text/html; /usr/bin/w3m -I %{charset} -T text/html -dump; copiousoutput;
