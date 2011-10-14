@@ -31,7 +31,12 @@
 (toggle-scroll-bar -1)
 
 (when (>= emacs-major-version 23)
-  (set-default-font "Bitstream Vera Sans Mono-9"))
+  (let ((font (if (x-list-fonts "Bitstream Vera Sans Mono-9")
+                "Bitstream Vera Sans Mono-9"
+                "Dejavu Sans Mono-9")))
+    (if (>= emacs-minor-version 1)
+      (set-frame-font font)
+      (set-default-font font))))
 
 ;; Turn on font-lock mode for syntax highlighting
 (global-font-lock-mode t)

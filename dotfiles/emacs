@@ -1,7 +1,8 @@
 (add-to-list 'load-path "~/.elisp")
 
-(defun itap ()
-  (string-equal (getenv "LOGNAME") "sbach"))
+(defun at-work-p ()
+  (or (string-equal (getenv "LOGNAME") "sbach")
+      (string-equal (getenv "LOGNAME") "sjbach")))
 
 (setq-default indent-tabs-mode nil)
 
@@ -22,19 +23,19 @@
 
 (when (file-exists-p "~/clojure")
   ;; TODO: cleanup
-  (add-to-list 'load-path "~/clojure/swank-clojure")
-  (setq swank-clojure-jar-path "~/clojure/clojure-git/clojure.jar")
-  (require 'swank-clojure-autoload)
+  ;(add-to-list 'load-path "~/clojure/swank-clojure")
+  ;(setq swank-clojure-jar-path "~/clojure/clojure-git/clojure.jar")
+  ;(require 'swank-clojure-autoload)
 
-  (eval-after-load "slime"
-    '(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl"))))
+;  (eval-after-load "slime"
+;    '(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl"))))
 
   (add-to-list 'load-path "~/clojure/clojure-mode")
   (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
   (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode)))
 
-(eval-after-load "slime"
-    '(add-to-list 'slime-lisp-implementations '(scheme ("mzscheme"))))
+;(eval-after-load "slime"
+;    '(add-to-list 'slime-lisp-implementations '(scheme ("mzscheme"))))
 
 (defun close-buffer-and-window-unless-last ()
   (interactive)
@@ -61,7 +62,7 @@
 
 (mapc 'expand-load
       `("look-and-feel.el"
-        ,(and (itap) "qpx-ita.el")
+        ,(and (at-work-p) "qpx-ita.el")
         "viper-boot.el"))
 
 (custom-set-variables

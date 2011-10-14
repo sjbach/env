@@ -75,7 +75,7 @@
 ;;
 (eval-after-load "viper-in-more-modes"
   '(progn
-    (when (itap)
+    (when (at-work-p)
       (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "g" 'qgrep)
       (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-i" 'insert-dp)
       (viper-imm-defkey-l viper-imm-lisp-mode-vi-map "\C-r" 'remove-dp)
@@ -101,7 +101,7 @@
       (let ((map (make-sparse-keymap)))
         (viper-imm-defkey-l map "." 'find-tag)
         (viper-imm-defkey-l map "," 'pop-tag-mark)
-        (when (itap)
+        (when (at-work-p)
           (viper-imm-defkey-l map "g" 'qgrep))
         map))
 
