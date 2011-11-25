@@ -16,10 +16,11 @@
 "               Matt Tolton, Björn Winckler, sowill, David Brown
 "               Brett DiFrischia, Ali Asad Lotia, Kenneth Love, Ben Boeckel,
 "               robquant, lilydjwg, Martin Wache, Johannes Holzfuß
-"               Donald Curtis, Jan Zwiener
+"               Donald Curtis, Jan Zwiener, Giuseppe Rota, Toby O'Connell,
+"               Göran Gustafsson
 "
-" Release Date: April 29, 2011
-"      Version: 4.1
+" Release Date: November 25, 2011
+"      Version: 4.2
 "
 "        Usage:
 "                 <Leader>lf  - Opens the filesystem explorer.
@@ -36,7 +37,9 @@
 "                 ":LustyBufferExplorer"
 "                 ":LustyBufferGrep"
 "
-"               (Personally, I map these to ,f ,r ,b and ,g)
+"               To suppress the default mappings, set this option:
+"
+"                 let g:LustyExplorerDefaultMappings = 0
 "
 "               When launched, a new window appears at bottom presenting a
 "               table of files/dirs or buffers, and in the status bar a
@@ -266,10 +269,16 @@ endfunction
 
 
 " Default mappings.
-nmap <silent> <Leader>lf :LustyFilesystemExplorer<CR>
-nmap <silent> <Leader>lr :LustyFilesystemExplorerFromHere<CR>
-nmap <silent> <Leader>lb :LustyBufferExplorer<CR>
-nmap <silent> <Leader>lg :LustyBufferGrep<CR>
+if !exists("g:LustyExplorerDefaultMappings")
+  let g:LustyExplorerDefaultMappings = 1
+endif
+
+if g:LustyExplorerDefaultMappings == 1
+  nmap <silent> <Leader>lf :LustyFilesystemExplorer<CR>
+  nmap <silent> <Leader>lr :LustyFilesystemExplorerFromHere<CR>
+  nmap <silent> <Leader>lb :LustyBufferExplorer<CR>
+  nmap <silent> <Leader>lg :LustyBufferGrep<CR>
+endif
 
 " Vim-to-ruby function calls.
 function! s:LustyFilesystemExplorerStart(path)
@@ -824,31 +833,51 @@ class Explorer
           @selected_index = 0
         when 14               # C-n (select next)
           @selected_index = \
-            (@selected_index + 1) % @current_sorted_matches.size
+            if @current_sorted_matches.size.zero?
+              0
+            else
+              (@selected_index + 1) % @current_sorted_matches.size
+            end
           refresh_mode = :no_recompute
         when 16               # C-p (select previous)
           @selected_index = \
-            (@selected_index - 1) % @current_sorted_matches.size
+            if @current_sorted_matches.size.zero?
+              0
+            else
+              (@selected_index - 1) % @current_sorted_matches.size
+            end
           refresh_mode = :no_recompute
         when 6                # C-f (select right)
-          columns = (@current_sorted_matches.size.to_f / @row_count.to_f).ceil
-          cur_column = @selected_index / @row_count
-          cur_row = @selected_index % @row_count
-          new_column = (cur_column + 1) % columns
-          if (new_column + 1) * (cur_row + 1) > @current_sorted_matches.size
-            new_column = 0
-          end
-          @selected_index = new_column * @row_count + cur_row
+          @selected_index = \
+            if @row_count.nil? || @row_count.zero?
+              0
+            else
+              columns = \
+                (@current_sorted_matches.size.to_f / @row_count.to_f).ceil
+              cur_column = @selected_index / @row_count
+              cur_row = @selected_index % @row_count
+              new_column = (cur_column + 1) % columns
+              if (new_column + 1) * (cur_row + 1) > @current_sorted_matches.size
+                new_column = 0
+              end
+              new_column * @row_count + cur_row
+            end
           refresh_mode = :no_recompute
         when 2                # C-b (select left)
-          columns = (@current_sorted_matches.size.to_f / @row_count.to_f).ceil
-          cur_column = @selected_index / @row_count
-          cur_row = @selected_index % @row_count
-          new_column = (cur_column - 1) % columns
-          if (new_column + 1) * (cur_row + 1) > @current_sorted_matches.size
-            new_column = columns - 2
-          end
-          @selected_index = new_column * @row_count + cur_row
+          @selected_index = \
+            if @row_count.nil? || @row_count.zero?
+              0
+            else
+              columns = \
+                (@current_sorted_matches.size.to_f / @row_count.to_f).ceil
+              cur_column = @selected_index / @row_count
+              cur_row = @selected_index % @row_count
+              new_column = (cur_column - 1) % columns
+              if (new_column + 1) * (cur_row + 1) > @current_sorted_matches.size
+                new_column = columns - 2
+              end
+              new_column * @row_count + cur_row
+            end
           refresh_mode = :no_recompute
         when 15               # C-o choose in new horizontal split
           choose(:new_split)
@@ -1082,6 +1111,9 @@ class FilesystemExplorer < Explorer
       return if @running
       if path.empty?
         path = VIM::getcwd()
+      end
+      if path.respond_to?(:force_encoding)
+        path = path.force_encoding(VIM::evaluate('&enc'))
       end
       @prompt.set!(path + File::SEPARATOR)
       run()
@@ -1876,6 +1908,14 @@ class Display
       VIM::command "#{map} <C-e>    :call <SID>#{prefix}KeyPressed(5)<CR>"
       VIM::command "#{map} <C-r>    :call <SID>#{prefix}KeyPressed(18)<CR>"
       VIM::command "#{map} <C-u>    :call <SID>#{prefix}KeyPressed(21)<CR>"
+      VIM::command "#{map} <Esc>OD  :call <SID>#{prefix}KeyPressed(2)<CR>"
+      VIM::command "#{map} <Esc>OC  :call <SID>#{prefix}KeyPressed(6)<CR>"
+      VIM::command "#{map} <Esc>OA  :call <SID>#{prefix}KeyPressed(16)<CR>"
+      VIM::command "#{map} <Esc>OB  :call <SID>#{prefix}KeyPressed(14)<CR>"
+      VIM::command "#{map} <Left>   :call <SID>#{prefix}KeyPressed(2)<CR>"
+      VIM::command "#{map} <Right>  :call <SID>#{prefix}KeyPressed(6)<CR>"
+      VIM::command "#{map} <Up>     :call <SID>#{prefix}KeyPressed(16)<CR>"
+      VIM::command "#{map} <Down>   :call <SID>#{prefix}KeyPressed(14)<CR>"
     end
 
     def print(strings)
