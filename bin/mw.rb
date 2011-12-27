@@ -15,6 +15,7 @@ require 'uri'
 require 'rubygems'
 require 'hpricot'
 require 'open-uri'
+require 'net/http'
 
 $debug = false
 
@@ -36,15 +37,25 @@ def main
     end
   end
 
+  d "found entries:\n" + entries.join("\n")
+
   success = true
 
   if entries.empty?
     success &= parse_entry(doc)
   else
-    entries.each do |entry|
-      url = uri_escape("http://www.merriam-webster.com#{entry}")
-      success &= parse_entry(Hpricot(open(url)))
-      puts
+    uri = URI.parse(url)
+    (0..(entries.length-1)).each do |i|
+      params = { 'start' => 0, 'show' => i.to_s, 'ref' => 'dictionary' }
+      resp, data = Net::HTTP.post_form(uri, params)
+      d "resp: #{resp}"
+      if resp.class == Net::HTTPOK
+        success &= parse_entry(Hpricot(data))
+        puts
+      else
+        puts "form post failed for entry #{i}"
+        exit 1
+      end
     end
   end
 
@@ -107,6 +118,8 @@ def parse_entry(doc)
 
   doc.search("div.definition") do |div_definition|
     word = (div_definition/"h1").inner_text
+
+    d "found definition for #{word}"
 
     div_definition.search("div[@id = 'mwEntryData']") do |div_mwEntryData|
       div_mwEntryData.search("div.headword") do |div_headword|
