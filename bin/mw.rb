@@ -141,7 +141,9 @@ def parse_entry(doc)
         when /example-sentences/
           d 'example-sentences'
           div.search("li") do |li|
-            examples << li.inner_text
+            unless li.inner_text == '[+]more[-]hide'
+              examples << li.inner_text
+            end
           end
         when /etymology/
           d 'etymology'
