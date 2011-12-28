@@ -2,13 +2,41 @@
 #
 _w_dot()
 {
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  old_ifs="$IFS"
-  IFS='
-'
-  COMPREPLY=( $(cd ~/words && compgen -f -- "$cur") )
-  IFS="$old_ifs"
-}
-complete -F _w_dot w.
-	
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  local IFS=$'\t\n'
 
+  COMPREPLY=( $(cd ~/words && compgen -A file -- "$cur") )
+
+  _w_dot_escape_compgen_array
+}
+
+# Stolen from mount bash_completion's _reply_compgen_array.
+# There is some superstition here; I haven't investigated how
+# much of this is necessary.
+_w_dot_escape_compgen_array()
+{
+    # Create the argument for compgen -W by escaping twice.
+    #
+    # One round of escape is because we want to reply with escaped arguments. A
+    # second round is required because compgen -W will helpfully expand it's
+    # argument.
+    local i wlist
+    for i in ${!COMPREPLY[*]}; do
+        local q=$(quote "$(printf %q "${COMPREPLY[$i]}")")
+        wlist+=$q$'\n'
+    done
+
+    # We also have to add another round of escaping to $cur.
+    local ecur="$cur"
+    ecur="${ecur//\\/\\\\}"
+    ecur="${ecur//\'/\'}"
+
+    # Actually generate completions.
+    local oldifs=$IFS
+    IFS=$'\n' eval 'COMPREPLY=(`compgen -W "$wlist" -- "${ecur}"`)'
+    IFS=$oldifs
+}
+
+complete -F _w_dot w.
+complete -F _w_dot w.redo
+complete -F _w_dot w.rm
