@@ -100,6 +100,7 @@ def parse_entry(doc)
 
   word = nil
   has_image = false
+  available = true
   function = nil
   usage = nil
   pronunciation = nil
@@ -120,6 +121,8 @@ def parse_entry(doc)
     word = (div_definition/"h1").inner_text
 
     d "found definition for #{word}"
+
+    available = (div_definition/'div.teaser').empty?
 
     div_definition.search("div[@id = 'mwEntryData']") do |div_mwEntryData|
       div_mwEntryData.search("div.headword") do |div_headword|
@@ -249,6 +252,11 @@ def parse_entry(doc)
   end
 
   return false if word.nil? || word.empty?
+
+  if not available
+    puts "Entry: #{word} -- unavailable"
+    return true
+  end
 
   #
   # Print the parsed dictionary entry.
