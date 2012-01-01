@@ -226,6 +226,8 @@ def parse_entry(doc)
         when /wcentral-link/
         when nil
           d "Skipped: #{div}"
+        when /^d$/
+          d "Skipping weird nested div.d"
         else
           puts "unknown block: #{div.get_attribute('class')}"
           puts div
@@ -244,6 +246,7 @@ def parse_entry(doc)
               div_processor.call(div2)
             end
           else
+            d "No container"
             div_processor.call(div1)
           end
         end
