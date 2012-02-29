@@ -82,8 +82,9 @@ set timeoutlen=300
 
 " Lusty
 "let g:LustyJugglerShowKeys = 2
-let g:LustyExplorerSuppressRubyWarning = 1
+"let g:LustyJugglerKeyboardLayout = "dvorak"
 "let g:LustyExplorerAlwaysShowDotFiles = 1
+let g:LustyExplorerSuppressRubyWarning = 1
 nmap <silent> <Leader>f :LustyFilesystemExplorer<CR>
 nmap <silent> <Leader>b :LustyBufferExplorer<CR>
 nmap <silent> <Leader>r :LustyFilesystemExplorerFromHere<CR>
