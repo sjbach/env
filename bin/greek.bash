@@ -39,10 +39,11 @@ if [ -z "$sound_names" ]; then
   exit 1
 fi
 
+#    wget -q -O - "http://www.merriam-webster.com/cgi-bin/audio.pl?$sound=$word" | \
 sound_urls=$(\
   for sound in $sound_names; do
-    wget -q -O - "http://www.merriam-webster.com/cgi-bin/audio.pl?$sound=$word" | \
-    grep EMBED | sed -r 's/.*SRC="([^"]+)".*/\1/'
+    wget -q -O - "http://www.merriam-webster.com/audio.php?file=$sound" | \
+    grep -i '<EMBED' | sed -r 's/.*SRC="([^"]+)".*/\1/'
   done)
 
 wget -q $sound_urls -P "$sound_dir"
