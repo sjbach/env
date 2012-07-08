@@ -34,7 +34,8 @@
 (setq split-height-threshold nil)
 (setq split-width-threshold 0)
 
-(when (>= emacs-major-version 23)
+(when (and (>= emacs-major-version 23)
+           (x-display-list))
   (let ((font (if (x-list-fonts "Bitstream Vera Sans Mono-9")
                 "Bitstream Vera Sans Mono-9"
                 "Dejavu Sans Mono-9")))
