@@ -169,5 +169,6 @@ nmap <silent> <Leader>h :A<CR>
 " Indent XML readably
 function! DoPrettyXML()
 	1,$!xmllint --format --recover -
+	set filetype=xml
 endfunction
 command! PrettyXML call DoPrettyXML()
