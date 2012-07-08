@@ -3,8 +3,7 @@
 # for examples
 
 set -o vi
-export PATH="~/bin:$PATH:~/stellar/bin"
-export CVSROOT=/usr/local/cvsroot
+export PATH="~/bin:$PATH"
 export EDITOR=/usr/bin/vim
 
 # allow recursive ** expansion
@@ -116,3 +115,8 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
+
+if [ -f ~/.bash-local ]; then
+  . ~/.bash-local
+fi
+
