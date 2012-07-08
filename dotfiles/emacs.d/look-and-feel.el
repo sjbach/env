@@ -57,6 +57,11 @@
     (display-buffer buffer nil)))
 (setq display-buffer-function 'steve-display-buffer-fn)
 
+;; Shorten paths in grep-mode
+;; FIXME can I do this quicker so that the pre-overlay names aren't visible?
+(require 'scf-mode)
+(add-hook 'grep-mode-hook (lambda () (scf-mode 1)))
+
 (when (and (>= emacs-major-version 23)
            (x-display-list))
   (let ((font (if (x-list-fonts "Bitstream Vera Sans Mono-9")
