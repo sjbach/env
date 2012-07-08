@@ -51,6 +51,9 @@
 (column-number-mode t)
 (line-number-mode 1)
 
+;; New windows are annoying.
+(setq pop-up-windows nil)
+
 ;; Enable visual feedback on selections
 (transient-mark-mode t)
 
