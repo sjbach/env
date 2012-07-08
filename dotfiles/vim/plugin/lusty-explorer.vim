@@ -1,4 +1,4 @@
-"    Copyright: Copyright (C) 2007-2012 Stephen Bach
+"    Copyright: Copyright (C) 2007 Stephen Bach
 "               Permission is hereby granted to use and distribute this code,
 "               with or without modifications, provided that this copyright
 "               notice is copied with it. Like anything else that's free,
@@ -9,7 +9,7 @@
 "
 " Name Of File: lusty-explorer.vim
 "  Description: Dynamic Filesystem and Buffer Explorer Vim Plugin
-"  Maintainers: Stephen Bach <this-file@sjbach.com>
+"  Maintainers: Stephen Bach <http://items.sjbach.com/about>
 "               Matt Tolton <matt-lusty-explorer@tolton.com>
 " Contributors: Raimon Grau, Sergey Popov, Yuichi Tateno, Bernhard Walle,
 "               Rajendra Badapanda, cho45, Simo Salminen, Sami Samhuri,
@@ -17,7 +17,7 @@
 "               Brett DiFrischia, Ali Asad Lotia, Kenneth Love, Ben Boeckel,
 "               robquant, lilydjwg, Martin Wache, Johannes Holzfuß
 "               Donald Curtis, Jan Zwiener, Giuseppe Rota, Toby O'Connell,
-"               Göran Gustafsson, Joel Elkins
+"               Göran Gustafsson, Joel Elkins, Dominick LoBraico
 "
 " Release Date: February 24, 2012
 "      Version: 4.3
@@ -322,7 +322,7 @@ endfunction
 " Setup the autocommands that handle buffer MRU ordering.
 augroup LustyExplorer
   autocmd!
-  autocmd BufEnter * ruby LustyE::profile() { $le_buffer_stack.push }
+  autocmd BufAdd,BufEnter * ruby LustyE::profile() { $le_buffer_stack.push }
   autocmd BufDelete * ruby LustyE::profile() { $le_buffer_stack.pop }
   autocmd BufWipeout * ruby LustyE::profile() { $le_buffer_stack.pop }
 augroup End
@@ -1736,6 +1736,7 @@ class SavedSettings
     @insertmode = VIM::evaluate_bool("&insertmode")
     @showcmd = VIM::evaluate_bool("&showcmd")
     @list = VIM::evaluate_bool("&list")
+    @hlsearch = VIM::evaluate_bool("&hlsearch")
 
     @report = VIM::evaluate("&report")
     @sidescroll = VIM::evaluate("&sidescroll")
@@ -1769,6 +1770,12 @@ class SavedSettings
       VIM::set_option "list"
     else
       VIM::set_option "nolist"
+    end
+
+    if @hlsearch
+      VIM::set_option "hlsearch"
+    else
+      VIM::set_option "nohlsearch"
     end
 
     VIM::command "set report=#{@report}"
@@ -1814,6 +1821,7 @@ class Display
     end
 
     def create(prefix)
+      VIM::command("let s:winstate = winrestcmd()")
 
       # Make a window for the display and move there.
       # Start at size 1 to mitigate flashing effect when
@@ -1851,6 +1859,7 @@ class Display
       VIM::set_option "noinsertmode"
       VIM::set_option "noshowcmd"
       VIM::set_option "nolist"
+      VIM::set_option "nohlsearch"
       VIM::set_option "report=9999"
       VIM::set_option "sidescroll=0"
       VIM::set_option "sidescrolloff=0"
@@ -1992,10 +2001,16 @@ class Display
     end
 
     def self.max_height
-      stored_height = $curwin.height
-      $curwin.height = VIM::MOST_POSITIVE_INTEGER
+      # Compute the height of the display if it were grow to take up
+      # all available space, squishing every other Vim window to its
+      # minimal size.
+
+      # Ask for the world.  The resize command defaults to the max height.
+      VIM::command("resize")
+      # Remember what we got.
       highest_allowable = $curwin.height
-      $curwin.height = stored_height
+      # Restore the window state.
+      VIM::command("exe s:winstate")
       highest_allowable
     end
 
@@ -2348,12 +2363,13 @@ class BufferStack
     end
 
     def push
-      @stack.delete $curbuf.number
-      @stack << $curbuf.number
+      buf_number = VIM::evaluate('expand("<abuf>")').to_i
+      @stack.delete buf_number
+      @stack << buf_number
     end
 
     def pop
-      number = VIM::evaluate('bufnr(expand("<afile>"))')
+      number = VIM::evaluate('bufnr(expand("<abuf>"))')
       @stack.delete number
     end
 

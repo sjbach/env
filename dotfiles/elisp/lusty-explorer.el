@@ -1,6 +1,6 @@
 ;;; lusty-explorer.el --- Dynamic filesystem explorer and buffer switcher
 ;;
-;; Copyright (C) 2008-2010 Stephen Bach <this-file@sjbach.com>
+;; Copyright (C) 2008 Stephen Bach <http://items.sjbach.com/about>
 ;;
 ;; Version: 2.4
 ;; Created: July 27, 2010
@@ -66,6 +66,8 @@
 ;; René Kyllingstad
 ;; Alex Schroeder
 ;; Tassilo Horn
+;; Sasha Kovar
+;; John Wiegley
 ;;
 
 ;;; Code:
@@ -109,6 +111,11 @@ always immediate."
   "How much influence buffer recency-of-use should have on ordering of
 buffer names in the matches window; 0.10 = %10."
   :type 'float
+  :group 'lusty-explorer)
+
+(defcustom lusty-case-fold t
+  "Ignore case when matching if non-nil."
+  :type 'boolean
   :group 'lusty-explorer)
 
 (defface lusty-match-face
@@ -214,33 +221,33 @@ Uses the faces `lusty-directory-face', `lusty-slash-face', and
 (defun lusty-file-explorer ()
   "Launch the file/directory mode of LustyExplorer."
   (interactive)
-  (lusty--define-mode-map)
-  (let* ((lusty--active-mode :file-explorer)
-         (lusty--ignored-extensions-regex
-           (concat "\\(?:" (regexp-opt completion-ignored-extensions) "\\)$"))
-         (minibuffer-local-filename-completion-map lusty-mode-map)
-         (file
-          ;; read-file-name is silly in that if the result is equal to the
-          ;; dir argument, it gets converted to the default-filename
-          ;; argument.  Set it explicitly to "" so if lusty-launch-dired is
-          ;; called in the directory we start at, the result is that directory
-          ;; instead of the name of the current buffer.
-          (lusty--run 'read-file-name default-directory "")))
-    (when file
-      (switch-to-buffer
-       (find-file-noselect
-        (expand-file-name file))))))
+  (let ((lusty--active-mode :file-explorer))
+    (lusty--define-mode-map)
+    (let* ((lusty--ignored-extensions-regex
+            (concat "\\(?:" (regexp-opt completion-ignored-extensions) "\\)$"))
+           (minibuffer-local-filename-completion-map lusty-mode-map)
+           (file
+            ;; read-file-name is silly in that if the result is equal to the
+            ;; dir argument, it gets converted to the default-filename
+            ;; argument.  Set it explicitly to "" so if lusty-launch-dired is
+            ;; called in the directory we start at, the result is that directory
+            ;; instead of the name of the current buffer.
+            (lusty--run 'read-file-name default-directory "")))
+      (when file
+        (switch-to-buffer
+         (find-file-noselect
+          (expand-file-name file)))))))
 
 ;;;###autoload
 (defun lusty-buffer-explorer ()
   "Launch the buffer mode of LustyExplorer."
   (interactive)
-  (lusty--define-mode-map)
-  (let* ((lusty--active-mode :buffer-explorer)
-         (minibuffer-local-completion-map lusty-mode-map)
-         (buffer (lusty--run 'read-buffer)))
-    (when buffer
-      (switch-to-buffer buffer))))
+  (let ((lusty--active-mode :buffer-explorer))
+    (lusty--define-mode-map)
+    (let* ((minibuffer-local-completion-map lusty-mode-map)
+           (buffer (lusty--run 'read-buffer)))
+      (when buffer
+        (switch-to-buffer buffer)))))
 
 ;;;###autoload
 (defun lusty-highlight-next ()
@@ -498,6 +505,7 @@ does not begin with '.'."
              (file-portion (file-name-nondirectory path))
              (normalized-dir (lusty-normalize-dir dir)))
         ;; Clean up the path when selecting, in case we recurse.
+        (remove-text-properties 0 (length match) '(face) match)
         (lusty-set-minibuffer-text normalized-dir match)
         (if (file-directory-p (concat normalized-dir match))
             (progn
@@ -608,6 +616,13 @@ does not begin with '.'."
         (lusty-buffer (get-buffer-create lusty-buffer-name)))
     (save-selected-window
       (select-window lowest-window)
+
+      ;; If necessary, expand the window we're going to split so
+      ;; Emacs won't complain it's too small.
+      (when (< (window-height)
+               (* 2 window-min-height))
+        (enlarge-window (- (* 2 window-min-height) (window-height))))
+
       (let ((new-lowest
              ;; Create the window for lusty-buffer
              (split-window-vertically)))
@@ -921,6 +936,19 @@ does not begin with '.'."
   (let ((fill-column (window-width)))
     (center-line)))
 
+(defun lusty-delete-backward (count)
+  "Delete char backwards, or at beginning of buffer, go up one level."
+  (interactive "P")
+  (if count
+      (call-interactively 'delete-backward-char)
+    (if (= (char-before) ?/)
+        (progn
+          (backward-delete-char 1)
+          (while (and (/= (char-before) ?/)
+                      (not (get-text-property (1- (point)) 'read-only)))
+            (backward-delete-char 1)))
+      (unless (get-text-property (1- (point)) 'read-only)
+        (call-interactively 'delete-backward-char)))))
 
 (defun lusty--define-mode-map ()
   ;; Re-generated every run so that it can inherit new functions.
@@ -928,6 +956,7 @@ does not begin with '.'."
     (set-keymap-parent map minibuffer-local-map)
     (define-key map (kbd "RET") 'lusty-open-this)
     (define-key map "\t" 'lusty-select-match)
+    (define-key map [remap delete-backward-char] 'lusty-delete-backward)
     (define-key map "\C-n" 'lusty-highlight-next)
     (define-key map "\C-p" 'lusty-highlight-previous)
     (define-key map "\C-s" 'lusty-highlight-next)
@@ -979,12 +1008,12 @@ does not begin with '.'."
            ;; Content of LM--build-score-array...
            ;; Inline for interpreted performance.
            (let* ((scores (make-vector str-len LM--score-no-match))
-                  (str-lower (downcase str))
-                  (abbrev-lower (downcase abbrev))
+                  (str-test (if lusty-case-fold (downcase str) str))
+                  (abbrev-test (if lusty-case-fold (downcase abbrev) abbrev))
                   (last-index 0)
                   (started-p nil))
              (dotimes (i abbrev-len)
-               (let ((pos (position (aref abbrev-lower i) str-lower
+               (let ((pos (position (aref abbrev-test i) str-test
                                     :start last-index
                                     :end str-len)))
                  (when (null pos)
@@ -1057,22 +1086,22 @@ does not begin with '.'."
 ;   (defun fit-window-to-buffer (owin max-height)
 ;     (interactive)
 ;     (if owin
-; 	(delete-other-windows))
+;       (delete-other-windows))
 ;     (when (> (length (window-list nil 'nomini)) 1)
 ;       (let* ((window (selected-window))
-; 	     (buf (window-buffer window))
-; 	     (height (window-displayed-height (selected-window)))
-; 	     (new-height
+;            (buf (window-buffer window))
+;            (height (window-displayed-height (selected-window)))
+;            (new-height
 ;               (min (with-current-buffer buf
 ;                      (count-lines (point-min) (point-max)))
 ;                    max-height))
-; 	     (diff (- new-height height)))
-; 	(unless (zerop diff)
-; 	  (enlarge-window diff))
-; 	(let ((end (with-current-buffer buf (point-max))))
-; 	  (while (and (> (length (window-list nil 'nomini)) 1)
-; 		      (not (pos-visible-in-window-p end)))
-; 	    (enlarge-window 1)))))))
+;            (diff (- new-height height)))
+;       (unless (zerop diff)
+;         (enlarge-window diff))
+;       (let ((end (with-current-buffer buf (point-max))))
+;         (while (and (> (length (window-list nil 'nomini)) 1)
+;                     (not (pos-visible-in-window-p end)))
+;           (enlarge-window 1)))))))
 
 
 (provide 'lusty-explorer)
