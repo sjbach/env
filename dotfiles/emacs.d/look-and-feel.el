@@ -30,6 +30,10 @@
 ;(set-scroll-bar-mode 'right)
 (toggle-scroll-bar -1)
 
+;; force horizontal splits - stolen from stackoverflow somewhere
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
+
 (when (>= emacs-major-version 23)
   (let ((font (if (x-list-fonts "Bitstream Vera Sans Mono-9")
                 "Bitstream Vera Sans Mono-9"
