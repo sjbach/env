@@ -135,11 +135,6 @@ set wildmenu
 set wildmode=list:longest
 set wildignore=*.o,*.fasl
 
-autocmd BufRead *.xfa set filetype=xml
-autocmd BufRead *.xru set filetype=xml
-autocmd BufRead *.xna set filetype=xml
-autocmd BufRead *.qcf set filetype=lisp
-autocmd BufRead qpx.inc set filetype=make
 autocmd BufRead letter* set filetype=mail
 autocmd Filetype mail set fo -=l autoindent spell
 
@@ -161,8 +156,6 @@ autocmd FileType javascript,html set ts=2 shiftwidth=2 expandtab
 autocmd FileType java set ts=2 shiftwidth=2 expandtab
 autocmd BufReadPre viper,.viper set filetype=lisp
 
-autocmd BufRead ~/stellar/* set lbr formatoptions=l
-
 " a.vim
 nmap <silent> <Leader>h :A<CR>
 
@@ -172,3 +165,9 @@ function! DoPrettyXML()
 	set filetype=xml
 endfunction
 command! PrettyXML call DoPrettyXML()
+
+" Load local settings
+if filereadable($HOME . "/.vimrc-local")
+	source ~/.vimrc-local
+endif
+
