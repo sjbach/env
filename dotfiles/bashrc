@@ -7,6 +7,9 @@ export PATH="~/bin:$PATH:~/stellar/bin"
 export CVSROOT=/usr/local/cvsroot
 export EDITOR=/usr/bin/vim
 
+# allow recursive ** expansion
+shopt -s globstar
+
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
