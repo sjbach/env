@@ -2,10 +2,10 @@
 ;;
 ;; Copyright (C) 2008 Stephen Bach <http://items.sjbach.com/about>
 ;;
-;; Version: 2.4
+;; Version: 2.5
 ;; Created: July 27, 2010
 ;; Keywords: convenience, files, matching
-;; Compatibility: GNU Emacs 22 and 23
+;; Compatibility: GNU Emacs 22, 23, and 24
 ;;
 ;; Permission is hereby granted to use and distribute this code, with or
 ;; without modifications, provided that this copyright notice is copied with
@@ -55,19 +55,20 @@
 ;;   completion-ignored-extensions
 ;;
 ;; Latest release: <http://www.emacswiki.org/cgi-bin/wiki/LustyExplorer>
-;; Development:    <http://github.com/sjbach/lusty/tree/master>
+;; Development:    <http://github.com/sjbach/lusty-emacs>
 ;;
 
 ;;; Contributors:
 ;;
+;; Tassilo Horn
 ;; Jan Rehders
 ;; Hugo Schmitt
 ;; Volkan Yazici
 ;; René Kyllingstad
 ;; Alex Schroeder
-;; Tassilo Horn
 ;; Sasha Kovar
 ;; John Wiegley
+;; Johan Walles
 ;;
 
 ;;; Code:
@@ -111,6 +112,11 @@ always immediate."
   "How much influence buffer recency-of-use should have on ordering of
 buffer names in the matches window; 0.10 = %10."
   :type 'float
+  :group 'lusty-explorer)
+
+(defcustom lusty-fully-expand-matches-window-p t
+  "Whether or not to expand the matches window across the whole frame."
+  :type 'boolean
   :group 'lusty-explorer)
 
 (defcustom lusty-case-fold t
@@ -550,7 +556,33 @@ does not begin with '.'."
               (run-with-idle-timer lusty-idle-seconds-per-refresh nil
                                    'lusty-refresh-matches-buffer))))))
 
-;; Cribbed with modification from tail-select-lowest-window.
+(defun lusty-max-window-height ()
+  "Return the expected maximum allowable height of a window on this frame"
+  ;; FIXME: are there cases where this is incorrect?
+  (let* ((lusty-window
+          (get-buffer-window
+           (get-buffer-create lusty-buffer-name)))
+         (other-window
+          ;; In case the *LustyMatches* window was closed
+          (or lusty-window
+              (if (minibufferp)
+                  (next-window (selected-window) :skip-mini)
+                (selected-window))))
+         (test-window
+          (or lusty-window other-window)))
+    (assert test-window)
+    (- (frame-height)
+       ;; Account for modeline and/or header...
+       (- (window-height test-window)
+          (window-body-height test-window))
+       ;; And minibuffer height.
+       (window-height (minibuffer-window)))))
+
+(defun lusty-max-window-width ()
+  (frame-width))
+
+;; Only needed for Emacs 23 compatibility, because the Emacs root window in an
+;; already split frame is not a living window.
 (defun lusty-lowest-window ()
   "Return the lowest window on the frame."
   (flet ((iterate-non-dedicated-window (start-win direction)
@@ -586,60 +618,29 @@ does not begin with '.'."
           (setq window-search-p nil))))
     lowest-window)))
 
-(defun lusty-max-window-height ()
-  "Return the expected maximum allowable height of a window on this frame"
-  ;; FIXME: are there cases where this is incorrect?
-  (let* ((lusty-window
-          (get-buffer-window
-           (get-buffer-create lusty-buffer-name)))
-         (other-window
-          ;; In case the *LustyMatches* window was closed
-          (or lusty-window
-              (if (minibufferp)
-                  (next-window (selected-window) :skip-mini)
-                (selected-window))))
-         (test-window
-          (or lusty-window other-window)))
-    (assert test-window)
-    (- (frame-height)
-       ;; Account for modeline and/or header...
-       (- (window-height test-window)
-          (window-body-height test-window))
-       ;; And minibuffer height.
-       (window-height (minibuffer-window)))))
-
-(defun lusty-max-window-width ()
-  (frame-width))
-
 (defun lusty--setup-matches-window ()
-  (let ((lowest-window (lusty-lowest-window))
-        (lusty-buffer (get-buffer-create lusty-buffer-name)))
+  (let ((lusty-buffer (get-buffer-create lusty-buffer-name)))
     (save-selected-window
-      (select-window lowest-window)
-
-      ;; If necessary, expand the window we're going to split so
-      ;; Emacs won't complain it's too small.
-      (when (< (window-height)
-               (* 2 window-min-height))
-        (enlarge-window (- (* 2 window-min-height) (window-height))))
-
-      (let ((new-lowest
-             ;; Create the window for lusty-buffer
-             (split-window-vertically)))
-        (select-window new-lowest)
-        ;; Try to get a window covering the full frame.  Sometimes
-        ;; this takes more than one try, but we don't want to do it
-        ;; infinitely in case of weird setups.
-        (loop repeat 5
-              while (< (window-width) (frame-width))
-              do
-              (condition-case nil
-                  (enlarge-window-horizontally (- (frame-width)
-                                                  (window-width)))
-                (error
-                 (return))))
-        (set-window-buffer new-lowest lusty-buffer))))
-  ;;
+      (let* ((root-window (frame-root-window))
+             ;; Emacs 23 compatibility
+             (window (if (window-live-p root-window)
+                         root-window
+                       (lusty-lowest-window)))
+             (lusty-window (split-window window)))
+        (select-window lusty-window)
+        (when lusty-fully-expand-matches-window-p
+          ;; Try to get a window covering the full frame.  Sometimes
+          ;; this takes more than one try, but we don't want to do it
+          ;; infinitely in case of weird setups.
+          (loop repeat 5
+                while (< (window-width) (frame-width))
+                do
+                (condition-case nil
+                    (enlarge-window-horizontally (- (frame-width)
+                                                    (window-width)))
+                  (error
+                   (return)))))
+        (set-window-buffer lusty-window lusty-buffer))))
   ;; Window configuration may be restored intermittently.
   (setq lusty--initial-window-config (current-window-configuration)))
 
@@ -957,12 +958,19 @@ does not begin with '.'."
     (define-key map (kbd "RET") 'lusty-open-this)
     (define-key map "\t" 'lusty-select-match)
     (define-key map [remap delete-backward-char] 'lusty-delete-backward)
+
     (define-key map "\C-n" 'lusty-highlight-next)
     (define-key map "\C-p" 'lusty-highlight-previous)
     (define-key map "\C-s" 'lusty-highlight-next)
     (define-key map "\C-r" 'lusty-highlight-previous)
     (define-key map "\C-f" 'lusty-highlight-next-column)
     (define-key map "\C-b" 'lusty-highlight-previous-column)
+
+    (define-key map (kbd "<left>") 'lusty-highlight-previous-column)
+    (define-key map (kbd "<right>") 'lusty-highlight-next-column)
+    (define-key map (kbd "<up>") 'lusty-highlight-previous)
+    (define-key map (kbd "<down>") 'lusty-highlight-next)
+
     (define-key map "\C-xd" 'lusty-launch-dired)
     (define-key map "\C-xe" 'lusty-select-current-name)
     (setq lusty-mode-map map))
