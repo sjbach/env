@@ -120,6 +120,9 @@ def parse_entry(doc)
   doc.search("div.definition") do |div_definition|
     word = (div_definition/"h1").inner_text
 
+    # Hack to remove "About Our Definitions" interfering with the entry
+    word = word.sub(/About Our Definitions.*/, '')
+
     d "found definition for #{word}"
 
     available = (div_definition/'div.teaser').empty?
