@@ -6682,14 +6682,16 @@ Equivalent to Vim's C-w prefix.")
 ;;; Insert mode keys
 
 ;; Vim-like completion keys
-(define-key viper-insert-basic-map "\C-p" 'vimpulse-abbrev-expand-before)
-(define-key viper-insert-basic-map "\C-n" 'vimpulse-abbrev-expand-after)
+; STEVE disabled the below because they conflict with my personal keymaps.
+;(define-key viper-insert-basic-map "\C-p" 'vimpulse-abbrev-expand-before)
+;(define-key viper-insert-basic-map "\C-n" 'vimpulse-abbrev-expand-after)
 (define-key viper-insert-basic-map "\C-x\C-p" 'vimpulse-expand-line)
 (define-key viper-insert-basic-map "\C-x\C-n" 'vimpulse-expand-line)
 (define-key viper-insert-basic-map [delete] 'delete-char) ; <delete> key
 ;; make ^[ work
 (define-key viper-insert-basic-map (kbd "ESC") 'viper-exit-insert-state)
 ;; paste
+; STEVE disabled the below because they conflict with my personal keymaps.
 (define-key viper-insert-basic-map "\C-r" 'vimpulse-paste-in-insert)
 ;; temporarily escape to vi state
 (define-key viper-insert-basic-map "\C-o" 'viper-escape-to-vi)
