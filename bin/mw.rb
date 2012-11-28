@@ -11,6 +11,9 @@
 #  sudo gem install --version 0.6.164 hpricot
 #
 
+# TODO:
+# - do an initial pass of the DOM removing <style> and Facebook/G+ stuff
+
 require 'uri'
 require 'rubygems'
 require 'hpricot'
@@ -52,7 +55,6 @@ def main
       d "resp: #{resp}"
       if resp.class == Net::HTTPOK
         success &= parse_outer_entry(Hpricot(data))
-        puts
       else
         puts "form post failed for entry #{i}"
         exit 1
@@ -133,11 +135,12 @@ class DictEntry
 
     if not @available
       puts "Entry: #{@word} -- unavailable"
+      puts
       return
     end
 
     puts "Entry: #{@word} #{@has_image ? '  (has image)' : ''}"
-    puts "Function: #{@function}"
+    puts "Function: #{@function}" if @function
     if not @related.empty?
       @related.each do |r|
         puts wrap_text(r)
@@ -189,6 +192,8 @@ class DictEntry
       puts "Encyclopedia..."
       puts wrap_text(@encyclopedia, "  ")
     end
+
+    puts
   end
 end
 
@@ -204,32 +209,36 @@ def parse_outer_entry(doc)
     # STEVE should this be somewhere further down?
     entry.available = (div_definition/'div.teaser').empty?
 
-    div_definition.search("div#mwEntryData") do |div_mwEntryData|
-      headword_divs = div_mwEntryData.search('div.headword')
-      if headword_divs and headword_divs.length > 1
-        d "multiple headwords"
-        # Hack: break the HTML into sections, each holding all content between
-        # div.headwords.
-        headword_divs.each do |headword_div|
-          els = [headword_div]
-          iter = headword_div.next_sibling
-          while iter and not iter.classes.include?("headword")
-            d "adding #{iter.to_html[0..20]} after #{els.length}"
-            els << iter
-            iter = iter.next_sibling
+    if div_definition.search("div#mwEntryData").empty?
+      entry.pretty_print
+    else
+      div_definition.search("div#mwEntryData") do |div_mwEntryData|
+        headword_divs = div_mwEntryData.search('div.headword')
+        if headword_divs and headword_divs.length > 1
+          d "multiple headwords"
+          # Hack: break the HTML into sections, each holding all content between
+          # div.headwords.
+          headword_divs.each do |headword_div|
+            els = [headword_div]
+            iter = headword_div.next_sibling
+            while iter and not iter.classes.include?("headword")
+              d "adding #{iter.to_html[0..20]} after #{els.length}"
+              els << iter
+              iter = iter.next_sibling
+            end
+            d "creating new doc with #{els.length} elements"
+            # Hpricot crashes if I try to create an Element instead of a whole
+            # document.
+            new_div_definition = Hpricot(
+              '<div class="definition">' +
+              els.map{ |el| el.to_html }.join +
+              '</div>').search('div.definition')
+              parse_inner_entry(new_div_definition,
+                                Marshal::load(Marshal.dump(entry)))
           end
-          d "creating new doc with #{els.length} elements"
-          # Hpricot crashes if I try to create an Element instead of a whole
-          # document.
-          new_div_definition = Hpricot(
-            '<div class="definition">' +
-            els.map{ |el| el.to_html }.join +
-            '</div>').search('div.definition')
-          entry.pretty_print
-          parse_inner_entry(new_div_definition, Marshal::load(Marshal.dump(entry)))
+        else
+          parse_inner_entry(div_definition, Marshal::load(Marshal.dump(entry)))
         end
-      else
-        parse_inner_entry(div_definition, Marshal::load(Marshal.dump(entry)))
       end
     end
   end
