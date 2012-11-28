@@ -42,15 +42,16 @@ def main
   success = true
 
   if entries.empty?
-    success &= parse_entry(doc)
+    success &= parse_outer_entry(doc)
   else
     uri = URI.parse(url)
     (0..(entries.length-1)).each do |i|
       params = { 'start' => 0, 'show' => i.to_s, 'ref' => 'dictionary' }
+      d "uri: #{uri}, params: #{params}"
       resp, data = Net::HTTP.post_form(uri, params)
       d "resp: #{resp}"
       if resp.class == Net::HTTPOK
-        success &= parse_entry(Hpricot(data))
+        success &= parse_outer_entry(Hpricot(data))
         puts
       else
         puts "form post failed for entry #{i}"
@@ -96,45 +97,153 @@ def uri_escape(str)
                  .gsub("]", "%5D")
 end
 
-def parse_entry(doc)
+class DictEntry
 
-  word = nil
-  has_image = false
-  available = true
-  function = nil
-  usage = nil
-  pronunciation = nil
-  etymology = nil
-  first_use = nil
-  related = []
-  synonyms_etc = []
-  synonyms_discussion = nil
-  usage_discussion = nil
-  definitions = []
-  special_definitions = []
-  examples = []
-  transitive_verb = :unset
-  variant = nil
-  encyclopedia = nil
+  attr_accessor :word, :has_image, :available, :function, :usage,
+    :pronunciation, :etymology, :first_use, :related, :synonyms_etc,
+    :synonyms_discussion, :usage_discussion, :definitions,
+    :special_definitions, :examples, :transitive_verb, :variant, :encyclopedia
+
+  def initialize
+    @word = nil
+    @available = true
+    @has_image = false
+    @function = nil
+    @usage = nil
+    @pronunciation = nil
+    @etymology = nil
+    @first_use = nil
+    @related = []
+    @synonyms_etc = []
+    @synonyms_discussion = nil
+    @usage_discussion = nil
+    @definitions = []
+    @special_definitions = []
+    @examples = []
+    @transitive_verb = :unset
+    @variant = nil
+    @encyclopedia = nil
+  end
+
+  def pretty_print
+    #
+    # Print the parsed dictionary entry.
+    # Note: pronunciation skipped.
+    #
+
+    if not @available
+      puts "Entry: #{@word} -- unavailable"
+      return
+    end
+
+    puts "Entry: #{@word} #{@has_image ? '  (has image)' : ''}"
+    puts "Function: #{@function}"
+    if not @related.empty?
+      @related.each do |r|
+        puts wrap_text(r)
+      end
+    end
+    puts("Usage: #{@usage}") if @usage
+    if @etymology
+      puts "Etymology..."
+      puts wrap_text(@etymology, " ")
+    end
+    if @first_use
+      puts "First Use: #{@first_use}"
+    end
+
+    puts "Definitions..."
+    print_definitions(@definitions)
+
+    if not @special_definitions.empty?
+      puts "Special Definitions..."
+      print_definitions(@special_definitions)
+    end
+
+    if not @examples.empty?
+      puts "Examples..."
+      @examples.each do |e|
+        wrapped = wrap_text("#{e}", "   ")
+        puts wrapped.sub(/^  /," -")
+      end
+    end
+    if not @synonyms_etc.empty?
+      puts "Similar..."
+      @synonyms_etc.each do |a|
+        puts " #{a[0]}: "
+        puts wrap_text(a[1], "   ")
+      end
+    end
+    if @synonyms_discussion
+      puts "Synonyms Discussion..."
+      puts wrap_text(@synonyms_discussion, "  ")
+    end
+    if @usage_discussion
+      puts "Usage Discussion..."
+      puts wrap_text(@usage_discussion, "  ")
+    end
+    if @variant
+      puts "Variant: #{@variant}"
+    end
+    if @encyclopedia
+      puts "Encyclopedia..."
+      puts wrap_text(@encyclopedia, "  ")
+    end
+  end
+end
+
+def parse_outer_entry(doc)
 
   doc.search("div.definition") do |div_definition|
+    entry = DictEntry.new
     word = (div_definition/"h1").inner_text
-
     # Hack to remove "About Our Definitions" interfering with the entry
-    word = word.sub(/About Our Definitions.*/, '')
+    entry.word = word.sub(/About Our Definitions.*/, '')
+    d "found definition for #{entry.word}"
 
-    d "found definition for #{word}"
+    # STEVE should this be somewhere further down?
+    entry.available = (div_definition/'div.teaser').empty?
 
-    available = (div_definition/'div.teaser').empty?
+    div_definition.search("div#mwEntryData") do |div_mwEntryData|
+      headword_divs = div_mwEntryData.search('div.headword')
+      if headword_divs and headword_divs.length > 1
+        d "multiple headwords"
+        # Hack: break the HTML into sections, each holding all content between
+        # div.headwords.
+        headword_divs.each do |headword_div|
+          els = [headword_div]
+          iter = headword_div.next_sibling
+          while iter and not iter.classes.include?("headword")
+            d "adding #{iter.to_html[0..20]} after #{els.length}"
+            els << iter
+            iter = iter.next_sibling
+          end
+          d "creating new doc with #{els.length} elements"
+          # Hpricot crashes if I try to create an Element instead of a whole
+          # document.
+          new_div_definition = Hpricot(
+            '<div class="definition">' +
+            els.map{ |el| el.to_html }.join +
+            '</div>').search('div.definition')
+          entry.pretty_print
+          parse_inner_entry(new_div_definition, Marshal::load(Marshal.dump(entry)))
+        end
+      else
+        parse_inner_entry(div_definition, Marshal::load(Marshal.dump(entry)))
+      end
+    end
+  end
+end
 
-    div_definition.search("div[@id = 'mwEntryData']") do |div_mwEntryData|
-      div_mwEntryData.search("div.headword") do |div_headword|
-        function = (div_headword/"span.main-fl").inner_text.strip
+def parse_inner_entry(div_definition, entry)
+
+      div_definition.search("div.headword") do |div_headword|
+        entry.function = (div_headword/"span.main-fl").inner_text.strip
         unless (div_headword/"span.usg").empty?
-          usage = (div_headword/"span.usg").inner_text.strip
+          entry.usage = (div_headword/"span.usg").inner_text.strip
         end
         unless (div_headword/"span.pr").empty?
-          pronunciation = (div_headword/"span.pr").inner_text.strip
+          entry.pronunciation = (div_headword/"span.pr").inner_text.strip
         end
       end
 
@@ -143,17 +252,17 @@ def parse_entry(doc)
         case div.get_attribute('class')
         when /^(sblk$|sense-block)/
           d 'sblk'
-          parse_definition(div, transitive_verb, definitions)
+          parse_definition(div, entry.transitive_verb, entry.definitions)
         when /example-sentences/
           d 'example-sentences'
           div.search("li") do |li|
             unless li.inner_text == '[+]more[-]hide'
-              examples << li.inner_text
+              entry.examples << li.inner_text
             end
           end
         when /etymology/
           d 'etymology'
-          assert(etymology.nil?)
+          assert(entry.etymology.nil?)
           # Sometimes includes a First Use sub div note.
           extra_text = \
             (div/">div.content>div").to_a.inject("") { |s,e|
@@ -164,11 +273,11 @@ def parse_entry(doc)
               div_inner.swap('')
             end
           end
-          etymology = (div/">div.content").inner_text.strip + extra_text
+          entry.etymology = (div/">div.content").inner_text.strip + extra_text
         when /first-use/
           d "first-use"
-          assert(first_use.nil?)
-          first_use = (div/">div.content").inner_text
+          assert(entry.first_use.nil?)
+          entry.first_use = (div/">div.content").inner_text
         when /synonyms-reference/
           d 'synonyms-reference'
           div.search(">div>div>div>div>div") do |div_related|
@@ -178,7 +287,7 @@ def parse_entry(doc)
               if inner_text =~ /^(.*): (.*)/
                 type = $1
                 words = $2
-                synonyms_etc << [type, words]
+                entry.synonyms_etc << [type, words]
               else
                 puts "Could not parse synonyms thing: #{inner_text}"
                 exit 1
@@ -191,36 +300,36 @@ def parse_entry(doc)
             end
           end
         when /synonyms-discussion/
-          assert(synonyms_discussion.nil?)
-          synonyms_discussion = (div/">div.content").inner_text.strip
+          assert(entry.synonyms_discussion.nil?)
+          entry.synonyms_discussion = (div/">div.content").inner_text.strip
         when /usage-discussion/
-          assert(usage_discussion.nil?)
-          usage_discussion = (div/">div.content").inner_text.strip
+          assert(entry.usage_discussion.nil?)
+          entry.usage_discussion = (div/">div.content").inner_text.strip
         when /^us$/
-          assert(usage_discussion.nil?)
-          usage_discussion = div.inner_text.strip
+          assert(entry.usage_discussion.nil?)
+          entry.usage_discussion = div.inner_text.strip
         when /^r$/  # related?
           d 'r'
-          related << div.inner_text
+          entry.related << div.inner_text
         when /^vt$/
           # transitive verb -- applies to subsequent definitions
-          transitive_verb = (div.inner_text !~ /intransitive/)
+          entry.transitive_verb = (div.inner_text !~ /intransitive/)
         when /^art$/
-          has_image = true
+          entry.has_image = true
         when /^variant$/
-          assert(variant.nil?)
-          variant = (div/">div.content").inner_text.strip
+          assert(entry.variant.nil?)
+          entry.variant = (div/">div.content").inner_text.strip
         when /^concise-link$/
           # td class blurb
           encyclopedia = (div/">table>tr>td").inner_text.strip
           # Strip initial "<word> ? " before entry.
-          encyclopedia = encyclopedia.sub(/^\s*#{word}\s*\W*\s*/,'')
+          encyclopedia = encyclopedia.sub(/^\s*#{entry.word}\s*\W*\s*/,'')
           # Strip everything after READ ARTICLE.
-          encyclopedia = encyclopedia.sub(/\s*READ.*/,'')
+          entry.encyclopedia = encyclopedia.sub(/\s*READ.*/,'')
         when /^dr$/
           # Special use of word?
           div.search(">div.d>div") do |div_inner|
-            parse_definition(div_inner, :unset, special_definitions)
+            parse_definition(div_inner, :unset, entry.special_definitions)
           end
         when /rhyming-dictionary/
         when /britannica-entry/
@@ -254,74 +363,10 @@ def parse_entry(doc)
           end
         end
       end
-    end
-  end
 
-  return false if word.nil? || word.empty?
+  # TODO: validate parse
 
-  if not available
-    puts "Entry: #{word} -- unavailable"
-    return true
-  end
-
-  #
-  # Print the parsed dictionary entry.
-  # Note: pronunciation skipped.
-  #
-
-  puts "Entry: #{word} #{has_image ? '  (has image)' : ''}"
-  puts "Function: #{function}"
-  if not related.empty?
-    related.each do |r|
-      puts wrap_text(r)
-    end
-  end
-  puts("Usage: #{usage}") if usage
-  if etymology
-    puts "Etymology..."
-    puts wrap_text(etymology, " ")
-  end
-  if first_use
-    puts "First Use: #{first_use}"
-  end
-
-  puts "Definitions..."
-  print_definitions(definitions)
-
-  if not special_definitions.empty?
-    puts "Special Definitions..."
-    print_definitions(special_definitions)
-  end
-
-  if not examples.empty?
-    puts "Examples..."
-    examples.each do |e|
-      wrapped = wrap_text("#{e}", "   ")
-      puts wrapped.sub(/^  /," -")
-    end
-  end
-  if not synonyms_etc.empty?
-    puts "Similar..."
-    synonyms_etc.each do |a|
-      puts " #{a[0]}: "
-      puts wrap_text(a[1], "   ")
-    end
-  end
-  if synonyms_discussion
-    puts "Synonyms Discussion..."
-    puts wrap_text(synonyms_discussion, "  ")
-  end
-  if usage_discussion
-    puts "Usage Discussion..."
-    puts wrap_text(usage_discussion, "  ")
-  end
-  if variant
-    puts "Variant: #{variant}"
-  end
-  if encyclopedia
-    puts "Encyclopedia..."
-    puts wrap_text(encyclopedia, "  ")
-  end
+  entry.pretty_print
 
   return true
 end
