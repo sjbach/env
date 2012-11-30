@@ -12,6 +12,7 @@
 #
 
 # TODO:
+# - rewrite using nokogiri or something similar
 # - do an initial pass of the DOM removing <style> and Facebook/G+ stuff
 
 require 'uri'
@@ -104,7 +105,8 @@ class DictEntry
   attr_accessor :word, :has_image, :available, :function, :usage,
     :pronunciation, :etymology, :first_use, :related, :synonyms_etc,
     :synonyms_discussion, :usage_discussion, :definitions,
-    :special_definitions, :examples, :transitive_verb, :variant, :encyclopedia
+    :special_definitions, :examples, :transitive_verb, :variant, :encyclopedia,
+    :source
 
   def initialize
     @word = nil
@@ -125,6 +127,7 @@ class DictEntry
     @transitive_verb = :unset
     @variant = nil
     @encyclopedia = nil
+    @source = nil
   end
 
   def pretty_print
@@ -140,6 +143,7 @@ class DictEntry
     end
 
     puts "Entry: #{@word} #{@has_image ? '  (has image)' : ''}"
+    puts "Source: #{@source}" if @source
     puts "Function: #{@function}" if @function
     if not @related.empty?
       @related.each do |r|
@@ -253,6 +257,12 @@ def parse_inner_entry(div_definition, entry)
         end
         unless (div_headword/"span.pr").empty?
           entry.pronunciation = (div_headword/"span.pr").inner_text.strip
+        end
+        # STEVE gotta be a better way.
+        if div_headword.children.find {|c| c.class == Hpricot::Elem and c.name == "em"}
+          entry.source = div_headword.children.find {
+            |c| c.class == Hpricot::Elem and c.name == "em"
+          }.inner_text.strip
         end
       end
 
