@@ -76,15 +76,19 @@
 
 ;; Simple Vim command line functions
 
+(defun e ()
+  (interactive)
+  (revert-buffer nil t))
+
 (defun w (&optional args)
   (interactive "p")
   (save-buffer args))
 
-(defun q (&optional args)
-  (interactive "P")
-  (save-buffers-kill-emacs args))
-
-(defun wq (&optional args)
-  (interactive "P")
-  (save-buffers-kill-emacs args))
+;(defun q (&optional args)
+;  (interactive "P")
+;  (save-buffers-kill-emacs args))
+;
+;(defun wq (&optional args)
+;  (interactive "P")
+;  (save-buffers-kill-emacs args))
 
