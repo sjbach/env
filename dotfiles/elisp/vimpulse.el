@@ -6692,7 +6692,7 @@ Equivalent to Vim's C-w prefix.")
 (define-key viper-insert-basic-map (kbd "ESC") 'viper-exit-insert-state)
 ;; paste
 ; STEVE disabled the below because they conflict with my personal keymaps.
-(define-key viper-insert-basic-map "\C-r" 'vimpulse-paste-in-insert)
+;(define-key viper-insert-basic-map "\C-r" 'vimpulse-paste-in-insert)
 ;; temporarily escape to vi state
 (define-key viper-insert-basic-map "\C-o" 'viper-escape-to-vi)
 
