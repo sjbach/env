@@ -355,12 +355,13 @@ def parse_inner_entry(div_definition, entry)
         when /browse/
         when /learners-link/
         when /wcentral-link/
+        when /dictButtons/
         when nil
           d "Skipped: #{div}"
         when /^d$/
           d "Skipping weird nested div.d"
         else
-          puts "unknown block: #{div.get_attribute('class')}"
+          puts "unknown block: >>#{div.get_attribute('class')}<<"
           puts div
           exit 1
         end
