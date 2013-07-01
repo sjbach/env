@@ -1,23 +1,20 @@
-#!/usr/bin/ruby
+#!/usr/bin/ruby1.9.1
 #
 # Merriam-Webster.com scraper
 #
-# Works okay on the ~1200 words I tried.
-#
-# Had to be re-written for m-w.com's Aug./Sept. 2010 site relaunch.
+# Works okay on the ~1200 words I tried, as of July, 2013.
 #
 # Setup:
 #  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
-#  sudo gem install --version 0.6.164 hpricot
+#  sudo gem install nokogiri
 #
 
 # TODO:
-# - rewrite using nokogiri or something similar
 # - do an initial pass of the DOM removing <style> and Facebook/G+ stuff
 
 require 'uri'
 require 'rubygems'
-require 'hpricot'
+require 'nokogiri'
 require 'open-uri'
 require 'net/http'
 
@@ -30,13 +27,13 @@ end
 
 def main
   url = uri_escape("http://www.merriam-webster.com/dictionary/#{ARGV[0]}")
-  doc = Hpricot(open(url))
+  doc = Nokogiri::HTML(open(url))
 
   # Check to see if there are multiple entries
   entries = []
 
-  doc.search("//ol[@class = 'results']") do |ol|
-    ol.search("//li/a") do |a|
+  doc.xpath("//ol[@class = 'results']").each do |ol|
+    ol.xpath(".//li/a").each do |a|
       entries << a.attributes["href"]
     end
   end
@@ -52,10 +49,10 @@ def main
     (0..(entries.length-1)).each do |i|
       params = { 'start' => 0, 'show' => i.to_s, 'ref' => 'dictionary' }
       d "uri: #{uri}, params: #{params}"
-      resp, data = Net::HTTP.post_form(uri, params)
+      resp = Net::HTTP.post_form(uri, params)
       d "resp: #{resp}"
       if resp.class == Net::HTTPOK
-        success &= parse_outer_entry(Hpricot(data))
+        success &= parse_outer_entry(Nokogiri::HTML(resp.body))
       else
         puts "form post failed for entry #{i}"
         exit 1
@@ -106,7 +103,7 @@ class DictEntry
     :pronunciation, :etymology, :first_use, :related, :synonyms_etc,
     :synonyms_discussion, :usage_discussion, :definitions,
     :special_definitions, :examples, :transitive_verb, :variant, :encyclopedia,
-    :source
+    :source, :bio_note
 
   def initialize
     @word = nil
@@ -128,6 +125,7 @@ class DictEntry
     @variant = nil
     @encyclopedia = nil
     @source = nil
+    @bio_note = nil
   end
 
   def pretty_print
@@ -196,28 +194,31 @@ class DictEntry
       puts "Encyclopedia..."
       puts wrap_text(@encyclopedia, "  ")
     end
+    if @bio_note
+      puts "Biographical Note..."
+      puts wrap_text(@bio_note, "  ")
+    end
 
     puts
   end
 end
 
 def parse_outer_entry(doc)
-
-  doc.search("div.definition") do |div_definition|
+  doc.css("div.definition").each do |div_definition|
     entry = DictEntry.new
-    word = (div_definition/"h1").inner_text
+    word = div_definition.at_css('h1').inner_text
     # Hack to remove "About Our Definitions" interfering with the entry
     entry.word = word.sub(/About Our Definitions.*/, '')
     d "found definition for #{entry.word}"
 
     # STEVE should this be somewhere further down?
-    entry.available = (div_definition/'div.teaser').empty?
+    entry.available = div_definition.at_css('div.teaser').nil?
 
-    if div_definition.search("div#mwEntryData").empty?
-      entry.pretty_print
+    if div_definition.css("div#mwEntryData").empty?
+      entry.pretty_print()
     else
-      div_definition.search("div#mwEntryData") do |div_mwEntryData|
-        headword_divs = div_mwEntryData.search('div.headword')
+      div_definition.css("div#mwEntryData").each do |div_mwEntryData|
+        headword_divs = div_mwEntryData.css('div.headword')
         if headword_divs and headword_divs.length > 1
           d "multiple headwords"
           # Hack: break the HTML into sections, each holding all content between
@@ -225,18 +226,18 @@ def parse_outer_entry(doc)
           headword_divs.each do |headword_div|
             els = [headword_div]
             iter = headword_div.next_sibling
-            while iter and not iter.classes.include?("headword")
+            while iter and not (iter.attributes['class'] &&
+                                iter.attributes['class'].content.include?('headword'))
               d "adding #{iter.to_html[0..20]} after #{els.length}"
               els << iter
               iter = iter.next_sibling
             end
             d "creating new doc with #{els.length} elements"
-            # Hpricot crashes if I try to create an Element instead of a whole
-            # document.
-            new_div_definition = Hpricot(
+            # There might be a better way to do this.
+            new_div_definition = Nokogiri::HTML(
               '<div class="definition">' +
               els.map{ |el| el.to_html }.join +
-              '</div>').search('div.definition')
+              '</div>').at_css('div.definition')
               parse_inner_entry(new_div_definition,
                                 Marshal::load(Marshal.dump(entry)))
           end
@@ -250,18 +251,20 @@ end
 
 def parse_inner_entry(div_definition, entry)
 
-      div_definition.search("div.headword") do |div_headword|
-        entry.function = (div_headword/"span.main-fl").inner_text.strip
-        unless (div_headword/"span.usg").empty?
-          entry.usage = (div_headword/"span.usg").inner_text.strip
+      div_definition.css("div.headword").each do |div_headword|
+        entry.function = div_headword.at_css("span.main-fl") && \
+          div_headword.at_css("span.main-fl").inner_text.strip
+        unless div_headword.at_css("span.usg").nil?
+          entry.usage = div_headword.at_css("span.usg").inner_text.strip
         end
-        unless (div_headword/"span.pr").empty?
-          entry.pronunciation = (div_headword/"span.pr").inner_text.strip
+        unless div_headword.at_css("span.pr").nil?
+          entry.pronunciation = div_headword.at_css("span.pr").inner_text.strip
         end
+
         # STEVE gotta be a better way.
-        if div_headword.children.find {|c| c.class == Hpricot::Elem and c.name == "em"}
-          entry.source = div_headword.children.find {
-            |c| c.class == Hpricot::Elem and c.name == "em"
+        if div_headword.children.find {|c| c.class == Nokogiri::XML::Element and c.name == "em"}
+          entry.source = div_headword.children.find { |c|
+            c.class == Nokogiri::XML::Element and c.name == "em"
           }.inner_text.strip
         end
       end
@@ -274,32 +277,32 @@ def parse_inner_entry(div_definition, entry)
           parse_definition(div, entry.transitive_verb, entry.definitions)
         when /example-sentences/
           d 'example-sentences'
-          div.search("li") do |li|
-            unless li.inner_text == '[+]more[-]hide'
-              entry.examples << li.inner_text
+          div.css("li").each do |li|
+            unless li.inner_text.strip == '[+]more[-]hide'
+              entry.examples << li.inner_text.strip
             end
           end
         when /etymology/
           d 'etymology'
           assert(entry.etymology.nil?)
           # Sometimes includes a First Use sub div note.
-          extra_text = \
-            (div/">div.content>div").to_a.inject("") { |s,e|
-              s + "\n#{e.inner_text.strip}"
-            }
+          extra_text = div.css(">div.content>div").to_a.inject("") { |s,el|
+              s + "\n#{el.inner_text.strip}"
+          }
           if not extra_text.empty?
-            div.search(">div.content>div") do |div_inner|
+            div.css(">div.content>div").each do |div_inner|
               div_inner.swap('')
             end
           end
-          entry.etymology = (div/">div.content").inner_text.strip + extra_text
+          entry.etymology = \
+            div.at_css(">div.content").inner_text.strip + extra_text
         when /first-use/
           d "first-use"
           assert(entry.first_use.nil?)
-          entry.first_use = (div/">div.content").inner_text
+          entry.first_use = div.at_css(">div.content").inner_text
         when /synonyms-reference/
           d 'synonyms-reference'
-          div.search(">div>div>div>div>div") do |div_related|
+          div.css(">div>div>div>div>div").each do |div_related|
             case div_related.get_attribute('class')
             when /(syn|ant|rel|near)-para/
               inner_text = div_related.inner_text.strip
@@ -320,10 +323,11 @@ def parse_inner_entry(div_definition, entry)
           end
         when /synonyms-discussion/
           assert(entry.synonyms_discussion.nil?)
-          entry.synonyms_discussion = (div/">div.content").inner_text.strip
+          entry.synonyms_discussion = \
+            div.at_css(">div.content").inner_text.strip
         when /usage-discussion/
           assert(entry.usage_discussion.nil?)
-          entry.usage_discussion = (div/">div.content").inner_text.strip
+          entry.usage_discussion = div.at_css(">div.content").inner_text.strip
         when /^us$/
           assert(entry.usage_discussion.nil?)
           entry.usage_discussion = div.inner_text.strip
@@ -337,19 +341,21 @@ def parse_inner_entry(div_definition, entry)
           entry.has_image = true
         when /^variant$/
           assert(entry.variant.nil?)
-          entry.variant = (div/">div.content").inner_text.strip
+          entry.variant = div.at_css(">div.content").inner_text.strip
         when /^concise-link$/
           # td class blurb
-          encyclopedia = (div/">table>tr>td").inner_text.strip
+          encyclopedia = div.at_css(">table>tr>td").inner_text.strip
           # Strip initial "<word> ? " before entry.
           encyclopedia = encyclopedia.sub(/^\s*#{entry.word}\s*\W*\s*/,'')
           # Strip everything after READ ARTICLE.
           entry.encyclopedia = encyclopedia.sub(/\s*READ.*/,'')
         when /^dr$/
           # Special use of word?
-          div.search(">div.d>div") do |div_inner|
+          div.css(">div.d>div").each do |div_inner|
             parse_definition(div_inner, :unset, entry.special_definitions)
           end
+        when /^bio-note$/
+          entry.bio_note = div.at_css("div.content").inner_text.strip
         when /rhyming-dictionary/
         when /britannica-entry/
         when /browse/
@@ -367,13 +373,13 @@ def parse_inner_entry(div_definition, entry)
         end
       }
 
-      div_definition.search("div.d") do |div_d|
-        div_d.search(">div") do |div1|
+      div_definition.css("div.d").each do |div_d|
+        div_d.css(">div").each do |div1|
 
           # Open the KonaBody container, if needed.
           if div1.get_attribute('class') == "KonaBody"
             d "Saw KonaBody"
-            div1.search(">div") do |div2|
+            div1.css(">div").each do |div2|
               d "KonaBody iter"
               div_processor.call(div2)
             end
@@ -386,28 +392,28 @@ def parse_inner_entry(div_definition, entry)
 
   # TODO: validate parse
 
-  entry.pretty_print
+  entry.pretty_print()
 
   return true
 end
 
 def parse_definition(div_elem, transitive_verb, array)
-  unless (div_elem/"div.snum").empty?
-    num = (div_elem/"div.snum").inner_text
+  unless div_elem.at_css("div.snum").nil?
+    num = div_elem.at_css("div.snum").inner_text
   end
 
   # Sometimes senses include sub-senses with letters as indicators.
-  div_elem.search("div.scnt") do |div_scnt|
-    if (div_scnt/"em.sn").empty?
+  div_elem.css("div.scnt").each do |div_scnt|
+    if div_scnt.at_css("em.sn").nil?
       # No lettered sub-senses.
       definition = div_scnt.inner_text.strip.sub(/^: /,'')
       array << [num, nil, definition, transitive_verb]
     else
-      div_scnt.search("span.ssens") do |span_ssens|
-        if (span_ssens/"em.sn").empty?
+      div_scnt.css("span.ssens").each do |span_ssens|
+        if span_ssens.at_css("em.sn").nil?
           letter = nil
         else
-          letter = (span_ssens/"em.sn").inner_text.strip
+          letter = span_ssens.at_css("em.sn").inner_text.strip
         end
         definition = span_ssens.inner_text.strip.sub(/^#{letter}[^:]*: /,'')
         array << [num, letter, definition, transitive_verb]
