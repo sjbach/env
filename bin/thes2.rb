@@ -1,6 +1,6 @@
 #!/usr/bin/ruby1.9.1
 #
-# Thesaurus.com scraper
+# Thesaurus.com scraper for August 2013 site re-write.
 #
 # Setup:
 #  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
@@ -11,7 +11,6 @@ require 'uri'
 require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
-require 'net/http'
 
 $debug = false
 
@@ -55,14 +54,13 @@ def uri_escape(str)
                  .gsub("]", "%5D")
 end
 
+# Fork + file descriptor magic to wrap the output in `less`.
 $rd, $wr = IO.pipe
-
 if fork()
   $wr.close
   $stdin.reopen($rd)
   exec "less"
 end
-
 $rd.close
 
 def main
@@ -75,9 +73,11 @@ def main
     $wr.puts "Entry: #{div.at_css('strong.ttl').inner_text.strip} (#{div.at_css('em.txt').inner_text.strip})"
     $wr.puts 'Synonyms...'
     $wr.puts to_terminal_rows(div.css('.relevancy-list span.text').map { |el| el.inner_text.strip })
-    $wr.puts 'Antonyms...'
-    $wr.puts to_terminal_rows(div.css('.antonyms span.text').map { |el| el.inner_text.strip })
-    $wr.puts
+    if not div.css('.antonyms span.text').empty?
+      $wr.puts 'Antonyms...'
+      $wr.puts to_terminal_rows(div.css('.antonyms span.text').map { |el| el.inner_text.strip })
+    end
+      $wr.puts
   end
 
   doc.css("div.syn_of_syns").each do |div|
@@ -88,8 +88,7 @@ def main
     $wr.puts
   end
 
-
-  if !doc.css('div#example-sentences p').empty?
+  if not doc.css('div#example-sentences p').empty?
     $wr.puts 'Example Sentences:'
     doc.css("div#example-sentences p").each do |p|
       $wr.puts wrap_text(p.inner_text.strip).sub(/^  /,"- ")
@@ -97,14 +96,12 @@ def main
     $wr.puts
   end
 
-  if !doc.css('div#word-origin p').empty?
+  if not doc.css('div#word-origin p').empty?
     $wr.puts 'Word Origin & History:'
     doc.css("div#word-origin p").each do |p|
       $wr.puts wrap_text(p.inner_text.strip.gsub(/\s+/, ' ')).sub(/^  /,"- ")
     end
   end
-
-
 end
 
 main()
