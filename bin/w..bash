@@ -36,7 +36,12 @@ if ! [ "$word" ] || \
   usage
 fi
 
-dict_dbs=$(dict --dbs | sed 1d | sed -r 's/^ //; s/[[:space:]]+.*//')
+# Skip translation dictionaries.
+dict_dbs=$(dict --dbs \
+  | sed 1d \
+  | sed -r 's/^ //; s/[[:space:]]+.*//' \
+  | grep -v '^...-...$' \
+  | grep -v 'english\|trans\|all')
 
 if ! [ -d "$word_dir" ] ; then
   if ! dict "$word" >/dev/null 2>&1 && [ -z "$force" ]; then
