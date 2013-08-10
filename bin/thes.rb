@@ -1,28 +1,21 @@
-#!/usr/bin/ruby
+#!/usr/bin/ruby1.9.1
 #
-# Thesaurus
+# Thesaurus.com scraper for August 2013 site re-write.
 #
 # Setup:
 #  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
-#  sudo gem install hpricot
-#
-# Tried to do this using scrubyt, didn't work out.
+#  sudo gem install nokogiri
 #
 
 require 'uri'
 require 'rubygems'
-require 'hpricot'
+require 'nokogiri'
 require 'open-uri'
 
-$stifle_did_you_mean = false
-
-if ARGV[0] == '-q'
-  $stifle_did_you_mean = true
-  ARGV.shift
-end
+$debug = false
 
 if ARGV[0].nil?
-  $stderr.puts "Usage: thes [-q] <word>"
+  $stderr.puts "Usage: thes <word>"
   exit 0
 end
 
@@ -61,94 +54,62 @@ def uri_escape(str)
                  .gsub("]", "%5D")
 end
 
-rd, wr = IO.pipe
-
+# Fork + file descriptor magic to wrap the output in `less`.
+$rd, $wr = IO.pipe
 if fork()
-  wr.close
-  $stdin.reopen(rd)
+  $wr.close
+  $stdin.reopen($rd)
   exec "less"
 end
+$rd.close
 
-rd.close
+def main
+  term = uri_escape(ARGV[0])
+  doc = Nokogiri::HTML(
+    open("http://thesaurus.com/browse/#{term}"))
 
-term = uri_escape(ARGV[0])
-doc = Hpricot(open("http://thesaurus.com/browse/#{term}",
-                   "User-Agent" => "Ruby/#{RUBY_VERSION}"))
+  # "Synonims" -- irony?
+  doc.css("div.synonims").each do |div|
+    $wr.puts "Entry: #{div.at_css('strong.ttl').inner_text.strip} (#{div.at_css('em.txt').inner_text.strip})"
+    $wr.puts 'Synonyms...'
+    $wr.puts to_terminal_rows(div.css('.relevancy-list span.text').map { |el| el.inner_text.strip })
+    if not div.css('.antonyms span.text').empty?
+      $wr.puts 'Antonyms...'
+      $wr.puts to_terminal_rows(div.css('.antonyms span.text').map { |el| el.inner_text.strip })
+    end
+      $wr.puts
+  end
 
-doc.search("//table[@class = 'the_content']") do |table|
+  doc.css("div.syn_of_syns").each do |div|
+    $wr.puts "Entry: #{div.at_css('.subtitle a').inner_text.strip} (#{div.at_css('.def').inner_text.strip})"
+    $wr.puts 'Synonyms...'
+    $wr.puts to_terminal_rows(div.css('li a').map { |el| el.inner_text })
+    # No Antonyms available in content. :-(
+    $wr.puts
+  end
 
-  table.search("//td[@valign = 'top']") do |e|
-    clause = e.innerText
+  if not doc.css('div#example-sentences p').empty?
+    $wr.puts 'Example Sentences:'
+    doc.css("div#example-sentences p").each do |p|
+      $wr.puts wrap_text(p.inner_text.strip).sub(/^  /,"- ")
+    end
+    $wr.puts
+  end
 
-    case clause
-    when /Entry/
-      # The first entry has some extra stuff that we need to avoid
-      # printing.
-      top_entry = e.next_sibling.search("//span[@id = 'queryn']").first
-      if top_entry
-        wr.puts "Entry: #{top_entry.innerText.strip}"
-      else
-        wr.puts "Entry: #{e.next_sibling.innerText.strip}"
-      end
-
-    when /Speech/
-      e.next_sibling.search("span") do |speech|
-        wr.puts "Type: #{speech.innerText}"
-      end
-
-    when /Synonyms/
-      wr.puts "Synonyms..."
-
-      words = e.next_sibling.innerText.gsub(/\s+/, " ").strip.split(",")
-      wr.puts to_terminal_rows(words)
-
-    when /Antonyms/
-      wr.puts "Antonyms..."
-
-      words = e.next_sibling.innerText.gsub(/\s+/, " ").strip.split(",")
-      wr.puts to_terminal_rows(words)
-
-    when /Definition/
-      wr.puts "Definition: #{e.next_sibling.innerText}"
-
-    when /Notes/
-      wr.puts "Notes..."
-      wr.puts "#{wrap_text(e.next_sibling.innerText)}"
-
-    when /Related/
-      wr.puts "Related..."
-      wr.puts "#{wrap_text(e.next_sibling.innerText.strip)}"
-
-    when /Concept/
-      wr.puts "Concept: #{e.next_sibling.innerText}"
-
-    when /Category/
-      wr.puts "Category: #{e.next_sibling.innerText}"
-
-    else
-      wr.puts "Unknown::"
-      wr.puts clause
-
+  if not doc.css('div#word-origin p').empty?
+    $wr.puts 'Word Origin & History:'
+    doc.css("div#word-origin p").each do |p|
+      $wr.puts wrap_text(p.inner_text.strip.gsub(/\s+/, ' ')).sub(/^  /,"- ")
     end
   end
-  
-  wr.puts
+
+  # Sections that used to be available but is no longer available:
+  # - Notes
+  # - Related
+  # - Concept
+  # - Category
+
 end
 
-unless $stifle_did_you_mean
-  wr.puts
-  wr.puts "-------------------------"
-  wr.puts
-
-  doc.search("//div[@class = 'padnearby']") do |nearby|
-    wr.puts "Did you mean..."
-    words = []
-    nearby.search("div/a") do |word|
-      words << word.innerText
-    end
-
-    wr.puts to_terminal_rows(words)
-    wr.puts
-  end
-end
+main()
 
