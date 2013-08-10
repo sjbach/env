@@ -102,6 +102,13 @@ def main
       $wr.puts wrap_text(p.inner_text.strip.gsub(/\s+/, ' ')).sub(/^  /,"- ")
     end
   end
+
+  # Sections that used to be available but is no longer available:
+  # - Notes
+  # - Related
+  # - Concept
+  # - Category
+
 end
 
 main()
