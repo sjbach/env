@@ -69,8 +69,9 @@ end
 
 def main
   term = uri_escape(ARGV[0])
-  doc = Nokogiri::HTML(
-    open("http://thesaurus.com/browse/#{term}"))
+  doc = Nokogiri::HTML(open("http://thesaurus.com/browse/#{term}"))
+
+  return if doc.at_css('.words-gallery-no-results')
 
   # "Synonims" -- irony?
   doc.css("div.synonims").each do |div|
