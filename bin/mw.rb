@@ -81,6 +81,7 @@ def parse_doc(content)
     '#facebook',
     '.learners-link',
     '.wcentral-link',
+    'input',
   ]
   doc = Nokogiri::HTML(content)
   worthless_content_selectors.each do |selector|
@@ -285,10 +286,10 @@ def scrape_inner_entry(div_definition, entry)
   div_definition.css("div.headword").each do |div_headword|
     entry.function = div_headword.at_css("span.main-fl") && \
       div_headword.at_css("span.main-fl").inner_text.strip
-    unless div_headword.at_css("span.usg").nil?
+    if div_headword.at_css("span.usg")
       entry.usage = div_headword.at_css("span.usg").inner_text.strip
     end
-    unless div_headword.at_css("span.pr").nil?
+    if div_headword.at_css("span.pr")
       entry.pronunciation = div_headword.at_css("span.pr").inner_text.strip
     end
 
@@ -423,7 +424,7 @@ def scrape_inner_entry(div_definition, entry)
 end
 
 def scrape_definition(div_elem, transitive_verb, array)
-  unless div_elem.at_css("div.snum").nil?
+  if div_elem.at_css("div.snum")
     num = div_elem.at_css("div.snum").inner_text
   end
 
@@ -431,7 +432,7 @@ def scrape_definition(div_elem, transitive_verb, array)
   div_elem.css("div.scnt").each do |div_scnt|
     if div_scnt.at_css("em.sn").nil?
       # No lettered sub-senses.
-      definition = div_scnt.inner_text.strip.sub(/^: /,'')
+      definition = div_scnt.inner_text.strip.sub(/^:[[:space:]]+/, '')
       array << [num, nil, definition, transitive_verb]
     else
       div_scnt.css("span.ssens").each do |span_ssens|
@@ -440,7 +441,9 @@ def scrape_definition(div_elem, transitive_verb, array)
         else
           letter = span_ssens.at_css("em.sn").inner_text.strip
         end
-        definition = span_ssens.inner_text.strip.sub(/^#{letter}[^:]*: /,'')
+        definition = span_ssens.inner_text.strip.sub(
+          /^#{letter}[^:]*:[[:space:]]+/,
+          '')
         array << [num, letter, definition, transitive_verb]
       end
     end
