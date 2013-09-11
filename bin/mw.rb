@@ -43,7 +43,7 @@ def main
   success = true
 
   if entries.empty?
-    success &= parse_outer_entry(doc)
+    success &= scrape_outer_entry(doc)
   else
     uri = URI.parse(url)
     (0..(entries.length-1)).each do |i|
@@ -52,7 +52,7 @@ def main
       resp = Net::HTTP.post_form(uri, params)
       d "resp: #{resp}"
       if resp.class == Net::HTTPOK
-        success &= parse_outer_entry(Nokogiri::HTML(resp.body))
+        success &= scrape_outer_entry(Nokogiri::HTML(resp.body))
       else
         puts "form post failed for entry #{i}"
         exit 1
@@ -203,7 +203,7 @@ class DictEntry
   end
 end
 
-def parse_outer_entry(doc)
+def scrape_outer_entry(doc)
   doc.css("div.definition").each do |div_definition|
     entry = DictEntry.new
     word = div_definition.at_css('h1').inner_text
@@ -238,19 +238,19 @@ def parse_outer_entry(doc)
               '<div class="definition">' +
               els.map{ |el| el.to_html }.join +
               '</div>').at_css('div.definition')
-              parse_inner_entry(new_div_definition,
-                                Marshal::load(Marshal.dump(entry)))
+              scrape_inner_entry(new_div_definition,
+                                 Marshal::load(Marshal.dump(entry)))
           end
         else
-          parse_inner_entry(div_definition, Marshal::load(Marshal.dump(entry)))
+          scrape_inner_entry(div_definition,
+                             Marshal::load(Marshal.dump(entry)))
         end
       end
     end
   end
 end
 
-def parse_inner_entry(div_definition, entry)
-
+def scrape_inner_entry(div_definition, entry)
       div_definition.css("div.headword").each do |div_headword|
         entry.function = div_headword.at_css("span.main-fl") && \
           div_headword.at_css("span.main-fl").inner_text.strip
@@ -274,7 +274,7 @@ def parse_inner_entry(div_definition, entry)
         case div.get_attribute('class')
         when /^(sblk$|sense-block)/
           d 'sblk'
-          parse_definition(div, entry.transitive_verb, entry.definitions)
+          scrape_definition(div, entry.transitive_verb, entry.definitions)
         when /example-sentences/
           d 'example-sentences'
           div.css("li").each do |li|
@@ -352,7 +352,7 @@ def parse_inner_entry(div_definition, entry)
         when /^dr$/
           # Special use of word?
           div.css(">div.d>div").each do |div_inner|
-            parse_definition(div_inner, :unset, entry.special_definitions)
+            scrape_definition(div_inner, :unset, entry.special_definitions)
           end
         when /^bio-note$/
           entry.bio_note = div.at_css("div.content").inner_text.strip
@@ -397,7 +397,7 @@ def parse_inner_entry(div_definition, entry)
   return true
 end
 
-def parse_definition(div_elem, transitive_verb, array)
+def scrape_definition(div_elem, transitive_verb, array)
   unless div_elem.at_css("div.snum").nil?
     num = div_elem.at_css("div.snum").inner_text
   end
