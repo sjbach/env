@@ -280,130 +280,130 @@ def scrape_outer_entry(doc)
 end
 
 def scrape_inner_entry(div_definition, entry)
-      div_definition.css("div.headword").each do |div_headword|
-        entry.function = div_headword.at_css("span.main-fl") && \
-          div_headword.at_css("span.main-fl").inner_text.strip
-        unless div_headword.at_css("span.usg").nil?
-          entry.usage = div_headword.at_css("span.usg").inner_text.strip
-        end
-        unless div_headword.at_css("span.pr").nil?
-          entry.pronunciation = div_headword.at_css("span.pr").inner_text.strip
-        end
+  div_definition.css("div.headword").each do |div_headword|
+    entry.function = div_headword.at_css("span.main-fl") && \
+      div_headword.at_css("span.main-fl").inner_text.strip
+    unless div_headword.at_css("span.usg").nil?
+      entry.usage = div_headword.at_css("span.usg").inner_text.strip
+    end
+    unless div_headword.at_css("span.pr").nil?
+      entry.pronunciation = div_headword.at_css("span.pr").inner_text.strip
+    end
 
-        # STEVE gotta be a better way.
-        if div_headword.children.find {|c| c.class == Nokogiri::XML::Element and c.name == "em"}
-          entry.source = div_headword.children.find { |c|
-            c.class == Nokogiri::XML::Element and c.name == "em"
-          }.inner_text.strip
+    # STEVE gotta be a better way.
+    if div_headword.children.find {|c| c.class == Nokogiri::XML::Element and c.name == "em"}
+      entry.source = div_headword.children.find { |c|
+        c.class == Nokogiri::XML::Element and c.name == "em"
+      }.inner_text.strip
+    end
+  end
+
+  div_processor = lambda { |div|
+
+    case div.get_attribute('class')
+    when /^(sblk$|sense-block)/
+      d 'sblk'
+      scrape_definition(div, entry.transitive_verb, entry.definitions)
+    when /example-sentences/
+      d 'example-sentences'
+      div.css("li").each do |li|
+        unless li.inner_text.strip == '[+]more[-]hide'
+          entry.examples << li.inner_text.strip
         end
       end
-
-      div_processor = lambda { |div|
-
-        case div.get_attribute('class')
-        when /^(sblk$|sense-block)/
-          d 'sblk'
-          scrape_definition(div, entry.transitive_verb, entry.definitions)
-        when /example-sentences/
-          d 'example-sentences'
-          div.css("li").each do |li|
-            unless li.inner_text.strip == '[+]more[-]hide'
-              entry.examples << li.inner_text.strip
-            end
-          end
-        when /etymology/
-          d 'etymology'
-          assert(entry.etymology.nil?)
-          # Sometimes includes a First Use sub div note.
-          extra_text = div.css(">div.content>div").to_a.inject("") { |s,el|
-              s + "\n#{el.inner_text.strip}"
-          }
-          if not extra_text.empty?
-            div.css(">div.content>div").each do |div_inner|
-              div_inner.swap('')
-            end
-          end
-          entry.etymology = \
-            div.at_css(">div.content").inner_text.strip + extra_text
-        when /first-use/
-          d "first-use"
-          assert(entry.first_use.nil?)
-          entry.first_use = div.at_css(">div.content").inner_text
-        when /synonyms-reference/
-          d 'synonyms-reference'
-          div.css('dl').each do |dl|
-            type = dl.at_css('dt').inner_text.strip
-            words = dl.at_css('dd').inner_text.strip
-            entry.synonyms_etc << [type, words]
-          end
-        when /synonyms-discussion/
-          assert(entry.synonyms_discussion.nil?)
-          entry.synonyms_discussion = \
-            div.at_css(">div.content").inner_text.strip
-        when /usage-discussion/
-          assert(entry.usage_discussion.nil?)
-          entry.usage_discussion = div.at_css(">div.content").inner_text.strip
-        when /^us$/
-          assert(entry.usage_discussion.nil?)
-          entry.usage_discussion = div.inner_text.strip
-        when /^r$/  # related?
-          d 'r'
-          entry.related << div.inner_text
-        when /^vt$/
-          # transitive verb -- applies to subsequent definitions
-          entry.transitive_verb = (div.inner_text !~ /intransitive/)
-        when /^art$/
-          entry.has_image = true
-        when /^variant$/
-          assert(entry.variant.nil?)
-          entry.variant = div.at_css(">div.content").inner_text.strip
-        when /^concise-link$/
-          # td class blurb
-          encyclopedia = div.at_css(">table>tr>td").inner_text.strip
-          # Strip initial "<word> ? " before entry.
-          encyclopedia = encyclopedia.sub(/^\s*#{entry.word}\s*\W*\s*/,'')
-          # Strip everything after READ ARTICLE.
-          entry.encyclopedia = encyclopedia.sub(/\s*READ.*/,'')
-        when /^dr$/
-          # Special use of word?
-          div.css(">div.d>div").each do |div_inner|
-            scrape_definition(div_inner, :unset, entry.special_definitions)
-          end
-        when /^bio-note$/
-          entry.bio_note = div.at_css("div.content").inner_text.strip
-        when /rhyming-dictionary/
-        when /britannica-entry/
-        when /browse/
-        when /learners-link/
-        when /wcentral-link/
-        when /dictButtons/
-        when nil
-          d "Skipped: #{div}"
-        when /^d$/
-          d "Skipping weird nested div.d"
-        else
-          puts "unknown block: >>#{div.get_attribute('class')}<<"
-          puts div
-          exit 1
-        end
+    when /etymology/
+      d 'etymology'
+      assert(entry.etymology.nil?)
+      # Sometimes includes a First Use sub div note.
+      extra_text = div.css(">div.content>div").to_a.inject("") { |s,el|
+          s + "\n#{el.inner_text.strip}"
       }
-
-      div_definition.css("div.d").each do |div_d|
-        div_d.css(">div").each do |div1|
-
-          # Open the KonaBody container, if needed.
-          if div1.get_attribute('class') == "KonaBody"
-            d "Saw KonaBody"
-            div1.css(">div").each do |div2|
-              d "KonaBody iter"
-              div_processor.call(div2)
-            end
-          else
-            d "No container"
-            div_processor.call(div1)
-          end
+      if not extra_text.empty?
+        div.css(">div.content>div").each do |div_inner|
+          div_inner.swap('')
         end
       end
+      entry.etymology = \
+        div.at_css(">div.content").inner_text.strip + extra_text
+    when /first-use/
+      d "first-use"
+      assert(entry.first_use.nil?)
+      entry.first_use = div.at_css(">div.content").inner_text
+    when /synonyms-reference/
+      d 'synonyms-reference'
+      div.css('dl').each do |dl|
+        type = dl.at_css('dt').inner_text.strip
+        words = dl.at_css('dd').inner_text.strip
+        entry.synonyms_etc << [type, words]
+      end
+    when /synonyms-discussion/
+      assert(entry.synonyms_discussion.nil?)
+      entry.synonyms_discussion = \
+        div.at_css(">div.content").inner_text.strip
+    when /usage-discussion/
+      assert(entry.usage_discussion.nil?)
+      entry.usage_discussion = div.at_css(">div.content").inner_text.strip
+    when /^us$/
+      assert(entry.usage_discussion.nil?)
+      entry.usage_discussion = div.inner_text.strip
+    when /^r$/  # related?
+      d 'r'
+      entry.related << div.inner_text
+    when /^vt$/
+      # transitive verb -- applies to subsequent definitions
+      entry.transitive_verb = (div.inner_text !~ /intransitive/)
+    when /^art$/
+      entry.has_image = true
+    when /^variant$/
+      assert(entry.variant.nil?)
+      entry.variant = div.at_css(">div.content").inner_text.strip
+    when /^concise-link$/
+      # td class blurb
+      encyclopedia = div.at_css(">table>tr>td").inner_text.strip
+      # Strip initial "<word> ? " before entry.
+      encyclopedia = encyclopedia.sub(/^\s*#{entry.word}\s*\W*\s*/,'')
+      # Strip everything after READ ARTICLE.
+      entry.encyclopedia = encyclopedia.sub(/\s*READ.*/,'')
+    when /^dr$/
+      # Special use of word?
+      div.css(">div.d>div").each do |div_inner|
+        scrape_definition(div_inner, :unset, entry.special_definitions)
+      end
+    when /^bio-note$/
+      entry.bio_note = div.at_css("div.content").inner_text.strip
+    when /rhyming-dictionary/
+    when /britannica-entry/
+    when /browse/
+    when /learners-link/
+    when /wcentral-link/
+    when /dictButtons/
+    when nil
+      d "Skipped: #{div}"
+    when /^d$/
+      d "Skipping weird nested div.d"
+    else
+      puts "unknown block: >>#{div.get_attribute('class')}<<"
+      puts div
+      exit 1
+    end
+  }
+
+  div_definition.css("div.d").each do |div_d|
+    div_d.css(">div").each do |div1|
+
+      # Open the KonaBody container, if needed.
+      if div1.get_attribute('class') == "KonaBody"
+        d "Saw KonaBody"
+        div1.css(">div").each do |div2|
+          d "KonaBody iter"
+          div_processor.call(div2)
+        end
+      else
+        d "No container"
+        div_processor.call(div1)
+      end
+    end
+  end
 
   # TODO: validate parse
 
