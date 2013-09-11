@@ -372,6 +372,14 @@ def scrape_inner_entry(div_definition, entry)
     when /^bio-note$/
       entry.bio_note = div.at_css("div.content").inner_text.strip
     when /rhyming-dictionary/
+      actual_type = div.at_css('>h2>span').inner_text.strip
+      if actual_type !~ /Rhymes with/
+        # Some extra content is listed under rhyming-dictionary, but isn't
+        # actually about rhyming, e.g. 'Other Business Terms' or 'Other
+        # Philosophy Terms'.
+        words = div.at_css('div.content').inner_text.strip
+        entry.synonyms_etc << [actual_type, words]
+      end
     when /britannica-entry/
     when /browse/
     when /learners-link/
