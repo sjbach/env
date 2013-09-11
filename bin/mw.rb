@@ -132,7 +132,7 @@ end
 class DictEntry
 
   attr_accessor :word, :has_image, :available, :function, :usage,
-    :pronunciation, :etymology, :first_use, :related, :synonyms_etc,
+    :pronunciation, :etymology, :first_use, :relateds, :synonyms_etc,
     :synonyms_discussion, :usage_discussion, :definitions,
     :special_definitions, :examples, :transitive_verb, :variant, :encyclopedia,
     :source, :bio_note
@@ -146,7 +146,7 @@ class DictEntry
     @pronunciation = nil
     @etymology = nil
     @first_use = nil
-    @related = []
+    @relateds = []
     @synonyms_etc = []
     @synonyms_discussion = nil
     @usage_discussion = nil
@@ -175,8 +175,8 @@ class DictEntry
     puts "Entry: #{@word} #{@has_image ? '  (has image)' : ''}"
     puts "Source: #{@source}" if @source
     puts "Function: #{@function}" if @function
-    if not @related.empty?
-      @related.each do |r|
+    if not @relateds.empty?
+      @relateds.each do |r|
         puts wrap_text(r)
       end
     end
@@ -239,7 +239,9 @@ def scrape_outer_entry(doc)
   doc.css("div.definition").each do |div_definition|
     entry = DictEntry.new
     word = div_definition.at_css('h1').inner_text
-    # Hack to remove "About Our Definitions" interfering with the entry
+    # Hack to remove "About Our Definitions" interfering with the entry.
+    # (This is probably no longer necessary, but it doesn't hurt anything.)
+    # Note that entry.word may be overridden below.
     entry.word = word.sub(/About Our Definitions.*/, '')
     d "found definition for #{entry.word}"
 
@@ -256,6 +258,8 @@ def scrape_outer_entry(doc)
           # Hack: break the HTML into sections, each holding all content between
           # div.headwords.
           headword_divs.each do |headword_div|
+            cloned_entry = Marshal::load(Marshal.dump(entry))
+            cloned_entry.word = scrape_syllable_separated_word(headword_div)
             els = [headword_div]
             iter = headword_div.next_sibling
             while iter and not (iter.attributes['class'] &&
@@ -271,15 +275,23 @@ def scrape_outer_entry(doc)
               els.map{ |el| el.to_html }.join +
               '</div>').at_css('div.definition')
               scrape_inner_entry(new_div_definition,
-                                 Marshal::load(Marshal.dump(entry)))
+                                 cloned_entry)
           end
         else
-          scrape_inner_entry(div_definition,
-                             Marshal::load(Marshal.dump(entry)))
+          cloned_entry = Marshal::load(Marshal.dump(entry))
+          cloned_entry.word = scrape_syllable_separated_word(headword_divs[0])
+          scrape_inner_entry(div_definition, cloned_entry)
         end
       end
     end
   end
+end
+
+def scrape_syllable_separated_word(headword_div)
+  h2 = headword_div.at_css('h2')
+  h2.at_css('sup').remove if h2.at_css('sup')
+
+  h2.inner_text.strip
 end
 
 def scrape_inner_entry(div_definition, entry)
@@ -306,7 +318,8 @@ def scrape_inner_entry(div_definition, entry)
     case div.get_attribute('class')
     when /^(sblk$|sense-block)/
       d 'sblk'
-      scrape_definition(div, entry.transitive_verb, entry.definitions)
+      scrape_definition(div, entry.transitive_verb, entry.definitions,
+                        entry.relateds)
     when /example-sentences/
       d 'example-sentences'
       div.css("li").each do |li|
@@ -350,8 +363,9 @@ def scrape_inner_entry(div_definition, entry)
       assert(entry.usage_discussion.nil?)
       entry.usage_discussion = div.inner_text.strip
     when /^r$/  # related?
+      # Note: may no longer ever exist at this part of the DOM.
       d 'r'
-      entry.related << div.inner_text
+      entry.relateds << div.inner_text
     when /^vt$/
       # transitive verb -- applies to subsequent definitions
       entry.transitive_verb = (div.inner_text !~ /intransitive/)
@@ -370,7 +384,8 @@ def scrape_inner_entry(div_definition, entry)
     when /^dr$/
       # Special use of word?
       div.css(">div.d>div").each do |div_inner|
-        scrape_definition(div_inner, :unset, entry.special_definitions)
+        scrape_definition(div_inner, :unset, entry.special_definitions,
+                          entry.relateds)
       end
     when /^bio-note$/
       entry.bio_note = div.at_css("div.content").inner_text.strip
@@ -423,7 +438,7 @@ def scrape_inner_entry(div_definition, entry)
   return true
 end
 
-def scrape_definition(div_elem, transitive_verb, array)
+def scrape_definition(div_elem, transitive_verb, definitions, relateds)
   if div_elem.at_css("div.snum")
     num = div_elem.at_css("div.snum").inner_text
   end
@@ -433,7 +448,7 @@ def scrape_definition(div_elem, transitive_verb, array)
     if div_scnt.at_css("em.sn").nil?
       # No lettered sub-senses.
       definition = div_scnt.inner_text.strip.sub(/^:[[:space:]]+/, '')
-      array << [num, nil, definition, transitive_verb]
+      definitions << [num, nil, definition, transitive_verb]
     else
       div_scnt.css("span.ssens").each do |span_ssens|
         if span_ssens.at_css("em.sn").nil?
@@ -444,9 +459,16 @@ def scrape_definition(div_elem, transitive_verb, array)
         definition = span_ssens.inner_text.strip.sub(
           /^#{letter}[^:]*:[[:space:]]+/,
           '')
-        array << [num, letter, definition, transitive_verb]
+        definitions << [num, letter, definition, transitive_verb]
       end
     end
+  end
+
+  # E.g. '— pre·scrip·tive·ly   adverb'.  These seem to be associated with
+  # the word as a whole, not the particular definition, even though this
+  # content has been moved down to this level of the DOM.
+  div_elem.css("div.r").each do |div_r|
+    relateds << div_r.inner_text.strip
   end
 end
 
