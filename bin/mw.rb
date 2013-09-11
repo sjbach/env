@@ -27,7 +27,7 @@ end
 
 def main
   url = uri_escape("http://www.merriam-webster.com/dictionary/#{ARGV[0]}")
-  doc = Nokogiri::HTML(open(url))
+  doc = parse_doc(open(url))
 
   # Check to see if there are multiple entries
   entries = []
@@ -52,7 +52,7 @@ def main
       resp = Net::HTTP.post_form(uri, params)
       d "resp: #{resp}"
       if resp.class == Net::HTTPOK
-        success &= scrape_outer_entry(Nokogiri::HTML(resp.body))
+        success &= scrape_outer_entry(parse_doc(resp.body))
       else
         puts "form post failed for entry #{i}"
         exit 1
@@ -64,6 +64,32 @@ def main
     puts "No definition found for '#{ARGV[0]}'"
     exit 1
   end
+end
+
+# Parse input as an HTML document and remove elements from the DOM that are
+# known to interfere with parsing or are otherwise unwanted.
+def parse_doc(content)
+  worthless_content_selectors = [
+    'script',
+    'style',
+    '#homograph-tool-tip',
+    '.gplusBtn',
+    '.citeBtn',
+    '.facebookBtn',
+  ]
+  doc = Nokogiri::HTML(content)
+  worthless_content_selectors.each do |selector|
+    while true do
+      element = doc.at_css(selector)
+      if element.nil?
+        break
+      else
+        element.remove()
+      end
+    end
+  end
+
+  doc
 end
 
 # Debug print
@@ -234,7 +260,7 @@ def scrape_outer_entry(doc)
             end
             d "creating new doc with #{els.length} elements"
             # There might be a better way to do this.
-            new_div_definition = Nokogiri::HTML(
+            new_div_definition = parse_doc(
               '<div class="definition">' +
               els.map{ |el| el.to_html }.join +
               '</div>').at_css('div.definition')
