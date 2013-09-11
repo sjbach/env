@@ -331,24 +331,10 @@ def scrape_inner_entry(div_definition, entry)
           entry.first_use = div.at_css(">div.content").inner_text
         when /synonyms-reference/
           d 'synonyms-reference'
-          div.css(">div>div>div>div>div").each do |div_related|
-            case div_related.get_attribute('class')
-            when /(syn|ant|rel|near)-para/
-              inner_text = div_related.inner_text.strip
-              if inner_text =~ /^(.*): (.*)/
-                type = $1
-                words = $2
-                entry.synonyms_etc << [type, words]
-              else
-                puts "Could not parse synonyms thing: #{inner_text}"
-                exit 1
-              end
-            when /see-more/
-              nil # ignore
-            else
-              puts "unknown synonmys: #{div_related.get_attribute('class')}"
-              exit 1
-            end
+          div.css('dl').each do |dl|
+            type = dl.at_css('dt').inner_text.strip
+            words = dl.at_css('dd').inner_text.strip
+            entry.synonyms_etc << [type, words]
           end
         when /synonyms-discussion/
           assert(entry.synonyms_discussion.nil?)
