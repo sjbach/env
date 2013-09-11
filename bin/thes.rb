@@ -63,6 +63,10 @@ if fork()
 end
 $rd.close
 
+def clean(el)
+  el.inner_text.strip
+end
+
 def main
   term = uri_escape(ARGV[0])
   doc = Nokogiri::HTML(
@@ -70,20 +74,20 @@ def main
 
   # "Synonims" -- irony?
   doc.css("div.synonims").each do |div|
-    $wr.puts "Entry: #{div.at_css('strong.ttl').inner_text.strip} (#{div.at_css('em.txt').inner_text.strip})"
+    $wr.puts "Entry: #{clean(div.at_css('strong.ttl'))} (#{clean(div.at_css('em.txt'))})"
     $wr.puts 'Synonyms...'
-    $wr.puts to_terminal_rows(div.css('.relevancy-list span.text').map { |el| el.inner_text.strip })
+    $wr.puts to_terminal_rows(div.css('.relevancy-list span.text').map { |el| clean(el) })
     if not div.css('.antonyms span.text').empty?
       $wr.puts 'Antonyms...'
-      $wr.puts to_terminal_rows(div.css('.antonyms span.text').map { |el| el.inner_text.strip })
+      $wr.puts to_terminal_rows(div.css('.antonyms span.text').map { |el| clean(el) })
     end
       $wr.puts
   end
 
   doc.css("div.syn_of_syns").each do |div|
-    $wr.puts "Entry: #{div.at_css('.subtitle a').inner_text.strip} (#{div.at_css('.def').inner_text.strip})"
+    $wr.puts "Entry: #{clean(div.at_css('.subtitle a'))} (#{clean(div.at_css('.def'))})"
     $wr.puts 'Synonyms...'
-    $wr.puts to_terminal_rows(div.css('li a').map { |el| el.inner_text })
+    $wr.puts to_terminal_rows(div.css('li a').map { |el| clean(el) })
     # No Antonyms available in content. :-(
     $wr.puts
   end
@@ -91,7 +95,7 @@ def main
   if not doc.css('div#example-sentences p').empty?
     $wr.puts 'Example Sentences:'
     doc.css("div#example-sentences p").each do |p|
-      $wr.puts wrap_text(p.inner_text.strip).sub(/^  /,"- ")
+      $wr.puts wrap_text(clean(p)).sub(/^  /,"- ")
     end
     $wr.puts
   end
@@ -99,7 +103,7 @@ def main
   if not doc.css('div#word-origin p').empty?
     $wr.puts 'Word Origin & History:'
     doc.css("div#word-origin p").each do |p|
-      $wr.puts wrap_text(p.inner_text.strip.gsub(/\s+/, ' ')).sub(/^  /,"- ")
+      $wr.puts wrap_text(clean(p).gsub(/\s+/, ' ')).sub(/^  /,"- ")
     end
   end
 
