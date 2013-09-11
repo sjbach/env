@@ -103,7 +103,7 @@ def main
     end
   end
 
-  # Sections that used to be available but is no longer available:
+  # Sections that used to be available but are no longer available:
   # - Notes
   # - Related
   # - Concept
