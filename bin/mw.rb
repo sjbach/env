@@ -76,6 +76,9 @@ def parse_doc(content)
     '.gplusBtn',
     '.citeBtn',
     '.facebookBtn',
+    '#fb-comments',
+    '.fb-comments',
+    '#facebook',
   ]
   doc = Nokogiri::HTML(content)
   worthless_content_selectors.each do |selector|
