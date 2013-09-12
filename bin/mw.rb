@@ -438,6 +438,12 @@ def scrape_inner_entry(div_definition, entry)
   return true
 end
 
+def clean_definition(el)
+  # m-w.com has started to insert &nbsp; characters into the definitions to
+  # force 2+ spaces.  We only want a max of a single space, though.
+  el.inner_text.strip.gsub(/[[:space:]]+/, ' ')
+end
+
 def scrape_definition(div_elem, transitive_verb, definitions, relateds)
   if div_elem.at_css("div.snum")
     num = div_elem.at_css("div.snum").inner_text
@@ -447,7 +453,7 @@ def scrape_definition(div_elem, transitive_verb, definitions, relateds)
   div_elem.css("div.scnt").each do |div_scnt|
     if div_scnt.at_css("em.sn").nil?
       # No lettered sub-senses.
-      definition = div_scnt.inner_text.strip.sub(/^:[[:space:]]+/, '')
+      definition = clean_definition(div_scnt).sub(/^: /, '')
       definitions << [num, nil, definition, transitive_verb]
     else
       div_scnt.css("span.ssens").each do |span_ssens|
@@ -456,8 +462,8 @@ def scrape_definition(div_elem, transitive_verb, definitions, relateds)
         else
           letter = span_ssens.at_css("em.sn").inner_text.strip
         end
-        definition = span_ssens.inner_text.strip.sub(
-          /^#{letter}[^:]*:[[:space:]]+/,
+        definition = clean_definition(span_ssens).sub(
+          /^#{letter}[^:]*: +/,
           '')
         definitions << [num, letter, definition, transitive_verb]
       end
