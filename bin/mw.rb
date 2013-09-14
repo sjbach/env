@@ -133,7 +133,7 @@ class DictEntry
 
   attr_accessor :word, :has_image, :available, :function, :usage,
     :pronunciation, :etymology, :first_use, :relateds, :synonyms_etc,
-    :synonyms_discussion, :usage_discussion, :definitions,
+    :synonyms_discussion, :usage_discussion, :definitions, :quick_definitions,
     :special_usages, :examples, :transitive_verb, :variant, :encyclopedia,
     :source, :bio_note
 
@@ -152,6 +152,7 @@ class DictEntry
     @usage_discussion = nil
     @definitions = []
     @special_usages = []
+    @quick_definitions = []
     @examples = []
     @transitive_verb = :unset
     @variant = nil
@@ -173,6 +174,13 @@ class DictEntry
     end
 
     puts "Entry: #{@word} #{@has_image ? '  (has image)' : ''}"
+
+    @quick_definitions.each do |quick|
+      wrapped = wrap_text(quick, "    ")
+      # Insert the leading colon on the first line.
+      puts wrapped.sub(/^ */, '  : ')
+    end
+
     puts "Source: #{@source}" if @source
     puts "Function: #{@function}" if @function
     if not @relateds.empty?
@@ -260,6 +268,8 @@ def scrape_outer_entry(doc)
           headword_divs.each do |headword_div|
             cloned_entry = Marshal::load(Marshal.dump(entry))
             cloned_entry.word = scrape_syllable_separated_word(headword_div)
+            cloned_entry.quick_definitions =
+              scrape_quick_definitions(headword_div)
             els = [headword_div]
             iter = headword_div.next_sibling
             while iter and not (iter.attributes['class'] &&
@@ -280,6 +290,8 @@ def scrape_outer_entry(doc)
         else
           cloned_entry = Marshal::load(Marshal.dump(entry))
           cloned_entry.word = scrape_syllable_separated_word(headword_divs[0])
+          cloned_entry.quick_definitions =
+            scrape_quick_definitions(headword_divs[0])
           scrape_inner_entry(div_definition, cloned_entry)
         end
       end
@@ -292,6 +304,12 @@ def scrape_syllable_separated_word(headword_div)
   h2.at_css('sup').remove if h2.at_css('sup')
 
   h2.inner_text.strip
+end
+
+def scrape_quick_definitions(headword_div)
+  headword_div.css('.ld_on_collegiate p').map { |quick_el|
+    clean_definition(quick_el).sub(/^: /, '')
+  }
 end
 
 def scrape_inner_entry(div_definition, entry)
