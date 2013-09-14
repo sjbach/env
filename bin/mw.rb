@@ -134,7 +134,7 @@ class DictEntry
   attr_accessor :word, :has_image, :available, :function, :usage,
     :pronunciation, :etymology, :first_use, :relateds, :synonyms_etc,
     :synonyms_discussion, :usage_discussion, :definitions,
-    :special_definitions, :examples, :transitive_verb, :variant, :encyclopedia,
+    :special_usages, :examples, :transitive_verb, :variant, :encyclopedia,
     :source, :bio_note
 
   def initialize
@@ -151,7 +151,7 @@ class DictEntry
     @synonyms_discussion = nil
     @usage_discussion = nil
     @definitions = []
-    @special_definitions = []
+    @special_usages = []
     @examples = []
     @transitive_verb = :unset
     @variant = nil
@@ -192,9 +192,9 @@ class DictEntry
     puts "Definitions..."
     print_definitions(@definitions)
 
-    if not @special_definitions.empty?
-      puts "Special Definitions..."
-      print_definitions(@special_definitions)
+    if not @special_usages.empty?
+      puts "Special Usages..."
+      print_special_usages(@special_usages)
     end
 
     if not @examples.empty?
@@ -318,8 +318,7 @@ def scrape_inner_entry(div_definition, entry)
     case div.get_attribute('class')
     when /^(sblk$|sense-block)/
       d 'sblk'
-      scrape_definition(div, entry.transitive_verb, entry.definitions,
-                        entry.relateds)
+      scrape_definition(div, entry.transitive_verb, entry)
     when /example-sentences/
       d 'example-sentences'
       div.css("li").each do |li|
@@ -381,12 +380,6 @@ def scrape_inner_entry(div_definition, entry)
       encyclopedia = encyclopedia.sub(/^\s*#{entry.word}\s*\W*\s*/,'')
       # Strip everything after READ ARTICLE.
       entry.encyclopedia = encyclopedia.sub(/\s*READ.*/,'')
-    when /^dr$/
-      # Special use of word?
-      div.css(">div.d>div").each do |div_inner|
-        scrape_definition(div_inner, :unset, entry.special_definitions,
-                          entry.relateds)
-      end
     when /^bio-note$/
       entry.bio_note = div.at_css("div.content").inner_text.strip
     when /rhyming-dictionary/
@@ -444,17 +437,20 @@ def clean_definition(el)
   el.inner_text.strip.gsub(/[[:space:]]+/, ' ')
 end
 
-def scrape_definition(div_elem, transitive_verb, definitions, relateds)
+def scrape_definition(div_elem, transitive_verb, entry)
   if div_elem.at_css("div.snum")
     num = div_elem.at_css("div.snum").inner_text
   end
 
   # Sometimes senses include sub-senses with letters as indicators.
   div_elem.css("div.scnt").each do |div_scnt|
+    next if not div_scnt.ancestors('div.dr').empty?
+    next if not div_scnt.ancestors('div.r').empty?
+
     if div_scnt.at_css("em.sn").nil?
       # No lettered sub-senses.
       definition = clean_definition(div_scnt).sub(/^: /, '')
-      definitions << [num, nil, definition, transitive_verb]
+      entry.definitions << [num, nil, definition, transitive_verb]
     else
       div_scnt.css("span.ssens").each do |span_ssens|
         if span_ssens.at_css("em.sn").nil?
@@ -465,16 +461,37 @@ def scrape_definition(div_elem, transitive_verb, definitions, relateds)
         definition = clean_definition(span_ssens).sub(
           /^#{letter}[^:]*: +/,
           '')
-        definitions << [num, letter, definition, transitive_verb]
+        entry.definitions << [num, letter, definition, transitive_verb]
       end
     end
   end
 
-  # E.g. '— pre·scrip·tive·ly   adverb'.  These seem to be associated with
-  # the word as a whole, not the particular definition, even though this
-  # content has been moved down to this level of the DOM.
+  # Word information that isn't specific to this particular definition, but
+  # still appears in the schema at this level for whatever reason.  It's likely
+  # that these only appear on the last definition.
+
+  # Word variants, e.g. '— pre·scrip·tive·ly   adverb'.
   div_elem.css("div.r").each do |div_r|
-    relateds << div_r.inner_text.strip
+    entry.relateds << div_r.inner_text.strip
+  end
+
+  # Special usages, e.g. '— in microcosm <newline> <definition>'
+  div_elem.css("div.dr").each do |div_dr|
+    special_ssens = div_dr.at_css('.ssens')
+    definition = clean_definition(special_ssens).sub(/^: /, '')
+    special_ssens.remove()
+    usage = div_dr.inner_text.strip
+    entry.special_usages << [usage, definition]
+  end
+end
+
+def print_special_usages(usages)
+  usages.each do |u|
+    usage, definition = *u
+    puts " #{usage}"
+    wrapped = wrap_text(definition, "     ")
+    # Insert the leading colon on the first line.
+    puts wrapped.sub(/^ */, '   : ')
   end
 end
 
