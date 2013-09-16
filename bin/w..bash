@@ -51,7 +51,7 @@ if ! [ -d "$word_dir" ] ; then
   mkdir -p "$word_dir"
 
   # Old thes content retained as files named "thes"
-  thes -q "$word" > "$word_dir/thes2"
+  thes "$word" > "$word_dir/thes2"
   mw "$word" > "$word_dir/mw"
   greek "$word" "$word_dir"
 
