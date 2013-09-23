@@ -74,8 +74,7 @@ def main
   return if doc.at_css('.words-gallery-no-results')
   return if doc.at_css('#words-gallery-no-results')
 
-  # "Synonims" -- irony?
-  doc.css("div.synonims").each do |div|
+  doc.css("div.synonyms").each do |div|
     $wr.puts "Entry: #{clean(div.at_css('strong.ttl'))} (#{clean(div.at_css('em.txt'))})"
     $wr.puts 'Synonyms...'
     $wr.puts to_terminal_rows(div.css('.relevancy-list span.text').map { |el| clean(el) })
