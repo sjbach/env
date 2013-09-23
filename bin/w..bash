@@ -56,10 +56,11 @@ if ! [ -d "$word_dir" ] ; then
   greek "$word" "$word_dir"
 
   for dict in $dict_dbs; do
-    get_def "$dict" "$word" > "$word_dir/$dict"
+    get_def "$dict" "$word" > "$word_dir/$dict" &
   done
 
   date > "$word_dir/date"
+  wait
 fi
 
 ( for wav in "$word_dir"/*.wav; do test -e "$wav" && aplay -q "$wav"; done ) &
@@ -83,6 +84,13 @@ fi
   fi
   if [ -s "$word_dir/thes2" ]; then
     cat "$word_dir/thes2"
+    echo
+    echo "==============================================="
+    echo
+  fi
+  # (Custom)
+  if [ -s "$word_dir/wikipedia" ]; then
+    cat "$word_dir/wikipedia"
     echo
     echo "==============================================="
     echo
