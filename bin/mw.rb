@@ -51,6 +51,10 @@ def main
       d "uri: #{uri}, params: #{params}"
       resp = Net::HTTP.post_form(uri, params)
       d "resp: #{resp}"
+      if resp.class == Net::HTTPMovedPermanently
+        d "moved permanently: #{resp} --> #{resp.header['location']}"
+        resp = Net::HTTP.post_form(URI.parse(resp.header['location']), params)
+      end
       if resp.class == Net::HTTPOK
         success &= scrape_outer_entry(parse_doc(resp.body))
       else
