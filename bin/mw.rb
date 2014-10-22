@@ -418,6 +418,7 @@ def scrape_inner_entry(div_definition, entry)
     when /learners-link/
     when /wcentral-link/
     when /dictButtons/
+    when /ask-the-editors/
     when nil
       d "Skipped: #{div}"
     when /^d$/
