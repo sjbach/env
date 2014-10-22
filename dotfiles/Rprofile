@@ -1,0 +1,17 @@
+options(width = 250)
+options(maxprint = 500)
+options(google3.flag.logtostderr = TRUE)
+
+a <- function() {
+  system("~/bin/a")
+}
+
+tt <- function() {
+  print(Sys.time())
+}
+
+ListMemoryHogs <- function(n=10) {
+  z <- sapply(ls(1), function(x) object.size(get(x)) / 1024 / 1024)
+  print(as.matrix(rev(sort(z))[1:n]))
+}
+
