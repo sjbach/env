@@ -248,59 +248,72 @@ class DictEntry
 end
 
 def scrape_outer_entry(doc)
-  doc.css("div.definition").each do |div_definition|
-    entry = DictEntry.new
-    word = div_definition.at_css('h1').inner_text
-    # Hack to remove "About Our Definitions" interfering with the entry.
-    # (This is probably no longer necessary, but it doesn't hurt anything.)
-    # Note that entry.word may be overridden below.
-    entry.word = word.sub(/About Our Definitions.*/, '')
-    d "found definition for #{entry.word}"
+  div_content = doc.css("div.main_content_area")
+  if div_content.empty?
+    $stderr.puts "No main_content_area found"
+    return false
+  elsif div_content.length > 1
+    $stderr.puts "Warning: multiple main_content_area"
+  end
+  div_content = div_content.first
 
-    # STEVE should this be somewhere further down?
-    entry.available = div_definition.at_css('div.teaser').nil?
+  entry = DictEntry.new
+  word = div_content.at_css('.reference_section_title_secondary h1').inner_text
 
-    if div_definition.css("div#mwEntryData").empty?
-      entry.pretty_print()
-    else
-      div_definition.css("div#mwEntryData").each do |div_mwEntryData|
-        headword_divs = div_mwEntryData.css('div.headword')
-        if headword_divs and headword_divs.length > 1
-          d "multiple headwords"
-          # Hack: break the HTML into sections, each holding all content between
-          # div.headwords.
-          headword_divs.each do |headword_div|
-            cloned_entry = Marshal::load(Marshal.dump(entry))
-            cloned_entry.word = scrape_syllable_separated_word(headword_div)
-            cloned_entry.quick_definitions =
-              scrape_quick_definitions(headword_div)
-            els = [headword_div]
-            iter = headword_div.next_sibling
-            while iter and not (iter.attributes['class'] &&
-                                iter.attributes['class'].content.include?('headword'))
-              d "adding #{iter.to_html[0..20]} after #{els.length}"
-              els << iter
-              iter = iter.next_sibling
-            end
-            d "creating new doc with #{els.length} elements"
-            # There might be a better way to do this.
-            new_div_definition = parse_doc(
-              '<div class="definition">' +
-              els.map{ |el| el.to_html }.join +
-              '</div>').at_css('div.definition')
-              scrape_inner_entry(new_div_definition,
-                                 cloned_entry)
-          end
-        else
+  # Hack to remove "About Our Definitions" interfering with the entry.
+  # (This is probably no longer necessary, but it doesn't hurt anything.)
+  # Note that entry.word may be overridden below.
+  entry.word = word.sub(/About Our Definitions.*/, '')
+  d "found definition for #{entry.word}"
+
+  # STEVE should this be somewhere further down?
+  entry.available = div_content.at_css('div.teaser').nil?
+
+  mw_entry_data = div_content.css("div#mwEntryData")
+  if mw_entry_data.empty?
+    entry.pretty_print()
+  else
+    if mw_entry_data.length > 1
+      $stderr.puts "Warning: multiple mwEntryData"
+    end
+    # STEVE remove loop once I decide it's unnecessary
+    mw_entry_data.each do |div_mwEntryData|
+      headword_divs = div_mwEntryData.css('div.headword')
+      if headword_divs and headword_divs.length > 1
+        d "multiple headwords"
+        # Hack: break the HTML into sections, each holding all content between
+        # div.headwords.
+        headword_divs.each do |headword_div|
           cloned_entry = Marshal::load(Marshal.dump(entry))
-          cloned_entry.word = scrape_syllable_separated_word(headword_divs[0])
+          cloned_entry.word = scrape_syllable_separated_word(headword_div)
           cloned_entry.quick_definitions =
-            scrape_quick_definitions(headword_divs[0])
-          scrape_inner_entry(div_definition, cloned_entry)
+            scrape_quick_definitions(headword_div)
+          els = [headword_div]
+          iter = headword_div.next_sibling
+          while iter and not (iter.attributes['class'] &&
+                              iter.attributes['class'].content.include?('headword'))
+            d "adding #{iter.to_html[0..20]} after #{els.length}"
+            els << iter
+            iter = iter.next_sibling
+          end
+          d "creating new doc with #{els.length} elements"
+          # There might be a better way to do this.
+          new_div_mwEntryData = parse_doc(
+            '<div id="mwEntryData">' +
+            els.map{ |el| el.to_html }.join +
+            '</div>').at_css('div#mwEntryData')
+          scrape_inner_entry(new_div_mwEntryData, cloned_entry)
         end
+      else
+        cloned_entry = Marshal::load(Marshal.dump(entry))
+        cloned_entry.word = scrape_syllable_separated_word(headword_divs[0])
+        cloned_entry.quick_definitions =
+          scrape_quick_definitions(headword_divs[0])
+        scrape_inner_entry(div_mwEntryData, cloned_entry)
       end
     end
   end
+  return true
 end
 
 def scrape_syllable_separated_word(headword_div)
@@ -316,8 +329,8 @@ def scrape_quick_definitions(headword_div)
   }
 end
 
-def scrape_inner_entry(div_definition, entry)
-  div_definition.css("div.headword").each do |div_headword|
+def scrape_inner_entry(div_mwEntryData, entry)
+  div_mwEntryData.css("div.headword").each do |div_headword|
     entry.function = div_headword.at_css("span.main-fl") && \
       div_headword.at_css("span.main-fl").inner_text.strip
     if div_headword.at_css("span.usg")
@@ -419,6 +432,7 @@ def scrape_inner_entry(div_definition, entry)
     when /wcentral-link/
     when /dictButtons/
     when /ask-the-editors/
+    when /facebook-comments/
     when nil
       d "Skipped: #{div}"
     when /^d$/
@@ -430,7 +444,7 @@ def scrape_inner_entry(div_definition, entry)
     end
   }
 
-  div_definition.css("div.d").each do |div_d|
+  div_mwEntryData.css("div.d").each do |div_d|
     div_d.css(">div").each do |div1|
 
       # Open the KonaBody container, if needed.
