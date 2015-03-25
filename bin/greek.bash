@@ -30,6 +30,7 @@ fi
 
 sound_names=$(\
   wget -q -O - "http://www.m-w.com/dictionary/$1" | \
+  grep -v '\<wow_entry\>' | \
   grep '\<au(' | \
   sed -r "s/au\('([^']+)/\n--\1--\n/g" | \
   sed -rn '/^--/s/--([^-]+).*/\1/p')
