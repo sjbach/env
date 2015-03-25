@@ -317,8 +317,11 @@ def scrape_outer_entry(doc)
 end
 
 def scrape_syllable_separated_word(headword_div)
-  span = headword_div.at_css('.hw-syllables')
-  (span ? span : headword_div.at_css('h1')).inner_text.strip
+  el = headword_div.at_css('.hw-syllables') ?
+    headword_div.at_css('.hw-syllables') :
+    headword_div.at_css('h1')
+  el.at_css('sup').remove if el.at_css('sup')
+  return el.inner_text.strip
 end
 
 def scrape_quick_definitions(headword_div)
