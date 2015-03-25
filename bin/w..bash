@@ -41,6 +41,7 @@ dict_dbs=$(dict --dbs \
   | sed 1d \
   | sed -r 's/^ //; s/[[:space:]]+.*//' \
   | grep -v '^...-...$' \
+  | grep -v '^fd-...-...$' \
   | grep -v 'english\|trans\|all')
 
 if ! [ -d "$word_dir" ] ; then
