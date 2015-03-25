@@ -254,11 +254,18 @@ def scrape_outer_entry(doc)
     return false
   elsif div_content.length > 1
     $stderr.puts "Warning: multiple main_content_area"
+  elsif div_content.at_css('.reference_page_title_secondary')
+    text =
+      div_content.at_css('.reference_page_title_secondary').inner_text.strip
+    return false if text == 'Not Found'
   end
   div_content = div_content.first
 
   entry = DictEntry.new
-  word = div_content.at_css('.headword h1').inner_text
+  word =
+    (div_content.at_css('.headword h1') ?
+     div_content.at_css('.headword h1') :
+     div_content.at_css('.reference_section_title_secondary h1')).inner_text
 
   # Hack to remove "About Our Definitions" interfering with the entry.
   # (This is probably no longer necessary, but it doesn't hurt anything.)
@@ -317,9 +324,12 @@ def scrape_outer_entry(doc)
 end
 
 def scrape_syllable_separated_word(headword_div)
-  el = headword_div.at_css('.hw-syllables') ?
-    headword_div.at_css('.hw-syllables') :
-    headword_div.at_css('h1')
+  d headword_div
+  el = (headword_div.at_css('.hw-syllables') ?
+        headword_div.at_css('.hw-syllables') :
+        (headword_div.at_css('h1') ?
+         headword_div.at_css('h1') :
+         headword_div.at_css('h2')))
   el.at_css('sup').remove if el.at_css('sup')
   return el.inner_text.strip
 end
