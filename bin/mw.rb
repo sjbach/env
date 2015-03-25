@@ -258,7 +258,7 @@ def scrape_outer_entry(doc)
   div_content = div_content.first
 
   entry = DictEntry.new
-  word = div_content.at_css('.reference_section_title_secondary h1').inner_text
+  word = div_content.at_css('.headword h1').inner_text
 
   # Hack to remove "About Our Definitions" interfering with the entry.
   # (This is probably no longer necessary, but it doesn't hurt anything.)
@@ -317,10 +317,8 @@ def scrape_outer_entry(doc)
 end
 
 def scrape_syllable_separated_word(headword_div)
-  h2 = headword_div.at_css('h2')
-  h2.at_css('sup').remove if h2.at_css('sup')
-
-  h2.inner_text.strip
+  span = headword_div.at_css('.hw-syllables')
+  (span ? span : headword_div.at_css('h1')).inner_text.strip
 end
 
 def scrape_quick_definitions(headword_div)
