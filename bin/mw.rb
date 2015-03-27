@@ -456,8 +456,20 @@ def scrape_inner_entry(div_mwEntryData, entry)
   }
 
   div_mwEntryData.css("div.d").each do |div_d|
-    div_d.css(">div").each do |div1|
 
+    # This weird definition HTML appears for foreign terms
+    if div_d.css('>strong')
+      definition =
+        div_d.xpath('strong/following-sibling::text()')
+            .inner_text
+            .gsub(/[[:space:]]/, ' ')
+            .strip
+      unless definition.empty?
+        entry.definitions << [nil, nil, definition, :unset]
+      end
+    end
+
+    div_d.css(">div").each do |div1|
       # Open the KonaBody container, if needed.
       if div1.get_attribute('class') == "KonaBody"
         d "Saw KonaBody"
