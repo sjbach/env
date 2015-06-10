@@ -9,9 +9,6 @@
 #  sudo gem install nokogiri
 #
 
-# TODO:
-# - do an initial pass of the DOM removing <style> and Facebook/G+ stuff
-
 require 'uri'
 require 'rubygems'
 require 'nokogiri'
@@ -74,17 +71,26 @@ end
 # known to interfere with parsing or are otherwise unwanted.
 def parse_doc(content)
   worthless_content_selectors = [
+    '.ask-the-editors',
     'script',
     'style',
     '#homograph-tool-tip',
     '.gplusBtn',
     '.citeBtn',
+    '.def-header',
+    '.left_rail',
+    '.right_rail',
     '.facebookBtn',
     '#fb-comments',
     '.fb-comments',
+    '.facebook-comments',
     '#facebook',
     '.learners-link',
     '.wcentral-link',
+    '.popularity-score',
+    '#scrabble_speed_bump_container',
+    '.spacer_dots',
+    '#ROS_textAd',
     'input',
   ]
   doc = Nokogiri::HTML(content)
@@ -442,8 +448,6 @@ def scrape_inner_entry(div_mwEntryData, entry)
     when /learners-link/
     when /wcentral-link/
     when /dictButtons/
-    when /ask-the-editors/
-    when /facebook-comments/
     when nil
       d "Skipped: #{div}"
     when /^d$/
