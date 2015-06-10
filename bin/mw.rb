@@ -71,27 +71,27 @@ end
 # known to interfere with parsing or are otherwise unwanted.
 def parse_doc(content)
   worthless_content_selectors = [
-    '.ask-the-editors',
+    'input',
     'script',
     'style',
+    '#facebook',
+    '#fb-comments',
     '#homograph-tool-tip',
-    '.gplusBtn',
+    '#ROS_textAd',
+    '#scrabble_speed_bump_container',
+    '.ask-the-editors',
     '.citeBtn',
     '.def-header',
-    '.left_rail',
-    '.right_rail',
     '.facebookBtn',
-    '#fb-comments',
-    '.fb-comments',
     '.facebook-comments',
-    '#facebook',
+    '.fb-comments',
+    '.gplusBtn',
     '.learners-link',
-    '.wcentral-link',
+    '.left_rail',
     '.popularity-score',
-    '#scrabble_speed_bump_container',
+    '.right_rail',
     '.spacer_dots',
-    '#ROS_textAd',
-    'input',
+    '.wcentral-link',
   ]
   doc = Nokogiri::HTML(content)
   worthless_content_selectors.each do |selector|
