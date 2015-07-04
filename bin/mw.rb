@@ -1,12 +1,10 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/ruby2.1
 #
 # Merriam-Webster.com scraper
 #
-# Works okay on the ~1200 words I tried, as of July, 2013.
-#
 # Setup:
 #  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
-#  sudo gem install nokogiri
+#  sudo aptitude install ruby-nokogiri
 #
 
 require 'uri'

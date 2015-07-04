@@ -1,10 +1,10 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/ruby2.1
 #
-# Thesaurus.com scraper for August 2013 site re-write.
+# Thesaurus.com scraper.
 #
 # Setup:
 #  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
-#  sudo gem install nokogiri
+#  sudo aptitude install ruby-nokogiri
 #
 
 require 'uri'
