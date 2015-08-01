@@ -446,6 +446,7 @@ def scrape_inner_entry(div_mwEntryData, entry)
     when /learners-link/
     when /wcentral-link/
     when /dictButtons/
+    when /triplelift_ad_container/
     when nil
       d "Skipped: #{div}"
     when /^d$/
