@@ -11,7 +11,7 @@ grep "$@" -- ~/.histfile ~/.hists/* | tac | nl | \
 sed -r 's/([0-9]+) *([^:]*):(.*)/\2:\1:\3/' | \
 #
 # Pretty print
-sed -r 's%.*\.hists/(.*).(histfile|bash_history):%\1:%' | \
+sed -r 's%.*\.hists/(.*)\.(.*\.)?(histfile|bash_history):%\1:%' | \
 #
 # Put more recent lines first like this:
 #   year, month, day, then implicitly by the inserted line number
