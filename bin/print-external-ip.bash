@@ -1,4 +1,4 @@
 #!/bin/bash
 
-curl --silent checkip.dyndns.org | sed 's/.*Current IP Address: //; s/<.*$//'
+exec dig +short myip.opendns.com @resolver1.opendns.com
 
