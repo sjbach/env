@@ -138,15 +138,6 @@ set wildignore=*.o,*.fasl
 autocmd BufRead letter* set filetype=mail
 autocmd Filetype mail set fo -=l autoindent spell
 
-" ITA indenting style
-"autocmd Filetype c,cpp,h set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
-" JSH indenting style
-"autocmd Filetype c,cpp,h set tabstop=8 softtabstop=4 shiftwidth=4 noexpandtab
-" Wimba indenting style, sort-of
-"autocmd Filetype c,cpp,h set tabstop=2 softtabstop=2 shiftwidth=2 expandtab
-" Viewglob
-"autocmd Filetype c,cpp,h,sh set cindent autoindent
-
 autocmd Filetype sh set ts=4 shiftwidth=2 expandtab
 autocmd Filetype lisp,ruby,xml,html set ts=8 shiftwidth=2 expandtab
 autocmd Filetype python set ts=2 shiftwidth=2 expandtab
