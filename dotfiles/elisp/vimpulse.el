@@ -3643,13 +3643,21 @@ or mismatched paren."
            (not (eq viper-current-state 'replace-state))
            (not (eq viper-current-state 'emacs-state))
            show-paren-mode viper-mode)
-      ;; safely delete the overlays used by `show-paren-function'
-      ;; and call our custom function instead
-      (and (viper-overlay-live-p show-paren-overlay)
-           (vimpulse-delete-overlay show-paren-overlay))
-      (and (viper-overlay-live-p show-paren-overlay-1)
-           (vimpulse-delete-overlay show-paren-overlay-1))
-      (vimpulse-paren-highlight-pair))
+      (let ((paren-overlay-var
+             (cond ((boundp 'show-paren-overlay) show-paren-overlay)
+                   ((boundp 'show-paren--overlay) show-paren--overlay)
+                   (t (error "No show-paren-overlay var"))))
+            (paren-overlay-1-var
+             (cond ((boundp 'show-paren-overlay-1) show-paren-overlay-1)
+                   ((boundp 'show-paren--overlay-1) show-paren--overlay-1)
+                   (t (error "No show-paren-overlay-1 var")))))
+        ;; safely delete the overlays used by `show-paren-function'
+        ;; and call our custom function instead
+        (and (viper-overlay-live-p paren-overlay-var)
+             (vimpulse-delete-overlay paren-overlay-var))
+        (and (viper-overlay-live-p paren-overlay-1-var)
+             (vimpulse-delete-overlay paren-overlay-1-var))
+        (vimpulse-paren-highlight-pair)))
      ;; Viper in Insert mode
      (t
       ;; delete the overlays used by our custom function
