@@ -539,6 +539,70 @@ work on closed parens like one can expect in vi."
                            'vi-state
                            viper-imm-inferior-ruby-mode-vi-map))
 
+;;;; R / ESS mode
+
+(defcustom viper-imm-ess-bindings t
+  "R/ESS bindings."
+  :type  'boolean
+  :group 'viper-in-more-modes)
+
+(defvar viper-imm-ess-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "RET") 'inferior-ess-send-input)
+    (define-key map (kbd "TAB") 'comint-dynamic-complete)
+;    (viper-imm-defkey-l map "k" 'ess-load-file)
+;    (viper-imm-defkey-l map "K" 'ess-load-file)
+    (define-key map "\C-n" 'comint-next-input)
+    (define-key map "\C-p" 'comint-previous-input)
+    map))
+
+(defvar viper-imm-ess-mode-insert-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "RET") 'inferior-ess-send-input)
+    (define-key map (kbd "TAB") 'comint-dynamic-complete)
+;    (viper-imm-defkey-l map "k" 'ess-load-file)
+;    (viper-imm-defkey-l map "K" 'ess-load-file)
+    (define-key map "\C-n" 'comint-next-input)
+    (define-key map "\C-p" 'comint-previous-input)
+    map))
+
+(when viper-imm-ess-bindings
+  (viper-modify-major-mode 'inferior-ess-mode
+                           'vi-state
+                           viper-imm-ess-mode-vi-map)
+  (viper-modify-major-mode 'inferior-ess-mode
+                           'insert-state
+                           viper-imm-ess-mode-insert-map))
+
+(defcustom viper-imm-r-bindings t
+  "R/ESS bindings."
+  :type  'boolean
+  :group 'viper-in-more-modes)
+
+(defun viper-imm-r-eval-region (&optional arg)
+  (interactive "P")
+  (if (and (boundp 'vimpulse-visual-mode)
+           (not vimpulse-visual-mode))
+      (error "Select the region in Visual Mode.")
+    (ess-eval-region (min (mark) (point)) (max (mark) (point)) nil)
+    (vimpulse-visual-mode 'toggle)))
+
+(defvar viper-imm-r-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "TAB") 'comint-dynamic-complete)
+    (viper-imm-defkey-l map "j" 'ess-eval-line)
+    (viper-imm-defkey-l map "k" 'ess-load-file)
+    (viper-imm-defkey-l map "K" 'ess-load-file)
+    (viper-imm-defkey-l map "r" 'viper-imm-r-eval-region)
+;    (define-key map "\C-n" 'comint-next-input)
+;    (define-key map "\C-p" 'comint-previous-input)
+    map))
+
+(when viper-imm-r-bindings
+  (viper-modify-major-mode 'ess-mode
+                           'vi-state
+                           viper-imm-r-mode-vi-map))
+
 ;;; }}} End major mode keybinding code
 
 (provide 'viper-in-more-modes)
