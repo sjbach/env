@@ -159,6 +159,10 @@ function! DoPrettyXML()
 endfunction
 command! PrettyXML call DoPrettyXML()
 
+" Try to compile the current file as LaTeX.
+command! Latex execute "silent !pdflatex --output-directory '%:p:h' --file-line-error --halt-on-error '%'"
+nmap <silent> <Leader>l :Latex<CR>
+
 " Load local settings
 if filereadable($HOME . "/.vimrc-local")
 	source ~/.vimrc-local
