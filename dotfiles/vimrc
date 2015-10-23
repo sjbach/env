@@ -156,6 +156,7 @@ autocmd FileType javascript,html set ts=2 shiftwidth=2 expandtab
 autocmd FileType java set ts=2 shiftwidth=2 expandtab
 autocmd FileType r set ts=2 shiftwidth=2 expandtab
 autocmd BufReadPre viper,.viper set filetype=lisp
+autocmd FileType tex set ts=2 shiftwidth=2 expandtab
 
 " a.vim
 nmap <silent> <Leader>h :A<CR>
