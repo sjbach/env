@@ -575,7 +575,7 @@ work on closed parens like one can expect in vi."
                            viper-imm-ess-mode-insert-map))
 
 (defcustom viper-imm-r-bindings t
-  "R/ESS bindings."
+  "R bindings."
   :type  'boolean
   :group 'viper-in-more-modes)
 
@@ -602,6 +602,48 @@ work on closed parens like one can expect in vi."
   (viper-modify-major-mode 'ess-mode
                            'vi-state
                            viper-imm-r-mode-vi-map))
+
+(defcustom viper-imm-ess-help-bindings t
+  "ESS help-mode bindings."
+  :type  'boolean
+  :group 'viper-in-more-modes)
+
+(defvar viper-imm-ess-help-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "TAB") 'comint-dynamic-complete)
+;    (viper-imm-defkey-l map "j" 'ess-eval-line)
+;    (viper-imm-defkey-l map "k" 'ess-load-file)
+;    (viper-imm-defkey-l map "K" 'ess-load-file)
+    (viper-imm-defkey-l map "r" 'viper-imm-r-eval-region)
+    (define-key map "q" 'ess-help-quit)
+    map))
+
+(when viper-imm-ess-help-bindings
+  (viper-modify-major-mode 'ess-help-mode
+                           'vi-state
+                           viper-imm-ess-help-mode-vi-map))
+
+
+
+
+(defcustom viper-imm-locate-bindings t
+  "locate-mode bindings bindings."
+  :type  'boolean
+  :group 'viper-in-more-modes)
+
+
+(defvar viper-imm-locate-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "RET") 'dired-find-file)
+    (define-key map (kbd "q") 'quit-window)
+    map))
+
+(when viper-imm-locate-bindings
+  (viper-modify-major-mode 'locate-mode
+                           'vi-state
+                           viper-imm-locate-mode-vi-map))
+
+
 
 ;;; }}} End major mode keybinding code
 

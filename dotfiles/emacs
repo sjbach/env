@@ -66,6 +66,14 @@
         ,(and (at-work-p) "google-boot.el")
         "viper-boot.el"))
 
+;; Use Spotlight for `locate` command on OS X
+(when (string-equal system-type "darwin")
+  (setq locate-command "mdfind"))
+
+(when (file-exists-p "~/ESS")
+  (add-to-list 'load-path "~/ESS/lisp/")
+  (load "ess-site"))
+
 (custom-set-variables
  '(load-home-init-file t t)
  '(warning-suppress-types (quote ((undo discard-info))))

@@ -64,10 +64,16 @@
 
 (when (and (>= emacs-major-version 23)
            (x-display-list))
-  (let ((font (if (x-list-fonts "Bitstream Vera Sans Mono-9")
-                "Bitstream Vera Sans Mono-9"
-                "Dejavu Sans Mono-9")))
-    (if (>= emacs-minor-version 1)
+  (let ((font
+          (cond ((x-list-fonts "Bitstream Vera Sans Mono-9")
+                  "Bitstream Vera Sans Mono-9")
+                ((string-equal system-type "darwin")
+                 "Dejavu Sans Mono-12")
+                (t
+                 "Dejavu Sans Mono-9"))))
+    (if (or (> emacs-major-version 23)
+            (and (eq emacs-major-version 23)
+                 (>= emacs-minor-version 1)))
       (set-frame-font font)
       (set-default-font font))))
 
@@ -100,6 +106,15 @@
   (font-lock-add-keywords 'python-mode words)
   (font-lock-add-keywords 'c-mode words)
   (font-lock-add-keywords 'c++-mode words)
+  (font-lock-add-keywords 'java-mode words)
+  (font-lock-add-keywords 'r-mode words)
+  (font-lock-add-keywords 'R-mode words)
+  (font-lock-add-keywords 'ess-mode words)
+  (font-lock-add-keywords 'ruby-mode words)
+  (font-lock-add-keywords 'latex-mode words)
   (font-lock-add-keywords 'lisp-mode words)
   (font-lock-add-keywords 'emacs-lisp-mode words))
+
+(when (string-equal system-type "darwin")
+  (toggle-frame-maximized))
 

@@ -44,6 +44,7 @@
                                        (interactive)
                                        (switch-to-buffer (other-buffer))))
 (define-key viper-vi-global-user-map ",h" 'ff-find-other-file)
+(define-key viper-vi-global-user-map ", " 'locate)
 (define-key viper-vi-global-user-map ",xo" 'other-window)
 (define-key viper-vi-global-user-map ",x0" 'delete-window)
 (define-key viper-vi-global-user-map ",x1" 'delete-other-windows)
@@ -117,6 +118,8 @@
 (setq viper-vi-state-mode-list
       (append viper-vi-state-mode-list
               '(fundamental-mode  ; << doesn't seem to work
+                locate-mode
+                ess-help-mode
                 clojure-mode
                 grep-mode
                 comint-mode
@@ -125,6 +128,8 @@
                 sldb-mode
                 debugger-mode
                 completion-list-mode)))
+
+(add-hook 'ess-help-mode-hook 'viper-change-state-to-vi)
 
 (setq viper-emacs-state-mode-list
       (set-difference viper-emacs-state-mode-list
