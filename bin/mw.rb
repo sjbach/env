@@ -56,10 +56,7 @@ def main
       end
     elsif classes.include?('related-box')
       puts 'Related...'
-      # TODO broken; this will be tricky.
-      card_box.css('div.card-primary-content h6').each do |h6|
-        puts h6.inner_text.strip
-      end
+      parse_and_print_synonym_box(card_box)
     elsif classes.include?('other-x-terms-box')
       puts 'Other field terms...'
       card_box.css('div.card-primary-content p').each do |p|
@@ -210,6 +207,26 @@ def uri_escape(str)
   # Square brackets are not caught as invalid characters...
   URI.escape(str).gsub("[", "%5B") \
                  .gsub("]", "%5D")
+end
+
+def parse_and_print_synonym_box(card_box_node)
+  heading = nil
+  text = ''
+  card_box_node.at_css('.definition-block').children.each do |node|
+    assert(node.element? || node.text?)
+    case node.name
+    when 'h6'
+      unless heading.nil?
+        puts wrap_text(text.strip, "   ")
+      end
+      heading = node.inner_text.strip
+      puts wrap_text("#{heading}:", " ")
+      text = ''
+    else  # In practice, 'text', 'a', and 'em'.
+      text += node.inner_text
+    end
+  end
+  puts wrap_text(text.strip, "   ")
 end
 
 main()
