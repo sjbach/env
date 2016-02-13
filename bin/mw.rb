@@ -77,24 +77,9 @@ def main
 
     elsif classes.include?('quick-def-box')
       puts if just_parsed_quick_def or just_parsed_full_def
-
-      term = card_box.at_css('h1, h2 i') or card_box.at_css('h1, h2')
-      function = card_box.at_css('.word-attributes .main-attr')
-      pronunciation = card_box.at_css('.word-attributes .pr')
-      puts "Quick: #{term.inner_text.strip}" if term
-      puts "Function: #{function.inner_text.strip}" if function
-      puts "Pronunciation: #{pronunciation.inner_text.strip}" if pronunciation
-
-      card_box.css('.definition-list li').each do |e|
-        # TODO must individually parse these; 'sense' 'sub sense'; add back
-        # intro-colon
-        wrapped = wrap_text("#{e.inner_text.strip}", "   ")
-        puts wrapped.sub(/^  /," :")
-      end
-
+      parse_and_print_quick_def_box(card_box)
       just_parsed_quick_def = true
       just_parsed_full_def = false
-
 
     elsif classes.include?('full-def-box')
       puts if just_parsed_full_def or not just_parsed_quick_def
@@ -160,8 +145,6 @@ def parse_and_sanitize_doc(content)
     '#cite-module',
     # Ad/tracking stuff?
     '.central-abl-box',
-    # (Makes text cleanup a little simpler.)
-    '.intro-colon',
   ]
   doc = Nokogiri::HTML(content)
   worthless_content_selectors.each do |selector|
@@ -227,6 +210,34 @@ def parse_and_print_synonym_box(card_box_node)
     end
   end
   puts wrap_text(text.strip, "   ")
+end
+
+
+def parse_and_print_quick_def_box(card_box_node)
+  term = card_box_node.at_css('h1, h2 i') or card_box_node.at_css('h1, h2')
+  function = card_box_node.at_css('.word-attributes .main-attr')
+  pronunciation = card_box_node.at_css('.word-attributes .pr')
+  puts "Quick: #{term.inner_text.strip}" if term
+  puts "Function: #{function.inner_text.strip}" if function
+  puts "Pronunciation: #{pronunciation.inner_text.strip}" if pronunciation
+
+  card_box_node.css('.definition-list .definition-inner-item > span').each \
+  do |outer_span|
+    prefix = ''
+    text = ''
+    outer_span.children.each do |node|
+      assert(node.element? || node.text?)
+      if node.attributes['class'].to_s =~ /intro-colon/
+        prefix += "#{node.inner_text.strip} "
+      else
+        text += node.inner_text
+      end
+    end
+
+    wrapped = wrap_text("#{text.strip}", " " + " " * prefix.length)
+    wrapped[0..(1 + prefix.length - 1)] = " #{prefix}"
+    puts wrapped
+  end
 end
 
 main()
