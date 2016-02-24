@@ -7,6 +7,9 @@
 #  sudo aptitude install ruby-nokogiri
 #
 
+# TODO:
+# - Strip out 'X Defined for Kids' definitions
+
 require 'uri'
 require 'rubygems'
 require 'nokogiri'
@@ -267,11 +270,15 @@ def parse_and_print_full_def_box(card_box_node)
   puts "Pronunciation: #{pronunciation.inner_text.strip_nbsp}" if pronunciation
   puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
 
-  card_box_node.css('.card-primary-content') do |primary_node|
-    # TODO loop over this first, consuming dro / runon-attributes
-  end
+  card_box_node.css('.card-primary-content').each do |card_primary_content|
+    card_primary_content.ancestors('.dro').each do |dro|
+      # (Not sure what 'dro' is short for.)
+      dro.css('.runon-attributes').each do |expression|
+        puts " —#{expression.inner_text.strip_nbsp}"
+      end
+    end
 
-  card_box_node.css('.definition-list > li').each do |li|
+  card_primary_content.css('.definition-list > li').each do |li|
     if node_has_class(li, 'vt')
       puts " /#{li.inner_text.strip_nbsp}/"
     else
@@ -312,6 +319,7 @@ def parse_and_print_full_def_box(card_box_node)
         print_def_item(def_item, prev_def_item)
       end
     end
+  end
   end
 end
 
