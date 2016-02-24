@@ -278,48 +278,48 @@ def parse_and_print_full_def_box(card_box_node)
       end
     end
 
-  card_primary_content.css('.definition-list > li').each do |li|
-    if node_has_class(li, 'vt')
-      puts " /#{li.inner_text.strip_nbsp}/"
-    else
-      prev_def_item = nil
-      def_item = DefItem.new
+    card_primary_content.css('.definition-list > li').each do |li|
+      if node_has_class(li, 'vt')
+        puts " /#{li.inner_text.strip_nbsp}/"
+      else
+        prev_def_item = nil
+        def_item = DefItem.new
 
-      li.at_css('> p').children.each do |node|
-        if (node_has_class(node, ['sense', 'sub', 'intro-colon']) or
-            node_is_nonstandard_intro_colon(node))
-          def_item.incorporate(node)
-        elsif node.name == 'span'
-          # Recurse another level.
-          node.children.each do |node_inner|
-            if (node_has_class(node_inner, ['sense', 'sub', 'intro-colon']) or
-                node_is_nonstandard_intro_colon(node_inner))
-              if def_item.appears_complete?
-                print_def_item(def_item, prev_def_item)
-                prev_def_item = def_item.clone
-                def_item.text = ''
+        li.at_css('> p').children.each do |node|
+          if (node_has_class(node, ['sense', 'sub', 'intro-colon']) or
+              node_is_nonstandard_intro_colon(node))
+            def_item.incorporate(node)
+          elsif node.name == 'span'
+            # Recurse another level.
+            node.children.each do |node_inner|
+              if (node_has_class(node_inner, ['sense', 'sub', 'intro-colon']) or
+                  node_is_nonstandard_intro_colon(node_inner))
+                if def_item.appears_complete?
+                  print_def_item(def_item, prev_def_item)
+                  prev_def_item = def_item.clone
+                  def_item.text = ''
+                end
+                def_item.incorporate(node_inner)
+              else
+                def_item.incorporate(node_inner)
               end
-              def_item.incorporate(node_inner)
-            else
-              def_item.incorporate(node_inner)
             end
+            # Last entry in sub-list.
+            assert(def_item.appears_complete?)
+            print_def_item(def_item, prev_def_item)
+            prev_def_item = def_item.clone
+            def_item.text = ''
+          else  # text
+            def_item.incorporate(node)
           end
-          # Last entry in sub-list.
-          assert(def_item.appears_complete?)
+        end
+
+        # Last entry.
+        if def_item.appears_complete?
           print_def_item(def_item, prev_def_item)
-          prev_def_item = def_item.clone
-          def_item.text = ''
-        else  # text
-          def_item.incorporate(node)
         end
       end
-
-      # Last entry.
-      if def_item.appears_complete?
-        print_def_item(def_item, prev_def_item)
-      end
     end
-  end
   end
 end
 
