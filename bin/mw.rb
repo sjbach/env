@@ -87,6 +87,12 @@ def main
         puts wrap_text(li.inner_text.strip_nbsp, " ")
       end
 
+    elsif classes.include?('history-box')
+      puts 'History...'
+      card_box.css('div.card-primary-content p').each do |p|
+        puts wrap_text(p.inner_text.strip_nbsp, " ")
+      end
+
     elsif classes.include?('quick-def-box')
       puts if just_parsed_quick_def or just_parsed_full_def
       parse_and_print_quick_def_box(card_box)
