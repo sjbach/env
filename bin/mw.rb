@@ -270,14 +270,27 @@ def parse_and_print_full_def_box(card_box_node)
   puts "Pronunciation: #{pronunciation.inner_text.strip_nbsp}" if pronunciation
   puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
 
-  card_box_node.css('.card-primary-content').each do |card_primary_content|
-    card_primary_content.ancestors('.dro').each do |dro|
+  card_box_node.css('.inner-box-wrapper > ' +
+                    '.card-primary-content, .dro, .uro').each do |el|
+    if node_has_class(el, 'dro')
       # (Not sure what 'dro' is short for.)
-      dro.css('.runon-attributes').each do |expression|
+      el.css('.runon-attributes').each do |expression|
+        puts " —#{expression.inner_text.strip_nbsp}"
+      end
+    end
+    if node_has_class(el, 'uro')
+      # (Not sure what 'uro' is short for.)
+      el.css('.runon-attributes').each do |expression|
         puts " —#{expression.inner_text.strip_nbsp}"
       end
     end
 
+    card_primary_contents = el.css('.card-primary-content')
+    if node_has_class(el, 'card-primary-content')
+      card_primary_contents << el
+    end
+
+  card_primary_contents.each do |card_primary_content|
     card_primary_content.css('.definition-list > li').each do |li|
       if node_has_class(li, 'vt')
         puts " /#{li.inner_text.strip_nbsp}/"
@@ -320,6 +333,7 @@ def parse_and_print_full_def_box(card_box_node)
         end
       end
     end
+  end
   end
 end
 
