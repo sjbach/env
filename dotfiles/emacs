@@ -74,6 +74,17 @@
   (add-to-list 'load-path "~/ESS/lisp/")
   (load "ess-site"))
 
+; ELPA:
+;(require 'package)
+;(add-to-list 'package-archives
+;             '("melpa" . "https://melpa.org/packages/"))
+;(when (< emacs-major-version 24)
+;  ;; For important compatibility libraries like cl-lib
+;  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+;(package-initialize)
+;(package-list) ; to update
+; Then: M-x package-install foo
+
 (custom-set-variables
  '(load-home-init-file t t)
  '(warning-suppress-types (quote ((undo discard-info))))

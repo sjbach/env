@@ -119,7 +119,8 @@
       (append viper-vi-state-mode-list
               '(fundamental-mode  ; << doesn't seem to work
                 locate-mode
-                ess-help-mode
+                ess-help-mode ; << doesn't seem to work
+                doc-view-mode
                 clojure-mode
                 grep-mode
                 comint-mode
