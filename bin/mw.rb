@@ -247,9 +247,13 @@ def parse_and_print_quick_def_box(card_box_node)
   term = card_box_node.at_css('h1, h2 i') or card_box_node.at_css('h1, h2')
   function = card_box_node.at_css('.word-attributes .main-attr')
   pronunciation = card_box_node.at_css('.word-attributes .pr')
+  syllables = card_box_node.at_css('.word-attributes .word-syllables')
   puts "Quick: #{term.inner_text.strip_nbsp}" if term
   puts "Function: #{function.inner_text.strip_nbsp}" if function
   puts "Pronunciation: #{pronunciation.inner_text.strip_nbsp}" if pronunciation
+  if syllables && !pronunciation
+    puts "Syllables: #{syllables.inner_text.strip_nbsp}"
+  end
 
   card_box_node.css('.definition-list .definition-inner-item > span').each \
   do |outer_span|
@@ -275,6 +279,7 @@ def parse_and_print_full_def_box(card_box_node)
   # TODO double check this ever occurs
   function = card_box_node.at_css('.word-attributes .main-attr')
   pronunciation = card_box_node.at_css('.word-attributes .pr')
+  syllables = card_box_node.at_css('.word-attributes .word-syllables')
   inflections =
     card_box_node.css('.inflections > span').to_a.map { |i|
       i.inner_text.strip_nbsp
@@ -283,6 +288,9 @@ def parse_and_print_full_def_box(card_box_node)
   puts "Full: #{term.inner_text.strip_nbsp}" if term
   puts "Function: #{function.inner_text.strip_nbsp}" if function
   puts "Pronunciation: #{pronunciation.inner_text.strip_nbsp}" if pronunciation
+  if syllables && !pronunciation
+    puts "Syllables: #{syllables.inner_text.strip_nbsp}"
+  end
   puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
 
   card_box_node.css('.inner-box-wrapper > ' +
