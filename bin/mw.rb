@@ -314,7 +314,8 @@ def parse_and_print_full_def_box(card_box_node)
     end
 
     card_primary_contents.each do |card_primary_content|
-      card_primary_content.css('.definition-list > li').each do |li|
+      card_primary_content.css('.definition-list > li, ' +
+                               '.definition-list > .d > li').each do |li|
         if node_has_class(li, 'vt')
           puts " /#{li.inner_text.strip_nbsp}/"
         else
