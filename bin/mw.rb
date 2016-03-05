@@ -99,6 +99,13 @@ def main
         puts wrap_text(p.inner_text.strip_nbsp, "  ")
       end
 
+    elsif classes.include?('variants-box')
+      # TODO: put all on one line?
+      puts 'Variants...'
+      card_box.css('div.card-primary-content').each do |content|
+        puts wrap_text(content.inner_text.strip_nbsp, " ")
+      end
+
     elsif classes.include?('art-box')
       puts '[Has illustration]'
 
@@ -143,6 +150,8 @@ def parse_and_sanitize_doc(content)
     '.social-sidebar',
     # Popularity.
     '.popularity-block',
+    # Pronunciation buttons; can complicate parsing a bit.
+    '.play-pron',
     # Harmless, but not useful to this scraper.
     '.global-footer',
     '.shrinkheader-t',
