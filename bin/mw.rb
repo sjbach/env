@@ -93,6 +93,12 @@ def main
         puts wrap_text(p.inner_text.strip_nbsp, " ")
       end
 
+    elsif classes.include?('little-gems-box')
+      puts 'Aside...'
+      card_box.css('div.card-primary-content p').each do |p|
+        puts wrap_text(p.inner_text.strip_nbsp, "  ")
+      end
+
     elsif classes.include?('art-box')
       puts '[Has illustration]'
 
