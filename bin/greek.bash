@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Download the pronunciations for the given word and play them.
+# Download and play Merriam-Webster pronunciations for the given word.
 
 function usage {
   echo "usage: ${0##*/} <word> [dir]" >&2
@@ -18,6 +18,12 @@ case $# in
      ;;
 esac
 
+player=$(which mplayer || which mpv || which play)
+if [ -z "$player" ]; then
+  echo "No mp3 player installed" >&2
+  exit 1
+fi
+
 sound="$1"
 
 if [ "$dir" ]; then
@@ -28,31 +34,27 @@ fi
 
 [ ! -d "$sound_dir" ] && mkdir -p "$sound_dir"
 
-sound_names=$(\
-  wget -q -O - "http://www.m-w.com/dictionary/$1" | \
-  grep -v '\<wow_entry\>' | \
-  grep '\<au(' | \
-  sed -r "s/au\('([^']+)/\n--\1--\n/g" | \
-  sed -rn '/^--/s/--([^-]+).*/\1/p')
+URL_PREFIX='http://media.merriam-webster.com/audio/prons/en/us/mp3/'
 
-if [ -z "$sound_names" ]; then
+sound_urls=$(\
+  wget -q -O - "http://www.m-w.com/dictionary/$1" | \
+  grep '"play-pron"' | \
+  tr ' ' '\n' | \
+  grep data-file | \
+  sed -r 's/.*data-file="([^"]*)".*/\1/' | \
+  sed -r 's|^(.).*|\1/&.mp3|' | \
+  sed "s!^!$URL_PREFIX!" | \
+  sort -u)
+
+if [ -z "$sound_urls" ]; then
   echo "No sounds found for \"$1\"." >&2
   exit 1
 fi
-
-#    wget -q -O - "http://www.merriam-webster.com/cgi-bin/audio.pl?$sound=$word" | \
-sound_urls=$(\
-  for sound in $sound_names; do
-    wget -q -O - "http://www.merriam-webster.com/audio.php?file=$sound" | \
-    grep -i '<EMBED' | sed -r 's/.*SRC="([^"]+)".*/\1/'
-  done)
 
 wget -q $sound_urls -P "$sound_dir"
 
 for url in $sound_urls; do
   path="$sound_dir/${url##*/}"
-  mv "$path" "$path".wav
-  echo "$path".wav
-  aplay "$path".wav
+  $player "$path"
 done
 
