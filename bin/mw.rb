@@ -45,10 +45,42 @@ def main
   ever_parsed_quick_or_full_def = false
   just_parsed_quick_def = false
   just_parsed_full_def = false
+  suppress_newline = false
+  parsing_kids_definitions = false
 
-  doc.css('div.card-box').each do |card_box|
+  doc.css('div.card-box, .typo7').each do |card_box|
     classes = card_box.attributes['class'].to_s.split
-    if classes.include?('examples-box')
+
+    if classes.include?('typo7')
+      # This is a text header separating groups of definitions.
+
+      # If we were previously parsing "Defined for Kids" definitions, we must
+      # be done now.
+      parsing_kids_definitions = false
+
+      case card_box.inner_text.downcase
+      when /\bkids\b/
+        # These are essentially redundant with the other definitions, so we
+        # don't print them.
+        parsing_kids_definitions = true
+      when /medical/
+        puts
+        puts header_text('Medical')
+        puts
+        suppress_newline = true
+      when /phrases/
+        # (Ignore - regular parsing will catch it on next iteration.)
+      else
+        puts "Unexpected header: #{card_box.inner_text}"
+        exit 1
+      end
+      next
+    end
+
+    if parsing_kids_definitions
+      # Suppress the definition parsing below.
+      next
+    elsif classes.include?('examples-box')
       puts 'Examples...'
       card_box.css('.definition-list li').each do |e|
         wrapped = wrap_text("#{e.inner_text.strip_nbsp}", "   ")
@@ -111,24 +143,28 @@ def main
       puts '[Has illustration]'
 
     elsif classes.include?('quick-def-box')
-      if ever_parsed_quick_or_full_def && (just_parsed_quick_def ||
-                                           just_parsed_full_def)
+      if (ever_parsed_quick_or_full_def &&
+          (just_parsed_quick_def || just_parsed_full_def) &&
+          !suppress_newline)
         puts
       end
       parse_and_print_quick_def_box(card_box)
       just_parsed_quick_def = true
       just_parsed_full_def = false
       ever_parsed_quick_or_full_def = true
+      suppress_newline = false
 
     elsif classes.include?('full-def-box')
-      if ever_parsed_quick_or_full_def && (just_parsed_full_def ||
-                                           !just_parsed_quick_def)
+      if (ever_parsed_quick_or_full_def &&
+          (just_parsed_full_def || !just_parsed_quick_def) &&
+          !suppress_newline)
         puts
       end
       parse_and_print_full_def_box(card_box)
       just_parsed_quick_def = false
       just_parsed_full_def = true
       ever_parsed_quick_or_full_def = true
+      suppress_newline = false
 
     else
       puts "Unexpected box type: #{classes.join(',')}"
@@ -216,6 +252,12 @@ end
 def terminal_width
   stty_width = %x{stty size}.split[1].to_i - 2
   stty_width < 0 ? 78 : stty_width
+end
+
+def header_text(text, width=terminal_width())
+  return (('-' * (width/ 2 - text.length/2)) +
+          text +
+          ('-' * (width/ 2 - text.length/2)))
 end
 
 def uri_escape(str)
