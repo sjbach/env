@@ -42,6 +42,7 @@ def main
     exit 1
   end
 
+  ever_parsed_quick_or_full_def = false
   just_parsed_quick_def = false
   just_parsed_full_def = false
 
@@ -110,16 +111,24 @@ def main
       puts '[Has illustration]'
 
     elsif classes.include?('quick-def-box')
-      puts if just_parsed_quick_def or just_parsed_full_def
+      if ever_parsed_quick_or_full_def && (just_parsed_quick_def ||
+                                           just_parsed_full_def)
+        puts
+      end
       parse_and_print_quick_def_box(card_box)
       just_parsed_quick_def = true
       just_parsed_full_def = false
+      ever_parsed_quick_or_full_def = true
 
     elsif classes.include?('full-def-box')
-      puts if just_parsed_full_def or not just_parsed_quick_def
+      if ever_parsed_quick_or_full_def && (just_parsed_full_def ||
+                                           !just_parsed_quick_def)
+        puts
+      end
       parse_and_print_full_def_box(card_box)
       just_parsed_quick_def = false
       just_parsed_full_def = true
+      ever_parsed_quick_or_full_def = true
 
     else
       puts "Unexpected box type: #{classes.join(',')}"
