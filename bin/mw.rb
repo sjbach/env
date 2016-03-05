@@ -7,9 +7,6 @@
 #  sudo aptitude install ruby-nokogiri
 #
 
-# TODO:
-# - Strip out 'X Defined for Kids' definitions
-
 require 'uri'
 require 'rubygems'
 require 'nokogiri'
