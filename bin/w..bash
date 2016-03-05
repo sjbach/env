@@ -23,6 +23,11 @@ function usage {
   exit 1
 }
 
+mp3_player=$(which mplayer || which mpv || which play)
+if [ -z "$mp3_player" ]; then
+  die "No mp3 player installed"
+fi
+
 function get_def {
   dictionary="$1"
   word="$2"
@@ -64,7 +69,15 @@ if ! [ -d "$word_dir" ] ; then
   wait
 fi
 
-( for wav in "$word_dir"/*.wav; do test -e "$wav" && aplay -q "$wav"; done ) &
+# Play pronunciations, if any.
+( for wav in "$word_dir"/*.wav; do
+    test -e "$wav" && aplay -q "$wav"
+  done
+  for mp3 in "$word_dir"/*.mp3; do
+    test -e "$mp3" && $mp3_player "$mp3"
+  done >/dev/null 2>&1
+  ) &
+
 ( if [ -s "$word_dir/mw" ]; then
     cat "$word_dir/mw"
     echo
