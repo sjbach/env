@@ -62,7 +62,12 @@ def main
         parsing_kids_definitions = true
       when /medical/
         puts
-        puts header_text('Medical')
+        puts header_text(' Medical ')
+        puts
+        suppress_newline = true
+      when /\blaw\b/
+        puts
+        puts header_text(' Law ')
         puts
         suppress_newline = true
       when /phrases/
