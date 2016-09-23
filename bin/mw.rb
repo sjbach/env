@@ -361,12 +361,22 @@ def parse_and_print_full_def_box(card_box_node)
     if node_has_class(el, 'dro')
       # (Not sure what 'dro' is short for.)
       el.css('.runon-attributes').each do |expression|
+        expression.css('em').each do |em|
+          # adjective, adverb, noun, etc.
+          assert(em.elements.empty?, 'Unexpected HTML in em')
+          em.content = "[#{em.inner_text}]"
+        end
         puts " —#{expression.inner_text.strip_nbsp}"
       end
     end
     if node_has_class(el, 'uro')
       # (Not sure what 'uro' is short for.)
       el.css('.runon-attributes').each do |expression|
+        expression.css('em').each do |em|
+          # adjective, adverb, noun, etc.
+          assert(em.elements.empty?, 'Unexpected HTML in em')
+          em.content = "[#{em.inner_text}]"
+        end
         puts " —#{expression.inner_text.strip_nbsp}"
       end
     end
