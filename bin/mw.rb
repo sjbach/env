@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 #!/usr/bin/ruby2.1
 #
 # Merriam-Webster.com scraper
