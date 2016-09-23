@@ -413,6 +413,7 @@ def parse_and_print_full_def_box(card_box_node)
       card_primary_content.css('.definition-list > li, ' +
                                '.definition-list > .d > li').each do |li|
         if node_has_class(li, 'vt')
+          # adjective, adverb, noun, etc.
           puts " [#{li.content.strip_nbsp}]"
         else
           prev_def_item = nil
@@ -458,7 +459,7 @@ def parse_and_print_full_def_box(card_box_node)
 end
 
 class DefItem
-  attr_accessor :sense_num, :sub_alpha, :colon, :text
+  attr_accessor :sense_num, :sub_alpha, :sub_num, :colon, :text
 
   def initialize
     @text = ''
@@ -466,7 +467,13 @@ class DefItem
 
   def incorporate(node)
     if node_has_class(node, 'sub')
-      @sub_alpha = node.content.strip_nbsp
+      assert(node_has_class(node, ['alp', 'num']),
+             'Sub-definition missing expected class')
+      if node_has_class(node, 'alp')
+        @sub_alpha = node.content.strip_nbsp
+      else # node_has_class(node, 'num')
+        @sub_num = node.content.strip_nbsp
+      end
     elsif node_has_class(node, 'sense')
       @sense_num = node.content.strip_nbsp
     elsif (node_has_class(node, 'intro-colon') or 
@@ -488,8 +495,11 @@ class DefItem
 end
 
 def print_def_item(def_item, prev_def_item)
+  # Assumed order of definition prefixes.
+  # TODO: actually keep track of the order of consumption.
   prefix = [def_item.sense_num,
             def_item.sub_alpha,
+            def_item.sub_num,
             def_item.colon]
   if prev_def_item
     if def_item.sense_num and (def_item.sense_num == prev_def_item.sense_num)
@@ -497,6 +507,9 @@ def print_def_item(def_item, prev_def_item)
     end
     if def_item.sub_alpha and (def_item.sub_alpha == prev_def_item.sub_alpha)
       prefix[1] = ' '
+    end
+    if def_item.sub_num and (def_item.sub_num == prev_def_item.sub_num)
+      prefix[2] = ' '
     end
   end
   prefix_str = prefix.compact.join(' ') + ' '
