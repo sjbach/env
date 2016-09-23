@@ -72,7 +72,10 @@ def main
         puts
         suppress_newline = true
       when /phrases/
-        # (Ignore - regular parsing will catch it on next iteration.)
+        puts
+        puts header_text(' Phrases ')
+        puts
+        suppress_newline = true
       else
         puts "Unexpected header: #{card_box.content}"
         exit 1
