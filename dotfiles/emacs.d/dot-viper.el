@@ -52,6 +52,7 @@
 (define-key viper-vi-global-user-map ",x3" 'split-window-horizontally)
 (define-key viper-vi-global-user-map ",xk" 'kill-this-buffer)
 (define-key viper-vi-global-user-map ",A" 'beginning-of-defun)
+(define-key viper-vi-global-user-map ",p" 'fill-paragraph)
 
 (defun vimpulse-vim-excursion ()
   ;; FIXME cleanup
@@ -150,6 +151,7 @@
 (defvar viper-grep-mode-fixes 
   (let ((map (make-sparse-keymap)))
     (define-key map "q" 'close-buffer-and-window-unless-last)
+    (define-key map "D" 'remove-matching-lines)
     map))
 (viper-modify-major-mode 'grep-mode 'vi-state viper-grep-mode-fixes)
 
@@ -169,6 +171,27 @@
             (save-excursion
               (set-buffer (slime-events-buffer))
               (viper-change-state-to-vi))))
+
+;; FIXME these should not be in dot-viper.el
+(add-hook 'html-mode-hook
+          (lambda ()
+            (auto-fill-mode t)
+            (set-fill-column 100)))
+(add-hook 'sgml-mode-hook
+          (lambda ()
+            (auto-fill-mode t)
+            (set-fill-column 100)))
+(add-hook 'python-mode-hook
+          (lambda ()
+            (auto-fill-mode t)
+            (set-fill-column 80)))
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (auto-fill-mode t)
+            (set-fill-column 80)))
+
+(add-hook 'ess-help-mode-hook 'viper-change-state-to-vi)
+
 
 ;TODO:
 ; map ESC to end search mode (which C-g does)
