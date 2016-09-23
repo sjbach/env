@@ -298,6 +298,11 @@ def parse_and_print_synonym_box(card_box_node)
       heading = node.content.strip_nbsp
       puts wrap_text("#{heading}:", " ")
       text = ''
+    when 'div'
+      # Convert "See more at <thesaurus link>".
+      # TODO: include m-w.com/thesaurus content?
+      assert(node.content.strip_nbsp =~ /^See more at/, 'Unexpected text')
+      text += ' |-> (thes)'
     else  # In practice, 'text', 'a', and 'em'.
       text += node.content
     end
