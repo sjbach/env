@@ -56,7 +56,7 @@ def main
       # be done now.
       parsing_kids_definitions = false
 
-      case card_box.inner_text.downcase
+      case card_box.content.downcase
       when /\bkids\b/
         # These are essentially redundant with the other definitions, so we
         # don't print them.
@@ -74,7 +74,7 @@ def main
       when /phrases/
         # (Ignore - regular parsing will catch it on next iteration.)
       else
-        puts "Unexpected header: #{card_box.inner_text}"
+        puts "Unexpected header: #{card_box.content}"
         exit 1
       end
       next
@@ -86,13 +86,13 @@ def main
     elsif classes.include?('examples-box')
       puts 'Examples...'
       card_box.css('.definition-list li').each do |e|
-        wrapped = wrap_text("#{e.inner_text.strip_nbsp}", "   ")
+        wrapped = wrap_text("#{e.content.strip_nbsp}", "   ")
         puts wrapped.sub(/^  /," -")
       end
     elsif classes.include?('origin-box')
       puts 'Origin...'
       card_box.css('div.card-primary-content p').each do |p|
-        puts wrap_text(p.inner_text.strip_nbsp, " ")
+        puts wrap_text(p.content.strip_nbsp, " ")
       end
     elsif classes.include?('rhymes-with-box')
       # (Elided.)
@@ -100,7 +100,7 @@ def main
       # TODO put all on one line?
       puts 'First known use...'
       card_box.css('div.card-primary-content p').each do |p|
-        puts wrap_text(p.inner_text.strip_nbsp, " ")
+        puts wrap_text(p.content.strip_nbsp, " ")
       end
     elsif classes.include?('related-box')
       puts 'Related...'
@@ -108,38 +108,38 @@ def main
     elsif classes.include?('other-x-terms-box')
       puts 'Other field terms...'
       card_box.css('div.card-primary-content p').each do |p|
-        puts wrap_text(p.inner_text.strip_nbsp, " ")
+        puts wrap_text(p.content.strip_nbsp, " ")
       end
     elsif classes.include?('related-phrases-box')
       puts 'Related phrases...'
       card_box.css('div.card-primary-content li').each do |li|
-        wrapped = wrap_text("#{li.inner_text.strip_nbsp}", "   ")
+        wrapped = wrap_text("#{li.content.strip_nbsp}", "   ")
         puts wrapped.sub(/^  /," -")
       end
 
     elsif classes.include?('synonym-discussion-box')
       puts 'Synonym discussion...'
       card_box.css('div.card-primary-content .definition-block').each do |li|
-        puts wrap_text(li.inner_text.strip_nbsp, " ")
+        puts wrap_text(li.content.strip_nbsp, " ")
       end
 
     elsif classes.include?('history-box')
       puts 'History...'
       card_box.css('div.card-primary-content p').each do |p|
-        puts wrap_text(p.inner_text.strip_nbsp, " ")
+        puts wrap_text(p.content.strip_nbsp, " ")
       end
 
     elsif classes.include?('little-gems-box')
       puts 'Aside...'
       card_box.css('div.card-primary-content p').each do |p|
-        puts wrap_text(p.inner_text.strip_nbsp, "  ")
+        puts wrap_text(p.content.strip_nbsp, "  ")
       end
 
     elsif classes.include?('variants-box')
       # TODO: put all on one line?
       puts 'Variants...'
       card_box.css('div.card-primary-content').each do |content|
-        puts wrap_text(content.inner_text.strip_nbsp, " ")
+        puts wrap_text(content.content.strip_nbsp, " ")
       end
 
     elsif classes.include?('art-box')
@@ -282,7 +282,7 @@ def node_has_class(node, str_or_array)
 end
 
 def node_is_nonstandard_intro_colon(node)
-  return (node.name == 'strong' and node.inner_text.strip_nbsp == ':')
+  return (node.name == 'strong' and node.content.strip_nbsp == ':')
 end
 
 def parse_and_print_synonym_box(card_box_node)
@@ -295,11 +295,11 @@ def parse_and_print_synonym_box(card_box_node)
       unless heading.nil?
         puts wrap_text(text.strip_nbsp, "   ")
       end
-      heading = node.inner_text.strip_nbsp
+      heading = node.content.strip_nbsp
       puts wrap_text("#{heading}:", " ")
       text = ''
     else  # In practice, 'text', 'a', and 'em'.
-      text += node.inner_text
+      text += node.content
     end
   end
   puts wrap_text(text.strip_nbsp, "   ")
@@ -311,11 +311,11 @@ def parse_and_print_quick_def_box(card_box_node)
   function = card_box_node.at_css('.word-attributes .main-attr')
   pronunciation = card_box_node.at_css('.word-attributes .pr')
   syllables = card_box_node.at_css('.word-attributes .word-syllables')
-  puts "Quick: #{term.inner_text.strip_nbsp}" if term
-  puts "Function: #{function.inner_text.strip_nbsp}" if function
-  puts "Pronunciation: #{pronunciation.inner_text.strip_nbsp}" if pronunciation
+  puts "Quick: #{term.content.strip_nbsp}" if term
+  puts "Function: #{function.content.strip_nbsp}" if function
+  puts "Pronunciation: #{pronunciation.content.strip_nbsp}" if pronunciation
   if syllables && !pronunciation
-    puts "Syllables: #{syllables.inner_text.strip_nbsp}"
+    puts "Syllables: #{syllables.content.strip_nbsp}"
   end
 
   card_box_node.css('.definition-list .definition-inner-item > span').each \
@@ -325,9 +325,9 @@ def parse_and_print_quick_def_box(card_box_node)
     outer_span.children.each do |node|
       assert(node.element? || node.text?)
       if node_has_class(node, 'intro-colon')
-        prefix += "#{node.inner_text.strip_nbsp} "
+        prefix += "#{node.content.strip_nbsp} "
       else
-        text += node.inner_text
+        text += node.content
       end
     end
 
@@ -345,14 +345,14 @@ def parse_and_print_full_def_box(card_box_node)
   syllables = card_box_node.at_css('.word-attributes .word-syllables')
   inflections =
     card_box_node.css('.inflections > span').to_a.map { |i|
-      i.inner_text.strip_nbsp
+      i.content.strip_nbsp
     }.join('  ')
 
-  puts "Full: #{term.inner_text.strip_nbsp}" if term
-  puts "Function: #{function.inner_text.strip_nbsp}" if function
-  puts "Pronunciation: #{pronunciation.inner_text.strip_nbsp}" if pronunciation
+  puts "Full: #{term.content.strip_nbsp}" if term
+  puts "Function: #{function.content.strip_nbsp}" if function
+  puts "Pronunciation: #{pronunciation.content.strip_nbsp}" if pronunciation
   if syllables && !pronunciation
-    puts "Syllables: #{syllables.inner_text.strip_nbsp}"
+    puts "Syllables: #{syllables.content.strip_nbsp}"
   end
   puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
 
@@ -364,9 +364,9 @@ def parse_and_print_full_def_box(card_box_node)
         expression.css('em').each do |em|
           # adjective, adverb, noun, etc.
           assert(em.elements.empty?, 'Unexpected HTML in em')
-          em.content = "[#{em.inner_text}]"
+          em.content = "[#{em.content}]"
         end
-        puts " —#{expression.inner_text.strip_nbsp}"
+        puts " —#{expression.content.strip_nbsp}"
       end
     end
     if node_has_class(el, 'uro')
@@ -375,9 +375,9 @@ def parse_and_print_full_def_box(card_box_node)
         expression.css('em').each do |em|
           # adjective, adverb, noun, etc.
           assert(em.elements.empty?, 'Unexpected HTML in em')
-          em.content = "[#{em.inner_text}]"
+          em.content = "[#{em.content}]"
         end
-        puts " —#{expression.inner_text.strip_nbsp}"
+        puts " —#{expression.content.strip_nbsp}"
       end
     end
 
@@ -390,7 +390,7 @@ def parse_and_print_full_def_box(card_box_node)
       card_primary_content.css('.definition-list > li, ' +
                                '.definition-list > .d > li').each do |li|
         if node_has_class(li, 'vt')
-          puts " /#{li.inner_text.strip_nbsp}/"
+          puts " /#{li.content.strip_nbsp}/"
         else
           prev_def_item = nil
           def_item = DefItem.new
@@ -443,15 +443,15 @@ class DefItem
 
   def incorporate(node)
     if node_has_class(node, 'sub')
-      @sub_alpha = node.inner_text.strip_nbsp
+      @sub_alpha = node.content.strip_nbsp
     elsif node_has_class(node, 'sense')
-      @sense_num = node.inner_text.strip_nbsp
+      @sense_num = node.content.strip_nbsp
     elsif (node_has_class(node, 'intro-colon') or 
            node_is_nonstandard_intro_colon(node))
-      @colon = node.inner_text.strip_nbsp
+      @colon = node.content.strip_nbsp
       assert(@colon == ':')
     else
-      @text += node.inner_text
+      @text += node.content
     end
   end
 
