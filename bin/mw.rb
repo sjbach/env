@@ -316,8 +316,15 @@ def parse_and_print_quick_def_box(card_box_node)
   function = card_box_node.at_css('.word-attributes .main-attr')
   pronunciation = card_box_node.at_css('.word-attributes .pr')
   syllables = card_box_node.at_css('.word-attributes .word-syllables')
-  puts "Quick: #{term.content.strip_nbsp}" if term
-  puts "Function: #{function.content.strip_nbsp}" if function
+
+  if term and function
+    puts "Quick: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
+  elsif term
+    puts "Quick: #{term.content.strip_nbsp}"
+  else
+    assert(function.nil?, 'Sentence function specified but no term')
+  end
+
   puts "Pronunciation: #{pronunciation.content.strip_nbsp}" if pronunciation
   if syllables && !pronunciation
     puts "Syllables: #{syllables.content.strip_nbsp}"
@@ -353,8 +360,16 @@ def parse_and_print_full_def_box(card_box_node)
       i.content.strip_nbsp
     }.join('  ')
 
-  puts "Full: #{term.content.strip_nbsp}" if term
-  puts "Function: #{function.content.strip_nbsp}" if function
+
+  if term and function
+    # Note: might be this doesn't ever occur.
+    puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
+  elsif term
+    puts "Full: #{term.content.strip_nbsp}"
+  else
+    assert(function.nil?, 'Sentence function specified but no term')
+  end
+
   puts "Pronunciation: #{pronunciation.content.strip_nbsp}" if pronunciation
   if syllables && !pronunciation
     puts "Syllables: #{syllables.content.strip_nbsp}"
@@ -395,7 +410,7 @@ def parse_and_print_full_def_box(card_box_node)
       card_primary_content.css('.definition-list > li, ' +
                                '.definition-list > .d > li').each do |li|
         if node_has_class(li, 'vt')
-          puts " /#{li.content.strip_nbsp}/"
+          puts " [#{li.content.strip_nbsp}]"
         else
           prev_def_item = nil
           def_item = DefItem.new
