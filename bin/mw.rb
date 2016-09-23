@@ -114,7 +114,7 @@ def main
         puts wrap_text(p.content.strip_nbsp, " ")
       end
     elsif classes.include?('related-phrases-box')
-      puts 'Related phrases...'
+      puts 'Related phrases (separate definitions)...'
       card_box.css('div.card-primary-content li').each do |li|
         wrapped = wrap_text("#{li.content.strip_nbsp}", "   ")
         puts wrapped.sub(/^  /," -")
