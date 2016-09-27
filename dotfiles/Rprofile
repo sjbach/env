@@ -15,3 +15,24 @@ ListMemoryHogs <- function(n=10) {
   print(as.matrix(rev(sort(z))[1:n]))
 }
 
+# In-place debug printing.  Not industry strength.
+#
+# a <- b + c      # what is the value of b here?
+#
+# ==>
+#
+# a <- dp(b) + c  # (prints "b :: <99>")
+dp <- function(variable) {
+    variable.name <- deparse(substitute(variable))
+    if (length(variable) == 1) {
+        cat(variable.name, " :: <", variable, ">\n", sep="")
+    } else if (is.vector(variable)) {
+        cat(variable.name, " :: <", paste(variable, collapse=" "), ">\n", sep="")
+    } else {
+        cat(variable.name, " :: <<\n", sep="")
+        print(variable)
+        cat(">>\n")
+    }
+    return(variable)
+}
+
