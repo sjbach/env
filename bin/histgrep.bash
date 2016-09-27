@@ -10,7 +10,7 @@ if [ "`uname`" != "Darwin" ]; then
 fi
 
 # Get results, reverse, prepend line numbers
-grep "$@" -- ~/.histfile ~/.hists/* | tac | nl | \
+grep --text "$@" -- ~/.histfile ~/.hists/* | tac | nl | \
 #
 # Insert line numbers for better intra-day sorting
 sed $extended_regex_flag 's/([0-9]+) *([^:]*):(.*)/\2:\1:\3/' | \
