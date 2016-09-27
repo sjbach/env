@@ -4,14 +4,19 @@
 # (See //cron/save-hist.bash)
 #
 
+extended_regex_flag='-r'
+if [ "`uname`" != "Darwin" ]; then
+  extended_regex_flag='-E'
+fi
+
 # Get results, reverse, prepend line numbers
 grep "$@" -- ~/.histfile ~/.hists/* | tac | nl | \
 #
 # Insert line numbers for better intra-day sorting
-sed -r 's/([0-9]+) *([^:]*):(.*)/\2:\1:\3/' | \
+sed $extended_regex_flag 's/([0-9]+) *([^:]*):(.*)/\2:\1:\3/' | \
 #
 # Pretty print
-sed -r 's%.*\.hists/(.*)\.(.*\.)?(histfile|bash_history):%\1:%' | \
+sed $extended_regex_flag 's%.*\.hists/(.*)\.(.*\.)?(histfile|bash_history):%\1:%' | \
 #
 # Put more recent lines first like this:
 #   year, month, day, then implicitly by the inserted line number
@@ -25,5 +30,5 @@ sort -u -t ':' --key 3 | \
 sort --key 1.7,1.8nr --key 1.1,1.3Mr --key 1.4,1.5nr | \
 #
 # Remove the inserted line numbers.
-sed -r 's/:[0-9]+:/:/'
+sed $extended_regex_flag 's/:[0-9]+:/:/'
 
