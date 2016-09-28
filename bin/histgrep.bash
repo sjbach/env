@@ -5,7 +5,7 @@
 #
 
 extended_regex_flag='-r'
-if [ "`uname`" != "Darwin" ]; then
+if [ "`uname`" = "Darwin" ]; then
   extended_regex_flag='-E'
 fi
 
