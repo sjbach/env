@@ -18,7 +18,7 @@ require 'net/http'
 $debug = false
 
 if ARGV[0].nil?
-  $stderr.puts "Usage: m-w <word>"
+  $stderr.puts "Usage: mw <word>"
   exit 0
 end
 
