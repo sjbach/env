@@ -152,6 +152,12 @@ def main
         puts wrap_text(p.content.strip_nbsp, "  ")
       end
 
+    elsif classes.include?('headscratcher-box')
+      puts 'Headscratcher...'
+      card_box.css('div.card-primary-content p').each do |p|
+        puts wrap_text(p.content.strip_nbsp, "  ")
+      end
+
     elsif classes.include?('art-box')
       puts '[Has illustration]'
 
