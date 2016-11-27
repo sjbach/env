@@ -52,12 +52,13 @@ def main
     if classes.include?('typo7')
       # This is a text header separating groups of definitions.
 
-      # If we were previously parsing "Defined for Kids" definitions, we must
-      # be done now.
+      # If we were previously parsing "Defined for Kids" or "Defined for
+      # English Language Learners" definitions, we must be done now.
       parsing_kids_definitions = false
 
       case card_box.content.downcase
-      when /\bkids\b/
+      when /\bkids\b/,
+           /english language learners/
         # These are essentially redundant with the other definitions, so we
         # don't print them.
         parsing_kids_definitions = true
