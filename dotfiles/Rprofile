@@ -1,5 +1,5 @@
 options(width = 250)
-options(maxprint = 500)
+options(max.print = 1000)
 options(google3.flag.logtostderr = TRUE)
 
 a <- function() {
