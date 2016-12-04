@@ -177,8 +177,7 @@ def main
       suppress_newline = false
 
     elsif classes.include?('full-def-box')
-      if (!just_parsed_headword &&
-          ever_parsed_quick_or_full_def &&
+      if (!just_parsed_headword && ever_parsed_quick_or_full_def &&
            (just_parsed_full_def || !just_parsed_quick_def) &&
            !suppress_newline)
         puts
