@@ -43,6 +43,7 @@ def main
   ever_parsed_quick_or_full_def = false
   just_parsed_quick_def = false
   just_parsed_full_def = false
+  just_parsed_headword = false
   suppress_newline = false
   parsing_kids_definitions = false
 
@@ -161,6 +162,8 @@ def main
     elsif classes.include?('art-box')
       puts '[Has illustration]'
 
+    # Note: m-w.com seems to have stopped emitting this section.  I'm not sure
+    # if it'll come back (I found it useful) so leaving this logic in for now.
     elsif classes.include?('quick-def-box')
       if (ever_parsed_quick_or_full_def &&
           (just_parsed_quick_def || just_parsed_full_def) &&
@@ -174,16 +177,18 @@ def main
       suppress_newline = false
 
     elsif classes.include?('full-def-box')
-      if (ever_parsed_quick_or_full_def &&
-          (just_parsed_full_def || !just_parsed_quick_def) &&
-          !suppress_newline)
+      if (!just_parsed_headword &&
+          ever_parsed_quick_or_full_def &&
+           (just_parsed_full_def || !just_parsed_quick_def) &&
+           !suppress_newline)
         puts
       end
-      parse_and_print_full_def_box(card_box)
+      parse_and_print_full_def_box(card_box, !just_parsed_headword)
       just_parsed_quick_def = false
       just_parsed_full_def = true
       ever_parsed_quick_or_full_def = true
       suppress_newline = false
+      just_parsed_headword = classes.include?('headword-box')
 
     else
       puts "Unexpected box type: #{classes.join(',')}"
@@ -365,7 +370,7 @@ def parse_and_print_quick_def_box(card_box_node)
   end
 end
 
-def parse_and_print_full_def_box(card_box_node)
+def parse_and_print_full_def_box(card_box_node, print_term = true)
   term = card_box_node.at_css('h1, h2 i') or card_box_node.at_css('h1, h2')
   # TODO double check this ever occurs
   function = card_box_node.at_css('.word-attributes .main-attr')
@@ -376,14 +381,15 @@ def parse_and_print_full_def_box(card_box_node)
       i.content.strip_nbsp
     }.join('  ')
 
-
-  if term and function
-    # Note: might be this doesn't ever occur.
-    puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
-  elsif term
-    puts "Full: #{term.content.strip_nbsp}"
-  else
-    assert(function.nil?, 'Sentence function specified but no term')
+  if print_term
+    if term and function
+      # Note: might be this doesn't ever occur.
+      puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
+    elsif term
+      puts "Full: #{term.content.strip_nbsp}"
+    elsif print_term
+      assert(function.nil?, 'Sentence function specified but no term')
+    end
   end
 
   puts "Pronunciation: #{pronunciation.content.strip_nbsp}" if pronunciation
