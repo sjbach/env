@@ -31,7 +31,7 @@ class String
 end
 
 def main
-  url = uri_escape("http://www.merriam-webster.com/dictionary/#{ARGV[0]}")
+  url = uri_escape("https://www.merriam-webster.com/dictionary/#{ARGV[0]}")
   doc = parse_and_sanitize_doc(open(url))
 
   # TODO does this happen in practice?  Looks like we get a 404
