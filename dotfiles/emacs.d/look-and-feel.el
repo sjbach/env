@@ -108,6 +108,7 @@
   (font-lock-add-keywords 'c-mode words)
   (font-lock-add-keywords 'c++-mode words)
   (font-lock-add-keywords 'java-mode words)
+  (font-lock-add-keywords 'js-mode words)
   (font-lock-add-keywords 'r-mode words)
   (font-lock-add-keywords 'R-mode words)
   (font-lock-add-keywords 'ess-mode words)
