@@ -86,6 +86,7 @@
 ; Then: M-x package-install foo
 
 (custom-set-variables
+ '(js-indent-level 2)
  '(load-home-init-file t t)
  '(warning-suppress-types (quote ((undo discard-info))))
  )
