@@ -1,1 +1,0 @@
-svn-log-diff.bash
