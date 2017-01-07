@@ -265,6 +265,10 @@ def assert(condition, message = 'assertion failure')
   raise AssertionError.new(message) unless condition
 end
 
+def die(message = 'unexpected circumstance')
+  raise AssertionError.new(message)
+end
+
 def wrap_text(text, indent="  ", width=terminal_width())
   # Regex modified from:
   # http://blog.macromates.com/2006/wrapping-text-with-regular-expressions/
@@ -400,25 +404,57 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
   card_box_node.css('.inner-box-wrapper > ' +
                     '.card-primary-content, .dro, .uro').each do |el|
     if node_has_class(el, 'dro')
-      # (Not sure what 'dro' is short for.)
-      el.css('.runon-attributes').each do |expression|
-        expression.css('em').each do |em|
+      # (Word inflections; not sure what 'dro' is short for.)
+      #
+      # TODO: use the same parsing as for 'uro', below.
+      el.css('.runon-attributes').each do |runon|
+        runon.css('em').each do |em|
           # adjective, adverb, noun, etc.
           assert(em.elements.empty?, 'Unexpected HTML in em')
           em.content = "[#{em.content}]"
         end
-        puts " —#{expression.content.strip_nbsp}"
+        puts " —#{runon.content.strip_nbsp}"
       end
     end
     if node_has_class(el, 'uro')
-      # (Not sure what 'uro' is short for.)
-      el.css('.runon-attributes').each do |expression|
-        expression.css('em').each do |em|
-          # adjective, adverb, noun, etc.
-          assert(em.elements.empty?, 'Unexpected HTML in em')
-          em.content = "[#{em.content}]"
+      # (Word inflections; not sure what 'uro' is short for.)
+      #
+      # These are usually trivial but sometimes have structure.
+      el.css('.runon-attributes').each do |runon|
+        ro_struct = {}
+        runon.elements.each do |runon_el|
+          case runon_el.name
+          when 'h2'
+            ro_struct['word'] = runon_el.content.strip_nbsp
+          when 'em'
+            ro_struct['function'] = runon_el.content.strip_nbsp
+          when 'a'
+            assert(node_has_class(runon_el, 'play-pron'),
+                  "Unexpected runon element: #{runon_el}")
+          when 'span'
+            if node_has_class(runon_el, 'pr')
+              ro_struct['pronunciation'] = runon_el.content.strip_nbsp
+            elsif node_has_class(runon_el, 'in')
+              assert(runon_el.elements.length == 2,
+                     "Unexpected runon element: #{runon_el}")
+              ro_struct['plural'] =
+                "[#{runon_el.elements[0].content.strip_nbsp}: "\
+                "#{runon_el.elements[1].content.strip_nbsp}]"
+            elsif node_has_class(runon_el, 'utxt')
+              ro_struct['example'] =
+                wrap_text("#{runon_el.content.strip_nbsp}",
+                          "    ").sub(/^   /,"  -")
+            else
+              die("Unexpected runon element: #{runon_el}")
+            end
+          else
+            die("Unexpected runon element: #{runon_el}")
+          end
         end
-        puts " —#{expression.content.strip_nbsp}"
+        # (Most of these will usually be nil.)
+        puts " —#{ro_struct['word']} [#{ro_struct['function']}] "\
+             "#{ro_struct['pronunciation']} #{ro_struct['plural']}"
+        puts ro_struct['example'] if ro_struct['example']
       end
     end
 
