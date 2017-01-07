@@ -428,9 +428,6 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
             ro_struct['word'] = runon_el.content.strip_nbsp
           when 'em'
             ro_struct['function'] = runon_el.content.strip_nbsp
-          when 'a'
-            assert(node_has_class(runon_el, 'play-pron'),
-                  "Unexpected runon element: #{runon_el}")
           when 'span'
             if node_has_class(runon_el, 'pr')
               ro_struct['pronunciation'] = runon_el.content.strip_nbsp
