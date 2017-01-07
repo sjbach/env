@@ -420,6 +420,7 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
       # (Word inflections; not sure what 'uro' is short for.)
       #
       # These are usually trivial but sometimes have structure.
+      # (See e.g. 'compulsive')
       el.css('.runon-attributes').each do |runon|
         ro_struct = {}
         runon.elements.each do |runon_el|
