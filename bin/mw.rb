@@ -301,7 +301,7 @@ def node_has_class(node, str_or_array)
   when Array
     return (classes & str_or_array).any?
   else
-    assert(false, "bad class: #{str_or_array.class}")
+    die("bad class: #{str_or_array.class}")
   end
 end
 
