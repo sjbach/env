@@ -478,7 +478,8 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
             elsif node.name == 'span'
               # Recurse another level.
               node.children.each do |node_inner|
-                if (node_has_class(node_inner, ['sense', 'sub', 'intro-colon']) or
+                if (node_has_class(node_inner,
+                                   ['sense', 'sub', 'intro-colon']) or
                     node_is_nonstandard_intro_colon(node_inner))
                   if def_item.appears_complete?
                     print_def_item(def_item, prev_def_item)
