@@ -467,6 +467,17 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
         if node_has_class(li, 'vt')
           # adjective, adverb, noun, etc.
           puts " [#{li.content.strip_nbsp}]"
+          if li.next_sibling.name == 'span'
+            # Degenerate sub-definition.  See: 'inflame'.
+            assert(
+              node_is_nonstandard_intro_colon(li.next_sibling.elements[0]))
+            def_item = DefItem.new
+            li.next_sibling.children.each do |node|
+              def_item.incorporate(node)
+            end
+            assert(def_item.appears_complete?)
+            print_def_item(def_item, nil)
+          end
         else
           prev_def_item = nil
           def_item = DefItem.new
