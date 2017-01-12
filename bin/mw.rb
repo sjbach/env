@@ -4,8 +4,8 @@
 # Merriam-Webster.com scraper
 #
 # Setup:
-#  sudo aptitude install libruby ruby-dev rubygems libxml2 libxslt-dev
-#  sudo aptitude install ruby-nokogiri
+#  sudo apt install libruby ruby-dev rubygems libxml2 libxslt-dev
+#  sudo apt install ruby-nokogiri
 #
 
 require 'uri'
