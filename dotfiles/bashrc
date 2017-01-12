@@ -2,6 +2,10 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# Suppress "Couldn't connect to accessibility bus" GTK warnings.
+# https://bugs.launchpad.net/ubuntu/+source/at-spi2-core/+bug/1193236
+export NO_AT_BRIDGE=1
+
 set -o vi
 export PATH="~/bin:$PATH"
 export EDITOR=/usr/bin/vim
