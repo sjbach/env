@@ -462,17 +462,30 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
     end
 
     card_primary_contents.each do |card_primary_content|
-      card_primary_content.css('.definition-list > li, ' +
-                               '.definition-list > .d > li').each do |li|
-        if node_has_class(li, 'vt')
+      definition_list_items =
+        # Common case.
+        card_primary_content.css('.definition-list > li, ' \
+                                 '.definition-list > .d > li')
+      if (definition_list_items.empty? and
+          card_primary_content.at_css('.definition-list') and
+          card_primary_content.at_css('.definition-list > span'))
+        # Unusual case: a single definition given by nodes within an ol tag,
+        # but the nodes aren't li elements.
+        # See: 'sic transit gloria mundi'.
+        definition_list_items =
+          card_primary_content.at_css('.definition-list').children
+      end
+
+      definition_list_items.each do |item|  # (Note: may not be li elements.)
+        if node_has_class(item, 'vt')
           # adjective, adverb, noun, etc.
-          puts " [#{li.content.strip_nbsp}]"
-          if li.next_sibling.name == 'span'
+          puts " [#{item.content.strip_nbsp}]"
+          if item.next_sibling.name == 'span'
             # Degenerate sub-definition.  See: 'inflame'.
             assert(
-              node_is_nonstandard_intro_colon(li.next_sibling.elements[0]))
+              node_is_nonstandard_intro_colon(item.next_sibling.elements[0]))
             def_item = DefItem.new
-            li.next_sibling.children.each do |node|
+            item.next_sibling.children.each do |node|
               def_item.incorporate(node)
             end
             assert(def_item.appears_complete?)
@@ -482,7 +495,7 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
           prev_def_item = nil
           def_item = DefItem.new
 
-          li.at_css('> p').children.each do |node|
+          item.at_css('> p').children.each do |node|
             if (node_has_class(node, ['sense', 'sub', 'intro-colon']) or
                 node_is_nonstandard_intro_colon(node))
               def_item.incorporate(node)
