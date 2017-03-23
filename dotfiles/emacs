@@ -48,6 +48,7 @@
       (delete-window window))))
 
 (global-set-key "\C-d" 'close-buffer-and-window-unless-last)
+(global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 
 ;; Put all backups into a single directory
 (setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs-tmp"))))
