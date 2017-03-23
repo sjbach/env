@@ -238,6 +238,9 @@ def parse_and_sanitize_doc(content)
     '#cite-module',
     # Ad/tracking stuff?
     '.central-abl-box',
+    # "'foo' was our Word of the Day [...]. Hear the podcast!".
+    # Interferes with card parsing.
+    '.podcast-player-block',
   ]
   doc = Nokogiri::HTML(content)
   worthless_content_selectors.each do |selector|
