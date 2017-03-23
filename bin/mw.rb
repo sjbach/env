@@ -11,7 +11,6 @@
 require 'uri'
 require 'rubygems'
 require 'nokogiri'
-require 'open-uri'
 require 'net/http'
 
 #require 'pp'
@@ -31,8 +30,11 @@ class String
 end
 
 def main
-  url = uri_escape("https://www.merriam-webster.com/dictionary/#{ARGV[0]}")
-  doc = parse_and_sanitize_doc(open(url))
+  uri =
+    URI.parse(
+      uri_escape(
+        "https://www.merriam-webster.com/dictionary/#{ARGV[0]}"))
+  doc = parse_and_sanitize_doc(uri_open_following_redirects(uri))
 
   # TODO does this happen in practice?  Looks like we get a 404
   if doc.at_css('body.definitions-page').nil?
@@ -291,6 +293,23 @@ def uri_escape(str)
   # Square brackets are not caught as invalid characters...
   URI.escape(str).gsub("[", "%5B") \
                  .gsub("]", "%5D")
+end
+
+def uri_open_following_redirects(uri)
+  5.times do
+    assert(uri.scheme == "https")
+    response = Net::HTTP.get_response(uri)
+    case response
+    when Net::HTTPSuccess
+      return response.body
+    when Net::HTTPRedirection
+      uri.path = uri_escape(response['location'])
+    else
+      # Should be doing something more intelligent here.
+      die("Unimplemented HTTP response condition: #{response}")
+    end
+  end
+  die("Too many redirects for uri: #{uri}")
 end
 
 def node_has_class(node, str_or_array)
