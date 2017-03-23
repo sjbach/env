@@ -100,14 +100,14 @@ nmap <silent> <TAB> :LustyJugglePrevious<CR>
 
 " Catch trailing whitespace
 set listchars=tab:>-,trail:·,eol:$
-nmap <silent> <leader>s :set nolist!<CR>
+nmap <silent> <Leader>s :set nolist!<CR>
 
 " Fix command typos (stolen from Adam Katz)
 nmap ; :
 
 " ` is more useful than ' but less accessible.
 nnoremap ' `
-nnoremap ` '
+"nnoremap ` '
 
 " Buffer management
 nmap <C-h> :bp<CR>
@@ -134,9 +134,6 @@ runtime macros/matchit.vim
 set wildmenu
 set wildmode=list:longest
 set wildignore=*.o,*.fasl
-
-autocmd BufRead letter* set filetype=mail
-autocmd Filetype mail set fo -=l autoindent spell
 
 autocmd Filetype sh set ts=4 shiftwidth=2 expandtab
 autocmd Filetype lisp,ruby,xml,html set ts=8 shiftwidth=2 expandtab
