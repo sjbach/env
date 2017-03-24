@@ -305,6 +305,9 @@ def uri_open_following_redirects(uri)
     case response
     when Net::HTTPSuccess
       return response.body
+    when Net::HTTPNotFound
+      $stderr.puts "404: No definition found."
+      exit 1
     when Net::HTTPRedirection
       uri.path = uri_escape(response['location'])
     else
