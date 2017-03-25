@@ -481,6 +481,11 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
     end
 
     card_primary_contents = el.css('.card-primary-content')
+    # Sometimes an individual definition will include a list of
+    # sub-definitions, each confusingly captured in a card-primary-content
+    # class.  Remove these from the set here and handle them specially below.
+    # See: 'warrant', 'company'.
+    card_primary_contents -= el.css('.sub-entry > .card-primary-content')
     if node_has_class(el, 'card-primary-content')
       card_primary_contents << el
     end
@@ -531,8 +536,8 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
                     node_is_nonstandard_intro_colon(node_inner))
                   if def_item.appears_complete?
                     print_def_item(def_item, prev_def_item)
-                    prev_def_item = def_item.clone
-                    def_item.text = ''
+                    prev_def_item = def_item
+                    def_item = def_item.clone_and_partially_scrub()
                   end
                   def_item.incorporate(node_inner)
                 else
@@ -542,8 +547,8 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
               # Last entry in sub-list.
               assert(def_item.appears_complete?)
               print_def_item(def_item, prev_def_item)
-              prev_def_item = def_item.clone
-              def_item.text = ''
+              prev_def_item = def_item
+              def_item = def_item.clone_and_partially_scrub()
             else  # text
               def_item.incorporate(node)
             end
@@ -560,10 +565,13 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
 end
 
 class DefItem
-  attr_accessor :sense_num, :sub_alpha, :sub_num, :colon, :text
+  attr_accessor :sense_num, :sub_alpha, :sub_num, :colon, :text,
+                # Rare.
+                :sub_entries
 
   def initialize
     @text = ''
+    @sub_entries = []
   end
 
   def incorporate(node)
@@ -581,9 +589,27 @@ class DefItem
            node_is_nonstandard_intro_colon(node))
       @colon = node.content.strip_nbsp
       assert(@colon == ':')
+    elsif node_has_class(node, 'vi')
+      # These appear to be another form of example usages.
+      # See: 'warrant', 'company'.
+      @text += "(*) #{node.content.strip_nbsp}"
+    elsif node_has_class(node, 'sub-entry')
+      # These might be be able to have a very general form, as a descendant
+      # element includes the class 'card-primary-content', but they appear
+      # rarely and I've only seen textual content.
+      # See: 'warrant', 'company'.
+      assert(@text.length > 0)
+      @sub_entries << node.content.strip_nbsp
     else
       @text += node.content
     end
+  end
+
+  def clone_and_partially_scrub
+    new_def_item = self.clone
+    new_def_item.text = ''
+    new_def_item.sub_entries = []
+    return new_def_item
   end
 
   def appears_complete?
@@ -618,6 +644,14 @@ def print_def_item(def_item, prev_def_item)
                       " " + " " * prefix_str.length)
   wrapped[0..(1 + prefix_str.length - 1)] = " #{prefix_str}"
   puts wrapped
+
+  prefix_str = " " * (prefix_str.length) + "— "
+  def_item.sub_entries.each do |sub_entry|
+    wrapped = wrap_text("#{sub_entry}",
+                        " " + " " * prefix_str.length)
+    wrapped[0..(1 + prefix_str.length - 1)] = " #{prefix_str}"
+    puts wrapped
+  end
 end
 
 main()
