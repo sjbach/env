@@ -136,7 +136,9 @@ def main
         puts wrap_text(p.content.strip_nbsp, " ")
       end
 
-    elsif classes.include?('little-gems-box')
+    elsif (classes.include?('little-gems-box') or
+           # See: 'family'.
+           classes.include?('sinote-box'))
       puts 'Aside...'
       card_box.css('div.card-primary-content p').each do |p|
         puts wrap_text(p.content.strip_nbsp, "  ")
