@@ -241,6 +241,9 @@ def parse_and_sanitize_doc(content)
     # "'foo' was our Word of the Day [...]. Hear the podcast!".
     # Interferes with card parsing.
     '.podcast-player-block',
+    # Definitions of individual words in a multi-word search term.  I don't
+    # find these useful.
+    '.word-by-word-box',
   ]
   doc = Nokogiri::HTML(content)
   worthless_content_selectors.each do |selector|
