@@ -454,7 +454,7 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
       # (Word inflections; not sure what 'uro' is short for.)
       #
       # These are usually trivial but sometimes have structure.
-      # (See e.g. 'compulsive')
+      # (See e.g. 'compulsive', 'abscess'.)
       el.css('.runon-attributes').each do |runon|
         ro_struct = {}
         runon.elements.each do |runon_el|
@@ -463,7 +463,7 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
             ro_struct['word'] = runon_el.content.strip_nbsp
           when 'em'
             ro_struct['function'] = runon_el.content.strip_nbsp
-          when 'span'
+          when 'span', 'font'
             if node_has_class(runon_el, 'pr')
               ro_struct['pronunciation'] = runon_el.content.strip_nbsp
             elsif node_has_class(runon_el, 'in')
@@ -473,6 +473,7 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
                 "[#{runon_el.elements[0].content.strip_nbsp}: "\
                 "#{runon_el.elements[1].content.strip_nbsp}]"
             elsif node_has_class(runon_el, 'utxt')
+              assert(ro_struct['example'].nil?)
               ro_struct['example'] =
                 wrap_text("#{runon_el.content.strip_nbsp}",
                           "    ").sub(/^   /,"  -")
