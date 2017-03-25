@@ -437,24 +437,13 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
 
   card_box_node.css('.inner-box-wrapper > ' +
                     '.card-primary-content, .dro, .uro').each do |el|
-    if node_has_class(el, 'dro')
-      # (Word inflections; not sure what 'dro' is short for.)
-      #
-      # TODO: use the same parsing as for 'uro', below.
-      el.css('.runon-attributes').each do |runon|
-        runon.css('em').each do |em|
-          # adjective, adverb, noun, etc.
-          assert(em.elements.empty?, 'Unexpected HTML in em')
-          em.content = "[#{em.content}]"
-        end
-        puts " —#{runon.content.strip_nbsp}"
-      end
-    end
-    if node_has_class(el, 'uro')
-      # (Word inflections; not sure what 'uro' is short for.)
+    if node_has_class(el, 'dro') or node_has_class(el, 'uro')
+      # Word inflections; unclear what 'dro' and 'uro' are short for.
       #
       # These are usually trivial but sometimes have structure.
       # (See e.g. 'compulsive', 'abscess'.)
+      #
+      # Note: not certain that 'dro' and 'uro' have equivalent DOM potential.
       el.css('.runon-attributes').each do |runon|
         ro_struct = {}
         runon.elements.each do |runon_el|
