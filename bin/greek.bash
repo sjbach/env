@@ -27,34 +27,54 @@ fi
 sound="$1"
 
 if [ "$dir" ]; then
-  sound_dir="$dir"
+  save_dir="$dir"
 else
-  sound_dir=~/.greek
+  save_dir=~/.greek
 fi
 
-[ ! -d "$sound_dir" ] && mkdir -p "$sound_dir"
+[ ! -d "$save_dir" ] && mkdir -p "$save_dir"
 
-URL_PREFIX='http://media.merriam-webster.com/audio/prons/en/us/mp3/'
+URL_PREFIX='http://media.merriam-webster.com/audio/prons/en/us/mp3'
 
-sound_urls=$(\
+audio_related_html=$(\
   wget -q -O - "http://www.m-w.com/dictionary/$1" | \
   grep '"play-pron"' | \
-  tr ' ' '\n' | \
-  grep data-file | \
-  sed -r 's/.*data-file="([^"]*)".*/\1/' | \
-  sed -r 's|^(.).*|\1/&.mp3|' | \
-  sed "s!^!$URL_PREFIX!" | \
-  sort -u)
+  tr ' ' '\n')
 
-if [ -z "$sound_urls" ]; then
+sound_files=$(\
+  echo "$audio_related_html" | \
+  grep data-file | \
+  sed -r 's/.*data-file="([^"]*)".*/\1/')
+sound_files=($sound_files)
+
+sound_dirs=$(\
+  echo "$audio_related_html" | \
+  grep data-dir | \
+  sed -r 's/.*data-dir="([^"]*)".*/\1/')
+sound_dirs=($sound_dirs)
+
+if [ ${#sound_files[@]} -eq 0 ]; then
   echo "No sounds found for \"$1\"." >&2
+  exit 1
+elif [ ${#sound_files[@]} -ne ${#sound_dirs[@]} ]; then
+  echo "Error: parse failure" >&2
   exit 1
 fi
 
-wget -q $sound_urls -P "$sound_dir"
+sound_urls=()
 
-for url in $sound_urls; do
-  path="$sound_dir/${url##*/}"
+for i in "${!sound_files[@]}"; do
+  sound_url="$URL_PREFIX/${sound_dirs[$i]}/${sound_files[$i]}.mp3"
+  sound_urls+=($sound_url)
+done
+
+# (Print array, separating elements by newlines.)
+printf '%s\n' "${sound_urls[@]}" | sort -u | while read sound_url; do
+  if ! wget -q "$sound_url" -P "$save_dir"; then
+    echo "Error: couldn't download $sound_url"
+    continue
+  fi
+  path="$save_dir/${sound_url##*/}"
   $player "$path"
 done
 
