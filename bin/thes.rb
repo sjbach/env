@@ -45,7 +45,12 @@ def wrap_text(text, indent="  ", width=terminal_width())
 end
 
 def terminal_width
-  stty_width = %x{stty size}.split[1].to_i - 2
+  stty_width =
+    if $stdin.isatty and $stdout.isatty
+      %x{stty size}.split[1].to_i - 2
+    else
+      78
+    end
   stty_width < 0 ? 78 : stty_width
 end
 
