@@ -75,7 +75,16 @@ end
 
 def main
   term = uri_escape(ARGV[0])
-  doc = Nokogiri::HTML(open("http://thesaurus.com/browse/#{term}"))
+  begin
+    doc = Nokogiri::HTML(open("http://thesaurus.com/browse/#{term}"))
+  rescue OpenURI::HTTPError => error
+    if error.io.status.first =~ /^4/
+      $stderr.puts "Not found: '#{ARGV[0]}'"
+      exit 1
+    else
+      raise error
+    end
+  end
 
   return if doc.at_css('.words-gallery-no-results')
   return if doc.at_css('#words-gallery-no-results')
