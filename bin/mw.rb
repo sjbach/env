@@ -172,6 +172,9 @@ def main
     elsif classes.include?('art-box')
       puts '[Has illustration]'
 
+    elsif classes.include?('w3-note-box')
+      puts '[Has larger entry in unabridged dictionary]'
+
     # Note: m-w.com seems to have stopped emitting this section.  I'm not sure
     # if it'll come back (I found it useful) so leaving this logic in for now.
     elsif classes.include?('quick-def-box')
