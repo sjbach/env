@@ -473,7 +473,7 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
           when 'h2'
             ro_struct['word'] = runon_el.content.strip_nbsp
           when 'em'
-            ro_struct['function'] = runon_el.content.strip_nbsp
+            ro_struct['function'] = "[#{runon_el.content.strip_nbsp}]"
           when 'span', 'font'
             if node_has_class(runon_el, 'pr')
               ro_struct['pronunciation'] = runon_el.content.strip_nbsp
@@ -496,7 +496,7 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
           end
         end
         # (Most of these will usually be nil.)
-        puts " —#{ro_struct['word']} [#{ro_struct['function']}] "\
+        puts " —#{ro_struct['word']} #{ro_struct['function']} "\
              "#{ro_struct['pronunciation']} #{ro_struct['plural']}"
         puts ro_struct['example'] if ro_struct['example']
       end
