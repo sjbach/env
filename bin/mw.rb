@@ -96,6 +96,18 @@ def main
         wrapped = wrap_text("#{e.content.strip_nbsp}", "   ")
         puts wrapped.sub(/^  /," -")
       end
+    elsif classes.include?('fresh-examples-box')
+      # See: 'influence'.
+      puts 'Recent examples...'
+      card_box.css('.definition-list li').each do |e|
+        assert(e.at_css('.cite-example'))
+        assert(e.at_css('.cite-credit'))
+        puts wrap_text(
+          (e.at_css('.cite-example').content.strip_nbsp + " " +
+           e.at_css('.cite-credit').content.strip_nbsp).gsub(/\s+/, ' '),
+          "   ").sub(/^  /," -")
+      end
+
     elsif classes.include?('origin-box')
       puts 'Origin...'
       card_box.css('div.card-primary-content p').each do |p|
