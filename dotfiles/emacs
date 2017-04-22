@@ -63,6 +63,7 @@
 
 (mapc 'expand-load
       `("look-and-feel.el"
+        "prose.el"
 ;        ,(and (at-work-p) "qpx-ita.el")
         ,(and (at-work-p) "google-boot.el")
         "viper-boot.el"))
