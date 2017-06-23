@@ -8,5 +8,5 @@ vim=`which -a vim | sed 1d | head -n1`
 [ "$vim" ] || vim=`which vim`
 [ "$vim" ] || vim=vim
 
-DISPLAY= exec $vim "$@"
+DISPLAY='' exec $vim "$@"
 
