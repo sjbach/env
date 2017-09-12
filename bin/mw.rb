@@ -110,8 +110,13 @@ def main
 
     elsif classes.include?('origin-box')
       puts 'Origin...'
-      card_box.css('div.card-primary-content p').each do |p|
-        puts wrap_text(p.content.strip_nbsp, " ")
+      card_box.css('div.card-primary-content p, ' +
+                   # See: 'troglodyte'.
+                   'div.card-primary-content .et').each do |p|
+        stripped_content = p.content.strip_nbsp
+        if !stripped_content.empty?
+          puts wrap_text(stripped_content, " ")
+        end
       end
     elsif classes.include?('rhymes-with-box')
       # (Elided.)
