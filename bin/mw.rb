@@ -121,7 +121,8 @@ def main
       card_box.css('div.card-primary-content p').each do |p|
         puts wrap_text(p.content.strip_nbsp, " ")
       end
-    elsif classes.include?('related-box')
+    elsif (classes.include?('related-box') ||
+           classes.include?('thesaurus-synonyms-box'))
       puts 'Related...'
       parse_and_print_synonym_box(card_box)
     elsif classes.include?('other-x-terms-box')
