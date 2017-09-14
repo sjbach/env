@@ -74,7 +74,9 @@
 
 (when (file-exists-p "~/ESS")
   (add-to-list 'load-path "~/ESS/lisp/")
-  (load "ess-site"))
+  ;; Don't convert '_' to '<-'.  Annoying.
+  (load "ess-site")
+  (ess-toggle-underscore nil))
 
 ; ELPA:
 ;(require 'package)
