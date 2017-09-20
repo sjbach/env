@@ -127,6 +127,7 @@ def main
         puts wrap_text(p.content.strip_nbsp, " ")
       end
     elsif (classes.include?('related-box') ||
+           # See: 'troglodyte'.
            classes.include?('thesaurus-synonyms-box'))
       puts 'Related...'
       parse_and_print_synonym_box(card_box)
@@ -437,10 +438,12 @@ end
 
 def parse_and_print_full_def_box(card_box_node, print_term = true)
   term = card_box_node.at_css('h1, h2 i') or card_box_node.at_css('h1, h2')
-  # TODO double check this ever occurs
-  function = card_box_node.at_css('.word-attributes .main-attr')
-  pronunciation = card_box_node.at_css('.word-attributes .pr')
-  syllables = card_box_node.at_css('.word-attributes .word-syllables')
+  function = (card_box_node.at_css('.word-attributes .main-attr') or
+              card_box_node.at_css('.entry-attr .fl'))
+  pronunciation = (card_box_node.at_css('.word-attributes .pr') or
+                   card_box_node.at_css('.entry-attr .prs .pr'))
+  syllables = (card_box_node.at_css('.word-attributes .word-syllables') or
+               card_box_node.at_css('.entry-attr .word-syllables'))
   inflections =
     card_box_node.css('.inflections > span').to_a.map { |i|
       i.content.strip_nbsp
