@@ -27,6 +27,11 @@ class String
   def strip_nbsp
     return self.gsub("\u00A0", " ").strip
   end
+
+  # Include A0.
+  def squeeze_whitespace
+    return self.gsub(/[\n\u00A0]/, " ").squeeze(" ")
+  end
 end
 
 def main
@@ -80,6 +85,10 @@ def main
         puts header_text(' Phrases ')
         puts
         suppress_newline = true
+      when /\bfinancial\b/
+        # TODO: see e.g. 'warrant'
+        puts "\n<Financial definition suppressed>"
+        parsing_kids_definitions = true
       else
         puts "Unexpected header: #{card_box.content}"
         exit 1
@@ -215,6 +224,19 @@ def main
         puts
       end
       parse_and_print_full_def_box(card_box, !just_parsed_headword)
+      just_parsed_quick_def = false
+      just_parsed_full_def = true
+      ever_parsed_quick_or_full_def = true
+      suppress_newline = false
+      just_parsed_headword = classes.include?('headword-box')
+
+    elsif classes.include?('another-def')
+      if (!just_parsed_headword && ever_parsed_quick_or_full_def &&
+           (just_parsed_full_def || !just_parsed_quick_def) &&
+           !suppress_newline)
+        puts
+      end
+      parse_and_print_another_def(card_box, !just_parsed_headword)
       just_parsed_quick_def = false
       just_parsed_full_def = true
       ever_parsed_quick_or_full_def = true
@@ -594,6 +616,227 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
     end
   end
 end
+
+# TODO: first parse/print headword-box
+def parse_and_print_another_def(card_box_node, print_term = true)
+  term = card_box_node.at_css('.entry-hword .hword')
+  function = card_box_node.at_css('.entry-attr .fl')
+  #pronunciation = card_box_node.at_css('.entry-attr .prs .pr')
+  pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a { |pr_el|
+    pr_el.content.strib_nbsp
+  }.join(', ')
+  syllables = card_box_node.at_css('.entry-attr .word-syllables')
+
+  if print_term
+    if term and function
+      # Note: might be this doesn't ever occur.
+      puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
+    elsif term
+      puts "Full: #{term.content.strip_nbsp}"
+    else
+      assert(function.nil?, 'Sentence function specified but no term')
+    end
+  end
+
+  if pronunciation.empty?
+    if syllables
+      puts "Syllables: #{syllables.content.strip_nbsp}"
+    end
+  else
+    puts "Pronunciation: #{pronunciation}"
+  end
+
+  # These appear within a vg, but I bet in practice they only appear once.
+  inflections =
+    card_box_node.css('.vg-ins .in').to_a.map { |in_el|
+      if in_el.at_css('.il')
+        "#{in_el.at_css('.if').content.strip_nbsp} "\
+        "[#{in_el.at_css('.il').content.strip_nbsp}]"
+      else
+        in_el.content.strip_nbsp
+      end
+    }.join('  ')
+  puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
+
+  # Sanity checking.
+  assert(card_box_node.css('.entry').length == 1,
+         'Expected only a single entry')
+  card_box_node.css('.mw_t_bc').each do |mw_t_bc_el|
+    # All of these should just be semicolons.
+    assert(mw_t_bc_el.content.strip_nbsp == ":")
+  end
+
+  card_box_node.css('.entry').each do |entry_el|
+    sn_chain = []
+    entry_el.css('> .vg, .uros').each do |vg_or_uros_el|
+
+      classes = vg_or_uros_el.attributes['class'].to_s.split
+      if classes.include?('vg')
+        assert(!classes.include?('uros'), 'vg is also a uros')
+        vg_el = vg_or_uros_el
+        if vg_el.at_css('.vd')
+          # E.g. "transitive verb" -- see second def of "warrant".
+          puts " [#{vg_el.at_css('.vd').content.strip_nbsp}]"
+        end
+        vg_el.css('> .sb').each do |sb_el|
+          sb_el.xpath('./*[starts-with(@class, "sb-")]').each do |sb_num_el|
+            sb_num_el.css('> .sense').each do |sense_el|
+              case sense_el.css('.sn').length
+              when 0
+                # Uncommon
+                sn_chain << Sn.new
+              when 1
+                # Common
+                sn_chain << Sn.parse(sense_el.at_css('.sn'))
+              else
+                die('Expected at most a single .sn')
+              end
+              assert(sense_el.css('> .dt').length == 1,
+                     'Expected only a single .dt')
+              dt = Dt.parse(sense_el.at_css('.dt'))
+              #print_dt(dt, sn_chain)
+              print_dt(dt, sn_chain.last)
+            end
+          end
+        end
+      elsif classes.include?('uros')
+        vg_or_uros_el.css('.uro').each do |uro_el|
+          assert(uro_el.css('.ure').length == 1, 'Expected a single .ure')
+          word = uro_el.at_css('.ure').content.strip_nbsp
+          pronunciations =
+            uro_el.css('.pr .mw').to_a.map { |pr|
+              pr.content.strip_nbsp
+            }.join(',')
+          function = uro_el.at_css('.fl').content.strip_nbsp
+          puts " —#{word} #{pronunciations} [#{function}]"
+        end
+      else
+        die('Should be unreachable')
+      end
+    end
+  end
+end
+
+# Representation for definition enumerations, e.g. "1 a (2)".
+# "Sn" refers to the class name used in m-w.com's DOM.
+class Sn
+  attr_accessor :sense_num, :sub_alpha, :sub_num
+
+  def self.parse(sn_el)
+    # Preconditions.
+    assert(node_has_class(sn_el, 'sn'), 'element is not class .sn')
+    assert(sn_el.css('.num').length <= 1, 'Expected at most one .num')
+    assert(sn_el.css('.sub-num').length <= 1, 'Expected at most one .sub-num')
+
+    sn = Sn.new
+    initial_member_len = sn.instance_variables.length  # (0)
+    sn_el.children.each do |el|
+      if el.text?
+          assert(sn.sub_alpha.nil?)
+          sn.sub_alpha = el.content.strip_nbsp
+      else
+        el_classes = el.attributes['class'].to_s.split
+        if el_classes.include?('num')
+          assert(sn.sense_num.nil?)
+          sn.sense_num = el.content.strip_nbsp
+        elsif el_classes.include?('sub-num')
+          assert(sn.sub_num.nil?, "@sub_num already set: #{sn.sub_num}")
+          sn.sub_num = el.content.strip_nbsp
+        else
+          die("unexpected node type in Sn.parse: #{el}")
+        end
+      end
+    end
+
+    # If this is a top-level Sn and sub_num is set, then sub_alpha should also
+    # be set.
+    assert(sn.sense_num.nil? || sn.sub_num.nil? || sn.sub_alpha,
+           'Sense hierarchy assumption violated')
+    final_member_len = sn.instance_variables.length  # > 0
+    assert(final_member_len > initial_member_len,
+           'No Sn members set')
+    return sn
+  end
+
+  def indent_length
+    if @sense_num
+      assert(!@sense_num.empty?)
+      return 0
+    elsif @sub_alpha
+      assert(!@sub_alpha.empty?)
+      return 2
+    elsif @sub_num
+      assert(!@sub_num.empty?)
+      return 4
+    else
+      # This is just a placeholder Sn representing the absence of a .sn node.
+      return 0
+    end
+  end
+
+  def to_s
+    [@sense_num, @sub_alpha, @sub_num].compact.join(' ')
+  end
+end
+
+# Representation for an actual definition.  Might be compound, but should be
+# just text.
+# "Dt" refers to the class name used in m-w.com's DOM.
+class Dt
+  attr_accessor :defs
+  SENTINEL = "::COLON::"
+
+  # Note: modifies DOM.
+  def self.parse(dt_el)
+    # Preconditions.
+    assert(node_has_class(dt_el, 'dt'), 'element is not class .dt')
+    assert(dt_el.css('.mw_t_bc').length > 0,
+           'Expected at least one .mw_t_bc (colon)')
+
+    dt = Dt.new
+    dt_el.css('.mw_t_bc').to_a.map do |mw_t_bc|
+      mw_t_bc.content = SENTINEL
+    end
+    dt_el.css('li .t').to_a.map do |li_t|
+      # Hack: create text representation of bullet; not robust.
+      li_t.add_previous_sibling('(*) ')
+    end
+
+    subs = dt_el.css('.subs')
+    if !subs.empty?
+      # TODO: implement; see e.g. 'warrant', 'company.
+      puts "<Warning: sub definitions excised>"
+      subs.remove
+    end
+
+    dt.defs = dt_el.content.split(SENTINEL).map { |d|
+      d.squeeze_whitespace.strip
+    }.select { |d|
+      !d.empty?
+    }
+    assert(dt.defs.length > 0)
+    return dt
+  end
+end
+
+def print_dt(dt, sn)
+  # Preconditions.
+  assert(!dt.defs.empty?, 'No definitions in dt')
+
+  colon = ' : '
+  prefix_str = "#{' ' * sn.indent_length}#{sn.to_s}"
+  dt.defs.each_with_index do |d, i|
+    wrapped = wrap_text(d, " " * (prefix_str.length + colon.length))
+    wrapped[0...(prefix_str.length + colon.length)] =
+      if i == 0
+        "#{prefix_str}#{colon}"
+      else
+        "#{' ' * prefix_str.length}#{colon}"
+      end
+    puts wrapped
+  end
+end
+
 
 class DefItem
   attr_accessor :sense_num, :sub_alpha, :sub_num, :colon, :text,
