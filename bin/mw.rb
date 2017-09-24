@@ -217,18 +217,18 @@ def main
       ever_parsed_quick_or_full_def = true
       suppress_newline = false
 
-    elsif classes.include?('full-def-box')
+    elsif classes.include?('headword-box')
       if (!just_parsed_headword && ever_parsed_quick_or_full_def &&
            (just_parsed_full_def || !just_parsed_quick_def) &&
            !suppress_newline)
         puts
       end
-      parse_and_print_full_def_box(card_box, !just_parsed_headword)
+      parse_and_print_headword_box(card_box, !just_parsed_headword)
       just_parsed_quick_def = false
       just_parsed_full_def = true
       ever_parsed_quick_or_full_def = true
       suppress_newline = false
-      just_parsed_headword = classes.include?('headword-box')
+      just_parsed_headword = true
 
     elsif classes.include?('another-def')
       if (!just_parsed_headword && ever_parsed_quick_or_full_def &&
@@ -617,11 +617,9 @@ def parse_and_print_full_def_box(card_box_node, print_term = true)
   end
 end
 
-# TODO: first parse/print headword-box
-def parse_and_print_another_def(card_box_node, print_term = true)
+def parse_and_print_headword_box(card_box_node, print_term = true)
   term = card_box_node.at_css('.entry-hword .hword')
   function = card_box_node.at_css('.entry-attr .fl')
-  #pronunciation = card_box_node.at_css('.entry-attr .prs .pr')
   pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a.map { |pr_el|
     pr_el.content.strip_nbsp
   }.join(', ')
@@ -645,16 +643,27 @@ def parse_and_print_another_def(card_box_node, print_term = true)
   else
     puts "Pronunciation: #{pronunciation}"
   end
+end
+
+def parse_and_print_another_def(card_box_node, print_term = true)
+  # This card often includes the headword-box stuff for entries after the
+  # first.
+  parse_and_print_headword_box(card_box_node, print_term)
 
   # These appear within a vg, but I bet in practice they only appear once.
   inflections =
     card_box_node.css('.vg-ins .in').to_a.map { |in_el|
+      assert(in_el.at_css('.if'))
+      parsed = "#{in_el.at_css('.if').content.strip_nbsp}"
       if in_el.at_css('.il')
-        "#{in_el.at_css('.if').content.strip_nbsp} "\
-        "[#{in_el.at_css('.il').content.strip_nbsp}]"
-      else
-        in_el.content.strip_nbsp
+        parsed += " [#{in_el.at_css('.il').content.strip_nbsp}]"
       end
+      if in_el.at_css('.prs')
+        parsed += " " + in_el.css('.prs .pr .mw').to_a.map { |pr|
+          pr.content.strip_nbsp
+        }.join(',')
+      end
+      parsed
     }.join('  ')
   puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
 
