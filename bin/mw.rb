@@ -622,8 +622,8 @@ def parse_and_print_another_def(card_box_node, print_term = true)
   term = card_box_node.at_css('.entry-hword .hword')
   function = card_box_node.at_css('.entry-attr .fl')
   #pronunciation = card_box_node.at_css('.entry-attr .prs .pr')
-  pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a { |pr_el|
-    pr_el.content.strib_nbsp
+  pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a.map { |pr_el|
+    pr_el.content.strip_nbsp
   }.join(', ')
   syllables = card_box_node.at_css('.entry-attr .word-syllables')
 
