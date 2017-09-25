@@ -8,7 +8,11 @@ export NO_AT_BRIDGE=1
 
 set -o vi
 export PATH="~/bin:$PATH"
+export PATH=~/miniconda3/bin:"$PATH"
 export EDITOR=/usr/bin/vim
+
+# Posterity: `brew` started telling me to do this and gave instructions.
+export HOMEBREW_GITHUB_API_TOKEN="6239a507b99556b753633e26ac8e943c30240a22"
 
 # allow recursive ** expansion
 if [ "`uname`" != "Darwin" ]; then

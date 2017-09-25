@@ -1,3 +1,4 @@
+#!/usr/local/bin/ruby
 #!/usr/bin/ruby
 #!/usr/bin/ruby2.1
 #
