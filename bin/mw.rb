@@ -47,9 +47,7 @@ def main
     exit 1
   end
 
-  ever_parsed_quick_or_full_def = false
-  just_parsed_quick_def = false
-  just_parsed_full_def = false
+  ever_parsed_full_def = false
   just_parsed_headword = false
   suppress_newline = false
   parsing_kids_definitions = false
@@ -160,6 +158,7 @@ def main
         puts wrap_text(li.content.strip_nbsp, " ")
       end
 
+    # See e.g. 'shun'.
     elsif classes.include?('syns-box')
       puts 'Synonym discussion...'
       card_box.css('.syn').each do |syn_el|
@@ -216,45 +215,27 @@ def main
     elsif classes.include?('w3-note-box')
       puts '[Has larger entry in unabridged dictionary]'
 
-    # Note: m-w.com seems to have stopped emitting this section.  I'm not sure
-    # if it'll come back (I found it useful) so leaving this logic in for now.
-    elsif classes.include?('quick-def-box')
-      if (ever_parsed_quick_or_full_def &&
-          (just_parsed_quick_def || just_parsed_full_def) &&
+    elsif classes.include?('headword-box')
+      if (!just_parsed_headword && ever_parsed_full_def &&
           !suppress_newline)
         puts
       end
-      parse_and_print_quick_def_box(card_box)
-      just_parsed_quick_def = true
-      just_parsed_full_def = false
-      ever_parsed_quick_or_full_def = true
-      suppress_newline = false
-
-    elsif classes.include?('headword-box')
-      if (!just_parsed_headword && ever_parsed_quick_or_full_def &&
-           (just_parsed_full_def || !just_parsed_quick_def) &&
-           !suppress_newline)
-        puts
-      end
+      assert(!classes.include?('another-def'))
       parse_and_print_headword_box(card_box, !just_parsed_headword)
-      just_parsed_quick_def = false
-      just_parsed_full_def = true
-      ever_parsed_quick_or_full_def = true
+      ever_parsed_full_def = true
       suppress_newline = false
       just_parsed_headword = true
 
     elsif classes.include?('another-def')
-      if (!just_parsed_headword && ever_parsed_quick_or_full_def &&
-           (just_parsed_full_def || !just_parsed_quick_def) &&
-           !suppress_newline)
+      if (!just_parsed_headword && ever_parsed_full_def &&
+          !suppress_newline)
         puts
       end
+      assert(!classes.include?('headword-box'))
       parse_and_print_another_def(card_box, !just_parsed_headword)
-      just_parsed_quick_def = false
-      just_parsed_full_def = true
-      ever_parsed_quick_or_full_def = true
+      ever_parsed_full_def = true
       suppress_newline = false
-      just_parsed_headword = classes.include?('headword-box')
+      just_parsed_headword = false
 
     else
       puts "Unexpected box type: #{classes.join(',')}"
@@ -426,45 +407,6 @@ def parse_and_print_synonym_box(card_box_node)
     end
   end
   puts wrap_text(text.strip_nbsp, "   ")
-end
-
-# TODO: check to make sure no longer used and then delete.
-def parse_and_print_quick_def_box(card_box_node)
-  term = card_box_node.at_css('h1, h2 i') or card_box_node.at_css('h1, h2')
-  function = card_box_node.at_css('.word-attributes .main-attr')
-  pronunciation = card_box_node.at_css('.word-attributes .pr')
-  syllables = card_box_node.at_css('.word-attributes .word-syllables')
-
-  if term and function
-    puts "Quick: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
-  elsif term
-    puts "Quick: #{term.content.strip_nbsp}"
-  else
-    assert(function.nil?, 'Sentence function specified but no term')
-  end
-
-  puts "Pronunciation: #{pronunciation.content.strip_nbsp}" if pronunciation
-  if syllables && !pronunciation
-    puts "Syllables: #{syllables.content.strip_nbsp}"
-  end
-
-  card_box_node.css('.definition-list .definition-inner-item > span').each \
-  do |outer_span|
-    prefix = ''
-    text = ''
-    outer_span.children.each do |node|
-      assert(node.element? || node.text?)
-      if node_has_class(node, 'intro-colon')
-        prefix += "#{node.content.strip_nbsp} "
-      else
-        text += node.content
-      end
-    end
-
-    wrapped = wrap_text("#{text.strip_nbsp}", " " + " " * prefix.length)
-    wrapped[0..(1 + prefix.length - 1)] = " #{prefix}"
-    puts wrapped
-  end
 end
 
 def parse_and_print_headword_box(card_box_node, print_term = true)
