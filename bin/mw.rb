@@ -390,10 +390,6 @@ def node_has_class(node, str_or_array)
   end
 end
 
-def node_is_nonstandard_intro_colon(node)
-  return (node.name == 'strong' and node.content.strip_nbsp == ':')
-end
-
 def parse_and_print_synonym_box(card_box_node)
   heading = nil
   text = ''
@@ -419,7 +415,7 @@ def parse_and_print_synonym_box(card_box_node)
   puts wrap_text(text.strip_nbsp, "   ")
 end
 
-
+# TODO: check to make sure no longer used and then delete.
 def parse_and_print_quick_def_box(card_box_node)
   term = card_box_node.at_css('h1, h2 i') or card_box_node.at_css('h1, h2')
   function = card_box_node.at_css('.word-attributes .main-attr')
@@ -458,165 +454,6 @@ def parse_and_print_quick_def_box(card_box_node)
   end
 end
 
-def parse_and_print_full_def_box(card_box_node, print_term = true)
-  term = card_box_node.at_css('h1, h2 i') or card_box_node.at_css('h1, h2')
-  function = (card_box_node.at_css('.word-attributes .main-attr') or
-              card_box_node.at_css('.entry-attr .fl'))
-  pronunciation = (card_box_node.at_css('.word-attributes .pr') or
-                   card_box_node.at_css('.entry-attr .prs .pr'))
-  syllables = (card_box_node.at_css('.word-attributes .word-syllables') or
-               card_box_node.at_css('.entry-attr .word-syllables'))
-  inflections =
-    card_box_node.css('.inflections > span').to_a.map { |i|
-      i.content.strip_nbsp
-    }.join('  ')
-
-  if print_term
-    if term and function
-      # Note: might be this doesn't ever occur.
-      puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
-    elsif term
-      puts "Full: #{term.content.strip_nbsp}"
-    elsif print_term
-      assert(function.nil?, 'Sentence function specified but no term')
-    end
-  end
-
-  puts "Pronunciation: #{pronunciation.content.strip_nbsp}" if pronunciation
-  if syllables && !pronunciation
-    puts "Syllables: #{syllables.content.strip_nbsp}"
-  end
-  puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
-
-  card_box_node.css('.inner-box-wrapper > ' +
-                    '.card-primary-content, .dro, .uro').each do |el|
-    if node_has_class(el, 'dro') or node_has_class(el, 'uro')
-      # Word inflections; unclear what 'dro' and 'uro' are short for.
-      #
-      # These are usually trivial but sometimes have structure.
-      # (See e.g. 'compulsive', 'abscess'.)
-      #
-      # Note: not certain that 'dro' and 'uro' have equivalent DOM potential.
-      el.css('.runon-attributes').each do |runon|
-        ro_struct = {}
-        runon.elements.each do |runon_el|
-          case runon_el.name
-          when 'h2'
-            ro_struct['word'] = runon_el.content.strip_nbsp
-          when 'em'
-            ro_struct['function'] = "[#{runon_el.content.strip_nbsp}]"
-          when 'span', 'font'
-            if node_has_class(runon_el, 'pr')
-              ro_struct['pronunciation'] = runon_el.content.strip_nbsp
-            elsif node_has_class(runon_el, 'in')
-              assert(runon_el.elements.length == 2,
-                     "Unexpected runon element: #{runon_el}")
-              ro_struct['plural'] =
-                "[#{runon_el.elements[0].content.strip_nbsp}: "\
-                "#{runon_el.elements[1].content.strip_nbsp}]"
-            elsif node_has_class(runon_el, 'utxt')
-              assert(ro_struct['example'].nil?)
-              ro_struct['example'] =
-                wrap_text("#{runon_el.content.strip_nbsp}",
-                          "    ").sub(/^   /,"  -")
-            else
-              die("Unexpected runon element: #{runon_el}")
-            end
-          else
-            die("Unexpected runon element: #{runon_el}")
-          end
-        end
-        # (Most of these will usually be nil.)
-        puts " —#{ro_struct['word']} #{ro_struct['function']} "\
-             "#{ro_struct['pronunciation']} #{ro_struct['plural']}"
-        puts ro_struct['example'] if ro_struct['example']
-      end
-    end
-
-    card_primary_contents = el.css('.card-primary-content')
-    # Sometimes an individual definition will include a list of
-    # sub-definitions, each confusingly captured in a card-primary-content
-    # class.  Remove these from the set here and handle them specially below.
-    # See: 'warrant', 'company'.
-    card_primary_contents -= el.css('.sub-entry > .card-primary-content')
-    if node_has_class(el, 'card-primary-content')
-      card_primary_contents << el
-    end
-
-    card_primary_contents.each do |card_primary_content|
-      definition_list_items =
-        # Common case.
-        card_primary_content.css('.definition-list > li, ' \
-                                 '.definition-list > .d > li')
-      if (definition_list_items.empty? and
-          card_primary_content.at_css('.definition-list') and
-          card_primary_content.at_css('.definition-list > span'))
-        # Unusual case: a single definition given by nodes within an ol tag,
-        # but the nodes aren't li elements.
-        # See: 'sic transit gloria mundi'.
-        definition_list_items =
-          card_primary_content.at_css('.definition-list').children
-      end
-
-      definition_list_items.each do |item|  # (Note: may not be li elements.)
-        if node_has_class(item, 'vt')
-          # adjective, adverb, noun, etc.
-          puts " [#{item.content.strip_nbsp}]"
-          if item.next_sibling.name == 'span'
-            # Degenerate sub-definition.  See: 'inflame'.
-            assert(
-              node_is_nonstandard_intro_colon(item.next_sibling.elements[0]))
-            def_item = DefItem.new
-            item.next_sibling.children.each do |node|
-              def_item.incorporate(node)
-            end
-            assert(def_item.appears_complete?)
-            print_def_item(def_item, nil)
-          end
-        else
-          prev_def_item = nil
-          def_item = DefItem.new
-
-          item.at_css('> p').children.each do |node|
-            if (node_has_class(node, ['sense', 'sub', 'intro-colon']) or
-                node_is_nonstandard_intro_colon(node))
-              def_item.incorporate(node)
-            elsif node.name == 'span'
-              # Recurse another level.
-              node.children.each do |node_inner|
-                if (node_has_class(node_inner,
-                                   ['sense', 'sub', 'intro-colon']) or
-                    node_is_nonstandard_intro_colon(node_inner))
-                  if def_item.appears_complete?
-                    print_def_item(def_item, prev_def_item)
-                    prev_def_item = def_item
-                    def_item = def_item.clone_and_partially_scrub()
-                  end
-                  def_item.incorporate(node_inner)
-                else
-                  def_item.incorporate(node_inner)
-                end
-              end
-              # Last entry in sub-list.
-              assert(def_item.appears_complete?)
-              print_def_item(def_item, prev_def_item)
-              prev_def_item = def_item
-              def_item = def_item.clone_and_partially_scrub()
-            else  # text
-              def_item.incorporate(node)
-            end
-          end
-
-          # Last entry.
-          if def_item.appears_complete?
-            print_def_item(def_item, prev_def_item)
-          end
-        end
-      end
-    end
-  end
-end
-
 def parse_and_print_headword_box(card_box_node, print_term = true)
   term = card_box_node.at_css('.entry-hword .hword')
   function = card_box_node.at_css('.entry-attr .fl')
@@ -624,6 +461,8 @@ def parse_and_print_headword_box(card_box_node, print_term = true)
     pr_el.content.strip_nbsp
   }.join(', ')
   syllables = card_box_node.at_css('.entry-attr .word-syllables')
+
+  # TODO: parse 'vrs' when it appears; see e.g. 'inflame'.
 
   if print_term
     if term and function
@@ -718,6 +557,7 @@ def parse_and_print_another_def(card_box_node, print_term = true)
             }.join(',')
           function = uro_el.at_css('.fl').content.strip_nbsp
           puts " —#{word} #{pronunciations} [#{function}]"
+          # TODO: parse 'utxt' when it appears; see e.g. compulsive, abscess.
         end
       else
         die('Should be unreachable')
@@ -842,97 +682,6 @@ def print_dt(dt, sn)
       else
         "#{' ' * prefix_str.length}#{colon}"
       end
-    puts wrapped
-  end
-end
-
-
-class DefItem
-  attr_accessor :sense_num, :sub_alpha, :sub_num, :colon, :text,
-                # Rare.
-                :sub_entries
-
-  def initialize
-    @text = ''
-    @sub_entries = []
-  end
-
-  def incorporate(node)
-    if node_has_class(node, 'sub')
-      assert(node_has_class(node, ['alp', 'num']),
-             'Sub-definition missing expected class')
-      if node_has_class(node, 'alp')
-        @sub_alpha = node.content.strip_nbsp
-      else # node_has_class(node, 'num')
-        @sub_num = node.content.strip_nbsp
-      end
-    elsif node_has_class(node, 'sense')
-      @sense_num = node.content.strip_nbsp
-    elsif (node_has_class(node, 'intro-colon') or 
-           node_is_nonstandard_intro_colon(node))
-      @colon = node.content.strip_nbsp
-      assert(@colon == ':')
-    elsif node_has_class(node, 'vi')
-      # These appear to be another form of example usages.
-      # See: 'warrant', 'company'.
-      @text += "(*) #{node.content.strip_nbsp}"
-    elsif node_has_class(node, 'sub-entry')
-      # These might be be able to have a very general form, as a descendant
-      # element includes the class 'card-primary-content', but they appear
-      # rarely and I've only seen textual content.
-      # See: 'warrant', 'company'.
-      assert(@text.length > 0)
-      @sub_entries << node.content.strip_nbsp
-    else
-      @text += node.content
-    end
-  end
-
-  def clone_and_partially_scrub
-    new_def_item = self.clone
-    new_def_item.text = ''
-    new_def_item.sub_entries = []
-    return new_def_item
-  end
-
-  def appears_complete?
-    # Some definitions do not include an intro-colon, or we would check that
-    # here as well.
-    return !(@text.nil? or @text.empty? or @text.strip_nbsp.empty?)
-    #return !(@colon.nil? or @colon.empty? or
-    #         @text.nil? or @text.empty? or @text.strip_nbsp.empty?)
-  end
-end
-
-def print_def_item(def_item, prev_def_item)
-  # Assumed order of definition prefixes.
-  # TODO: actually keep track of the order of consumption.
-  prefix = [def_item.sense_num,
-            def_item.sub_alpha,
-            def_item.sub_num,
-            def_item.colon]
-  if prev_def_item
-    if def_item.sense_num and (def_item.sense_num == prev_def_item.sense_num)
-      prefix[0] = ' '
-    end
-    if def_item.sub_alpha and (def_item.sub_alpha == prev_def_item.sub_alpha)
-      prefix[1] = ' '
-    end
-    if def_item.sub_num and (def_item.sub_num == prev_def_item.sub_num)
-      prefix[2] = ' '
-    end
-  end
-  prefix_str = prefix.compact.join(' ') + ' '
-  wrapped = wrap_text("#{def_item.text.strip_nbsp}",
-                      " " + " " * prefix_str.length)
-  wrapped[0..(1 + prefix_str.length - 1)] = " #{prefix_str}"
-  puts wrapped
-
-  prefix_str = " " * (prefix_str.length) + "— "
-  def_item.sub_entries.each do |sub_entry|
-    wrapped = wrap_text("#{sub_entry}",
-                        " " + " " * prefix_str.length)
-    wrapped[0..(1 + prefix_str.length - 1)] = " #{prefix_str}"
     puts wrapped
   end
 end
