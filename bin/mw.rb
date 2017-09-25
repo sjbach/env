@@ -84,9 +84,10 @@ def main
         puts
         suppress_newline = true
       when /\bfinancial\b/
-        # TODO: see e.g. 'warrant'
-        puts "\n<Financial definition suppressed>"
-        parsing_kids_definitions = true
+        puts
+        puts header_text(' Financial ')
+        puts
+        suppress_newline = true
       else
         puts "Unexpected header: #{card_box.content}"
         exit 1
@@ -214,6 +215,11 @@ def main
 
     elsif classes.include?('w3-note-box')
       puts '[Has larger entry in unabridged dictionary]'
+
+    # Only has been seen subsequent to Financial Definition section.
+    # See e.g. 'warrant'.
+    elsif classes.include?('investing-answer')
+      parse_and_print_investing_answer(card_box)
 
     elsif classes.include?('headword-box')
       if (!just_parsed_headword && ever_parsed_full_def &&
@@ -383,6 +389,23 @@ def node_has_class(node, str_or_array)
     die("bad class: #{str_or_array.class}")
   end
 end
+
+def parse_and_print_investing_answer(card_box_node)
+  is_first_section = true
+  card_box_node.css('.section').each do |section_el|
+    puts if !is_first_section
+    is_first_section = false
+    puts " #{section_el.at_css('h2').content.strip_nbsp}"
+    puts
+    is_first_p = true
+    section_el.css('p').each do |p_el|
+      puts if !is_first_p
+      is_first_p = false
+      puts wrap_text(p_el.content.strip_nbsp, "  ")
+    end
+  end
+end
+
 
 def parse_and_print_synonym_box(card_box_node)
   heading = nil
