@@ -152,10 +152,23 @@ def main
         puts wrapped.sub(/^  /," -")
       end
 
+    # TODO: check to see if this is still ever emitted, or if it's been
+    # supplanted by syns-box.
     elsif classes.include?('synonym-discussion-box')
       puts 'Synonym discussion...'
       card_box.css('div.card-primary-content .definition-block').each do |li|
         puts wrap_text(li.content.strip_nbsp, " ")
+      end
+
+    elsif classes.include?('syns-box')
+      puts 'Synonym discussion...'
+      card_box.css('.syn').each do |syn_el|
+        syn_el.css('li .t').to_a.map do |li_t|
+          # Hack: create text representation of bullet; not robust.
+          li_t.add_previous_sibling('[(*) ')
+          li_t.add_next_sibling(']')
+        end
+        puts wrap_text(syn_el.content.squeeze_whitespace.strip_nbsp, " ")
       end
 
     elsif classes.include?('history-box')
