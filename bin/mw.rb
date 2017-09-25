@@ -433,16 +433,9 @@ def parse_and_print_synonym_box(card_box_node)
 end
 
 def parse_and_print_headword_box(card_box_node, print_term = true)
-  term = card_box_node.at_css('.entry-hword .hword')
-  function = card_box_node.at_css('.entry-attr .fl')
-  pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a.map { |pr_el|
-    pr_el.content.strip_nbsp
-  }.join(', ')
-  syllables = card_box_node.at_css('.entry-attr .word-syllables')
-
-  # TODO: parse 'vrs' when it appears; see e.g. 'inflame'.
-
   if print_term
+    term = card_box_node.at_css('.entry-hword .hword')
+    function = card_box_node.at_css('.entry-attr .fl')
     if term and function
       # Note: might be this doesn't ever occur.
       puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
@@ -453,12 +446,31 @@ def parse_and_print_headword_box(card_box_node, print_term = true)
     end
   end
 
+  pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a.map { |pr_el|
+    pr_el.content.strip_nbsp
+  }.join(', ')
   if pronunciation.empty?
+    syllables = card_box_node.at_css('.entry-attr .word-syllables')
     if syllables
       puts "Syllables: #{syllables.content.strip_nbsp}"
     end
   else
     puts "Pronunciation: #{pronunciation}"
+  end
+
+  # See e.g. 'inflame'.
+  if card_box_node.at_css('.entry-attr.vrs')
+    variants =
+      card_box_node.css('.entry-attr.vrs .vr').to_a.map { |vr_el|
+        assert(vr_el.at_css('.va'))
+        if vr_el.at_css('.vl')
+          "[#{vr_el.at_css('.vl').content.strip_nbsp}] "\
+          "#{vr_el.at_css('.va').content.strip_nbsp}"
+        else
+          "#{vr_el.at_css('.va').content.strip_nbsp}"
+        end
+      }.join(', ')
+    puts "Variants: #{variants}"
   end
 end
 
