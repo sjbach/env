@@ -531,8 +531,8 @@ def parse_and_print_another_def(card_box_node, print_term = true)
               end
               assert(sense_el.css('> .dt').length == 1,
                      'Expected only a single .dt')
-              dt = Dt.parse(sense_el.at_css('.dt'))
-              #print_dt(dt, sn_chain)
+              dt = Dt.parse(sense_el.at_css('.dt'),
+                            sense_el.at_css('.lb'))
               print_dt(dt, sn_chain.last)
             end
           end
@@ -626,7 +626,7 @@ class Dt
   SENTINEL = "::COLON::"
 
   # Note: modifies DOM.
-  def self.parse(dt_el)
+  def self.parse(dt_el, lb_el = nil)
     # Preconditions.
     assert(node_has_class(dt_el, 'dt'), 'element is not class .dt')
     assert(dt_el.css('.mw_t_bc').length > 0,
@@ -654,6 +654,13 @@ class Dt
       !d.empty?
     }
     assert(dt.defs.length > 0)
+
+    if lb_el
+      # See e.g. 'federalism'.
+      assert(dt.defs.length == 1,
+             'Unsure what to do with lb when there are multiple defs')
+      dt.defs[0] = "[#{lb_el.content.strip_nbsp}] #{dt.defs[0]}"
+    end
     return dt
   end
 end
