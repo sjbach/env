@@ -266,12 +266,14 @@ def parse_and_sanitize_doc(content)
     # Ask the Editors, word games; click spam.
     '.additional-content-area',
     '.menu-mob-cnt',
+    '.wgt-related-to',
     # Social media misc.
     '.seen-and-heard-block',
     '.social-btns',
     '.social-sidebar',
     # Popularity.
     '.popularity-block',
+    '.wgt-def-trend-watch',
     # Pronunciation buttons; can complicate parsing a bit.
     '.play-pron',
     # Harmless, but not useful to this scraper.
