@@ -495,7 +495,7 @@ def parse_and_print_another_def(card_box_node, print_term = true)
         }.join(',')
       end
       parsed
-    }.join('  ')
+    }.join('; ')
   puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
 
   # Sanity checking.
