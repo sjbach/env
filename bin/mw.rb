@@ -631,7 +631,7 @@ end
 # just text.
 # "Dt" refers to the class name used in m-w.com's DOM.
 class Dt
-  attr_accessor :defs
+  attr_accessor :defs, :subs
   SENTINEL = "::COLON::"
 
   # Note: modifies DOM.
@@ -642,19 +642,33 @@ class Dt
            'Expected at least one .mw_t_bc (colon)')
 
     dt = Dt.new
-    dt_el.css('.mw_t_bc').to_a.map do |mw_t_bc|
-      mw_t_bc.content = SENTINEL
-    end
+
+    # Hack: create text representation of bullets; not robust.
     dt_el.css('li .t').to_a.map do |li_t|
-      # Hack: create text representation of bullet; not robust.
       li_t.add_previous_sibling('(*) ')
     end
 
+    # 'subs'; seemingly compound terms that incorporate the current term.
+    # See e.g. 'warrant', 'company'.
     subs = dt_el.css('.subs')
     if !subs.empty?
-      # TODO: implement; see e.g. 'warrant', 'company.
-      puts "<Warning: sub definitions excised>"
+      assert(subs.length == 1)
+      assert(subs.at_css('> .sub'))
+      dt.subs = subs.css('> .sub').to_a.map { |sub|
+        sub_sub = sub.at_css('> .sub')
+        sub_sub.remove
+        "#{sub.content.squeeze_whitespace.strip_nbsp} "\
+        "#{sub_sub.content.squeeze_whitespace.strip_nbsp}"
+      }
+
+      # We're done with these now, so take them out of the DOM so that the
+      # markup removal below doesn't incorporate them.
       subs.remove
+    end
+
+    # Replace colons with unambiguous separators.
+    dt_el.css('.mw_t_bc').to_a.map do |mw_t_bc|
+      mw_t_bc.content = SENTINEL
     end
 
     dt.defs = dt_el.content.split(SENTINEL).map { |d|
@@ -689,6 +703,13 @@ def print_dt(dt, sn)
         "#{' ' * prefix_str.length}#{colon}"
       end
     puts wrapped
+  end
+  if dt.subs
+    dt.subs.each_with_index do |s, i|
+      # (Half-assed formatting, as these are rare.)
+      wrapped = wrap_text(s, " " * (prefix_str.length + colon.length + 2))
+      puts wrapped
+    end
   end
 end
 
