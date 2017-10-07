@@ -449,7 +449,14 @@ def parse_and_print_headword_box(card_box_node, print_term = true)
   end
 
   pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a.map { |pr_el|
-    pr_el.content.strip_nbsp
+    content = ''
+    l = pr_el.at_css('.l')
+    if l
+      # For example, 'archaic'; see e.g. 'prow'.
+      content = "[#{l.content.strip_nbsp}] "
+      l.remove
+    end
+    content + pr_el.content.strip_nbsp
   }.join(', ')
   if pronunciation.empty?
     syllables = card_box_node.at_css('.entry-attr .word-syllables')
