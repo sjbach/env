@@ -527,22 +527,31 @@ def parse_and_print_another_def(card_box_node, print_term = true)
         end
         vg_el.css('> .sb').each do |sb_el|
           sb_el.xpath('./*[starts-with(@class, "sb-")]').each do |sb_num_el|
-            sb_num_el.css('> .sense').each do |sense_el|
+            sb_num_el.css('> .sense, .sen').each do |sense_el|
               case sense_el.css('.sn').length
               when 0
                 # Uncommon
                 sn_chain << Sn.new
               when 1
                 # Common
-                sn_chain << Sn.parse(sense_el.at_css('.sn'))
+                sn_chain << Sn.parse(sense_el.at_css('.sn'),
+                                     sense_el.at_css('.sl'))
               else
                 die('Expected at most a single .sn')
               end
-              assert(sense_el.css('> .dt').length == 1,
-                     'Expected only a single .dt')
-              dt = Dt.parse(sense_el.at_css('.dt'),
-                            sense_el.at_css('.lb'))
-              print_dt(dt, sn_chain.last)
+
+              case sense_el.css('> .dt').length
+              when 0
+                # Rare.  See e.g. 'errand'.
+                print_sn_only(sn_chain.last)
+              when 1
+                # Common
+                dt = Dt.parse(sense_el.at_css('.dt'),
+                              sense_el.at_css('.lb'))
+                print_dt(dt, sn_chain.last)
+              else
+                die('Expected at most a single .dt')
+              end
             end
           end
         end
@@ -568,9 +577,9 @@ end
 # Representation for definition enumerations, e.g. "1 a (2)".
 # "Sn" refers to the class name used in m-w.com's DOM.
 class Sn
-  attr_accessor :sense_num, :sub_alpha, :sub_num
+  attr_accessor :sense_num, :sub_alpha, :sub_num, :sl
 
-  def self.parse(sn_el)
+  def self.parse(sn_el, sl_el = nil)
     # Preconditions.
     assert(node_has_class(sn_el, 'sn'), 'element is not class .sn')
     assert(sn_el.css('.num').length <= 1, 'Expected at most one .num')
@@ -594,6 +603,11 @@ class Sn
           die("unexpected node type in Sn.parse: #{el}")
         end
       end
+    end
+
+    if sl_el
+      # Rare; example content: 'archaic'.  See e.g. 'errand'.
+      sn.sl = "[#{sl_el.content.strip_nbsp}]"
     end
 
     # If this is a top-level Sn and sub_num is set, then sub_alpha should also
@@ -623,7 +637,7 @@ class Sn
   end
 
   def to_s
-    [@sense_num, @sub_alpha, @sub_num].compact.join(' ')
+    [@sense_num, @sub_alpha, @sub_num, @sl].compact.join(' ')
   end
 end
 
@@ -711,6 +725,13 @@ def print_dt(dt, sn)
       puts wrapped
     end
   end
+end
+
+def print_sn_only(sn)
+  # Preconditions.
+  assert(sn)
+  assert(sn.sl)
+  puts "#{' ' * sn.indent_length}#{sn.to_s}"
 end
 
 main()
