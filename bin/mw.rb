@@ -259,6 +259,8 @@ def parse_and_sanitize_doc(content)
     'style',
     'head > meta',
     'head > link',
+    # Advertisement for the unabridged edition.  (Always so?)
+    '#gist-note',
     # 'Word of the Day'
     '.right-rail',
     # Quiz links, etc.; click spam.
