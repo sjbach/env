@@ -535,7 +535,7 @@ def parse_and_print_another_def(card_box_node, print_term = true)
               when 1
                 # Common
                 sn_chain << Sn.parse(sense_el.at_css('.sn'),
-                                     sense_el.at_css('.sl'))
+                                     sense_el.at_css('.sl, .lb'))
               else
                 die('Expected at most a single .sn')
               end
@@ -577,9 +577,9 @@ end
 # Representation for definition enumerations, e.g. "1 a (2)".
 # "Sn" refers to the class name used in m-w.com's DOM.
 class Sn
-  attr_accessor :sense_num, :sub_alpha, :sub_num, :sl
+  attr_accessor :sense_num, :sub_alpha, :sub_num, :sl_or_lb
 
-  def self.parse(sn_el, sl_el = nil)
+  def self.parse(sn_el, sl_or_lb_el = nil)
     # Preconditions.
     assert(node_has_class(sn_el, 'sn'), 'element is not class .sn')
     assert(sn_el.css('.num').length <= 1, 'Expected at most one .num')
@@ -605,9 +605,9 @@ class Sn
       end
     end
 
-    if sl_el
-      # Rare; example content: 'archaic'.  See e.g. 'errand'.
-      sn.sl = "[#{sl_el.content.strip_nbsp}]"
+    if sl_or_lb_el
+      # Rare; example content: 'archaic'.  See e.g. 'errand', 'scholasticism'.
+      sn.sl_or_lb = "[#{sl_or_lb_el.content.strip_nbsp}]"
     end
 
     # If this is a top-level Sn and sub_num is set, then sub_alpha should also
@@ -637,7 +637,7 @@ class Sn
   end
 
   def to_s
-    [@sense_num, @sub_alpha, @sub_num, @sl].compact.join(' ')
+    [@sense_num, @sub_alpha, @sub_num, @sl_or_lb].compact.join(' ')
   end
 end
 
@@ -730,7 +730,7 @@ end
 def print_sn_only(sn)
   # Preconditions.
   assert(sn)
-  assert(sn.sl)
+  assert(sn.sl_or_lb)
   puts "#{' ' * sn.indent_length}#{sn.to_s}"
 end
 
