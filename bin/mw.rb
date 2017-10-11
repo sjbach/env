@@ -101,7 +101,8 @@ def main
     elsif classes.include?('examples-box')
       puts 'Examples...'
       card_box.css('.definition-list li').each do |e|
-        wrapped = wrap_text("#{e.content.strip_nbsp}", "   ")
+        wrapped = wrap_text("#{e.content.squeeze_whitespace.strip_nbsp}",
+                            "   ")
         puts wrapped.sub(/^  /," -")
       end
     elsif classes.include?('fresh-examples-box')
