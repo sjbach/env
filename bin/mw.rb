@@ -443,9 +443,9 @@ def parse_and_print_headword_box(card_box_node, print_term = true)
     function = card_box_node.at_css('.entry-attr .fl')
     if term and function
       # Note: might be this doesn't ever occur.
-      puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
+      puts ">> #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
     elsif term
-      puts "Full: #{term.content.strip_nbsp}"
+      puts ">> #{term.content.strip_nbsp}"
     else
       assert(function.nil?, 'Sentence function specified but no term')
     end
