@@ -654,8 +654,11 @@ class Dt
   def self.parse(dt_el, lb_el = nil)
     # Preconditions.
     assert(node_has_class(dt_el, 'dt'), 'element is not class .dt')
-    assert(dt_el.css('.mw_t_bc').length > 0,
-           'Expected at least one .mw_t_bc (colon)')
+
+    # The large majority of term definitions have a leading colon, but some
+    # don't, e.g. 'sect'.
+    #assert(dt_el.css('.mw_t_bc').length > 0,
+    #       'Expected at least one .mw_t_bc (colon)')
 
     dt = Dt.new
 
