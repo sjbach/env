@@ -535,7 +535,9 @@ def parse_and_print_another_def(card_box_node, print_term = true)
         end
         vg_el.css('> .sb').each do |sb_el|
           sb_el.xpath('./*[starts-with(@class, "sb-")]').each do |sb_num_el|
-            sb_num_el.css('> .sense, .sen').each do |sense_el|
+            sb_num_el.css('> .sense', '> .sen',
+                          # See e.g. 'cantilever'.
+                          '> .bs .sense', '> .bs .sen').each do |sense_el|
               case sense_el.css('.sn').length
               when 0
                 # Uncommon
@@ -717,6 +719,8 @@ def print_dt(dt, sn)
   # Preconditions.
   assert(!dt.defs.empty?, 'No definitions in dt')
 
+  # TODO: not properly handling the case where there is no .sn; see e.g.
+  # 'cantilever'.  It prints, but spacing is off.
   colon = ' : '
   prefix_str = "#{' ' * sn.indent_length}#{sn.to_s}"
   dt.defs.each_with_index do |d, i|
