@@ -503,10 +503,11 @@ def parse_and_print_another_def(card_box_node, print_term = true)
       if in_el.at_css('.il')
         parsed += " [#{in_el.at_css('.il').content.strip_nbsp}]"
       end
+      # Inflection pronunciations.
       if in_el.at_css('.prs')
         parsed += " " + in_el.css('.prs .pr .mw').to_a.map { |pr|
           pr.content.strip_nbsp
-        }.join(',')
+        }.join(', ')
       end
       parsed
     }.join('; ')
