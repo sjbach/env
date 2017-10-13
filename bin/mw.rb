@@ -491,11 +491,15 @@ def parse_and_print_another_def(card_box_node, print_term = true)
   # first.
   parse_and_print_headword_box(card_box_node, print_term)
 
-  # These appear within a vg, but I bet in practice they only appear once.
+  # These appear within a vg, but I bet in practice they only appear once per
+  # entry.
   inflections =
     card_box_node.css('.vg-ins .in').to_a.map { |in_el|
-      assert(in_el.at_css('.if'))
-      parsed = "#{in_el.at_css('.if').content.strip_nbsp}"
+      # I don't know what the difference is between .if and .ix; .if is much
+      # more common; .ix appears in e.g. 'mariposa'.
+      assert(in_el.at_css('.if, .ix'))
+      assert(!(in_el.at_css('.if') and in_el.at_css('.ix')))
+      parsed = "#{in_el.at_css('.if, .ix').content.strip_nbsp}"
       if in_el.at_css('.il')
         parsed += " [#{in_el.at_css('.il').content.strip_nbsp}]"
       end
