@@ -708,7 +708,9 @@ class Dt
     if lb_el
       # See e.g. 'federalism'.
       assert(dt.defs.length == 1,
+             # TODO: handle this; see 'synoptic', 'knickerbocker'.
              'Unsure what to do with lb when there are multiple defs')
+      # TODO: this double-prints for e.g. 'gordian'.
       dt.defs[0] = "[#{lb_el.content.strip_nbsp}] #{dt.defs[0]}"
     end
     return dt
