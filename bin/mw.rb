@@ -459,7 +459,7 @@ def parse_and_print_headword_box(card_box_node, print_term = true)
       content = "[#{l.content.strip_nbsp}] "
       l.remove
     end
-    content + pr_el.content.strip_nbsp
+    content + pr_el.content.squeeze_whitespace.strip_nbsp
   }.join(', ')
   if pronunciation.empty?
     syllables = card_box_node.at_css('.entry-attr .word-syllables')
