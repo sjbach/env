@@ -213,6 +213,8 @@ def main
 
     elsif classes.include?('art-box')
       puts '[Has illustration]'
+    elsif classes.include?('related-video')
+      puts '[Has related video]'
 
     elsif classes.include?('w3-note-box')
       puts '[Has larger entry in unabridged dictionary]'
