@@ -440,18 +440,6 @@ def parse_and_print_synonym_box(card_box_node)
 end
 
 def parse_and_print_headword_box(card_box_node, print_term = true)
-  if print_term
-    term = card_box_node.at_css('.entry-hword .hword')
-    function = card_box_node.at_css('.entry-attr .fl')
-    if term and function
-      # Note: might be this doesn't ever occur.
-      puts ">> #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
-    elsif term
-      puts ">> #{term.content.strip_nbsp}"
-    else
-      assert(function.nil?, 'Sentence function specified but no term')
-    end
-  end
 
   pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a.map { |pr_el|
     content = ''
@@ -463,13 +451,31 @@ def parse_and_print_headword_box(card_box_node, print_term = true)
     end
     content + pr_el.content.squeeze_whitespace.strip_nbsp
   }.join(', ')
-  if pronunciation.empty?
-    syllables = card_box_node.at_css('.entry-attr .word-syllables')
-    if syllables
-      puts "Syllables: #{syllables.content.strip_nbsp}"
+
+  pronunciation_or_syllables = 
+    if pronunciation.empty?
+      syllables = card_box_node.at_css('.entry-attr .word-syllables')
+      if syllables
+        syllables.content.strip_nbsp
+      end
+    else
+      pronunciation
     end
-  else
-    puts "Pronunciation: #{pronunciation}"
+
+  if print_term
+    term = card_box_node.at_css('.entry-hword .hword')
+    assert(term, 'No term specified')
+    function = card_box_node.at_css('.entry-attr .fl')
+    line = ">> #{term.content.strip_nbsp}"
+    if function
+      line += "   [#{function.content.strip_nbsp}]"
+    end
+    if pronunciation_or_syllables and !pronunciation_or_syllables.empty?
+      line += "   \\#{pronunciation_or_syllables}\\"
+    end
+    puts line
+  elsif pronunciation_or_syllables and !pronunciation_or_syllables.empty?
+    puts "\\#{pronunciation_or_syllables}\\"
   end
 
   # See e.g. 'inflame'.
@@ -507,9 +513,9 @@ def parse_and_print_another_def(card_box_node, print_term = true)
       end
       # Inflection pronunciations.
       if in_el.at_css('.prs')
-        parsed += " " + in_el.css('.prs .pr .mw').to_a.map { |pr|
+        parsed += " \\" + in_el.css('.prs .pr .mw').to_a.map { |pr|
           pr.content.strip_nbsp
-        }.join(', ')
+        }.join(', ') + "\\"
       end
       parsed
     }.join('; ')
@@ -574,9 +580,12 @@ def parse_and_print_another_def(card_box_node, print_term = true)
           pronunciations =
             uro_el.css('.pr .mw').to_a.map { |pr|
               pr.content.strip_nbsp
-            }.join(',')
+            }.join(', ')
+          if pronunciations and !pronunciations.empty?
+            pronunciations = "\\#{pronunciations}\\"
+          end
           function = uro_el.at_css('.fl').content.strip_nbsp
-          puts " —#{word} #{pronunciations} [#{function}]"
+          puts " —#{word}  [#{function}]  #{pronunciations}"
           # TODO: parse 'utxt' when it appears; see e.g. compulsive, abscess.
         end
       else
