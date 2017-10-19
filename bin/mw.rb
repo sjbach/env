@@ -207,8 +207,13 @@ def main
 
     elsif classes.include?('bio-box')
       puts 'Biographical note...'
+      # TODO: check if this is actually part of the DOM anymore.
       card_box.css('div.card-primary-content p').each do |p|
         puts wrap_text(p.content.strip_nbsp, "  ")
+      end
+      # See e.g. "Huntington's disease"
+      card_box.css('.bio').each do |bio|
+        puts wrap_text(bio.content.squeeze_whitespace.strip_nbsp, "  ")
       end
 
     elsif classes.include?('art-box')
