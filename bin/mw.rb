@@ -88,6 +88,12 @@ def main
         puts header_text(' Financial ')
         puts
         suppress_newline = true
+      when /\bbritish\b/
+        # I think this is usually redundant, so not printed.
+        # See e.g. 'anorak'.
+        puts
+        puts '<Has British definition>'
+        parsing_kids_definitions = true
       else
         puts "Unexpected header: #{card_box.content}"
         exit 1
@@ -542,7 +548,8 @@ def parse_and_print_another_def(card_box_node, print_term = true)
       if classes.include?('vg')
         assert(!classes.include?('uros'), 'vg is also a uros')
         vg_el = vg_or_uros_el
-        # TODO: parse and print .sls .sl modifiers; see e.g. "hambone".
+        # TODO: parse and print .sls .sl modifiers; see e.g. "hambone",
+        # "paracetamol".
         if vg_el.at_css('.vd')
           # E.g. "transitive verb" -- see second def of "warrant".
           puts " [#{vg_el.at_css('.vd').content.strip_nbsp}]"
