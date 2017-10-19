@@ -537,6 +537,7 @@ def parse_and_print_another_def(card_box_node, print_term = true)
       if classes.include?('vg')
         assert(!classes.include?('uros'), 'vg is also a uros')
         vg_el = vg_or_uros_el
+        # TODO: parse and print .sls .sl modifiers; see e.g. "hambone".
         if vg_el.at_css('.vd')
           # E.g. "transitive verb" -- see second def of "warrant".
           puts " [#{vg_el.at_css('.vd').content.strip_nbsp}]"
@@ -546,14 +547,14 @@ def parse_and_print_another_def(card_box_node, print_term = true)
             sb_num_el.css('> .sense', '> .sen',
                           # See e.g. 'cantilever'.
                           '> .bs .sense', '> .bs .sen').each do |sense_el|
-              case sense_el.css('.sn').length
+              case sense_el.css('> .sn').length
               when 0
                 # Uncommon
                 sn_chain << Sn.new
               when 1
                 # Common
-                sn_chain << Sn.parse(sense_el.at_css('.sn'),
-                                     sense_el.at_css('.sl, .lb'))
+                sn_chain << Sn.parse(sense_el.at_css('> .sn'),
+                                     sense_el.at_css('> .sl','> .lb'))
               else
                 die('Expected at most a single .sn')
               end
@@ -564,8 +565,8 @@ def parse_and_print_another_def(card_box_node, print_term = true)
                 print_sn_only(sn_chain.last)
               when 1
                 # Common
-                dt = Dt.parse(sense_el.at_css('.dt'),
-                              sense_el.at_css('.lb'))
+                dt = Dt.parse(sense_el.at_css('> .dt'),
+                              sense_el.at_css('> .lb'))
                 print_dt(dt, sn_chain.last)
               else
                 die('Expected at most a single .dt')
@@ -666,7 +667,7 @@ end
 # just text.
 # "Dt" refers to the class name used in m-w.com's DOM.
 class Dt
-  attr_accessor :defs, :subs
+  attr_accessor :defs, :note, :subs
   SENTINEL = "::COLON::"
 
   # Note: modifies DOM.
@@ -686,7 +687,17 @@ class Dt
       li_t.add_previous_sibling('(*) ')
     end
 
-    # 'subs'; seemingly compound terms that incorporate the current term.
+    # Additional context for the definition; see e.g. 'writ'.
+    snotes = dt_el.css('> .snote')
+    if !snotes.empty?
+      assert(snotes.length == 1)
+      dt.note = snotes[0].content.squeeze_whitespace.strip_nbsp
+      # We're done with this, so remove it from the DOM just in case it might
+      # interfere with later parsing.
+      snotes.remove
+    end
+
+    # 'subs'; seemingly, compound terms that incorporate the current term.
     # See e.g. 'warrant', 'company'.
     subs = dt_el.css('.subs')
     if !subs.empty?
@@ -698,7 +709,6 @@ class Dt
         "#{sub.content.squeeze_whitespace.strip_nbsp} "\
         "#{sub_sub.content.squeeze_whitespace.strip_nbsp}"
       }
-
       # We're done with these now, so take them out of the DOM so that the
       # markup removal below doesn't incorporate them.
       subs.remove
@@ -745,6 +755,9 @@ def print_dt(dt, sn)
         "#{' ' * prefix_str.length}#{colon}"
       end
     puts wrapped
+  end
+  if dt.note and !dt.note.empty?
+    puts wrap_text("> #{dt.note} <", " " * (prefix_str.length + colon.length))
   end
   if dt.subs
     dt.subs.each_with_index do |s, i|
