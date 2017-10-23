@@ -38,7 +38,7 @@ URL_PREFIX='http://media.merriam-webster.com/audio/prons/en/us/mp3'
 
 audio_related_html=$(\
   wget -q -O - "http://www.m-w.com/dictionary/$1" | \
-  grep '"play-pron"' | \
+  grep '[" ]play-pron[" ]' | \
   tr ' ' '\n')
 
 sound_files=$(\

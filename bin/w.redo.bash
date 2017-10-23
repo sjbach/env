@@ -17,12 +17,16 @@ else
   carded=
 fi
 
+# (Back it up.)
+mkdir -p "$db_dir/.old"
+cp -pR "$word_dir" "$db_dir/.old/$word.$$"
+
 mv "$word_dir"/date $date_file
 
 set -e
 
 w.rm "$word"
-w. "$word"
+w. -f "$word"
 
 mv $date_file "$word_dir"/date
 if [ "$carded" ]; then

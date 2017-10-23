@@ -89,6 +89,12 @@ def main
         puts header_text(' Financial ')
         puts
         suppress_newline = true
+      when /\bbritish\b/
+        # I think this is usually redundant, so not printed.
+        # See e.g. 'anorak'.
+        puts
+        puts '<Has British definition>'
+        parsing_kids_definitions = true
       else
         puts "Unexpected header: #{card_box.content}"
         exit 1
@@ -102,7 +108,8 @@ def main
     elsif classes.include?('examples-box')
       puts 'Examples...'
       card_box.css('.definition-list li').each do |e|
-        wrapped = wrap_text("#{e.content.strip_nbsp}", "   ")
+        wrapped = wrap_text("#{e.content.squeeze_whitespace.strip_nbsp}",
+                            "   ")
         puts wrapped.sub(/^  /," -")
       end
     elsif classes.include?('fresh-examples-box')
@@ -207,12 +214,19 @@ def main
 
     elsif classes.include?('bio-box')
       puts 'Biographical note...'
+      # TODO: check if this is actually part of the DOM anymore.
       card_box.css('div.card-primary-content p').each do |p|
         puts wrap_text(p.content.strip_nbsp, "  ")
+      end
+      # See e.g. "Huntington's disease"
+      card_box.css('.bio').each do |bio|
+        puts wrap_text(bio.content.squeeze_whitespace.strip_nbsp, "  ")
       end
 
     elsif classes.include?('art-box')
       puts '[Has illustration]'
+    elsif classes.include?('related-video')
+      puts '[Has related video]'
 
     elsif classes.include?('w3-note-box')
       puts '[Has larger entry in unabridged dictionary]'
@@ -260,6 +274,8 @@ def parse_and_sanitize_doc(content)
     'style',
     'head > meta',
     'head > link',
+    # Advertisement for the unabridged edition.  (Always so?)
+    '#gist-note',
     # 'Word of the Day'
     '.right-rail',
     # Quiz links, etc.; click spam.
@@ -267,12 +283,14 @@ def parse_and_sanitize_doc(content)
     # Ask the Editors, word games; click spam.
     '.additional-content-area',
     '.menu-mob-cnt',
+    '.wgt-related-to',
     # Social media misc.
     '.seen-and-heard-block',
     '.social-btns',
     '.social-sidebar',
     # Popularity.
     '.popularity-block',
+    '.wgt-def-trend-watch',
     # Pronunciation buttons; can complicate parsing a bit.
     '.play-pron',
     # Harmless, but not useful to this scraper.
@@ -434,29 +452,42 @@ def parse_and_print_synonym_box(card_box_node)
 end
 
 def parse_and_print_headword_box(card_box_node, print_term = true)
-  if print_term
-    term = card_box_node.at_css('.entry-hword .hword')
-    function = card_box_node.at_css('.entry-attr .fl')
-    if term and function
-      # Note: might be this doesn't ever occur.
-      puts "Full: #{term.content.strip_nbsp} [#{function.content.strip_nbsp}]"
-    elsif term
-      puts "Full: #{term.content.strip_nbsp}"
-    else
-      assert(function.nil?, 'Sentence function specified but no term')
-    end
-  end
 
   pronunciation = card_box_node.css('.entry-attr .prs .pr').to_a.map { |pr_el|
-    pr_el.content.strip_nbsp
-  }.join(', ')
-  if pronunciation.empty?
-    syllables = card_box_node.at_css('.entry-attr .word-syllables')
-    if syllables
-      puts "Syllables: #{syllables.content.strip_nbsp}"
+    content = ''
+    l = pr_el.at_css('.l')
+    if l
+      # For example, 'archaic'; see e.g. 'prow'.
+      content = "[#{l.content.strip_nbsp}] "
+      l.remove
     end
-  else
-    puts "Pronunciation: #{pronunciation}"
+    content + pr_el.content.squeeze_whitespace.strip_nbsp
+  }.join(', ')
+
+  pronunciation_or_syllables = 
+    if pronunciation.empty?
+      syllables = card_box_node.at_css('.entry-attr .word-syllables')
+      if syllables
+        syllables.content.strip_nbsp
+      end
+    else
+      pronunciation
+    end
+
+  if print_term
+    term = card_box_node.at_css('.entry-hword .hword')
+    assert(term, 'No term specified')
+    function = card_box_node.at_css('.entry-attr .fl')
+    line = ">> #{term.content.strip_nbsp}"
+    if function
+      line += "   [#{function.content.strip_nbsp}]"
+    end
+    if pronunciation_or_syllables and !pronunciation_or_syllables.empty?
+      line += "   \\#{pronunciation_or_syllables}\\"
+    end
+    puts line
+  elsif pronunciation_or_syllables and !pronunciation_or_syllables.empty?
+    puts "\\#{pronunciation_or_syllables}\\"
   end
 
   # See e.g. 'inflame'.
@@ -480,21 +511,26 @@ def parse_and_print_another_def(card_box_node, print_term = true)
   # first.
   parse_and_print_headword_box(card_box_node, print_term)
 
-  # These appear within a vg, but I bet in practice they only appear once.
+  # These appear within a vg, but I bet in practice they only appear once per
+  # entry.
   inflections =
     card_box_node.css('.vg-ins .in').to_a.map { |in_el|
-      assert(in_el.at_css('.if'))
-      parsed = "#{in_el.at_css('.if').content.strip_nbsp}"
+      # I don't know what the difference is between .if and .ix; .if is much
+      # more common; .ix appears in e.g. 'mariposa'.
+      assert(in_el.at_css('.if, .ix'))
+      assert(!(in_el.at_css('.if') and in_el.at_css('.ix')))
+      parsed = "#{in_el.at_css('.if, .ix').content.strip_nbsp}"
       if in_el.at_css('.il')
         parsed += " [#{in_el.at_css('.il').content.strip_nbsp}]"
       end
+      # Inflection pronunciations.
       if in_el.at_css('.prs')
-        parsed += " " + in_el.css('.prs .pr .mw').to_a.map { |pr|
+        parsed += " \\" + in_el.css('.prs .pr .mw').to_a.map { |pr|
           pr.content.strip_nbsp
-        }.join(',')
+        }.join(', ') + "\\"
       end
       parsed
-    }.join('  ')
+    }.join('; ')
   puts "Inflections: #{inflections.strip_nbsp}" if !inflections.empty?
 
   # Sanity checking.
@@ -513,28 +549,41 @@ def parse_and_print_another_def(card_box_node, print_term = true)
       if classes.include?('vg')
         assert(!classes.include?('uros'), 'vg is also a uros')
         vg_el = vg_or_uros_el
+        # TODO: parse and print .sls .sl modifiers; see e.g. "hambone",
+        # "paracetamol".
         if vg_el.at_css('.vd')
           # E.g. "transitive verb" -- see second def of "warrant".
           puts " [#{vg_el.at_css('.vd').content.strip_nbsp}]"
         end
         vg_el.css('> .sb').each do |sb_el|
           sb_el.xpath('./*[starts-with(@class, "sb-")]').each do |sb_num_el|
-            sb_num_el.css('> .sense').each do |sense_el|
-              case sense_el.css('.sn').length
+            sb_num_el.css('> .sense', '> .sen',
+                          # See e.g. 'cantilever'.
+                          '> .bs .sense', '> .bs .sen').each do |sense_el|
+              case sense_el.css('> .sn').length
               when 0
                 # Uncommon
                 sn_chain << Sn.new
               when 1
                 # Common
-                sn_chain << Sn.parse(sense_el.at_css('.sn'))
+                sn_chain << Sn.parse(sense_el.at_css('> .sn'),
+                                     sense_el.at_css('> .sl','> .lb'))
               else
                 die('Expected at most a single .sn')
               end
-              assert(sense_el.css('> .dt').length == 1,
-                     'Expected only a single .dt')
-              dt = Dt.parse(sense_el.at_css('.dt'))
-              #print_dt(dt, sn_chain)
-              print_dt(dt, sn_chain.last)
+
+              case sense_el.css('> .dt').length
+              when 0
+                # Rare.  See e.g. 'errand'.
+                print_sn_only(sn_chain.last)
+              when 1
+                # Common
+                dt = Dt.parse(sense_el.at_css('> .dt'),
+                              sense_el.at_css('> .lb'))
+                print_dt(dt, sn_chain.last)
+              else
+                die('Expected at most a single .dt')
+              end
             end
           end
         end
@@ -545,9 +594,12 @@ def parse_and_print_another_def(card_box_node, print_term = true)
           pronunciations =
             uro_el.css('.pr .mw').to_a.map { |pr|
               pr.content.strip_nbsp
-            }.join(',')
+            }.join(', ')
+          if pronunciations and !pronunciations.empty?
+            pronunciations = "\\#{pronunciations}\\"
+          end
           function = uro_el.at_css('.fl').content.strip_nbsp
-          puts " —#{word} #{pronunciations} [#{function}]"
+          puts " —#{word}  [#{function}]  #{pronunciations}"
           # TODO: parse 'utxt' when it appears; see e.g. compulsive, abscess.
         end
       else
@@ -560,9 +612,9 @@ end
 # Representation for definition enumerations, e.g. "1 a (2)".
 # "Sn" refers to the class name used in m-w.com's DOM.
 class Sn
-  attr_accessor :sense_num, :sub_alpha, :sub_num
+  attr_accessor :sense_num, :sub_alpha, :sub_num, :sl_or_lb
 
-  def self.parse(sn_el)
+  def self.parse(sn_el, sl_or_lb_el = nil)
     # Preconditions.
     assert(node_has_class(sn_el, 'sn'), 'element is not class .sn')
     assert(sn_el.css('.num').length <= 1, 'Expected at most one .num')
@@ -586,6 +638,11 @@ class Sn
           die("unexpected node type in Sn.parse: #{el}")
         end
       end
+    end
+
+    if sl_or_lb_el
+      # Rare; example content: 'archaic'.  See e.g. 'errand', 'scholasticism'.
+      sn.sl_or_lb = "[#{sl_or_lb_el.content.strip_nbsp}]"
     end
 
     # If this is a top-level Sn and sub_num is set, then sub_alpha should also
@@ -615,7 +672,7 @@ class Sn
   end
 
   def to_s
-    [@sense_num, @sub_alpha, @sub_num].compact.join(' ')
+    [@sense_num, @sub_alpha, @sub_num, @sl_or_lb].compact.join(' ')
   end
 end
 
@@ -623,30 +680,56 @@ end
 # just text.
 # "Dt" refers to the class name used in m-w.com's DOM.
 class Dt
-  attr_accessor :defs
+  attr_accessor :defs, :note, :subs
   SENTINEL = "::COLON::"
 
   # Note: modifies DOM.
-  def self.parse(dt_el)
+  def self.parse(dt_el, lb_el = nil)
     # Preconditions.
     assert(node_has_class(dt_el, 'dt'), 'element is not class .dt')
-    assert(dt_el.css('.mw_t_bc').length > 0,
-           'Expected at least one .mw_t_bc (colon)')
+
+    # The large majority of term definitions have a leading colon, but some
+    # don't, e.g. 'sect'.
+    #assert(dt_el.css('.mw_t_bc').length > 0,
+    #       'Expected at least one .mw_t_bc (colon)')
 
     dt = Dt.new
-    dt_el.css('.mw_t_bc').to_a.map do |mw_t_bc|
-      mw_t_bc.content = SENTINEL
-    end
+
+    # Hack: create text representation of bullets; not robust.
     dt_el.css('li .t').to_a.map do |li_t|
-      # Hack: create text representation of bullet; not robust.
       li_t.add_previous_sibling('(*) ')
     end
 
+    # Additional context for the definition; see e.g. 'writ'.
+    snotes = dt_el.css('> .snote')
+    if !snotes.empty?
+      assert(snotes.length == 1)
+      dt.note = snotes[0].content.squeeze_whitespace.strip_nbsp
+      # We're done with this, so remove it from the DOM just in case it might
+      # interfere with later parsing.
+      snotes.remove
+    end
+
+    # 'subs'; seemingly, compound terms that incorporate the current term.
+    # See e.g. 'warrant', 'company'.
     subs = dt_el.css('.subs')
     if !subs.empty?
-      # TODO: implement; see e.g. 'warrant', 'company.
-      puts "<Warning: sub definitions excised>"
+      assert(subs.length == 1)
+      assert(subs.at_css('> .sub'))
+      dt.subs = subs.css('> .sub').to_a.map { |sub|
+        sub_sub = sub.at_css('> .sub')
+        sub_sub.remove
+        "#{sub.content.squeeze_whitespace.strip_nbsp} "\
+        "#{sub_sub.content.squeeze_whitespace.strip_nbsp}"
+      }
+      # We're done with these now, so take them out of the DOM so that the
+      # markup removal below doesn't incorporate them.
       subs.remove
+    end
+
+    # Replace colons with unambiguous separators.
+    dt_el.css('.mw_t_bc').to_a.map do |mw_t_bc|
+      mw_t_bc.content = SENTINEL
     end
 
     dt.defs = dt_el.content.split(SENTINEL).map { |d|
@@ -655,6 +738,15 @@ class Dt
       !d.empty?
     }
     assert(dt.defs.length > 0)
+
+    if lb_el
+      # See e.g. 'federalism'.
+      assert(dt.defs.length == 1,
+             # TODO: handle this; see 'synoptic', 'knickerbocker'.
+             'Unsure what to do with lb when there are multiple defs')
+      # TODO: this double-prints for e.g. 'gordian'.
+      dt.defs[0] = "[#{lb_el.content.strip_nbsp}] #{dt.defs[0]}"
+    end
     return dt
   end
 end
@@ -663,6 +755,8 @@ def print_dt(dt, sn)
   # Preconditions.
   assert(!dt.defs.empty?, 'No definitions in dt')
 
+  # TODO: not properly handling the case where there is no .sn; see e.g.
+  # 'cantilever'.  It prints, but spacing is off.
   colon = ' : '
   prefix_str = "#{' ' * sn.indent_length}#{sn.to_s}"
   dt.defs.each_with_index do |d, i|
@@ -675,6 +769,23 @@ def print_dt(dt, sn)
       end
     puts wrapped
   end
+  if dt.note and !dt.note.empty?
+    puts wrap_text("> #{dt.note} <", " " * (prefix_str.length + colon.length))
+  end
+  if dt.subs
+    dt.subs.each_with_index do |s, i|
+      # (Half-assed formatting, as these are rare.)
+      wrapped = wrap_text(s, " " * (prefix_str.length + colon.length + 2))
+      puts wrapped
+    end
+  end
+end
+
+def print_sn_only(sn)
+  # Preconditions.
+  assert(sn)
+  assert(sn.sl_or_lb)
+  puts "#{' ' * sn.indent_length}#{sn.to_s}"
 end
 
 main()
