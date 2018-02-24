@@ -428,7 +428,19 @@ end
 def parse_and_print_synonym_box(card_box_node)
   heading = nil
   text = ''
-  card_box_node.at_css('.definition-block').children.each do |node|
+
+  nodes = card_box_node.at_css('.definition-block').children.to_a
+  destructured_nodes = []
+  nodes.each do |node|
+    if node_has_class(node, '.syn-box-list')
+      destructured_nodes << node
+    else
+      destructured_nodes += node.children.to_a
+    end
+  end
+  assert(destructured_nodes.length >= nodes.length)
+
+  destructured_nodes.each do |node|
     assert(node.element? || node.text?)
     case node.name
     when 'h6'
@@ -444,7 +456,7 @@ def parse_and_print_synonym_box(card_box_node)
       assert(node.content.strip_nbsp =~ /^See more at/, 'Unexpected text')
       text += ' |-> (thes)'
     else  # In practice, 'text', 'a', and 'em'.
-      text += node.content
+      text += node.content.squeeze_whitespace
     end
   end
   puts wrap_text(text.strip_nbsp, "   ")
@@ -542,11 +554,12 @@ def parse_and_print_another_def(card_box_node, print_term = true)
 
   card_box_node.css('.entry').each do |entry_el|
     sn_chain = []
-    entry_el.css('> .vg, .uros').each do |vg_or_uros_el|
+    entry_el.css('> .vg, .uros, .dros').each do |vg_or_uros_el|
 
       classes = vg_or_uros_el.attributes['class'].to_s.split
       if classes.include?('vg')
         assert(!classes.include?('uros'), 'vg is also a uros')
+        assert(!classes.include?('dros'), 'vg is also a dros')
         vg_el = vg_or_uros_el
         # TODO: parse and print .sls .sl modifiers; see e.g. "hambone",
         # "paracetamol".
@@ -557,6 +570,8 @@ def parse_and_print_another_def(card_box_node, print_term = true)
         vg_el.css('> .sb').each do |sb_el|
           sb_el.xpath('./*[starts-with(@class, "sb-")]').each do |sb_num_el|
             sb_num_el.css('> .sense', '> .sen',
+                          # See e.g. 'man'.
+                          '> .pseq > .sense',
                           # See e.g. 'cantilever'.
                           '> .bs .sense', '> .bs .sen').each do |sense_el|
               case sense_el.css('> .sn').length
@@ -590,6 +605,8 @@ def parse_and_print_another_def(card_box_node, print_term = true)
           end
         end
       elsif classes.include?('uros')
+        # Modification, e.g. 'manlike' (from 'man')
+        assert(!classes.include?('dros'), 'uros is also a dros')
         vg_or_uros_el.css('.uro').each do |uro_el|
           assert(uro_el.css('.ure').length == 1, 'Expected a single .ure')
           word = uro_el.at_css('.ure').content.strip_nbsp
@@ -603,6 +620,16 @@ def parse_and_print_another_def(card_box_node, print_term = true)
           function = uro_el.at_css('.fl').content.strip_nbsp
           puts " —#{word}  [#{function}]  #{pronunciations}"
           # TODO: parse 'utxt' when it appears; see e.g. compulsive, abscess.
+        end
+      elsif classes.include?('dros')
+        # Expression / idiom, e.g. 'to a man' (from 'man')
+        vg_or_uros_el.css('.dro').each do |dro_el|
+          assert(dro_el.css('> .drp').length == 1, 'Expected a single .drp')
+          expression = dro_el.at_css('> .drp').content.strip_nbsp
+          assert(dro_el.css('> .vg').length == 1, 'Expected a single .vg')
+          # Don't bother parsing the vg until I actually see a complex one.
+          text = dro_el.at_css('> .vg').content.strip_nbsp.gsub(/\s+/, ' ')
+          puts " —#{expression} #{text}"
         end
       else
         # TODO: parse/print .crxs; see e.g. 'cypher'.
@@ -745,11 +772,15 @@ class Dt
 
     if lb_el
       # See e.g. 'federalism'.
-      assert(dt.defs.length == 1,
-             # TODO: handle this; see 'synoptic', 'knickerbocker'.
-             'Unsure what to do with lb when there are multiple defs')
       # TODO: this double-prints for e.g. 'gordian'.
-      dt.defs[0] = "[#{lb_el.content.strip_nbsp}] #{dt.defs[0]}"
+      dt.defs = dt.defs.map.with_index { |text, i|
+        if i == 0
+          "[#{lb_el.content.strip_nbsp}] #{text}"
+        else
+          # TODO: handle this better; see 'synoptic', 'knickerbocker'.
+          "[ditto] #{text}"
+        end
+      }
     end
     return dt
   end
