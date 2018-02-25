@@ -570,8 +570,8 @@ def parse_and_print_another_def(card_box_node, print_term = true)
         vg_el.css('> .sb').each do |sb_el|
           sb_el.xpath('./*[starts-with(@class, "sb-")]').each do |sb_num_el|
             sb_num_el.css('> .sense', '> .sen',
-                          # See e.g. 'man'.
-                          '> .pseq > .sense',
+                          # See e.g. 'man', 'prerogative'.
+                          '> .pseq .sense',
                           # See e.g. 'cantilever'.
                           '> .bs .sense', '> .bs .sen').each do |sense_el|
               case sense_el.css('> .sn').length
