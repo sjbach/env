@@ -78,6 +78,12 @@
   (load "ess-site")
   (ess-toggle-underscore nil))
 
+(defmacro STEVE-dp (arg)
+  `(let ((STEVE-name ',arg)
+         (STEVE-val ,arg))
+     (message "STEVE-dp %S: %S" STEVE-name STEVE-val)
+     STEVE-val))
+
 ; ELPA:
 ;(require 'package)
 ;(add-to-list 'package-archives
