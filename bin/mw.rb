@@ -673,10 +673,16 @@ class Sn
     if !annotation_els.empty?
       # Rare; see e.g. 'archaic', 'errand', 'scholasticism', 'invest',
       # 'federalism', 'gordian', 'knickerbocker'.
-      sn.annotation =
-        ("[" +
-         annotation_els.map{ |el| el.content.strip_nbsp }.join(', ') +
-         "]")
+      if (annotation_els.length == 1 and
+          annotation_els.first.content =~ /^\[.*\]$/)
+        # Sometimes the annotations are already surrounded in square brackets.
+        sn.annotation = annotation_els.first.content.strip_nbsp
+      else
+        sn.annotation =
+          ("[" +
+           annotation_els.map{ |el| el.content.strip_nbsp }.join(', ') +
+           "]")
+      end
     end
 
     # If this is a top-level Sn and sub_num is set, then sub_alpha should also
