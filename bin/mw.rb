@@ -582,10 +582,10 @@ def parse_and_print_another_def(card_box_node, print_term = true)
               when 1
                 # Common
                 sn_chain << Sn.parse(sense_el.at_css('> .sn'),
-                                     sense_el.at_css('> .sl',
-                                                     '> .lb',
-                                                     # See e.g. 'invest'.
-                                                     '> .et'))
+                                     sense_el.css('> .sl',
+                                                  '> .lb',
+                                                  # See e.g. 'invest'.
+                                                  '> .et'))
               else
                 die('Expected at most a single .sn')
               end
@@ -596,8 +596,7 @@ def parse_and_print_another_def(card_box_node, print_term = true)
                 print_sn_only(sn_chain.last)
               when 1
                 # Common
-                dt = Dt.parse(sense_el.at_css('> .dt'),
-                              sense_el.at_css('> .lb'))
+                dt = Dt.parse(sense_el.at_css('> .dt'))
                 print_dt(dt, sn_chain.last)
               else
                 die('Expected at most a single .dt')
@@ -645,7 +644,7 @@ end
 class Sn
   attr_accessor :sense_num, :sub_alpha, :sub_num, :annotation
 
-  def self.parse(sn_el, annotation_el = nil)
+  def self.parse(sn_el, annotation_els = [])
     # Preconditions.
     assert(node_has_class(sn_el, 'sn'), 'element is not class .sn')
     assert(sn_el.css('.num').length <= 1, 'Expected at most one .num')
@@ -671,10 +670,13 @@ class Sn
       end
     end
 
-    if annotation_el
-      # Rare; example content: 'archaic'.  See e.g. 'errand', 'scholasticism',
-      # 'invest'.
-      sn.annotation = "[#{annotation_el.content.strip_nbsp}]"
+    if !annotation_els.empty?
+      # Rare; see e.g. 'archaic', 'errand', 'scholasticism', 'invest',
+      # 'federalism', 'gordian', 'knickerbocker'.
+      sn.annotation =
+        ("[" +
+         annotation_els.map{ |el| el.content.strip_nbsp }.join(', ') +
+         "]")
     end
 
     # If this is a top-level Sn and sub_num is set, then sub_alpha should also
@@ -716,7 +718,7 @@ class Dt
   SENTINEL = "::COLON::"
 
   # Note: modifies DOM.
-  def self.parse(dt_el, lb_el = nil)
+  def self.parse(dt_el)
     # Preconditions.
     assert(node_has_class(dt_el, 'dt'), 'element is not class .dt')
 
@@ -770,19 +772,6 @@ class Dt
       !d.empty?
     }
     assert(dt.defs.length > 0)
-
-    if lb_el
-      # See e.g. 'federalism'.
-      # TODO: this double-prints for e.g. 'gordian'.
-      dt.defs = dt.defs.map.with_index { |text, i|
-        if i == 0
-          "[#{lb_el.content.strip_nbsp}] #{text}"
-        else
-          # TODO: handle this better; see 'synoptic', 'knickerbocker'.
-          "[ditto] #{text}"
-        end
-      }
-    end
     return dt
   end
 end
@@ -795,6 +784,16 @@ def print_dt(dt, sn)
   # 'cantilever'.  It prints, but spacing is off.
   colon = ' : '
   prefix_str = "#{' ' * sn.indent_length}#{sn.to_s}"
+
+  # Sometimes the sn includes annotations that make it quite long.
+  # See e.g. 'invest'.
+  if prefix_str.length > (0.66 * terminal_width).floor
+    # Begin the definition on the line after the sense number using little
+    # indentation.
+    puts prefix_str
+    prefix_str = " " * (sn.indent_length + 1)
+  end
+
   dt.defs.each_with_index do |d, i|
     wrapped = wrap_text(d, " " * (prefix_str.length + colon.length))
     wrapped[0...(prefix_str.length + colon.length)] =
