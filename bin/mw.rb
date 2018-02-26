@@ -783,6 +783,16 @@ def print_dt(dt, sn)
   # 'cantilever'.  It prints, but spacing is off.
   colon = ' : '
   prefix_str = "#{' ' * sn.indent_length}#{sn.to_s}"
+
+  # Sometimes the sn includes annotations that make it quite long.
+  # See e.g. 'invest'.
+  if prefix_str.length > (0.66 * terminal_width).floor
+    # Begin the definition on the line after the sense number using little
+    # indentation.
+    puts prefix_str
+    prefix_str = " " * (sn.indent_length + 1)
+  end
+
   dt.defs.each_with_index do |d, i|
     wrapped = wrap_text(d, " " * (prefix_str.length + colon.length))
     wrapped[0...(prefix_str.length + colon.length)] =
