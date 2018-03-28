@@ -554,12 +554,13 @@ def parse_and_print_another_def(card_box_node, print_term = true)
 
   card_box_node.css('.entry').each do |entry_el|
     sn_chain = []
-    entry_el.css('> .vg, .uros, .dros').each do |vg_or_uros_el|
+    entry_el.css('> .vg, .cxs, .uros, .dros').each do |vg_or_uros_el|
 
       classes = vg_or_uros_el.attributes['class'].to_s.split
       if classes.include?('vg')
         assert(!classes.include?('uros'), 'vg is also a uros')
         assert(!classes.include?('dros'), 'vg is also a dros')
+        assert(!classes.include?('cxs'), 'vg is also a cxs')
         vg_el = vg_or_uros_el
         # TODO: parse and print .sls .sl modifiers; see e.g. "hambone",
         # "paracetamol".
@@ -606,6 +607,7 @@ def parse_and_print_another_def(card_box_node, print_term = true)
       elsif classes.include?('uros')
         # Modification, e.g. 'manlike' (from 'man')
         assert(!classes.include?('dros'), 'uros is also a dros')
+        assert(!classes.include?('cxs'), 'uros is also a cxs')
         vg_or_uros_el.css('.uro').each do |uro_el|
           assert(uro_el.css('.ure').length == 1, 'Expected a single .ure')
           word = uro_el.at_css('.ure').content.strip_nbsp
@@ -622,6 +624,7 @@ def parse_and_print_another_def(card_box_node, print_term = true)
         end
       elsif classes.include?('dros')
         # Expression / idiom, e.g. 'to a man' (from 'man')
+        assert(!classes.include?('cxs'), 'dros is also a cxs')
         vg_or_uros_el.css('.dro').each do |dro_el|
           assert(dro_el.css('> .drp').length == 1, 'Expected a single .drp')
           expression = dro_el.at_css('> .drp').content.strip_nbsp
@@ -630,8 +633,15 @@ def parse_and_print_another_def(card_box_node, print_term = true)
           text = dro_el.at_css('> .vg').content.strip_nbsp.gsub(/\s+/, ' ')
           puts " —#{expression} #{text}"
         end
+      elsif classes.include?('cxs')
+        # Cross-reference?  See e.g. 'cypher'.
+        vg_or_uros_el.css('li').each do |li|
+          text = li.content.squeeze_whitespace.strip_nbsp
+          if !text.empty?
+            puts wrap_text(text, " (x) ")
+          end
+        end
       else
-        # TODO: parse/print .crxs; see e.g. 'cypher'.
         die('Should be unreachable')
       end
     end
