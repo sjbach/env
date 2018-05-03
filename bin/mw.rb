@@ -432,7 +432,7 @@ def parse_and_print_synonym_box(card_box_node)
   nodes = card_box_node.at_css('.definition-block').children.to_a
   destructured_nodes = []
   nodes.each do |node|
-    if node_has_class(node, '.syn-box-list')
+    if node_has_class(node, 'syn-box-list')
       destructured_nodes << node
     else
       destructured_nodes += node.children.to_a
