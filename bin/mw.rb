@@ -430,14 +430,13 @@ def parse_and_print_synonym_box(card_box_node)
   heading = nil
   text = ''
 
-  nodes = card_box_node.at_css('.definition-block').children.to_a
+  nodes = card_box_node.at_css('.definition-block').children.select { |node|
+    node.element? || (node.text? && !node.content.strip_nbsp.empty?)
+  }
   destructured_nodes = []
   nodes.each do |node|
-    if node_has_class(node, 'syn-box-list')
-      destructured_nodes << node
-    else
-      destructured_nodes += node.children.to_a
-    end
+    assert(node_has_class(node, 'syn-box-list'))
+    destructured_nodes += node.children.to_a
   end
   assert(destructured_nodes.length >= nodes.length)
 
@@ -454,7 +453,8 @@ def parse_and_print_synonym_box(card_box_node)
     when 'div'
       # Convert "See more at <thesaurus link>".
       # TODO: include m-w.com/thesaurus content?
-      assert(node.content.strip_nbsp =~ /^See more at/, 'Unexpected text')
+      assert(node.content.strip_nbsp =~ /^See more at/,
+             "Unexpected text: #{node.content.strip_nbsp}")
       text += ' |-> (thes)'
     else  # In practice, 'text', 'a', and 'em'.
       text += node.content.squeeze_whitespace
