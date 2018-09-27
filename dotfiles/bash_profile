@@ -14,3 +14,7 @@ fi
 if [ -d ~/bin ] ; then
     PATH=~/bin:"${PATH}"
 fi
+
+# Added by Rust installation
+export PATH="$HOME/.cargo/bin:$PATH"
+
