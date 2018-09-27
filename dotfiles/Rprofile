@@ -2,6 +2,13 @@ options(width = 250)
 options(max.print = 1000)
 options(google3.flag.logtostderr = TRUE)
 
+# Default source for install.packages().
+local({r <- getOption("repos")
+  r["CRAN"] <- "http://cran.r-project.org"
+  options(repos=r)
+})
+
+
 a <- function() {
   system("~/bin/a")
 }
