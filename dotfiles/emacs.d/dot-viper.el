@@ -162,6 +162,11 @@
 (add-hook 'lisp-mode-hook 'steve-slime-temp-buffer-fixes)
 (add-hook 'clojure-mode-hook 'steve-slime-temp-buffer-fixes)
 
+;; Rust
+(add-hook 'cargo-process-mode-hook 'viper-change-state-to-vi)
+(add-hook 'cargo-process-mode-hook 'visual-line-mode) ; soft wrap
+(add-hook 'racer-help-mode-hook 'viper-change-state-to-vi)
+
 ;; SLIME REPL fixes
 (add-hook 'slime-repl-mode-hook 'viper-comint-mode-hook)
 

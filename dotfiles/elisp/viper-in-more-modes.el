@@ -623,6 +623,38 @@ work on closed parens like one can expect in vi."
                            'vi-state
                            viper-imm-ess-help-mode-vi-map))
 
+;;;; Rust Mode
+
+(defcustom viper-imm-rust-bindings t
+  "Rust bindings."
+  :type  'boolean
+  :group 'viper-in-more-modes)
+
+(defvar viper-imm-rust-mode-vi-map
+  (let ((map (make-sparse-keymap)))
+    (viper-imm-defkey-l map "." 'racer-find-definition)
+    (viper-imm-defkey-l map "," 'pop-tag-mark)
+    (viper-imm-defkey-l map "h" 'racer-describe)
+    map))
+(defvar viper-imm-rust-mode-insert-map
+  (let ((map (make-sparse-keymap)))
+    ;(define-key map (kbd "TAB") 'company-complete-common)
+    ;(define-key map (kbd "TAB") 'company-complete)
+    (define-key map (kbd "TAB") 'company-indent-or-complete-common)
+    (define-key map "\C-n" 'company-select-next)
+    (define-key map "\C-p" 'company-select-previous)
+    ;(define-key map (kbd "RET") 'company-complete-selection)
+    (define-key map (kbd "<right>") 'company-complete)
+    map))
+
+(when viper-imm-rust-bindings
+  (viper-modify-major-mode 'rust-mode
+                           'vi-state
+                           viper-imm-rust-mode-vi-map)
+  (viper-modify-major-mode 'rust-mode
+                           'insert-state
+                           viper-imm-rust-mode-insert-map))
+
 
 ;;;; Locate mode
 
