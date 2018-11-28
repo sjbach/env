@@ -96,6 +96,32 @@
 ;(package-list) ; to update
 ; Then: M-x package-install foo
 
+;; Rust stuff:
+;; http://julienblanchard.com/2016/fancy-rust-development-with-emacs/
+; M-x package-install cargo
+; M-x package-install company
+; M-x package-install racer
+; M-x package-install flycheck-rust
+; Cargo:
+(add-hook 'rust-mode-hook 'cargo-minor-mode)
+(add-hook 'rust-mode-hook
+          (lambda ()
+            ; STEVE vv untested
+            ; (setq rust-format-on-save t)
+            (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
+; Racer:
+(setq racer-cmd "~/.cargo/bin/racer") ;; Rustup binaries PATH
+(setq racer-rust-src-path "~/rust/src") ;; Rust source code PATH
+(add-hook 'rust-mode-hook #'racer-mode)
+(add-hook 'racer-mode-hook #'eldoc-mode)
+(add-hook 'racer-mode-hook #'company-mode)
+; Flycheck-rust:
+(add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+(add-hook 'rust-mode-hook #'flycheck-mode)
+; Misc:
+; (setenv "RUST_BACKTRACE" "1")
+(setenv "RUST_BACKTRACE" "full")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
