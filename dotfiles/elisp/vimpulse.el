@@ -6630,7 +6630,7 @@ specifies whether to include the quote marks in the range."
 (define-key viper-vi-basic-map "zt" 'viper-line-to-top)
 (define-key viper-vi-basic-map "zz" 'viper-line-to-middle)
 (define-key viper-vi-basic-map "\C-]" 'vimpulse-jump-to-tag-at-point)
-(define-key viper-vi-basic-map "\C-t" 'pop-tag-mark)
+;(define-key viper-vi-basic-map "\C-t" 'pop-tag-mark)
 (define-key viper-vi-basic-map "=" 'vimpulse-indent)
 (define-key viper-vi-basic-map "_" 'viper-next-line-at-bol)
 (define-key viper-vi-basic-map "#" 'vimpulse-search-backward-for-symbol-at-point)

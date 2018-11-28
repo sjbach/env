@@ -63,10 +63,11 @@
 
 (mapc 'expand-load
       `("look-and-feel.el"
-        "prose.el"
+;        "prose.el"
 ;        ,(and (at-work-p) "qpx-ita.el")
         ,(and (at-work-p) "google-boot.el")
-        "viper-boot.el"))
+        "viper-boot.el"
+        "env.el"))
 
 ;; Use Spotlight for `locate` command on OS X
 (when (string-equal system-type "darwin")
@@ -96,8 +97,18 @@
 ; Then: M-x package-install foo
 
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(js-indent-level 2)
  '(load-home-init-file t t)
- '(warning-suppress-types (quote ((undo discard-info))))
+ '(package-selected-packages
+   '(ample-theme adaptive-wrap racer flycheck-rust company cargo))
+ '(warning-suppress-types '((undo discard-info))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
-(custom-set-faces)
