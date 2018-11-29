@@ -12,9 +12,12 @@
     ;; Terminal
     ;(color-theme-dark-laptop)))
     ;(color-theme-comidia)))
-    (progn
-      (load-theme 'ample t t)
-      (enable-theme 'ample))))
+    ;(progn
+    ;  (load-theme 'ample t t)
+    ;  (enable-theme 'ample))))
+;    (color-theme-comidia)))
+    (color-theme-dark-laptop)))
+;(color-theme-sitaramv-solaris)
 
 ; Slime autodoc used to expand the minibuffer height, which was annoying.
 ;(setq resize-mini-windows nil)

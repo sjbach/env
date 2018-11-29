@@ -132,6 +132,8 @@
  '(package-selected-packages
    '(ample-theme adaptive-wrap racer flycheck-rust company cargo))
  '(warning-suppress-types '((undo discard-info))))
+; '(package-selected-packages (quote (adaptive-wrap racer flycheck-rust company cargo)))
+; '(warning-suppress-types (quote ((undo discard-info)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
