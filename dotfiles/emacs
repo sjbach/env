@@ -64,7 +64,9 @@
 (mapc 'expand-load
       `("look-and-feel.el"
 ;        "prose.el"
-        "viper-boot.el"
+        "code-conventions.el"
+        "misc.el"
+        "steve-evil.el"
         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
         ))
 
@@ -76,7 +78,9 @@
   (add-to-list 'load-path "~/ESS/lisp/")
   ;; Don't convert '_' to '<-'.  Annoying.
   (load "ess-site")
-  (ess-toggle-underscore nil))
+  (ess-toggle-underscore nil)
+  ;; This interferes with my `evil` configuration.
+  (define-key inferior-ess-mode-map "," nil))
 
 (defmacro STEVE-dp (arg)
   `(let ((STEVE-name ',arg)
@@ -129,10 +133,8 @@
  '(js-indent-level 2)
  '(load-home-init-file t t)
  '(package-selected-packages
-   '(ample-theme adaptive-wrap racer flycheck-rust company cargo))
+   '(elisp-slime-nav ample-theme adaptive-wrap racer flycheck-rust company cargo))
  '(warning-suppress-types '((undo discard-info))))
-; '(package-selected-packages (quote (adaptive-wrap racer flycheck-rust company cargo)))
-; '(warning-suppress-types (quote ((undo discard-info)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
