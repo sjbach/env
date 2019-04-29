@@ -66,6 +66,7 @@
 ;        "prose.el"
         "code-conventions.el"
         "misc.el"
+        "R.el"
         "rust.el"
         "steve-evil.el"
         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
@@ -74,14 +75,6 @@
 ;; Use Spotlight for `locate` command on OS X
 (when (string-equal system-type "darwin")
   (setq locate-command "mdfind"))
-
-(when (file-exists-p "~/ESS")
-  (add-to-list 'load-path "~/ESS/lisp/")
-  ;; Don't convert '_' to '<-'.  Annoying.
-  (load "ess-site")
-  (ess-toggle-underscore nil)
-  ;; This interferes with my `evil` configuration.
-  (define-key inferior-ess-mode-map "," nil))
 
 (defmacro STEVE-dp (arg)
   `(let ((STEVE-name ',arg)
