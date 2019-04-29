@@ -64,10 +64,9 @@
 (mapc 'expand-load
       `("look-and-feel.el"
 ;        "prose.el"
-;        ,(and (at-work-p) "qpx-ita.el")
-        ,(and (at-work-p) "google-boot.el")
         "viper-boot.el"
-        "env.el"))
+        ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
+        ))
 
 ;; Use Spotlight for `locate` command on OS X
 (when (string-equal system-type "darwin")
