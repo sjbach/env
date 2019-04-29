@@ -178,14 +178,14 @@
   "D" 'steve-remove-matching-lines)
 
 ;; Rust
-(let ((temp-space-map (make-sparse-keymap)))
-  (define-key temp-space-map "." 'racer-find-definition)
-  (define-key temp-space-map "," 'pop-tag-mark)
-  (define-key temp-space-map "d" 'racer-describe)
-  (define-key temp-space-map "h" 'racer-describe)
-  (evil-define-key
-    '(motion normal) rust-mode-map
-    " " temp-space-map))
+(define-prefix-command 'steve-evil-rust-space-motion-map)
+(define-key steve-evil-rust-space-motion-map "." 'racer-find-definition)
+(define-key steve-evil-rust-space-motion-map "," 'pop-tag-mark)
+(define-key steve-evil-rust-space-motion-map "d" 'racer-describe)
+(define-key steve-evil-rust-space-motion-map "h" 'racer-describe)
+(evil-define-key
+  '(motion normal) rust-mode-map
+  " " steve-evil-rust-space-motion-map)
 (evil-define-key
   'insert rust-mode-map
   (kbd "TAB") 'company-indent-or-complete-common
