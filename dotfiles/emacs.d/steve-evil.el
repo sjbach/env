@@ -97,7 +97,7 @@
   (kbd "TAB") 'steve-juggle-previous-buffer
 
   ;; Close buffer (instead of scroll down).
-  "\C-d" 'close-buffer-and-window-unless-last
+  "\C-d" 'steve-close-buffer-and-window-unless-last
   ;; I like C-y and C-e to scroll faster.
   "\C-y" (lambda ()
            (interactive)
@@ -174,7 +174,7 @@
 ;; Grep
 (evil-define-key
   '(motion normal) grep-mode-map
-  "q" 'close-buffer-and-window-unless-last
+  "q" 'steve-close-buffer-and-window-unless-last
   "D" 'steve-remove-matching-lines)
 
 ;; Rust

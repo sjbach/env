@@ -1,53 +1,10 @@
 (add-to-list 'load-path "~/.elisp")
 
-(defun at-work-p ()
-  (or (string-equal (getenv "LOGNAME") "sbach")
-      (string-equal (getenv "LOGNAME") "sjbach")))
-
 (setq-default indent-tabs-mode nil)
-
-(require 'hideshow)
-(defun display-code-line-counts (ov)
-  (when (eq 'code (overlay-get ov 'hs))
-    (overlay-put ov 'display
-                 (propertize
-                   (format " ...<%d>)"
-                           (count-lines (overlay-start ov)
-                                        (overlay-end ov)))
-                   'face 'font-lock-constant-face))))
-(setq hs-set-up-overlay 'display-code-line-counts)
-(add-hook 'lisp-mode-hook (lambda () (hs-minor-mode 1)))
-(add-hook 'emacs-lisp-mode-hook (lambda () (hs-minor-mode 1)))
 
 (require 'lusty-explorer)
 
-(when (file-exists-p "~/clojure")
-  ;; TODO: cleanup
-  ;(add-to-list 'load-path "~/clojure/swank-clojure")
-  ;(setq swank-clojure-jar-path "~/clojure/clojure-git/clojure.jar")
-  ;(require 'swank-clojure-autoload)
-
-;  (eval-after-load "slime"
-;    '(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl"))))
-
-  (add-to-list 'load-path "~/clojure/clojure-mode")
-  (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
-  (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode)))
-
-;(eval-after-load "slime"
-;    '(add-to-list 'slime-lisp-implementations '(scheme ("mzscheme"))))
-
-(defun close-buffer-and-window-unless-last ()
-  (interactive)
-  (let* ((buffer (current-buffer))
-         (window (get-buffer-window buffer))
-         (next (next-window window)))
-    (kill-buffer buffer)
-    (when (and window
-               (not (eq window next)))
-      (delete-window window))))
-
-(global-set-key "\C-d" 'close-buffer-and-window-unless-last)
+(global-set-key "\C-d" 'steve-close-buffer-and-window-unless-last)
 (global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 
 ;; Put all backups into a single directory
@@ -66,6 +23,7 @@
 ;        "prose.el"
         "code-conventions.el"
         "misc.el"
+        "clojure.el"
         "R.el"
         "rust.el"
         "steve-evil.el"
@@ -75,12 +33,6 @@
 ;; Use Spotlight for `locate` command on OS X
 (when (string-equal system-type "darwin")
   (setq locate-command "mdfind"))
-
-(defmacro STEVE-dp (arg)
-  `(let ((STEVE-name ',arg)
-         (STEVE-val ,arg))
-     (message "STEVE-dp %S: %S" STEVE-name STEVE-val)
-     STEVE-val))
 
 ; ELPA:
 (require 'package)
