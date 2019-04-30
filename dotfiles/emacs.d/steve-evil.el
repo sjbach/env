@@ -51,12 +51,14 @@
 ;; I don't use ';' for its traditional purpose ("Repeat latest f, t, F or T").
 (define-key evil-motion-state-map ";" 'execute-extended-command)
 
-;; I see these bindings as risky. In usual Emacs usage, quitting is quite
-;; rare. I never want it to happen willy-nilly. So unset them. 
 (evil-define-key
   'normal 'global
+  ;; I see these bindings as risky. In usual Emacs usage, quitting is quite
+  ;; rare. I never want it to happen willy-nilly. So unset them.
   "ZZ" nil
-  "ZQ" nil)
+  "ZQ" nil
+  ;; I use different bindings for tag stuff.
+  "\C-t" nil)
 
 
 ;;;
