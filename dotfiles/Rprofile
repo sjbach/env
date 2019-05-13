@@ -1,10 +1,13 @@
+# Install packages to $HOME/R instead of /usr/local/lib/R or /usr/lib/R.
+.libPaths(paste0("~/R/", version$major, ".", version$minor)) # e.g. "~/R/3.4.4"
+
 options(width = 250)
 options(max.print = 1000)
 options(google3.flag.logtostderr = TRUE)
 
 # Default source for install.packages().
 local({r <- getOption("repos")
-  r["CRAN"] <- "http://cran.r-project.org"
+  r["CRAN"] <- "https://cran.r-project.org"
   options(repos=r)
 })
 
