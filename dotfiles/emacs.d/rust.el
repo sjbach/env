@@ -14,6 +14,7 @@
             ; STEVE vv untested
             ; (setq rust-format-on-save t)
             (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
+(add-hook 'cargo-process-mode-hook 'visual-line-mode) ; soft wrap
 
 ;; Racer:
 (setq racer-cmd "~/.cargo/bin/racer")

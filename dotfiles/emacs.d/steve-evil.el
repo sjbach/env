@@ -2,6 +2,10 @@
 ;;; Package loading.
 ;;;
 
+;; STEVE TODO:
+;; - key binding: push value in nameless delete buffer into another buffer (say, "')
+
+
 ;; This needs to be done before loading evil:
 ;; Enable evil in the minibuffer.
 (customize-set-variable 'evil-want-minibuffer t)
@@ -93,20 +97,47 @@
 (define-key evil-visual-state-map "," 'steve-comma-visual-map)
 (define-key steve-comma-visual-map "c" 'comment-dwim)
 
+
+;; I like C-y and C-e to scroll faster.
+;;
+;; Implemented as commands (with `:repeat nil`) because otherwise these
+;; interfere with repeat ("."). There's probably a better way to do this.
+(evil-define-command steve-evil-scroll-line-down (count)
+  "Scrolls the window 3 * COUNT lines downwards."
+  :repeat nil
+  :keep-visual t
+  (interactive "p")
+  (let ((scroll-preserve-screen-position nil))
+    (scroll-up count)
+    (scroll-up count)
+    (scroll-up count)))
+;;
+(evil-define-command steve-evil-scroll-line-up (count)
+  "Scrolls the window 3 * COUNT lines upwards."
+  :repeat nil
+  :keep-visual t
+  (interactive "p")
+  (let ((scroll-preserve-screen-position nil))
+    (scroll-down count)
+    (scroll-down count)
+    (scroll-down count)))
+
 (evil-define-key
   'motion 'global
   ;; I don't use TAB for its traditional purpose.
   (kbd "TAB") 'steve-juggle-previous-buffer
-
   ;; Close buffer (instead of scroll down).
   "\C-d" 'steve-close-buffer-and-window-unless-last
-  ;; I like C-y and C-e to scroll faster.
-  "\C-y" (lambda ()
-           (interactive)
-           (evil-scroll-line-up 3))
-  "\C-e" (lambda ()
-           (interactive)
-           (evil-scroll-line-down 3)))
+  ;; (Instead of evil-scroll-line-up, evil-scroll-line-up.)
+  "\C-y" 'steve-evil-scroll-line-up
+  "\C-e" 'steve-evil-scroll-line-down
+;  "\C-y" (lambda ()
+;           (interactive)
+;           (evil-scroll-line-up 3))
+;  "\C-e" (lambda ()
+;           (interactive)
+;           (evil-scroll-line-down 3))
+  )
 
 
 ;;;
@@ -131,6 +162,7 @@
   (define-key temp-space-map "," 'help-go-back)
   (evil-define-key
     '(motion normal) help-mode-map
+    (kbd "TAB") 'steve-juggle-previous-buffer
     ;(kbd "C-h") 'help-go-back
     ;(kbd "C-l") 'help-go-forward
     " " temp-space-map))
@@ -176,6 +208,10 @@
 ;; Grep
 (evil-define-key
   '(motion normal) grep-mode-map
+  ; (Instead of 'compilation-next-error.)
+  (kbd "TAB") 'steve-juggle-previous-buffer
+  ; (Instead of 'recompile.)
+  "gg" 'evil-goto-first-line
   "q" 'steve-close-buffer-and-window-unless-last
   "D" 'steve-remove-matching-lines)
 
@@ -195,6 +231,13 @@
   "\C-p" 'company-select-previous
   (kbd "<right>") 'company-complete)
 
+;; Rust/cargo compilation
+(evil-define-key
+  '(motion normal) cargo-process-mode-map
+  ;; (Rather than next compilation error.)
+  (kbd "TAB") 'steve-juggle-previous-buffer
+  )
+
 ;;;
 ;;; Overrides of default states in some modes.
 ;;;
@@ -205,8 +248,16 @@
 
 
 ;;;
-;;; Vim-related utility functions.
+;;; Misc
 ;;;
+
+;; Treat "_" as a word character.
+;(add-hook 'c-mode-common-hook (lambda () (modify-syntax-entry ?_ "w")))
+(modify-syntax-entry ?_ "w")
+
+
+;; Vim-related utility functions.
+;;
 
 ;; Note: could probably use `evil-edit` instead, but I'm used to this.
 (defun e ()

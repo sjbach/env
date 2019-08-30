@@ -15,5 +15,5 @@
             (auto-fill-mode t)
             (set-fill-column 80)))
 
-(add-hook 'cargo-process-mode-hook 'visual-line-mode) ; soft wrap
+(add-hook 'emacs-lisp-mode-hook 'turn-on-elisp-slime-nav-mode)
 
