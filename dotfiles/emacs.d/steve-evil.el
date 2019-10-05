@@ -2,10 +2,6 @@
 ;;; Package loading.
 ;;;
 
-;; STEVE TODO:
-;; - key binding: push value in nameless delete buffer into another buffer (say, "')
-
-
 ;; This needs to be done before loading evil:
 ;; Enable evil in the minibuffer.
 (customize-set-variable 'evil-want-minibuffer t)
@@ -85,8 +81,17 @@
 (define-key steve-comma-motion-map "x2" 'split-window-vertically)
 (define-key steve-comma-motion-map "x3" 'split-window-horizontally)
 (define-key steve-comma-motion-map "xk" 'kill-this-buffer)
-; STEVE rarely used vv
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
+
+(define-key steve-comma-motion-map "ea" #'steve-copy-register-unnamed-to-a)
+;
+;(define-key steve-comma-motion-map "o\C-e"
+;  (lambda () (interactive) (scroll-other-window 3)))
+;(define-key steve-comma-motion-map "o\C-y"
+;  (lambda () (interactive) (scroll-other-window-down 3)))
+;(define-key steve-comma-motion-map "of" #'scroll-other-window)
+;(define-key steve-comma-motion-map "ob" #'scroll-other-window-down)
+; STEVE rarely used vv
 (define-key steve-comma-motion-map "A" 'beginning-of-defun)
 (define-key steve-comma-motion-map "p" 'fill-paragraph)
 (define-key steve-comma-motion-map "h" 'ff-find-other-file)
@@ -96,6 +101,10 @@
 (define-prefix-command 'steve-comma-visual-map)
 (define-key evil-visual-state-map "," 'steve-comma-visual-map)
 (define-key steve-comma-visual-map "c" 'comment-dwim)
+
+(defun steve-copy-register-unnamed-to-a ()
+  (interactive)
+  (evil-set-register ?a (evil-get-register ?\")))
 
 
 ;; I like C-y and C-e to scroll faster.

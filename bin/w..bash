@@ -118,5 +118,5 @@ fi
       echo
     fi
   done
-  ) | less
+  ) | less --RAW-CONTROL-CHARS
 
