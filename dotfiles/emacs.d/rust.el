@@ -7,6 +7,8 @@
 ; M-x package-install racer
 ; M-x package-install flycheck-rust
 
+(require 'fill-column-indicator)
+
 ;; Cargo:
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
 (add-hook 'rust-mode-hook
@@ -26,6 +28,13 @@
 ;; Flycheck-rust:
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 (add-hook 'rust-mode-hook #'flycheck-mode)
+
+;; Fill-column:
+(add-hook 'rust-mode-hook #'fci-mode)
+(add-hook 'rust-mode-hook
+          ;; 100 character lines, per style guide.
+          ;; (99 to be conservative.)
+          (lambda () (setq fill-column 99)))
 
 ;; Misc:
 ; (setenv "RUST_BACKTRACE" "1")
