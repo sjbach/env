@@ -1,4 +1,9 @@
 set editing-mode vi
+# When you edit a line you searched for, don't save the edits to history.
+set revert-all-at-newline on
+
+# https://stackoverflow.com/questions/7888387/the-way-to-distinguish-command-mode-and-insert-mode-in-bashs-vi-command-line-ed/42107711#42107711
+#set show-mode-in-prompt on
 
 $include /etc/inputrc
 
