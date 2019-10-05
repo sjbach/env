@@ -23,12 +23,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(evil-collection-setup-minibuffer t)
+ '(evil-want-keybinding nil)
+ '(evil-want-minibuffer t)
  '(js-indent-level 2)
  '(load-home-init-file t t)
  '(package-selected-packages
-   (quote
-    (undo-tree elisp-slime-nav ample-theme adaptive-wrap racer flycheck-rust company cargo)))
- '(warning-suppress-types (quote ((undo discard-info)))))
+   '(dash smart-mode-line solarized-theme fill-column-indicator undo-tree elisp-slime-nav ample-theme adaptive-wrap racer flycheck-rust company cargo))
+ '(warning-suppress-types '((undo discard-info))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
