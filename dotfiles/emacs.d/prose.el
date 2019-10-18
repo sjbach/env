@@ -30,3 +30,43 @@
     :modes (text-mode markdown-mode gfm-mode))
 
   (add-to-list 'flycheck-checkers 'proselint))
+
+;;
+;; Adding new/custom words to the dictionary.
+;; Stolen from: https://www.emacswiki.org/emacs/FlySpell
+;;
+
+(defun append-aspell-word (new-word)
+ (let ((header "personal_ws-1.1")
+       (file-name (substitute-in-file-name "$HOME/.aspell.en.pws"))
+       (read-words (lambda (file-name)
+                    (let ((all-lines (with-temp-buffer
+                                      (insert-file-contents file-name)
+                                      (split-string (buffer-string) "\n" t))))
+                     (if (null all-lines)
+                       ""
+                      (split-string (mapconcat 'identity (cdr all-lines) "\n")
+                                    nil
+                                    t))))))
+  (when (file-readable-p file-name)
+   (let* ((cur-words (eval (list read-words file-name)))
+          (all-words (delq header (cons new-word cur-words)))
+          (words (delq nil (remove-duplicates all-words :test 'string=))))
+    (with-temp-file file-name
+     (insert (concat header
+                     " en "
+                     (number-to-string (length words))
+                     "\n"
+                     (mapconcat 'identity (sort words #'string<) "\n"))))))
+  (unless (file-readable-p file-name)
+   (with-temp-file file-name
+    (insert (concat header " en 1\n" new-word "\n")))))
+ (ispell-kill-ispell t) ; restart ispell
+ (flyspell-mode)
+ (flyspell-mode))
+
+(defun append-aspell-current ()
+ "Add current word to aspell dictionary"
+ (interactive)
+ (append-aspell-word (thing-at-point 'word)))
+

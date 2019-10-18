@@ -14,3 +14,9 @@ fi
 if [ -d ~/bin ] ; then
     PATH=~/bin:"${PATH}"
 fi
+
+# Rust:
+if [ -d ~/.cargo/bin ] ; then
+    PATH=~/.cargo/bin:"${PATH}"
+fi
+

@@ -5,5 +5,6 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-~/bin/mw "$@" | exec less
+# --raw-control-chars makes 0x200b (zero-width space) display correctly.
+~/bin/mw "$@" | exec less --raw-control-chars
 

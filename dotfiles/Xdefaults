@@ -47,6 +47,10 @@ URxvt*color13:  #cf9ebe
 URxvt*color14:  #71bebe
 URxvt*color15:  white
 
+! For me, makes italics in terminal Emacs actually italics, not underline.
+URxvt*termName: rxvt-unicode-256color
+!URxvt.font: xft:DejaVu Sans Mono:size=9
+
 XTerm*utf8:	1
 XTerm*font:	fixed
 XTerm*background:	black

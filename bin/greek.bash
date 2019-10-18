@@ -36,9 +36,13 @@ fi
 
 URL_PREFIX='http://media.merriam-webster.com/audio/prons/en/us/mp3'
 
+# Appears (sometimes?) on unrelated audio links.
+REJECT_REGEX='jc-play-icon-type1'
+
 audio_related_html=$(\
   wget -q -O - "http://www.m-w.com/dictionary/$1" | \
   grep '[" ]play-pron[" ]' | \
+  grep -v "$REJECT_REGEX" | \
   tr ' ' '\n')
 
 sound_files=$(\
