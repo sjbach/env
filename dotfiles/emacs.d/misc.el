@@ -1,3 +1,5 @@
+
+; STEVE make work in terminal
 (defun steve-vim-excursion ()
   ;; FIXME cleanup
   (interactive)
