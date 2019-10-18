@@ -18,6 +18,10 @@
 (when (string-equal system-type "darwin")
   (setq locate-command "mdfind"))
 
+;; Don't let *scratch* be closed accidentally.
+(with-current-buffer "*scratch*"
+  (emacs-lock-mode 'kill))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -63,7 +67,7 @@
 
 (mapc 'expand-load
       `("look-and-feel.el"
-;        "prose.el"
+        "prose.el"
         "code-conventions.el"
         "misc.el"
         "clojure.el"

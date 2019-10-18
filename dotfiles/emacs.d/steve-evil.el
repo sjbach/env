@@ -46,6 +46,11 @@
 (my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
 (my-move-key evil-motion-state-map evil-normal-state-map " ")
 
+;; Switch the mappings for "'" and "`"; evil-goto-mark is better in almost
+;; every case, so best that it's more accessible
+(define-key evil-motion-state-map "'" 'evil-goto-mark)
+(define-key evil-motion-state-map "`" 'evil-goto-mark-line)
+
 ;; I don't use :ex mode (evil-ex).
 (define-key evil-motion-state-map ":" 'execute-extended-command)
 ;; I don't use ';' for its traditional purpose ("Repeat latest f, t, F or T").
@@ -74,7 +79,7 @@
 (define-key evil-motion-state-map "," 'steve-comma-motion-map)
 (define-key steve-comma-motion-map "r" 'lusty-file-explorer)
 (define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
-(define-key steve-comma-motion-map "j" 'steve-juggle-previous-buffer)
+;(define-key steve-comma-motion-map "j" 'steve-juggle-previous-buffer)
 (define-key steve-comma-motion-map "xo" 'other-window)
 (define-key steve-comma-motion-map "x0" 'delete-window)
 (define-key steve-comma-motion-map "x1" 'delete-other-windows)
@@ -84,6 +89,8 @@
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
 
 (define-key steve-comma-motion-map "ea" #'steve-copy-register-unnamed-to-a)
+(define-key steve-comma-motion-map "eb" #'steve-copy-register-unnamed-to-b)
+(define-key steve-comma-motion-map "ec" #'steve-copy-register-unnamed-to-c)
 ;
 ;(define-key steve-comma-motion-map "o\C-e"
 ;  (lambda () (interactive) (scroll-other-window 3)))
@@ -105,6 +112,12 @@
 (defun steve-copy-register-unnamed-to-a ()
   (interactive)
   (evil-set-register ?a (evil-get-register ?\")))
+(defun steve-copy-register-unnamed-to-b ()
+  (interactive)
+  (evil-set-register ?b (evil-get-register ?\")))
+(defun steve-copy-register-unnamed-to-c ()
+  (interactive)
+  (evil-set-register ?c (evil-get-register ?\")))
 
 
 ;; I like C-y and C-e to scroll faster.
