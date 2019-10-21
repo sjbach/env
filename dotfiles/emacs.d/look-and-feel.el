@@ -19,6 +19,15 @@
     (color-theme-dark-laptop)))
 ;(color-theme-sitaramv-solaris)
 
+;; Scrolling behavior.
+;;
+;; Begin scrolling the window three lines before the margin.
+(setq scroll-margin 3)
+;; When point moves out of the window, don't recenter the window on point,
+;; rather scroll just enough to get point in the window again (respecting the
+;; margin above).
+(setq scroll-conservatively 200)  ; (arbitrary high number)
+
 ; Slime autodoc used to expand the minibuffer height, which was annoying.
 ;(setq resize-mini-windows nil)
 

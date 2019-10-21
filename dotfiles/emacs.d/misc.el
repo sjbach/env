@@ -32,6 +32,8 @@
       (kill-buffer old-temp-paste-buf)))
   (let ((temp-paste-buf (get-buffer-create steve--temp-paste-buf-name)))
     (pop-to-buffer temp-paste-buf)
+    ;; Disable auto-indent.
+    (electric-indent-local-mode -1)
     ;(use-local-map (copy-keymap foo-mode-map))
     ;(local-set-key "d" 'some-function)
     (add-hook 'kill-buffer-hook

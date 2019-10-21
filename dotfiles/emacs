@@ -18,6 +18,9 @@
 (when (string-equal system-type "darwin")
   (setq locate-command "mdfind"))
 
+;; Save bookmarks to the fileysystem whenever there are changes.
+(setq bookmark-save-flag 1)
+
 ;; Don't let *scratch* be closed accidentally.
 (with-current-buffer "*scratch*"
   (emacs-lock-mode 'kill))
