@@ -22,17 +22,20 @@
 ;;     (color-theme-dark-laptop)))
 ;; ;(color-theme-sitaramv-solaris)
 
-;; Scrolling behavior.
+;; Make just-in-time font-lock styling be more aggressive. For me this results
+;; in fairly constant 5-10% average CPU load when styling a very large
+;; buffer. That's fine.
+(setq jit-lock-stealth-time 0.5)
+(setq jit-lock-stealth-nice 0.1)
+
+;; Scrolling behavior. (Make similar to Vim)
 ;;
-;; Begin scrolling the window three lines before the margin.
-(setq scroll-margin 3)
+;; Begin scrolling the window four lines before the margin.
+(setq scroll-margin 4)
 ;; When point moves out of the window, don't recenter the window on point,
 ;; rather scroll just enough to get point in the window again (respecting the
 ;; margin above).
 (setq scroll-conservatively 200)  ; (arbitrary high number)
-
-; Slime autodoc used to expand the minibuffer height, which was annoying.
-;(setq resize-mini-windows nil)
 
 ;; Different color for parens
 (require 'parenface)
@@ -43,9 +46,8 @@
 
 (setq inhibit-startup-message t)
 
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-;(set-scroll-bar-mode 'right)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
 (toggle-scroll-bar -1)
 
 ;; force horizontal splits - stolen from stackoverflow somewhere
@@ -96,19 +98,12 @@
       (set-frame-font font)
       (set-default-font font))))
 
-;; Turn on font-lock mode for syntax highlighting
-(global-font-lock-mode t)
-(setq font-lock-maximum-decoration t)
-
 ;; Show colums and lines in the status bar
 (column-number-mode t)
 (line-number-mode 1)
 
-;; New windows are annoying.
+;; Unexpected new windows are annoying.
 (setq pop-up-windows nil)
-
-;; Enable visual feedback on selections
-(transient-mark-mode t)
 
 ;; The completion buffer still shows too much boilerplate, but this helps
 (setq completion-show-help nil)
@@ -134,7 +129,8 @@
   (font-lock-add-keywords 'nxml-mode words)
   (font-lock-add-keywords 'python-mode words)
   (font-lock-add-keywords 'ruby-mode words)
-  (font-lock-add-keywords 'sh-mode words))
+  (font-lock-add-keywords 'sh-mode words)
+  (font-lock-add-keywords 'rust-mode words))
 
 (when (string-equal system-type "darwin")
   (toggle-frame-maximized))

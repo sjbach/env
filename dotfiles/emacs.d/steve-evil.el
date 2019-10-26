@@ -9,6 +9,9 @@
 ;; Context: https://github.com/emacs-evil/evil-collection/issues/60
 (customize-set-variable 'evil-want-keybinding nil)
 ;;
+;(setq-default evil-symbol-word-search t)
+(customize-set-variable 'evil-symbol-word-search t)
+;;
 (unless (file-exists-p "~/.emacs.d/evil")
   ;; `git clone https://github.com/emacs-evil/evil ~/.emacs.d/evil`
   (error "Clone `evil` to ~/.emacs.d/evil"))
@@ -37,6 +40,10 @@
 ;;; Overrides of default evil bindings.
 ;;;
 
+;; Evil mappings should already be loaded now; don't want to use
+;; with-eval-after-load and confuse the control flow.
+(assert (featurep 'evil-maps))
+
 ;; <SPACE> and <RET> don't need to be motion keys, as I never use them as such.
 ;; From: https://www.emacswiki.org/emacs/Evil
 (defun my-move-key (keymap-from keymap-to key)
@@ -54,7 +61,7 @@
 ;; I don't use :ex mode (evil-ex).
 (define-key evil-motion-state-map ":" 'execute-extended-command)
 ;; I don't use ';' for its traditional purpose ("Repeat latest f, t, F or T").
-(define-key evil-motion-state-map ";" 'execute-extended-command)
+; (define-key evil-motion-state-map ";" 'execute-extended-command)
 
 (evil-define-key
   'normal 'global
