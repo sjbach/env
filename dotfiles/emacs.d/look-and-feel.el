@@ -2,22 +2,25 @@
 ;; Look and feel
 ;;
 
-(require 'color-theme)
-;(color-theme-xemacs)
-(color-theme-initialize)
-(let ((display (getenv "DISPLAY")))
-  (if (and display (> (length display) 0))
-      ;; X
-      (color-theme-robin-hood)
-    ;; Terminal
-    ;(color-theme-dark-laptop)))
-    ;(color-theme-comidia)))
-    ;(progn
-    ;  (load-theme 'ample t t)
-    ;  (enable-theme 'ample))))
-;    (color-theme-comidia)))
-    (color-theme-dark-laptop)))
-;(color-theme-sitaramv-solaris)
+;; I mostly use Emacs in a terminal these days and with my color choices the
+;; default theme is good enough. But leave this for posterity.
+;;
+;; (require 'color-theme)
+;; ;(color-theme-xemacs)
+;; (color-theme-initialize)
+;; (let ((display (getenv "DISPLAY")))
+;;   (if (and display (> (length display) 0))
+;;       ;; X
+;;       (color-theme-robin-hood)
+;;     ;; Terminal
+;;     ;(color-theme-dark-laptop)))
+;;     ;(color-theme-comidia)))
+;;     ;(progn
+;;     ;  (load-theme 'ample t t)
+;;     ;  (enable-theme 'ample))))
+;; ;    (color-theme-comidia)))
+;;     (color-theme-dark-laptop)))
+;; ;(color-theme-sitaramv-solaris)
 
 ; Slime autodoc used to expand the minibuffer height, which was annoying.
 ;(setq resize-mini-windows nil)
