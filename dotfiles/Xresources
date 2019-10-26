@@ -1,0 +1,137 @@
+! Some brief info for posterity.
+!
+! - xterm-related resources are defined in:
+!
+!     /etc/X11/app-defaults/XTerm
+!
+!   And also, when `*customization: -color` is set (always):
+!
+!     /etc/X11/app-defaults/XTerm-color
+!
+!   (And probably other places.)
+!
+! - To query the resources loaded for the XTerm class:
+!     $ appres XTerm
+!
+! - You probably only want to have one of ~/.Xdefaults or ~/.Xresources. If
+!   you`re using both, it should be based on a conscious, informed reason. If
+!   you have only one (common case), it should probably be ~/.Xresources.
+!
+!   (There is also ~/.Xdefaults-<hostname> -- you probably don`t need it.)
+!
+! - Apostrophes/single-quotes are backticks in these comments because xrdb
+!   interprets lone single-quote as an unclosed string and emits a warning.
+!
+! - "XTerm" resources apply to both xterm and uxterm (which is a simple wrapper
+!   script on xterm). There`s also "UXTerm", which is specific to uxterm.
+!
+! - "XTerm" resources should apply also to rxvt and urxvt/rxvt-unicode, but in
+!   my experience this doesn`t always work (or more likely, I misunderstand
+!   what`s going on). So there is redundancy in this file.
+
+!! TERM variable:
+!
+! Ensure programs/libraries (e.g. ncurses) use the terminfo entry that allows
+! 256 colors. Shouldn`t be necessary these days, but doesn`t hurt.
+! Note: there is also e.g. xterm-direct for true color. But my package
+! manager`s version of xterm doesn`t support true color yet.
+XTerm.termName: xterm-256color
+UXTerm.termName: xterm-256color
+URxvt.termName: rxvt-unicode-256color
+
+!! xterm:
+!
+! Aside: Why the "*" instead of "."?  A lot of the interesting resources are
+! XTerm.vt100.foo rather than XTerm.foo. But some are XTerm.foo.
+!
+! Force UTF-8 even if not launched as `uxterm`.
+!XTerm*utf8: true
+!*utf8Title: true
+! Arbitrary, but well above the Ubuntu default of 1024.
+XTerm*saveLines: 32768
+! xterm`s scrollbar is obtrusive.
+XTerm*scrollBar: false
+
+!! urxvt:
+!
+! Aside: "Rxvt" resources apply also to urxvt/rxvt-unicode, but no one uses
+! the original rxvt anymore.
+URxvt.saveLines: 32768
+URxvt.scrollstyle: plain
+! Fade text by 15% when focus is lost.
+URxvt.fading: 15
+! Thin scrollbar. 5 seems to be the minimum.
+URxvt.thickness: 5
+! Don`t change font color for bold (rather, just use a bold font).
+!URxvt.intensityStyles: false 
+
+!! Colors:
+!
+! I think this is from the default palette of gnome-terminal (at least as it
+! was at one time).
+!
+! Because of the other color specificiations present in /etc/X11/app-defaults
+! we need to specify XTerm`s colors with some specificity to ensure they take
+! precedence. E.g. on my system UXTerm-color shows "*VT100*color5: magenta3",
+! and that will "win" against "*color5: #75507b" because the former is more
+! specific in its wildcard usage.
+!
+! special
+XTerm*foreground:   #ffffff
+XTerm*background:   #000000
+XTerm*cursorColor:  yellow
+! black
+XTerm*color0:       #000000
+XTerm*color8:       #555753
+! red
+XTerm*color1:       #cc0000
+XTerm*color9:       #ef2929
+! green
+XTerm*color2:       #4e9a06
+XTerm*color10:      #8ae234
+! yellow
+XTerm*color3:       #c4a000
+XTerm*color11:      #fce94f
+! blue
+XTerm*color4:       #3465a4
+XTerm*color12:      #729fcf
+! magenta
+XTerm*color5:       #75507b
+XTerm*color13:      #ad7fa8
+! cyan
+XTerm*color6:       #06989a
+XTerm*color14:      #34e2e2
+! white
+XTerm*color7:       #d3d7cf
+XTerm*color15:      #eeeeec
+!
+!! The same again, for everything else:
+! special
+*foreground:   #ffffff
+*background:   #000000
+*cursorColor:  yellow
+! black
+*color0:       #000000
+*color8:       #555753
+! red
+*color1:       #cc0000
+*color9:       #ef2929
+! green
+*color2:       #4e9a06
+*color10:      #8ae234
+! yellow
+*color3:       #c4a000
+*color11:      #fce94f
+! blue
+*color4:       #3465a4
+*color12:      #729fcf
+! magenta
+*color5:       #75507b
+*color13:      #ad7fa8
+! cyan
+*color6:       #06989a
+*color14:      #34e2e2
+! white
+*color7:       #d3d7cf
+*color15:      #eeeeec
+
