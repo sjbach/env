@@ -8,7 +8,7 @@
 (global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 
 ;; Put all backups into a single directory
-(setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs-tmp"))))
+(setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs.d/backup"))))
 (setq-default vc-make-backup-files t)
 
 ;; Don't warn about opening symlinked files.
