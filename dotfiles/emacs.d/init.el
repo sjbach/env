@@ -40,7 +40,7 @@
  '(js-indent-level 2)
  '(load-home-init-file t t)
  '(package-selected-packages
-   '(evil-magit magit dash smart-mode-line solarized-theme fill-column-indicator undo-tree elisp-slime-nav ample-theme adaptive-wrap racer flycheck-rust company cargo))
+   '(paren-face evil-magit magit dash smart-mode-line solarized-theme fill-column-indicator undo-tree elisp-slime-nav ample-theme adaptive-wrap racer flycheck-rust company cargo))
  '(warning-suppress-types '((undo discard-info))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -2,32 +2,6 @@
 ;; Look and feel
 ;;
 
-;; I mostly use Emacs in a terminal these days and with my color choices the
-;; default theme is good enough. But leave this for posterity.
-;;
-;; (require 'color-theme)
-;; ;(color-theme-xemacs)
-;; (color-theme-initialize)
-;; (let ((display (getenv "DISPLAY")))
-;;   (if (and display (> (length display) 0))
-;;       ;; X
-;;       (color-theme-robin-hood)
-;;     ;; Terminal
-;;     ;(color-theme-dark-laptop)))
-;;     ;(color-theme-comidia)))
-;;     ;(progn
-;;     ;  (load-theme 'ample t t)
-;;     ;  (enable-theme 'ample))))
-;; ;    (color-theme-comidia)))
-;;     (color-theme-dark-laptop)))
-;; ;(color-theme-sitaramv-solaris)
-
-;; Make just-in-time font-lock styling be more aggressive. For me this results
-;; in fairly constant 5-10% average CPU load when styling a very large
-;; buffer. That's fine.
-(setq jit-lock-stealth-time 0.5)
-(setq jit-lock-stealth-nice 0.1)
-
 ;; Scrolling behavior. (Make similar to Vim)
 ;;
 ;; Begin scrolling the window four lines before the margin.
@@ -38,7 +12,8 @@
 (setq scroll-conservatively 200)  ; (arbitrary high number)
 
 ;; Different color for parens
-(require 'parenface)
+(require 'paren-face)
+(global-paren-face-mode 1)
 
 (setq show-paren-delay 0)
 (show-paren-mode t)
@@ -60,43 +35,22 @@
 ;; Try to prevent lots of window splitting.  Stolen with modification from here
 ;; http://stackoverflow.com/questions/1381794/too-many-split-screens-opening-in
 ;;
-(defun steve-display-buffer-fn (buffer current-window-unacceptable-p)
+(defun steve--display-buffer-fn (buffer current-window-unacceptable-p)
   (if (and (not pop-up-frames)
            (one-window-p)
            (or current-window-unacceptable-p
                (not (eq (window-buffer (selected-window))
                         buffer)))
-;           (> (frame-width) 162)
+           ;; (> (frame-width) 162)
            )
       (split-window-horizontally))
   ;; Note: Some modules sets `pop-up-windows' to t before calling
   ;; `display-buffer'
   (let ((display-buffer-function nil)
         (pop-up-windows nil))
-;    (display-buffer buffer current-window-unacceptable-p)))
+    ;; (display-buffer buffer current-window-unacceptable-p)))
     (display-buffer buffer nil)))
-(setq display-buffer-function 'steve-display-buffer-fn)
-
-;; Shorten paths in grep-mode
-;; FIXME can I do this quicker so that the pre-overlay names aren't visible?
-;(require 'scf-mode)
-;(add-hook 'grep-mode-hook (lambda () (scf-mode 1)))
-;; NOTE disabled now that I'm not working in java as much
-
-(when (and (>= emacs-major-version 23)
-           (x-display-list))
-  (let ((font
-          (cond ((x-list-fonts "Bitstream Vera Sans Mono-9")
-                  "Bitstream Vera Sans Mono-9")
-                ((string-equal system-type "darwin")
-                 "Dejavu Sans Mono-12")
-                (t
-                 "Dejavu Sans Mono-9"))))
-    (if (or (> emacs-major-version 23)
-            (and (eq emacs-major-version 23)
-                 (>= emacs-minor-version 1)))
-      (set-frame-font font)
-      (set-default-font font))))
+(setq display-buffer-function #'steve--display-buffer-fn)
 
 ;; Show colums and lines in the status bar
 (column-number-mode t)
