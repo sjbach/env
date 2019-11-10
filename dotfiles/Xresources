@@ -24,6 +24,8 @@
 !
 ! - "XTerm" resources apply to both xterm and uxterm (which is a simple wrapper
 !   script on xterm). There`s also "UXTerm", which is specific to uxterm.
+!   Sometimes (always?) uxterm does not pick up resources for the XTerm class,
+!   so there is duplication below.
 !
 ! - "XTerm" resources should apply also to rxvt and urxvt/rxvt-unicode, but in
 !   my experience this doesn`t always work (or more likely, I misunderstand
@@ -49,8 +51,13 @@ URxvt.termName: rxvt-unicode-256color
 !*utf8Title: true
 ! Arbitrary, but well above the Ubuntu default of 1024.
 XTerm*saveLines: 32768
+UXTerm*saveLines: 32768
 ! xterm`s scrollbar is obtrusive.
 XTerm*scrollBar: false
+! Transmit Alt-<key> as ESC-<key> so that Emacs etc. can see it and interpret it
+! as M-<key>. (The default is 8-bit character entry.)
+XTerm*metaSendsEscape: true
+UXTerm*metaSendsEscape: true
 
 !! urxvt:
 !
@@ -77,7 +84,8 @@ URxvt.thickness: 5
 ! specific in its wildcard usage.
 !
 ! special
-XTerm*foreground:   #ffffff
+!XTerm*foreground:   #ffffff
+XTerm*foreground:   #b2b2b2
 XTerm*background:   #000000
 XTerm*cursorColor:  yellow
 ! black
@@ -107,7 +115,8 @@ XTerm*color15:      #eeeeec
 !
 !! The same again, for everything else:
 ! special
-*foreground:   #ffffff
+!*foreground:   #ffffff
+*foreground:   #b2b2b2
 *background:   #000000
 *cursorColor:  yellow
 ! black
