@@ -1,4 +1,27 @@
 
+(defun steve-comment-line-or-region ()
+  (interactive)
+  (if (use-region-p)
+      (comment-or-uncomment-region (region-beginning)
+                                   (region-end)
+                                   nil)
+    (comment-or-uncomment-region (line-beginning-position)
+                                 (line-end-position)
+                                 nil)))
+
+(defun steve-show-macroexpansion-for-region (beg end)
+  (interactive "r")
+  (unless (and beg end)
+    (error "No region given"))
+  (let* ((s (buffer-substring-no-properties beg end))
+         (sexp (read s))
+         (macroexpanded (macroexpand-1 sexp))
+         (buf-name "*Steve-Macroexpanded*")
+         (temp-buffer-setup-hook '(emacs-lisp-mode)))
+    (with-output-to-temp-buffer buf-name
+      ;(print macroexpanded)
+      (pp macroexpanded))))
+
 ; STEVE make work in terminal
 (defun steve-vim-excursion ()
   ;; FIXME cleanup
@@ -16,6 +39,7 @@
 (defvar steve--temp-paste-buf-name
   ;; Posterity: leading space means hidden.
   " *Steve text paste buffer*")
+;;
 (defun steve--temp-paste-buffer-cleanup ()
   ;; Copy buffer contents to kill-ring / evil unnamed register.
   (when (string-equal (buffer-name) steve--temp-paste-buf-name)
@@ -23,6 +47,7 @@
     (kill-new
      (s-trim
       (buffer-string)))))
+;;
 (defun steve-text-pasting-excursion ()
   (interactive)
   ;; Kill the paste buffer if it exists.
@@ -43,7 +68,7 @@
 
 (defun steve-remove-matching-lines ()
   (interactive)
-  (let ((regexp (read-regexp "filter")))
+  (let ((regexp (read-regexp "Remove matching")))
     (unwind-protect
         (progn
           (setq buffer-read-only nil)

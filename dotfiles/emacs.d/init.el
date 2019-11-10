@@ -18,6 +18,10 @@
 (when (string-equal system-type "darwin")
   (setq locate-command "mdfind"))
 
+;; Preserve minibuffer history.
+(savehist-mode 1)
+; Preserve cursor location when a file is reopened.
+(save-place-mode 1)
 ;; Save bookmarks to the fileysystem whenever there are changes.
 (setq bookmark-save-flag 1)
 
@@ -36,7 +40,7 @@
  '(js-indent-level 2)
  '(load-home-init-file t t)
  '(package-selected-packages
-   '(dash smart-mode-line solarized-theme fill-column-indicator undo-tree elisp-slime-nav ample-theme adaptive-wrap racer flycheck-rust company cargo))
+   '(evil-magit magit dash smart-mode-line solarized-theme fill-column-indicator undo-tree elisp-slime-nav ample-theme adaptive-wrap racer flycheck-rust company cargo))
  '(warning-suppress-types '((undo discard-info))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

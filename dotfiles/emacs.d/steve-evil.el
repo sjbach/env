@@ -35,6 +35,9 @@
 ;; Enable for all modes in the collection (until I decide that's a bad idea):
 (evil-collection-init)
 
+;; Magit
+(setq evil-magit-state 'motion)
+(require 'evil-magit)
 
 ;;;
 ;;; Overrides of default evil bindings.
@@ -42,7 +45,7 @@
 
 ;; Evil mappings should already be loaded now; don't want to use
 ;; with-eval-after-load and confuse the control flow.
-(assert (featurep 'evil-maps))
+(cl-assert (featurep 'evil-maps))
 
 ;; <SPACE> and <RET> don't need to be motion keys, as I never use them as such.
 ;; From: https://www.emacswiki.org/emacs/Evil
@@ -60,6 +63,8 @@
 
 ;; I don't use :ex mode (evil-ex).
 (define-key evil-motion-state-map ":" 'execute-extended-command)
+;; Shift-meta-: is awkward.
+(define-key evil-motion-state-map "\M-;" #'eval-expression)
 ;; I don't use ';' for its traditional purpose ("Repeat latest f, t, F or T").
 ; (define-key evil-motion-state-map ";" 'execute-extended-command)
 
@@ -94,6 +99,7 @@
 (define-key steve-comma-motion-map "x3" 'split-window-horizontally)
 (define-key steve-comma-motion-map "xk" 'kill-this-buffer)
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
+(define-key steve-comma-motion-map "c" 'steve-comment-line-or-region)
 
 (define-key steve-comma-motion-map "ea" #'steve-copy-register-unnamed-to-a)
 (define-key steve-comma-motion-map "eb" #'steve-copy-register-unnamed-to-b)
@@ -110,12 +116,16 @@
 (define-key steve-comma-motion-map "p" 'fill-paragraph)
 (define-key steve-comma-motion-map "h" 'ff-find-other-file)
 (define-key steve-comma-motion-map " " 'locate)
-;;
-;; Visual state.
-(define-prefix-command 'steve-comma-visual-map)
-(define-key evil-visual-state-map "," 'steve-comma-visual-map)
-(define-key steve-comma-visual-map "c" 'comment-dwim)
 
+(defun steve-eval-region-and-close-visual-mode (beg end)
+  (interactive "r")
+  (eval-region beg end)
+  (when (evil-visual-state-p)
+    (setq deactivate-mark t)))
+
+
+; STEVE genericize: take a register char as a prefix arg
+; - but: takes up entire `,e` namespace;
 (defun steve-copy-register-unnamed-to-a ()
   (interactive)
   (evil-set-register ?a (evil-get-register ?\")))
@@ -125,6 +135,27 @@
 (defun steve-copy-register-unnamed-to-c ()
   (interactive)
   (evil-set-register ?c (evil-get-register ?\")))
+
+
+;; In normal mode I like ">" and "<" to operate immediately on the current
+;; line, one key press, rather than wait for a motion. Delegate to the regular
+;; operator for visual mode.
+(require 'evil-types)  ;; For `(interactive "<v><vc>")`
+(evil-define-operator steve-evil-shift-left (beg end &optional dummy-type count preserve-empty)
+  :type line
+  (interactive "<v><vc>")
+  (steve-evil-shift-right beg end dummy-type (- (or count 1)) preserve-empty))
+;;
+(evil-define-operator steve-evil-shift-right (beg end &optional dummy-type count preserve-empty)
+  :type line
+  (interactive "<v><vc>")
+  (if (and beg end)
+      (evil-shift-right beg end count preserve-empty)
+    (evil-shift-right-line count)))
+;;
+;; TODO: should I be using `evil-define-key` for this instead?
+(define-key evil-normal-state-map "<" #'steve-evil-shift-left)
+(define-key evil-normal-state-map ">" #'steve-evil-shift-right)
 
 
 ;; I like C-y and C-e to scroll faster.
@@ -235,7 +266,7 @@
       '(motion normal) elisp-related-map
       " " temp-space-map))
   (let ((temp-space-map (make-sparse-keymap)))
-    (define-key temp-space-map "r" 'eval-region)
+    (define-key temp-space-map "r" #'steve-eval-region-and-close-visual-mode)
     (evil-define-key
       'visual elisp-related-map
       " " temp-space-map)))
