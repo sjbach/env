@@ -104,3 +104,8 @@
         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
         ))
 
+;; Launch Emacs server.
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
