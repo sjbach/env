@@ -1,6 +1,14 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+
+;; "In some circumstances, you may want to load packages explicitly in your
+;; init file (usually because some other code in your init file depends on a
+;; package). In that case, your init file should call the function
+;; package-initialize."
+(package-initialize)
+(setq package-enable-at-startup nil) ; (because we just now did it.)
+
 ;; Make just-in-time font-lock styling be more aggressive. For me this results
 ;; in fairly constant 5-10% average CPU load when styling a very large
 ;; buffer. That's fine.

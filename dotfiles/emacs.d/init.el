@@ -69,24 +69,12 @@
  ;; If there is more than one, they won't work right.
  )
 
-; ELPA:
+;; Package
+;;
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-
-;; Why: "In some circumstances, you may want to load packages explicitly in your
-;; init file (usually because some other code in your init file depends on a
-;; package). In that case, your init file should call the function
-;; package-initialize."
-(package-initialize)
-(setq package-enable-at-startup nil) ; (because we just now did it.)
-
-;; Posterity: installing new packages:
-;; (list-packages) ; to update
-;; Then: M-x package-install foo
+;; ELPA, MELPA:
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
 (defun expand-load (filename)
   (when (stringp filename)
