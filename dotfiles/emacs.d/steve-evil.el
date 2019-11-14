@@ -12,20 +12,9 @@
 ;(setq-default evil-symbol-word-search t)
 (customize-set-variable 'evil-symbol-word-search t)
 ;;
-(unless (file-exists-p "~/.emacs.d/evil")
-  ;; `git clone https://github.com/emacs-evil/evil ~/.emacs.d/evil`
-  (error "Clone `evil` to ~/.emacs.d/evil"))
-;; From: https://github.com/emacs-evil/evil
-(add-to-list 'load-path "~/.emacs.d/evil")
 (require 'evil)
 (evil-mode 1)
 
-(unless (file-exists-p "~/.emacs.d/evil-collection")
-  ;; `git clone https://github.com/emacs-evil/evil-collection.git ~/.emacs.d/evil-collection`
-  (error "Clone `evil-collection` to ~/.emacs.d/evil-collection"))
-;; Note: If this is placed after my custom bindings, they don't take effect.
-;; From: https://github.com/emacs-evil/evil-collection
-(add-to-list 'load-path "~/.emacs.d/evil-collection")
 ;; This evil-collection setting appears to pre-date `evil-want-minibuffer` in
 ;; the standard evil package, so I'm not clear whether or not it's redundant,
 ;; but I notice setting it makes the custom lusty-explorer bindings work
