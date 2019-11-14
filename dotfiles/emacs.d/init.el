@@ -1,4 +1,4 @@
-(add-to-list 'load-path "~/.elisp")
+(add-to-list 'load-path "~/.emacs.d/elisp")
 
 (setq-default indent-tabs-mode nil)
 
