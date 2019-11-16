@@ -251,6 +251,9 @@
     (define-key temp-space-map "e" 'eval-last-sexp)
     (define-key temp-space-map "k" 'eval-buffer)
     (define-key temp-space-map "K" 'eval-buffer)
+    (define-key temp-space-map "i" #'steve-toggle-dp-on-sexp)
+    (define-key temp-space-map "\C-i" #'steve-toggle-dp-on-sexp)
+    (define-key temp-space-map "x" #'eval-defun)
     (evil-define-key
       '(motion normal) elisp-related-map
       " " temp-space-map))

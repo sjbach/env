@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 
 (defun steve-comment-line-or-region ()
   (interactive)
@@ -89,9 +90,39 @@
                (not (eq window next)))
       (delete-window window))))
 
-;; Debug print
+;; Debug print. Evaluate the given form (just once, in case it has
+;; side-effects), print its representation to *Messages*, and return it.
 (defmacro STEVE-dp (arg)
-  `(let ((STEVE-name ',arg)
-         (STEVE-val ,arg))
-     (message "STEVE-dp %S: %S" STEVE-name STEVE-val)
-     STEVE-val))
+  (let ((name-var (gensym "STEVE-name"))
+        (val-var (gensym "STEVE-val")))
+    `(let ((,name-var ',arg)
+           (,val-var ,arg))
+       (message "STEVE-dp %S: %S" ,name-var ,val-var)
+       (message nil)
+       ,val-var)))
+
+(defun steve-toggle-dp-on-sexp ()
+  (interactive)
+  (save-mark-and-excursion
+    (skip-chars-forward "[:space:]\n")
+    (cl-destructuring-bind (sexp-beg . sexp-end)
+        (bounds-of-thing-at-point 'sexp)
+      (cl-assert (and sexp-beg sexp-end))
+      (save-restriction
+        (goto-char sexp-beg)
+        (narrow-to-region sexp-beg sexp-end)
+        (check-parens)  ;; (Just in case; should not be able to fail here.)
+        (atomic-change-group
+          (if (looking-at (rx point "(STEVE-dp"))
+              ;; Remove the (STEVE-dp ...) wrapper.
+              (progn
+                (delete-char (length "(STEVE-dp"))
+                (delete-horizontal-space)
+                (end-of-buffer)
+                (backward-char)
+                (cl-assert (looking-at ")"))
+                (delete-char 1))
+            ;; Apply the (STEVE-dp ...) wrapper.
+            (insert "(STEVE-dp ")
+            (end-of-buffer)
+            (insert ")")))))))
