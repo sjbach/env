@@ -37,6 +37,7 @@
 (save-place-mode 1)
 ;; Save bookmarks to the fileysystem whenever there are changes.
 (setq bookmark-save-flag 1)
+(setq messages-buffer-max-lines 32768)  ;; arbitrary high number
 
 (when (file-exists-p "~/emacs-src-git/src/")
   (setq find-function-C-source-directory
