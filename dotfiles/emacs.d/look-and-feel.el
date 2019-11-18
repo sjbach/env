@@ -24,7 +24,14 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
+(tooltip-mode -1)
 
+(require 'git-gutter)
+(global-git-gutter-mode 1)
+(require 'company)
+(setq company-idle-delay 0.1)
+(setq company-minimum-prefix-length 2)
+(setq company-tooltip-limit 30)
 ;; force horizontal splits - stolen from stackoverflow somewhere
 (setq split-height-threshold
       (if (>= emacs-major-version 23)

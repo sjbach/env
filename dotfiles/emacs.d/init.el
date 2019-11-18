@@ -7,9 +7,20 @@
 (global-set-key "\C-d" 'steve-close-buffer-and-window-unless-last)
 (global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 
+;; Backups and auto-saves.
 ;; Put all backups into a single directory
-(setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs.d/backup"))))
+(setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs.d/backups"))))
 (setq-default vc-make-backup-files t)
+;; Don't create backups by renaming, create by copying. A little slower I guess
+;; but I bet rarely significant.
+(setq backup-by-copying t)
+;;
+;; This is just the default value. On one of my systems it's overridden during
+;; startup to a relative path, not sure why, so re-appply it here.
+(setq auto-save-list-file-prefix "~/.emacs.d/auto-save-list/.saves-")
+;; Auto save files all in one directory rather than dropped wherever I'm
+;; editing.
+(setq auto-save-file-name-transforms `((".*" "~/.emacs.d/auto-saves/" t)))
 
 ;; Don't warn about opening symlinked files.
 (setq-default vc-follow-symlinks t)
@@ -25,6 +36,10 @@
 ;; Save bookmarks to the fileysystem whenever there are changes.
 (setq bookmark-save-flag 1)
 (setq messages-buffer-max-lines 32768)  ;; arbitrary high number
+
+(when (file-exists-p "~/emacs-src-git/src/")
+  (setq find-function-C-source-directory
+        "~/emacs-src-git/src/"))
 
 ;; Save/restore *scratch* across sessions.
 ;;

@@ -22,6 +22,7 @@
 (setq racer-cmd "~/.cargo/bin/racer")
 (setq racer-rust-src-path "~/rust/src")
 (add-hook 'rust-mode-hook #'racer-mode)
+;; Display annotations in the minibuffer.
 (add-hook 'racer-mode-hook #'eldoc-mode)
 (add-hook 'racer-mode-hook #'company-mode)
 
@@ -30,7 +31,7 @@
 (add-hook 'rust-mode-hook #'flycheck-mode)
 
 ;; Fill-column:
-(add-hook 'rust-mode-hook #'fci-mode)
+(add-hook 'rust-mode-hook #'turn-on-fci-mode)
 (add-hook 'rust-mode-hook
           ;; 100 character lines, per style guide.
           ;; (99 to be conservative.)

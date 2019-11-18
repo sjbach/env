@@ -1,6 +1,10 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+;; There are better options than icomplete these days.
+(require 'icomplete)
+(icomplete-mode 1)
+(setq icomplete-compute-delay 0.1)
 
 ;; "In some circumstances, you may want to load packages explicitly in your
 ;; init file (usually because some other code in your init file depends on a
