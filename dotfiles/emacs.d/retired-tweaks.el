@@ -1,6 +1,10 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+;; Defaults for these Racer variables are fine.
+(setq racer-cmd "~/.cargo/bin/racer")
+(setq racer-rust-src-path "~/rust/src")
+
 ;; There are better options than icomplete these days.
 (require 'icomplete)
 (icomplete-mode 1)

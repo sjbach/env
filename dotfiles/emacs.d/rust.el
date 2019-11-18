@@ -18,9 +18,6 @@
             (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
 (add-hook 'cargo-process-mode-hook 'visual-line-mode) ; soft wrap
 
-;; Racer:
-(setq racer-cmd "~/.cargo/bin/racer")
-(setq racer-rust-src-path "~/rust/src")
 (add-hook 'rust-mode-hook #'racer-mode)
 ;; Display annotations in the minibuffer.
 (add-hook 'racer-mode-hook #'eldoc-mode)
