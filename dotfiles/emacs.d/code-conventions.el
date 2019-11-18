@@ -15,7 +15,9 @@
             (auto-fill-mode t)
             (set-fill-column 80)))
 
-(add-hook 'emacs-lisp-mode-hook 'turn-on-elisp-slime-nav-mode)
+(add-hook 'emacs-lisp-mode-hook #'turn-on-elisp-slime-nav-mode)
 (add-hook 'emacs-lisp-mode-hook
           (lambda () (setq fill-column 79)))
+(add-hook 'emacs-lisp-mode-hook #'turn-on-fci-mode)
+(add-hook 'emacs-lisp-mode-hook #'company-mode)
 

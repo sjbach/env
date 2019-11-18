@@ -10,6 +10,12 @@
                                  (line-end-position)
                                  nil)))
 
+;; Simpler wrapper on `kill-buffer` defined to prevent ido from remapping the
+;; kill-buffer binding to ido-kill-buffer, which takes a name rather than
+;; defaulting to the current buffer.
+(defun steve-kill-buffer ()
+  (interactive)
+  (kill-buffer (current-buffer)))
 (defun steve-show-macroexpansion-for-region (beg end)
   (interactive "r")
   (unless (and beg end)

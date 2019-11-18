@@ -51,7 +51,7 @@
   (when (file-readable-p file-name)
    (let* ((cur-words (eval (list read-words file-name)))
           (all-words (delq header (cons new-word cur-words)))
-          (words (delq nil (remove-duplicates all-words :test 'string=))))
+          (words (delq nil (cl-remove-duplicates all-words :test 'string=))))
     (with-temp-file file-name
      (insert (concat header
                      " en "

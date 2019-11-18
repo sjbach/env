@@ -81,12 +81,10 @@
 (define-key steve-comma-motion-map "r" 'lusty-file-explorer)
 (define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
 ;(define-key steve-comma-motion-map "j" 'steve-juggle-previous-buffer)
-(define-key steve-comma-motion-map "xo" 'other-window)
-(define-key steve-comma-motion-map "x0" 'delete-window)
-(define-key steve-comma-motion-map "x1" 'delete-other-windows)
-(define-key steve-comma-motion-map "x2" 'split-window-vertically)
-(define-key steve-comma-motion-map "x3" 'split-window-horizontally)
-(define-key steve-comma-motion-map "xk" 'kill-this-buffer)
+
+(define-key steve-comma-motion-map "x" ctl-x-map)
+(define-key steve-comma-motion-map "xk" #'steve-kill-buffer)
+
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
 (define-key steve-comma-motion-map "c" 'steve-comment-line-or-region)
 
