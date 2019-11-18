@@ -23,7 +23,9 @@
 (setq auto-save-file-name-transforms `((".*" "~/.emacs.d/auto-saves/" t)))
 
 ;; Don't warn about opening symlinked files.
-(setq-default vc-follow-symlinks t)
+(setq vc-follow-symlinks t)
+;; Don't ask to save buffers before running a grep.
+(setq grep-save-buffers nil)
 
 ;; Use Spotlight for `locate` command on OS X
 (when (string-equal system-type "darwin")
