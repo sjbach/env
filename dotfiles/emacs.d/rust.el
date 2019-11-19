@@ -28,7 +28,7 @@
 (add-hook 'rust-mode-hook #'flycheck-mode)
 
 ;; Fill-column:
-(add-hook 'rust-mode-hook #'turn-on-fci-mode)
+(add-hook 'rust-mode-hook #'steve-turn-on-fill-column-indiciator)
 (add-hook 'rust-mode-hook
           ;; 100 character lines, per style guide.
           ;; (99 to be conservative.)

@@ -10,6 +10,12 @@
                                  (line-end-position)
                                  nil)))
 
+(defun steve-turn-on-fill-column-indiciator ()
+  (if (boundp 'display-fill-column-indicator)
+      ;; Only present in 27.1+.
+      (display-fill-column-indicator-mode 1)
+    (turn-on-fci-mode)))
+
 ;; Simpler wrapper on `kill-buffer` defined to prevent ido from remapping the
 ;; kill-buffer binding to ido-kill-buffer, which takes a name rather than
 ;; defaulting to the current buffer.

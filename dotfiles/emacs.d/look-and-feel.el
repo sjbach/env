@@ -47,6 +47,9 @@
 (when (boundp 'xterm-set-window-title)
   (setq xterm-set-window-title t))
 
+;; Consider:
+;; (global-display-fill-column-indicator-mode 1)
+
 (require 'git-gutter)
 (global-git-gutter-mode 1)
 (require 'company)
