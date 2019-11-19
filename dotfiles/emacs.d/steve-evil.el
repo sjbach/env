@@ -28,6 +28,10 @@
 (setq evil-magit-state 'motion)
 (require 'evil-magit)
 
+;; Surround
+(require 'evil-surround)
+(global-evil-surround-mode 1)
+
 ;;;
 ;;; Overrides of default evil bindings.
 ;;;
@@ -84,6 +88,7 @@
 
 (define-key steve-comma-motion-map "x" ctl-x-map)
 (define-key steve-comma-motion-map "xk" #'steve-kill-buffer)
+(define-key steve-comma-motion-map "xo" #'ace-window)
 
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
 (define-key steve-comma-motion-map "c" 'steve-comment-line-or-region)
@@ -168,16 +173,34 @@
     (scroll-down count)
     (scroll-down count)
     (scroll-down count)))
+;;
+(evil-define-command steve-evil-scroll-line-down-other (count)
+  :repeat nil
+  :keep-visual t
+  (interactive "p")
+  (scroll-other-window-down count)
+  (scroll-other-window-down count)
+  (scroll-other-window-down count))
+;;
+(evil-define-command steve-evil-scroll-line-up-other (count)
+  :repeat nil
+  :keep-visual t
+  (interactive "p")
+  (scroll-other-window count)
+  (scroll-other-window count)
+  (scroll-other-window count)))
 
 (evil-define-key
   'motion 'global
   ;; I don't use TAB for its traditional purpose.
-  (kbd "TAB") 'steve-juggle-previous-buffer
+  (kbd "TAB") #'steve-juggle-previous-buffer
   ;; Close buffer (instead of scroll down).
-  "\C-d" 'steve-close-buffer-and-window-unless-last
-  ;; (Instead of evil-scroll-line-up, evil-scroll-line-up.)
-  "\C-y" 'steve-evil-scroll-line-up
-  "\C-e" 'steve-evil-scroll-line-down)
+  "\C-d" #'steve-close-buffer-and-window-unless-last
+  ;; (Overriding evil-scroll-line-up, evil-scroll-line-up.)
+  "\C-y" #'steve-evil-scroll-line-up
+  "\C-e" #'steve-evil-scroll-line-down
+  "\M-y" #'steve-evil-scroll-line-up-other
+  "\M-e" #'steve-evil-scroll-line-down-other)
 
 (evil-define-key
   ;; STEVE instead of global should be the map for fundamental-mode (if one
@@ -226,7 +249,6 @@
 (add-hook 'lusty-setup-hook
           (lambda ()
             (evil-define-key
-              ;'(insert normal) lusty-mode-map
               '(insert normal motion global) lusty-mode-map
               "\C-n" 'lusty-highlight-next
               "\C-p" 'lusty-highlight-previous

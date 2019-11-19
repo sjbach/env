@@ -32,6 +32,16 @@
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
 (setq company-tooltip-limit 30)
+
+;; Ace window
+(require 'ace-window)
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+;; Which-key
+(require 'which-key)
+(setq which-key-sort-order 'which-key-prefix-then-key-order)
+(which-key-mode 1)
+
 ;; force horizontal splits - stolen from stackoverflow somewhere
 (setq split-height-threshold
       (if (>= emacs-major-version 23)
