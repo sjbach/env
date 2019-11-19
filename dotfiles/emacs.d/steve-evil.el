@@ -367,20 +367,3 @@
 ;  (save-buffers-kill-emacs args))
 
 
-; Notes:
-; - "If you want the underscore to be recognised as word character, you can modify its entry in the syntax-table:
-;  (modify-syntax-entry ?_ "w")
-;  This gives the underscore the word syntax-class. You can use a mode-hook to modify the syntax-table in all buffers of some mode, e.g.:
-;  (add-hook 'c-mode-common-hook #'(lambda () (modify-syntax-entry ?_ "w")))
-;  This gives the underscore the word syntax-class in all C-like buffers."
-; - evil-vars.el -- config some behavior of evil
-; - C-z to switch back-and-forth to Emacs mode
-; - Binding shift, e.g. C-S-l, doesn't work in the terminal.
-
-; Preconditions:
-; - git clone https://github.com/emacs-evil/evil ~/.emacs.d/evil
-; - git clone https://github.com/emacs-evil/evil-collection.git ~/.emacs.d/evil-collection
-
-; References:
-; - https://github.com/noctuid/evil-guide
-
