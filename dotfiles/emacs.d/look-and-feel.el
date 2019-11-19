@@ -43,6 +43,10 @@
       (set-window-display-table (selected-window) display-table))))
 (add-hook 'window-configuration-change-hook #'steve-set-smooth-window-divider)
 
+;; Terminal title
+(when (boundp 'xterm-set-window-title)
+  (setq xterm-set-window-title t))
+
 (require 'git-gutter)
 (global-git-gutter-mode 1)
 (require 'company)
