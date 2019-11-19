@@ -146,9 +146,19 @@
       (evil-shift-right beg end count preserve-empty)
     (evil-shift-right-line count)))
 ;;
-;; TODO: should I be using `evil-define-key` for this instead?
+;; Make "=" behave in normal mode like it does in visual mode, acting
+;; immediately on the current rather than waiting for a motion.
+(evil-define-operator steve-evil-indent (beg end &optional dummy)
+  :move-point nil
+  :type line
+  (interactive "<v>")
+  (if (and beg end)
+      (evil-indent beg end)
+    (evil-indent-line (line-beginning-position) (line-beginning-position))))
+;; TODO: should I be using `evil-define-key*` for this instead?
 (define-key evil-normal-state-map "<" #'steve-evil-shift-left)
 (define-key evil-normal-state-map ">" #'steve-evil-shift-right)
+(define-key evil-normal-state-map "=" #'steve-evil-indent)
 
 
 ;; I like C-y and C-e to scroll faster.
