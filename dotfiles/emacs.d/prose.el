@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;; Posterity: installation instructions:
 ;; - Install flycheck using package / MELPA;
 ;; - `pip install proselint`;

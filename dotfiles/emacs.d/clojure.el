@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;; (Ancient.)
 
 (when (file-exists-p "~/clojure")

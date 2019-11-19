@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;; Mostly taken from:
 ;;
 ;; http://julienblanchard.com/2016/fancy-rust-development-with-emacs/

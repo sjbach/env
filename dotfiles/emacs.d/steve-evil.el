@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;;;
 ;;; Package loading.
 ;;;
@@ -61,7 +62,7 @@
 ;; I don't use ';' for its traditional purpose ("Repeat latest f, t, F or T").
 ; (define-key evil-motion-state-map ";" 'execute-extended-command)
 
-(evil-define-key
+(evil-define-key*
   'normal 'global
   ;; I see these bindings as risky. In usual Emacs usage, quitting is quite
   ;; rare. I never want it to happen willy-nilly. So unset them.
@@ -190,7 +191,7 @@
   (scroll-other-window count)
   (scroll-other-window count)))
 
-(evil-define-key
+(evil-define-key*
   'motion 'global
   ;; I don't use TAB for its traditional purpose.
   (kbd "TAB") #'steve-juggle-previous-buffer
@@ -202,7 +203,7 @@
   "\M-y" #'steve-evil-scroll-line-up-other
   "\M-e" #'steve-evil-scroll-line-down-other)
 
-(evil-define-key
+(evil-define-key*
   ;; STEVE instead of global should be the map for fundamental-mode (if one
   ;; existed).
   'insert 'global
@@ -236,7 +237,7 @@
   ;(define-key temp-space-map "." 'help-follow-symbol)
   (define-key temp-space-map "." 'push-button)
   (define-key temp-space-map "," 'help-go-back)
-  (evil-define-key
+  (evil-define-key*
     '(motion normal) help-mode-map
     (kbd "TAB") 'steve-juggle-previous-buffer
     ;(kbd "C-h") 'help-go-back
@@ -248,7 +249,7 @@
 ;; Note: only necessary because I've enabled evil in the minibuffer.
 (add-hook 'lusty-setup-hook
           (lambda ()
-            (evil-define-key
+            (evil-define-key*
               '(insert normal motion global) lusty-mode-map
               "\C-n" 'lusty-highlight-next
               "\C-p" 'lusty-highlight-previous
@@ -274,12 +275,12 @@
     (define-key temp-space-map "i" #'steve-toggle-dp-on-sexp)
     (define-key temp-space-map "\C-i" #'steve-toggle-dp-on-sexp)
     (define-key temp-space-map "x" #'eval-defun)
-    (evil-define-key
+    (evil-define-key*
       '(motion normal) elisp-related-map
       " " temp-space-map))
   (let ((temp-space-map (make-sparse-keymap)))
     (define-key temp-space-map "r" #'steve-eval-region-and-close-visual-mode)
-    (evil-define-key
+    (evil-define-key*
       'visual elisp-related-map
       " " temp-space-map)))
 

@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (add-to-list 'load-path "~/.emacs.d/elisp")
 
 (setq-default indent-tabs-mode nil)
@@ -86,8 +88,8 @@
 (mapc 'expand-load
       `("look-and-feel.el"
         "prose.el"
-        "code-conventions.el"
         "misc.el"
+        "code-conventions.el"
         "clojure.el"
         "R.el"
         "rust.el"

@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;;
 ;; Look and feel
 ;;
@@ -52,6 +53,7 @@
 
 (require 'git-gutter)
 (global-git-gutter-mode 1)
+
 (require 'company)
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)

@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;; See: `custom-file`.
 
 (custom-set-variables

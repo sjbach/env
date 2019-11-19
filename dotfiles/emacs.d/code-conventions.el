@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (add-hook 'html-mode-hook
           (lambda ()
             (auto-fill-mode t)
