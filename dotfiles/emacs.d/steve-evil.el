@@ -199,7 +199,7 @@
   (interactive "p")
   (scroll-other-window count)
   (scroll-other-window count)
-  (scroll-other-window count)))
+  (scroll-other-window count))
 
 (evil-define-key*
   'motion 'global
