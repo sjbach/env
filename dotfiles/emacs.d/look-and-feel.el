@@ -58,6 +58,11 @@
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
 (setq company-tooltip-limit 30)
+;; Lisp
+;; A little extra highlighting in Lisp.
+(require 'lisp-extra-font-lock)
+(lisp-extra-font-lock-global-mode 1)
+;;
 
 ;; Ace window
 (require 'ace-window)
