@@ -62,6 +62,12 @@
 ;; Restore previous session's buffers, modes, etc.
 (desktop-save-mode 1)
 
+(require 'magit)
+(setq magit-diff-refine-hunk 'all)
+;; Can be slow in large repos.
+(add-hook 'after-save-hook #'magit-after-save-refresh-status)
+(setq git-timemachine-show-author nil)
+
 ;; Custom/customize stuff is auto-edited by Emacs and superstition
 ;; pressures me to have that done in its own file.
 (setq custom-file "~/.emacs.d/custom.el")
