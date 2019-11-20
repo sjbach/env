@@ -59,9 +59,6 @@
           (with-current-buffer remember-notes-buffer-name
             (emacs-lock-mode 'kill)))))
 
-;; Restore previous session's buffers, modes, etc.
-(desktop-save-mode 1)
-
 (require 'magit)
 (setq magit-diff-refine-hunk 'all)
 ;; Can be slow in large repos.
@@ -95,6 +92,9 @@
         "steve-evil.el"
         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
         ))
+
+;; Restore previous session's buffers, modes, etc.
+(desktop-save-mode 1)
 
 ;; Launch Emacs server.
 (require 'server)
