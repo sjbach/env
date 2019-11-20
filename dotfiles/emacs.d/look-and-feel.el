@@ -31,12 +31,12 @@
 (set-face-inverse-video 'vertical-border nil)
 (set-face-background 'vertical-border (face-background 'default))
 (set-face-foreground 'vertical-border "blue")  ;; magenta?
-;; Set symbol for the border
+;; Set a nicer symbol than "|"
+(require 'disp-table)  ;; ensure standard-display-table is set
 (defun steve-set-smooth-window-divider ()
-  (let ((display-table (or buffer-display-table standard-display-table)))
-    ;; standard-display-table does not yet exist when this hook is called early
-    ;; on. I could create one with (make-display-table), but seems like that's
-    ;; best the purview of Emacs.
+  (let ((display-table (or buffer-display-table
+                           (window-display-table)
+                           standard-display-table)))
     (when display-table
       (set-display-table-slot
        ;; Thinner alternative: ?│
