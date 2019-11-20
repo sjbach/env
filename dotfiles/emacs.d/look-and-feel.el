@@ -73,39 +73,9 @@
 (setq which-key-sort-order 'which-key-prefix-then-key-order)
 (which-key-mode 1)
 
-;; force horizontal splits - stolen from stackoverflow somewhere
-(setq split-height-threshold
-      (if (>= emacs-major-version 23)
-        nil
-        999))
-(setq split-width-threshold 0)
-
-;; Try to prevent lots of window splitting.  Stolen with modification from here
-;; http://stackoverflow.com/questions/1381794/too-many-split-screens-opening-in
-;;
-(defun steve--display-buffer-fn (buffer current-window-unacceptable-p)
-  (if (and (not pop-up-frames)
-           (one-window-p)
-           (or current-window-unacceptable-p
-               (not (eq (window-buffer (selected-window))
-                        buffer)))
-           ;; (> (frame-width) 162)
-           )
-      (split-window-horizontally))
-  ;; Note: Some modules sets `pop-up-windows' to t before calling
-  ;; `display-buffer'
-  (let ((display-buffer-function nil)
-        (pop-up-windows nil))
-    ;; (display-buffer buffer current-window-unacceptable-p)))
-    (display-buffer buffer nil)))
-(setq display-buffer-function #'steve--display-buffer-fn)
-
 ;; Show colums and lines in the status bar
 (column-number-mode t)
 (line-number-mode 1)
-
-;; Unexpected new windows are annoying.
-(setq pop-up-windows nil)
 
 ;; The completion buffer still shows too much boilerplate, but this helps
 (setq completion-show-help nil)
