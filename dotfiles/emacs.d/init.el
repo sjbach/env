@@ -40,34 +40,27 @@
 ;; Save bookmarks to the fileysystem whenever there are changes.
 (setq bookmark-save-flag 1)
 (setq messages-buffer-max-lines 32768)  ;; arbitrary high number
+;; Could be higher, but this is the limit used by desktop-save-mode and I don't
+;; see much value in preserving >200 open buffers.
+(setq history-length 200)
 
 (when (file-exists-p "~/emacs-src-git/src/")
   (setq find-function-C-source-directory
         "~/emacs-src-git/src/"))
 
-;; Save/restore *scratch* across sessions.
-;;
-;; The documentation for remember-notes says: "Set ‘initial-buffer-choice’ to
-;; ‘remember-notes’ to visit your notes buffer when Emacs starts.  Set
-;; ‘remember-notes-buffer-name’ to "*scratch*" to turn the *scratch* buffer
-;; into your notes buffer."
-;;
-;; This appears to be incorrect - if *scratch* exists when remember-notes is
-;; called (and it always will exist), then the notes buffer won't be renamed to
-;; *scratch*. To work around this, we have to kill the *scratch* buffer before
-;; remember-notes is called. Emacs automatically recreates the *scratch* buffer
-;; with the correct modes, so not a big deal, but hacky.
+;; Persistent scratch buffer.
 (require 'remember)
-(setq remember-notes-buffer-name "*scratch*")
-;; (setq initial-buffer-choice #'remember-notes)
+(setq remember-notes-buffer-name "*Scratch*")
 (setq initial-buffer-choice
       (lambda ()
-        (kill-buffer remember-notes-buffer-name)  ; *scratch*
         (prog1
             (remember-notes)
           ;; Don't let *scratch* be closed accidentally.
-          (with-current-buffer "*scratch*"
+          (with-current-buffer remember-notes-buffer-name
             (emacs-lock-mode 'kill)))))
+
+;; Restore previous session's buffers, modes, etc.
+(desktop-save-mode 1)
 
 ;; Custom/customize stuff is auto-edited by Emacs and superstition
 ;; pressures me to have that done in its own file.

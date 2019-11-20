@@ -1,6 +1,39 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+;; *scratch* is preserved in a different way (below).
+(setq desktop-files-not-to-save
+      (rx (or (regexp desktop-files-not-to-save)
+              (seq string-start
+                   (literal (buffer-file-name (remember-notes)))
+                   string-end)
+              (seq string-start
+                   "*scratch*"
+                   string-end))))
+
+;; Save/restore *scratch* across sessions.
+;;
+;; The documentation for remember-notes says: "Set ‘initial-buffer-choice’ to
+;; ‘remember-notes’ to visit your notes buffer when Emacs starts.  Set
+;; ‘remember-notes-buffer-name’ to "*scratch*" to turn the *scratch* buffer
+;; into your notes buffer."
+;;
+;; This appears to be incorrect - if *scratch* exists when remember-notes is
+;; called (and it always will exist), then the notes buffer won't be renamed to
+;; *scratch*. To work around this, we have to kill the *scratch* buffer before
+;; remember-notes is called. Emacs automatically recreates the *scratch* buffer
+;; with the correct modes, so not a big deal, but hacky.
+(setq remember-notes-buffer-name "*scratch*")
+(setq initial-buffer-choice #'remember-notes)
+(setq initial-buffer-choice
+      (lambda ()
+        (kill-buffer remember-notes-buffer-name)  ; *scratch*
+        (prog1
+            (remember-notes)
+          ;; Don't let *scratch* be closed accidentally.
+          (with-current-buffer remember-notes-buffer-name
+            (emacs-lock-mode 'kill)))))
+
 ;; Defaults for these Racer variables are fine.
 (setq racer-cmd "~/.cargo/bin/racer")
 (setq racer-rust-src-path "~/rust/src")
