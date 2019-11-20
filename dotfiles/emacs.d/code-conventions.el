@@ -22,4 +22,5 @@
           (lambda () (setq fill-column 79)))
 (add-hook 'emacs-lisp-mode-hook #'steve-turn-on-fill-column-indiciator)
 (add-hook 'emacs-lisp-mode-hook #'company-mode)
+(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
 

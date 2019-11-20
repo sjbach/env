@@ -12,10 +12,6 @@
 ;; margin above).
 (setq scroll-conservatively 200)  ; (arbitrary high number)
 
-;; Different color for parens
-(require 'paren-face)
-(global-paren-face-mode 1)
-
 (setq show-paren-delay 0)
 (show-paren-mode t)
 (setq show-paren-style 'parenthesis)

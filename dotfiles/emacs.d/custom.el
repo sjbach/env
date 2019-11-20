@@ -12,7 +12,7 @@
  '(js-indent-level 2)
  '(load-home-init-file t t)
  '(package-selected-packages
-   '(git-timemachine ace-window evil-surround adaptive-wrap dumb-jump which-key evil-collection latex-preview-pane lusty-explorer lisp-extra-font-lock git-gutter helm-ag helm ivy ido-grid-mode paren-face evil-magit magit fill-column-indicator undo-tree elisp-slime-nav racer flycheck-rust company cargo))
+   '(rainbow-delimiters git-timemachine ace-window evil-surround adaptive-wrap dumb-jump which-key evil-collection latex-preview-pane lusty-explorer lisp-extra-font-lock git-gutter helm-ag helm ivy ido-grid-mode paren-face evil-magit magit fill-column-indicator undo-tree elisp-slime-nav racer flycheck-rust company cargo))
  '(warning-suppress-types '((undo discard-info))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

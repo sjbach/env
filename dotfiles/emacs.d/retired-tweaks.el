@@ -1,6 +1,10 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+;; Different color for parens
+(require 'paren-face)
+(global-paren-face-mode 1)
+
 ;; *scratch* is preserved in a different way (below).
 (setq desktop-files-not-to-save
       (rx (or (regexp desktop-files-not-to-save)

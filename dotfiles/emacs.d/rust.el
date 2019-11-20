@@ -23,6 +23,7 @@
 ;; Display annotations in the minibuffer.
 (add-hook 'racer-mode-hook #'eldoc-mode)
 (add-hook 'racer-mode-hook #'company-mode)
+(add-hook 'rust-mode-hook #'rainbow-delimiters-mode)
 
 ;; Flycheck-rust:
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
