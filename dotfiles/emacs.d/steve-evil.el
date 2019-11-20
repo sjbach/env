@@ -189,17 +189,17 @@
   :repeat nil
   :keep-visual t
   (interactive "p")
-  (scroll-other-window-down count)
-  (scroll-other-window-down count)
-  (scroll-other-window-down count))
+  (scroll-other-window count)
+  (scroll-other-window count)
+  (scroll-other-window count))
 ;;
 (evil-define-command steve-evil-scroll-line-up-other (count)
   :repeat nil
   :keep-visual t
   (interactive "p")
-  (scroll-other-window count)
-  (scroll-other-window count)
-  (scroll-other-window count))
+  (scroll-other-window-down count)
+  (scroll-other-window-down count)
+  (scroll-other-window-down count))
 
 (evil-define-key*
   'motion 'global
@@ -207,7 +207,7 @@
   (kbd "TAB") #'steve-juggle-previous-buffer
   ;; Close buffer (instead of scroll down).
   "\C-d" #'steve-close-buffer-and-window-unless-last
-  ;; (Overriding evil-scroll-line-up, evil-scroll-line-up.)
+  ;; (Overriding evil-scroll-line-up, evil-scroll-line-down)
   "\C-y" #'steve-evil-scroll-line-up
   "\C-e" #'steve-evil-scroll-line-down
   "\M-y" #'steve-evil-scroll-line-up-other
