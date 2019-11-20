@@ -23,6 +23,16 @@
 (toggle-scroll-bar -1)
 (tooltip-mode -1)
 
+(require 'diminish)
+(diminish 'undo-tree-mode)
+(diminish 'company-mode)
+(diminish 'git-gutter-mode)
+(diminish 'eldoc-mode)
+(diminish 'elisp-slime-nav-mode)
+(diminish 'which-key-mode)
+(diminish 'racer-mode)
+(diminish 'cargo-minor-mode)
+
 ;; Window splitter styling (for vertical splits)
 (set-face-inverse-video 'vertical-border nil)
 (set-face-background 'vertical-border (face-background 'default))
