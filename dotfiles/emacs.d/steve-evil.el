@@ -33,6 +33,8 @@
 (require 'evil-surround)
 (global-evil-surround-mode 1)
 
+(add-to-list 'desktop-locals-to-save 'evil-markers-alist)
+
 ;;;
 ;;; Overrides of default evil bindings.
 ;;;

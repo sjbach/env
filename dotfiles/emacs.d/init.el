@@ -95,6 +95,10 @@
 
 ;; Restore previous session's buffers, modes, etc.
 (desktop-save-mode 1)
+(setq desktop-globals-to-save
+      (append desktop-globals-to-save
+              '((extended-command-history . 50)
+                (regexp-history . 50))))
 
 ;; Launch Emacs server.
 (require 'server)
