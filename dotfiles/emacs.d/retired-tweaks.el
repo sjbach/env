@@ -15,6 +15,16 @@
                    "*scratch*"
                    string-end))))
 
+;; <SPACE> and <RET> don't need to be motion keys, as I never use them as such.
+;; From: https://www.emacswiki.org/emacs/Evil
+(defun my-move-key (keymap-from keymap-to key)
+  "Moves key binding from one keymap to another, deleting from the old location. "
+  (define-key keymap-to key (lookup-key keymap-from key))
+  (define-key keymap-from key nil))
+(my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
+(my-move-key evil-motion-state-map evil-normal-state-map " ")
+
+
 ;; Save/restore *scratch* across sessions.
 ;;
 ;; The documentation for remember-notes says: "Set ‘initial-buffer-choice’ to

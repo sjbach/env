@@ -32,6 +32,7 @@
 (diminish 'which-key-mode)
 (diminish 'racer-mode)
 (diminish 'cargo-minor-mode)
+(diminish 'hs-minor-mode)
 
 ;; Window splitter styling (for vertical splits)
 (set-face-inverse-video 'vertical-border nil)

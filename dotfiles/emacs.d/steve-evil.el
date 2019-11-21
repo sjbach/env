@@ -43,14 +43,10 @@
 ;; with-eval-after-load and confuse the control flow.
 (cl-assert (featurep 'evil-maps))
 
-;; <SPACE> and <RET> don't need to be motion keys, as I never use them as such.
-;; From: https://www.emacswiki.org/emacs/Evil
-(defun my-move-key (keymap-from keymap-to key)
-  "Moves key binding from one keymap to another, deleting from the old location. "
-  (define-key keymap-to key (lookup-key keymap-from key))
-  (define-key keymap-from key nil))
-(my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
-(my-move-key evil-motion-state-map evil-normal-state-map " ")
+;; I use these keys for other things. There is never a time when I want to fall
+;; back to the defaults; I'd rather see an error.
+(define-key evil-motion-state-map (kbd "TAB") nil)
+(define-key evil-motion-state-map " " nil)
 
 ;; Switch the mappings for "'" and "`"; evil-goto-mark is better in almost
 ;; every case, so best that it's more accessible
@@ -87,11 +83,11 @@
 (define-key evil-motion-state-map "," 'steve-comma-motion-map)
 (define-key steve-comma-motion-map "r" 'lusty-file-explorer)
 (define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
-;(define-key steve-comma-motion-map "j" 'steve-juggle-previous-buffer)
 
 (define-key steve-comma-motion-map "x" ctl-x-map)
 (define-key steve-comma-motion-map "xk" #'steve-kill-buffer)
 (define-key steve-comma-motion-map "xo" #'ace-window)
+(define-key steve-comma-motion-map "xg" #'magit-status)
 
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
 (define-key steve-comma-motion-map "c" 'steve-comment-line-or-region)
