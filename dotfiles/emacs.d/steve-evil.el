@@ -162,6 +162,24 @@
 (define-key evil-normal-state-map ">" #'steve-evil-shift-right)
 (define-key evil-normal-state-map "=" #'steve-evil-indent)
 
+;; In Evil (and Vim), a `$` in visual mode will stretch the region to include
+;; the trailing newline. But usually when I press `$` in visual mode I only
+;; want the region to extend to the character preceding the newline. Sometimes
+;; I do want the newline though! So make it contextual. Two presses will
+;; include the newline.
+(evil-define-motion steve-evil-end-of-line (count)
+  :type inclusive
+  (if (and (null count)
+           (evil-visual-state-p)
+           (not (and (bolp) (eolp)))  ;; not on a blank line
+           ;; Note: evil's visual end is not the same position as (point).
+           (< (marker-position evil-visual-end) (line-end-position)))
+      (progn
+        (end-of-line)
+        (evil-adjust-cursor))
+    ;; Defer
+    (evil-end-of-line count)))
+(define-key evil-visual-state-map "$" #'steve-evil-end-of-line)
 
 ;; I like C-y and C-e to scroll faster.
 ;;
