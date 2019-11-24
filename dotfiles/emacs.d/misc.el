@@ -92,15 +92,6 @@
   (interactive)
   (switch-to-buffer (other-buffer)))
 
-(defun steve-close-buffer-and-window-unless-last ()
-  (interactive)
-  (let* ((buffer (current-buffer))
-         (window (get-buffer-window buffer))
-         (next (next-window window)))
-    (kill-buffer buffer)
-    (when (and window
-               (not (eq window next)))
-      (delete-window window))))
 
 ;; Debug print. Evaluate the given form (just once, in case it has
 ;; side-effects), print its representation to *Messages*, and return it.

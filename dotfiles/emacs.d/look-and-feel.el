@@ -78,7 +78,14 @@
 ;; Which-key
 (require 'which-key)
 (setq which-key-sort-order 'which-key-prefix-then-key-order)
+(setq which-key-allow-evil-operators t)
+(setq which-key-idle-delay 0.25)
+(setq which-key-idle-secondary-delay 0.05)
+(setq which-key-is-verbose t)
+(setq which-key-side-window-max-width 0.5)
 (which-key-mode 1)
+;; (which-key-setup-side-window-bottom)
+(which-key-setup-side-window-right)
 
 ;; Show colums and lines in the status bar
 (column-number-mode t)
