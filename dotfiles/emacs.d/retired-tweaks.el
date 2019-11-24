@@ -1,6 +1,17 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+;; Mostly redundant with the native kill-buffer-and-window
+(defun steve-close-buffer-and-window-unless-last ()
+  (interactive)
+  (let* ((buffer (current-buffer))
+         (window (get-buffer-window buffer))
+         (next (next-window window)))
+    (kill-buffer buffer)
+    (when (and window
+               (not (eq window next)))
+      (delete-window window))))
+
 ;; Different color for parens
 (require 'paren-face)
 (global-paren-face-mode 1)

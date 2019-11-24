@@ -83,6 +83,11 @@
 (define-key evil-motion-state-map "," 'steve-comma-motion-map)
 (define-key steve-comma-motion-map "r" 'lusty-file-explorer)
 (define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
+(define-key steve-comma-motion-map "A" 'beginning-of-defun)
+(define-key steve-comma-motion-map "p" 'fill-paragraph)
+; STEVE rarely used vv
+(define-key steve-comma-motion-map "h" 'ff-find-other-file)
+(define-key steve-comma-motion-map " " 'locate)
 
 (define-key steve-comma-motion-map "x" ctl-x-map)
 (define-key steve-comma-motion-map "xk" #'steve-kill-buffer)
@@ -95,18 +100,6 @@
 (define-key steve-comma-motion-map "ea" #'steve-copy-register-unnamed-to-a)
 (define-key steve-comma-motion-map "eb" #'steve-copy-register-unnamed-to-b)
 (define-key steve-comma-motion-map "ec" #'steve-copy-register-unnamed-to-c)
-;
-;(define-key steve-comma-motion-map "o\C-e"
-;  (lambda () (interactive) (scroll-other-window 3)))
-;(define-key steve-comma-motion-map "o\C-y"
-;  (lambda () (interactive) (scroll-other-window-down 3)))
-;(define-key steve-comma-motion-map "of" #'scroll-other-window)
-;(define-key steve-comma-motion-map "ob" #'scroll-other-window-down)
-; STEVE rarely used vv
-(define-key steve-comma-motion-map "A" 'beginning-of-defun)
-(define-key steve-comma-motion-map "p" 'fill-paragraph)
-(define-key steve-comma-motion-map "h" 'ff-find-other-file)
-(define-key steve-comma-motion-map " " 'locate)
 
 (defun steve-eval-region-and-close-visual-mode (beg end)
   (interactive "r")
@@ -159,10 +152,10 @@
 (define-key evil-normal-state-map "=" #'steve-evil-indent)
 
 ;; In Evil (and Vim), a `$` in visual mode will stretch the region to include
-;; the trailing newline. But usually when I press `$` in visual mode I only
-;; want the region to extend to the character preceding the newline. Sometimes
-;; I do want the newline though! So make it contextual. Two presses will
-;; include the newline.
+;; the trailing newline of the current line. But usually when I press `$` in
+;; visual mode I only want the region to extend to the character preceding the
+;; newline. Sometimes I do want the newline though! So make it contextual. Two
+;; presses will include the newline.
 (evil-define-motion steve-evil-end-of-line (count)
   :type inclusive
   (if (and (null count)
@@ -222,7 +215,7 @@
   ;; I don't use TAB for its traditional purpose.
   (kbd "TAB") #'steve-juggle-previous-buffer
   ;; Close buffer (instead of scroll down).
-  "\C-d" #'steve-close-buffer-and-window-unless-last
+  "\C-d" #'kill-buffer-and-window
   ;; (Overriding evil-scroll-line-up, evil-scroll-line-down)
   "\C-y" #'steve-evil-scroll-line-up
   "\C-e" #'steve-evil-scroll-line-down
@@ -238,7 +231,7 @@
   "\C-d" #'(lambda ()
              (interactive)
              (if (string-equal (buffer-name) steve--temp-paste-buf-name)
-                 (steve-close-buffer-and-window-unless-last)
+                 (kill-buffer-and-window)
                ;; Default binding (though I never actually use this).
                ; STEVE vv this path causes an error
                (evil-shift-left-line 1))))
@@ -317,7 +310,7 @@
   (kbd "TAB") 'steve-juggle-previous-buffer
   ; (Instead of 'recompile.)
   "gg" 'evil-goto-first-line
-  "q" 'steve-close-buffer-and-window-unless-last
+  "q" 'kill-buffer-and-window
   "D" 'steve-remove-matching-lines)
 
 ;; Rust

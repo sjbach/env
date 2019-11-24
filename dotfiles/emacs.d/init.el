@@ -4,10 +4,13 @@
 
 (setq-default indent-tabs-mode nil)
 
-(require 'lusty-explorer)
-
-(global-set-key "\C-d" 'steve-close-buffer-and-window-unless-last)
+(global-set-key "\C-d" #'kill-buffer-and-window)
 (global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
+;; Instead of kmacro-start-macro-or-insert-counter
+(global-set-key [f3] 'steve-juggle-previous-buffer)
+;; Instead of kmacro-end-or-call-macro
+(global-set-key [f4] #'other-window)
+(global-set-key [f5] #'other-frame)
 
 ;; Backups and auto-saves.
 ;; Put all backups into a single directory
@@ -59,16 +62,18 @@
           (with-current-buffer remember-notes-buffer-name
             (emacs-lock-mode 'kill)))))
 
+;; Custom/customize stuff is auto-edited by Emacs and superstition
+;; pressures me to have that done in its own file.
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+
+(require 'lusty-explorer)
+
 (require 'magit)
 (setq magit-diff-refine-hunk 'all)
 ;; Can be slow in large repos.
 (add-hook 'after-save-hook #'magit-after-save-refresh-status)
 (setq git-timemachine-show-author nil)
-
-;; Custom/customize stuff is auto-edited by Emacs and superstition
-;; pressures me to have that done in its own file.
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
 
 ;; Package
 ;;
