@@ -114,15 +114,31 @@
         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
         ))
 
-;; Restore previous session's buffers, modes, etc.
-(desktop-save-mode 1)
-(setq desktop-globals-to-save
-      (append desktop-globals-to-save
-              '((extended-command-history . 50)
-                (regexp-history . 50))))
-
 ;; Launch Emacs server.
 (require 'server)
 (unless (server-running-p)
   (server-start))
 
+;; Restore previous session's frameset, buffers, modes, etc.
+(desktop-save-mode 1)
+(setq desktop-globals-to-save
+      (append desktop-globals-to-save
+              '((extended-command-history . 50)
+                (regexp-history . 50))))
+;;
+;; desktop-save-mode will not restore frames in terminal Emacs because of a
+;; check for `(display-graphic-p)` in `(desktop-restoring-frameset-p)`. But the
+;; restore works just fine if you force it.
+;;
+;; Inspiration: https://emacs.stackexchange.com/a/45829
+(unless (display-graphic-p)
+  (setq desktop-restore-forces-onscreen nil)
+  (defun always-t () t)
+  ;; Note: this only works when called by the hook below.
+  (defun steve--restore-desktop-frameset-even-in-tty ()
+    (advice-add #'display-graphic-p :override #'always-t)
+    (desktop-restore-frameset)
+    (advice-remove #'display-graphic-p #'always-t)
+    (fmakunbound #'always-t))
+  (add-hook 'desktop-after-read-hook
+            #'steve--restore-desktop-frameset-even-in-tty))
