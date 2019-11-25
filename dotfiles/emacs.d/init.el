@@ -80,6 +80,17 @@
 (add-hook 'after-save-hook #'magit-after-save-refresh-status)
 (setq git-timemachine-show-author nil)
 
+;; `xterm-paste` pushes what it pastes onto the kill ring, which overwrites
+;; Evil's nameless register and shifts all the numbered registers down. I
+;; understand why it happens but it's not useful to me, so undo it.
+(defun steve--delete-top-of-kill-ring (&rest d)
+  (let ((interprogram-paste nil)
+        (yank-pop-change-selection nil)
+        (interprogram-cut-function nil))
+    (current-kill 1 nil))
+  nil)
+(advice-add #'xterm-paste :after #'steve--delete-top-of-kill-ring)
+
 ;; Package
 ;;
 (require 'package)
