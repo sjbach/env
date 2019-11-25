@@ -4,13 +4,18 @@
 
 (setq-default indent-tabs-mode nil)
 
+;; Context-free global bindings.
 (global-set-key "\C-d" #'kill-buffer-and-window)
-(global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 ;; Instead of kmacro-start-macro-or-insert-counter
 (global-set-key [f3] 'steve-juggle-previous-buffer)
 ;; Instead of kmacro-end-or-call-macro
 (global-set-key [f4] #'other-window)
 (global-set-key [f5] #'other-frame)
+;;
+;; Change the active window with Shift-<arrow key>.
+(require 'windmove)
+(windmove-default-keybindings)
+(setq windmove-wrap-around t)
 
 ;; Backups and auto-saves.
 ;; Put all backups into a single directory
@@ -58,7 +63,7 @@
       (lambda ()
         (prog1
             (remember-notes)
-          ;; Don't let *scratch* be closed accidentally.
+          ;; Don't let the notes buffer be closed accidentally.
           (with-current-buffer remember-notes-buffer-name
             (emacs-lock-mode 'kill)))))
 

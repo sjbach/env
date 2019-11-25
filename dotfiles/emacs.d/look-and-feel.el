@@ -71,12 +71,17 @@
 (lisp-extra-font-lock-global-mode 1)
 ;;
 
+(dumb-jump-mode 1)
 ;; Ace window
 (require 'ace-window)
+;; In terminal Emacs you only view one frame at a time, so a global scope is
+;; not usually what you want.
+(setq aw-scope 'frame)  ;; vs global (all frames)
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
 ;; Which-key
 (require 'which-key)
+(setq which-key-allow-imprecise-window-fit t)
 (setq which-key-sort-order 'which-key-prefix-then-key-order)
 (setq which-key-allow-evil-operators t)
 (setq which-key-idle-delay 0.25)

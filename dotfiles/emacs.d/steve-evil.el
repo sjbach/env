@@ -101,6 +101,9 @@
 (define-key steve-comma-motion-map "eb" #'steve-copy-register-unnamed-to-b)
 (define-key steve-comma-motion-map "ec" #'steve-copy-register-unnamed-to-c)
 
+(define-key steve-comma-motion-map "d." #'dumb-jump-go)
+(define-key steve-comma-motion-map "d," #'dumb-jump-back)
+
 (defun steve-eval-region-and-close-visual-mode (beg end)
   (interactive "r")
   (eval-region beg end)

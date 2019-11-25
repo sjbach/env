@@ -1,6 +1,8 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+(global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
+
 ;; Mostly redundant with the native kill-buffer-and-window
 (defun steve-close-buffer-and-window-unless-last ()
   (interactive)

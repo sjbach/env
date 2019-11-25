@@ -1,5 +1,10 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; Spell check in comments.
+(add-hook 'prog-mode-hook #'flyspell-prog-mode)
+;; Automatically break long lines.
+(add-hook 'prog-mode-hook #'turn-on-auto-fill)
+
 (add-hook 'html-mode-hook
           (lambda ()
             (auto-fill-mode t)
