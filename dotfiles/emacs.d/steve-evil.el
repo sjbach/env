@@ -43,8 +43,9 @@
 ;; with-eval-after-load and confuse the control flow.
 (cl-assert (featurep 'evil-maps))
 
-;; I use these keys for other things. There is never a time when I want to fall
-;; back to the defaults; I'd rather see an error.
+;; The default Evil bindings for these keys aren't that useful while the
+;; default major-mode bindings often are useful. Drop the Evil bindings so that
+;; the major-mode bindings are made available.
 (define-key evil-motion-state-map (kbd "TAB") nil)
 (define-key evil-motion-state-map " " nil)
 
@@ -103,6 +104,9 @@
 
 (define-key steve-comma-motion-map "d." #'dumb-jump-go)
 (define-key steve-comma-motion-map "d," #'dumb-jump-back)
+
+(define-key steve-comma-motion-map "mj" #'bookmark-jump)
+(define-key steve-comma-motion-map "ms" #'bookmark-set)
 
 (defun steve-eval-region-and-close-visual-mode (beg end)
   (interactive "r")
@@ -343,8 +347,6 @@
 ;;; Overrides of default states in some modes.
 ;;;
 
-;(setq evil-emacs-state-modes
-;      (remq 'completion-list-mode evil-emacs-state-modes))
 (evil-set-initial-state 'completion-list-mode 'motion)
 
 
@@ -369,13 +371,4 @@
 (defun w (&optional args)
   (interactive "p")
   (save-buffer args))
-
-;(defun q (&optional args)
-;  (interactive "P")
-;  (save-buffers-kill-emacs args))
-;
-;(defun wq (&optional args)
-;  (interactive "P")
-;  (save-buffers-kill-emacs args))
-
 

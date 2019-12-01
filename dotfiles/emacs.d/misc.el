@@ -16,9 +16,7 @@
       (display-fill-column-indicator-mode 1)
     (turn-on-fci-mode)))
 
-;; Simpler wrapper on `kill-buffer` defined to prevent ido from remapping the
-;; kill-buffer binding to ido-kill-buffer, which takes a name rather than
-;; defaulting to the current buffer.
+;; Simpler wrapper on `kill-buffer` that does not prompt for a buffer name.
 (defun steve-kill-buffer ()
   (interactive)
   (kill-buffer (current-buffer)))

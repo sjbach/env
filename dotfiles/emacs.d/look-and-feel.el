@@ -23,6 +23,9 @@
 (toggle-scroll-bar -1)
 (tooltip-mode -1)
 
+;; Show *Register Preview* quickly.
+(setq register-preview-delay 0.25)  ;; default: 1
+
 (require 'diminish)
 (add-hook 'after-init-hook
           (lambda ()
@@ -60,6 +63,11 @@
 ;; Consider:
 ;; (global-display-fill-column-indicator-mode 1)
 
+;; ido remaps any key mapping to kill-buffer to map to ido-kill-buffer
+;; instead. But this is overreaching- ido-kill-buffer is not a drop-in
+;; replacement for all kill-buffer usages, so undo that.
+(define-key (cdr ido-minor-mode-map-entry) [remap kill-buffer] nil)
+
 (require 'git-gutter)
 (global-git-gutter-mode 1)
 
@@ -74,6 +82,8 @@
 ;;
 
 (dumb-jump-mode 1)
+(setq dumb-jump-selector 'ivy)
+
 ;; Ace window
 (require 'ace-window)
 ;; In terminal Emacs you only view one frame at a time, so a global scope is

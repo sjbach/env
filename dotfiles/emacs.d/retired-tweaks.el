@@ -3,6 +3,9 @@
 
 (global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 
+(setq evil-emacs-state-modes
+      (remq 'completion-list-mode evil-emacs-state-modes))
+
 ;; Mostly redundant with the native kill-buffer-and-window
 (defun steve-close-buffer-and-window-unless-last ()
   (interactive)
@@ -165,3 +168,11 @@
 ;; Disabled now that I'm not working in java as much
 (require 'scf-mode)
 (add-hook 'grep-mode-hook (lambda () (scf-mode 1)))
+
+(defun q (&optional args)
+  (interactive "P")
+  (save-buffers-kill-emacs args))
+
+(defun wq (&optional args)
+  (interactive "P")
+  (save-buffers-kill-emacs args))
