@@ -58,6 +58,53 @@ XTerm*scrollBar: false
 ! as M-<key>. (The default is 8-bit character entry.)
 XTerm*metaSendsEscape: true
 UXTerm*metaSendsEscape: true
+! Define input escape sequences for many (but not all) key chords. Newer
+! versions of tty Emacs will recognize and interpret these sequences natively,
+! shells and other programs generally will not, but anyway you`re unlikely to
+! need them outside of a captive, persistent interface like Emacs.
+!
+! Notably present:
+! - S-RET, C-RET, C-S-RET
+! - C-TAB
+! - `C-,`, C-., C-;, C-<single quote>, C--, C-+, C-=
+!
+! Inconsistently present:
+! - C-<digit> (mostly missing?), C-S-<digit> (mostly present?)
+!
+! Notably missing:
+! - S-SPC (which is fine, because it`s so easy to mistype)
+! - C-SPC (because its original mapping, C-@, is in common use)
+! - S-TAB, C-S-TAB
+! - S-<backspace>, C-<backspace>, C-S-<backspace>
+! - C-`, C-~
+! - C-/ (perhaps because its original mapping, C-_, is in common use)
+! - C-| (i.e. C-S-\)
+! - C-<uppercase letter> (i.e. C-S-<lowercase letter>)
+XTerm*modifyOtherKeys: 1
+XTerm*formatOtherKeys: 1
+UXTerm*modifyOtherKeys: 1
+UXTerm*formatOtherKeys: 1
+! Add custom sequences for some of these missing chords.
+!
+! Note:
+! - Order matters here.
+! - Programs have no idea what to do with these unless you tell them.
+XTerm*vt100.translations: #override \
+    Ctrl Shift <Key>BackSpace: string("\033[STEVE-C-S-DEL") \n\
+    Ctrl <Key>BackSpace: string("\033[STEVE-C-DEL") \n\
+    Shift <Key>BackSpace: string("\033[STEVE-S-DEL") \n\
+    Ctrl Shift <Key>space: string("\033[STEVE-C-S-SPC") \n\
+    Ctrl <Key>space: string("\033[STEVE-C-SPC") \n\
+    Ctrl Shift <Key>slash: string("\033[63;6u") \n\
+    Ctrl <Key>slash: string("\033[STEVE-C-/")
+UXTerm*vt100.translations: #override \
+    Ctrl Shift <Key>BackSpace: string("\033[STEVE-C-S-DEL") \n\
+    Ctrl <Key>BackSpace: string("\033[STEVE-C-DEL") \n\
+    Shift <Key>BackSpace: string("\033[STEVE-S-DEL") \n\
+    Ctrl Shift <Key>space: string("\033[STEVE-C-S-SPC") \n\
+    Ctrl <Key>space: string("\033[STEVE-C-SPC") \n\
+    Ctrl Shift <Key>slash: string("\033[63;6u") \n\
+    Ctrl <Key>slash: string("\033[STEVE-C-/")
 
 !! urxvt:
 !
