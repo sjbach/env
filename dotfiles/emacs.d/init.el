@@ -120,6 +120,7 @@
 (setq magit-diff-refine-hunk 'all)
 ;; Can be slow in large repos.
 (add-hook 'after-save-hook #'magit-after-save-refresh-status)
+(setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 (setq git-timemachine-show-author nil)
 
 ;; `xterm-paste` pushes what it pastes onto the kill ring, which overwrites

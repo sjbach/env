@@ -28,6 +28,7 @@
 (add-hook 'emacs-lisp-mode-hook #'steve-turn-on-fill-column-indiciator)
 (add-hook 'emacs-lisp-mode-hook #'company-mode)
 (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+;; (setq rainbow-delimiters-max-face-count 8)  ;; vs 9
 
 ;; ^L is used as a section separator in GNU code. Make it look purposeful.
 (defun xah-show-formfeed-as-line ()

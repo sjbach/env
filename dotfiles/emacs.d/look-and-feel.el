@@ -96,7 +96,8 @@
 (setq which-key-allow-imprecise-window-fit t)
 (setq which-key-sort-order 'which-key-prefix-then-key-order)
 (setq which-key-allow-evil-operators t)
-(setq which-key-idle-delay 0.25)
+(setq which-key-idle-delay 0.25)  ;; When the connectivity is good
+;; (setq which-key-idle-delay 1)  ;; When the connectivity is poor
 (setq which-key-idle-secondary-delay 0.05)
 (setq which-key-is-verbose t)
 (setq which-key-side-window-max-width 0.5)
