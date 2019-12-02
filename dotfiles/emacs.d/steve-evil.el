@@ -219,10 +219,6 @@
 
 (evil-define-key*
   'motion 'global
-  ;; I don't use TAB for its traditional purpose.
-  (kbd "TAB") #'steve-juggle-previous-buffer
-  ;; Close buffer (instead of scroll down).
-  "\C-d" #'kill-buffer-and-window
   ;; (Overriding evil-scroll-line-up, evil-scroll-line-down)
   "\C-y" #'steve-evil-scroll-line-up
   "\C-e" #'steve-evil-scroll-line-down
@@ -265,10 +261,9 @@
   (define-key temp-space-map "," 'help-go-back)
   (evil-define-key*
     '(motion normal) help-mode-map
-    (kbd "TAB") 'steve-juggle-previous-buffer
     ;(kbd "C-h") 'help-go-back
     ;(kbd "C-l") 'help-go-forward
-    " " temp-space-map))
+    (kbd "C-SPC") temp-space-map))
 
 ;; Lusty Explorer
 ;; Have to do this in a hook because I wrote lusty-explorer.el in a weird way.
@@ -303,18 +298,16 @@
     (define-key temp-space-map "x" #'eval-defun)
     (evil-define-key*
       '(motion normal) elisp-related-map
-      " " temp-space-map))
+      (kbd "C-SPC") temp-space-map))
   (let ((temp-space-map (make-sparse-keymap)))
     (define-key temp-space-map "r" #'steve-eval-region-and-close-visual-mode)
     (evil-define-key*
       'visual elisp-related-map
-      " " temp-space-map)))
+      (kbd "C-SPC") temp-space-map)))
 
 ;; Grep
 (evil-define-key
   '(motion normal) grep-mode-map
-  ; (Instead of 'compilation-next-error.)
-  (kbd "TAB") 'steve-juggle-previous-buffer
   ; (Instead of 'recompile.)
   "gg" 'evil-goto-first-line
   "q" 'kill-buffer-and-window
@@ -328,13 +321,13 @@
 (define-key steve-evil-rust-space-motion-map "h" 'racer-describe)
 (evil-define-key
   '(motion normal) rust-mode-map
-  " " steve-evil-rust-space-motion-map)
 (evil-define-key
   'insert rust-mode-map
   (kbd "TAB") 'company-indent-or-complete-common
   "\C-n" 'company-select-next
   "\C-p" 'company-select-previous
   (kbd "<right>") 'company-complete)
+  (kbd "C-SPC") steve-evil-rust-space-motion-map)
 
 ;; Rust/cargo compilation
 (evil-define-key
