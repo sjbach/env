@@ -90,6 +90,16 @@
   (interactive)
   (switch-to-buffer (other-buffer)))
 
+(defun steve-show-help-buffer ()
+  (interactive)
+  ;; (let ((help-buffer-name (get-buffer "*Help*")))
+  (let ((help-buffer-name (help-buffer)))
+    (if (null help-buffer-name)
+        (error "No help buffer.")
+      (let ((help-window (get-buffer-window help-buffer-name)))
+        (if help-window
+            (select-window help-window)
+          (switch-to-buffer help-buffer-name))))))
 
 ;; Debug print. Evaluate the given form (just once, in case it has
 ;; side-effects), print its representation to *Messages*, and return it.

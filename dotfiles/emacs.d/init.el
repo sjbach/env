@@ -54,6 +54,8 @@
     (interactive)
     (message "Run `M-x delete-other-frames'")))
 ;;
+(define-key help-map "H" #'steve-show-help-buffer)
+;;
 ;; Change the active window with Shift-<arrow key>.
 (require 'windmove)
 (windmove-default-keybindings)
