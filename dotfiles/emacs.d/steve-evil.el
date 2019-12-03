@@ -83,7 +83,8 @@
 (define-prefix-command 'steve-comma-motion-map)
 (define-key evil-motion-state-map "," 'steve-comma-motion-map)
 (define-key steve-comma-motion-map "r" 'lusty-file-explorer)
-(define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
+;; (define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
+(define-key steve-comma-motion-map "B" #'lusty-buffer-explorer)
 (define-key steve-comma-motion-map "A" 'beginning-of-defun)
 (define-key steve-comma-motion-map "p" 'fill-paragraph)
 ; STEVE rarely used vv
