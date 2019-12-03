@@ -23,6 +23,8 @@
   ;; terminal emulator.
   (define-key input-map "\e[STEVE-C-SPC" (kbd "C-SPC"))
   (define-key input-map "\e[STEVE-C-S-SPC" (kbd "C-S-SPC"))
+  (define-key input-map "\e[STEVE-C-RET" [C-return])
+  (define-key input-map "\e[STEVE-C-S-RET" [C-S-return])
   (define-key input-map "\e[STEVE-S-DEL" (kbd "S-DEL"))
   (define-key input-map "\e[STEVE-C-DEL" (kbd "C-DEL"))
   (define-key input-map "\e[STEVE-C-S-DEL" (kbd "C-S-DEL"))
