@@ -172,6 +172,11 @@
       (append desktop-globals-to-save
               '((extended-command-history . 50)
                 (regexp-history . 50))))
+;; I want desktop-save-mode to save/restore frame names.
+;; Note: might be better to do this as advice on desktop-save and desktop-read.
+(setq frameset-filter-alist
+      (nconc (list (cons 'name nil))
+             (copy-tree frameset-filter-alist)))
 ;;
 ;; desktop-save-mode will not restore frames in terminal Emacs because of a
 ;; check for `(display-graphic-p)` in `(desktop-restoring-frameset-p)`. But the
@@ -179,13 +184,15 @@
 ;;
 ;; Inspiration: https://emacs.stackexchange.com/a/45829
 (unless (display-graphic-p)
-  (setq desktop-restore-forces-onscreen nil)
+  ;; (setq desktop-restore-forces-onscreen nil)
+  (setq desktop-restore-forces-onscreen 'all)
   (defun always-t () t)
   ;; Note: this only works when called by the hook below.
   (defun steve--restore-desktop-frameset-even-in-tty ()
     (advice-add #'display-graphic-p :override #'always-t)
     (desktop-restore-frameset)
     (advice-remove #'display-graphic-p #'always-t)
-    (fmakunbound #'always-t))
+    (fmakunbound #'always-t)
+    (message "Frames restored"))
   (add-hook 'desktop-after-read-hook
             #'steve--restore-desktop-frameset-even-in-tty))
