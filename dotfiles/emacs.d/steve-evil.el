@@ -88,7 +88,6 @@
 (define-key steve-comma-motion-map "A" 'beginning-of-defun)
 (define-key steve-comma-motion-map "p" 'fill-paragraph)
 ; STEVE rarely used vv
-(define-key steve-comma-motion-map "h" 'ff-find-other-file)
 (define-key steve-comma-motion-map " " 'locate)
 
 (define-key steve-comma-motion-map "x" ctl-x-map)
@@ -108,6 +107,8 @@
 
 (define-key steve-comma-motion-map "mj" #'bookmark-jump)
 (define-key steve-comma-motion-map "ms" #'bookmark-set)
+
+(define-key steve-comma-motion-map "h" #'steve-hydra-hideshow/body)
 
 (defun steve-eval-region-and-close-visual-mode (beg end)
   (interactive "r")
@@ -245,7 +246,7 @@
 ;;;
 
 ;;
-;; Generally, SPC as a Vim-style leader key.
+;; Generally, C-SPC as a Vim-style leader key.
 
 ;; Help
 (let ((temp-space-map (make-sparse-keymap)))
@@ -262,8 +263,6 @@
   (define-key temp-space-map "," 'help-go-back)
   (evil-define-key*
     '(motion normal) help-mode-map
-    ;(kbd "C-h") 'help-go-back
-    ;(kbd "C-l") 'help-go-forward
     (kbd "C-SPC") temp-space-map))
 
 ;; Lusty Explorer
