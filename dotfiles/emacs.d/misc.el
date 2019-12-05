@@ -20,18 +20,7 @@
 (defun steve-kill-buffer ()
   (interactive)
   (kill-buffer (current-buffer)))
-(defun steve-show-macroexpansion-for-region (beg end)
-  (interactive "r")
-  (unless (and beg end)
-    (error "No region given"))
-  (let* ((s (buffer-substring-no-properties beg end))
-         (sexp (read s))
-         (macroexpanded (macroexpand-1 sexp))
-         (buf-name "*Steve-Macroexpanded*")
-         (temp-buffer-setup-hook '(emacs-lisp-mode)))
-    (with-output-to-temp-buffer buf-name
-      ;(print macroexpanded)
-      (pp macroexpanded))))
+
 
 ; STEVE make work in terminal
 (defun steve-vim-excursion ()

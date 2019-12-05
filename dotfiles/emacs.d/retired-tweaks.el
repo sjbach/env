@@ -1,6 +1,19 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+;; See `macrostep-expand` instead, or just `pp-macroexpand-last-sexp`.
+(defun steve-show-macroexpansion-for-region (beg end)
+  (interactive "r")
+  (unless (and beg end)
+    (error "No region given"))
+  (let* ((s (buffer-substring-no-properties beg end))
+         (sexp (read s))
+         (macroexpanded (macroexpand-1 sexp))
+         (buf-name "*Steve-Macroexpanded*")
+         (temp-buffer-setup-hook '(emacs-lisp-mode)))
+    (with-output-to-temp-buffer buf-name
+      (pp macroexpanded))))
+
 (global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 
 (setq evil-emacs-state-modes

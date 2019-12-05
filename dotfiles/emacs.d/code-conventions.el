@@ -14,21 +14,23 @@
             (auto-fill-mode t)
             (set-fill-column 100)))
 (add-hook 'python-mode-hook
-          (lambda ()
-            (auto-fill-mode t)
-            (set-fill-column 80)))
+          (lambda () (set-fill-column 80)))
 (add-hook 'c++-mode-hook
-          (lambda ()
-            (auto-fill-mode t)
-            (set-fill-column 80)))
+          (lambda () (set-fill-column 80)))
 
-(add-hook 'emacs-lisp-mode-hook #'turn-on-elisp-slime-nav-mode)
+(dolist (elisp-hook '(emacs-lisp-mode-hook ielm-mode-hook))
+  (add-hook elisp-hook #'turn-on-elisp-slime-nav-mode)
+  (add-hook elisp-hook #'company-mode)
+  ;; (setq rainbow-delimiters-max-face-count 8)  ;; vs 9
+  (add-hook elisp-hook #'rainbow-delimiters-mode)
+  ;; Better version of `xref-find-definitions` or
+  ;; `elisp-slime-nav-find-elisp-thing-at-point` that works on e.g. local
+  ;; bindings, functions defined in macros (such as by cl-defstruct).
+  (add-hook elisp-hook #'elisp-def-mode))
+
+(add-hook 'emacs-lisp-mode-hook #'steve-turn-on-fill-column-indiciator)
 (add-hook 'emacs-lisp-mode-hook
           (lambda () (setq fill-column 79)))
-(add-hook 'emacs-lisp-mode-hook #'steve-turn-on-fill-column-indiciator)
-(add-hook 'emacs-lisp-mode-hook #'company-mode)
-(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
-;; (setq rainbow-delimiters-max-face-count 8)  ;; vs 9
 
 ;; ^L is used as a section separator in GNU code. Make it look purposeful.
 (defun xah-show-formfeed-as-line ()

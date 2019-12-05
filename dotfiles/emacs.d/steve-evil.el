@@ -288,15 +288,16 @@
     ;; package.
     ;(define-key temp-space-map "." 'xref-find-definitions)
     ;(define-key temp-space-map "," 'xref-pop-marker-stack)
-    (define-key temp-space-map "." 'elisp-slime-nav-find-elisp-thing-at-point)
+    (define-key temp-space-map "." #'elisp-def)
     (define-key temp-space-map "," 'pop-tag-mark)
-    (define-key temp-space-map "d" 'elisp-slime-nav-describe-elisp-thing-at-point)
+    (define-key temp-space-map "h" #'elisp-slime-nav-describe-elisp-thing-at-point)
     (define-key temp-space-map "e" 'eval-last-sexp)
     (define-key temp-space-map "k" 'eval-buffer)
     (define-key temp-space-map "K" 'eval-buffer)
     (define-key temp-space-map "i" #'steve-toggle-dp-on-sexp)
     (define-key temp-space-map "\C-i" #'steve-toggle-dp-on-sexp)
     (define-key temp-space-map "x" #'eval-defun)
+    (define-key temp-space-map "M" #'macrostep-expand)
     (evil-define-key*
       '(motion normal) elisp-related-map
       (kbd "C-SPC") temp-space-map))
@@ -318,7 +319,6 @@
 (define-prefix-command 'steve-evil-rust-space-motion-map)
 (define-key steve-evil-rust-space-motion-map "." 'racer-find-definition)
 (define-key steve-evil-rust-space-motion-map "," 'pop-tag-mark)
-(define-key steve-evil-rust-space-motion-map "d" 'racer-describe)
 (define-key steve-evil-rust-space-motion-map "h" 'racer-describe)
 (evil-define-key
   '(motion normal) rust-mode-map
