@@ -150,7 +150,8 @@
     (load-file (expand-file-name (format "~/.emacs.d/%s" filename)))))
 
 (mapc 'expand-load
-      `("look-and-feel.el"
+      `("keys.el"
+        "look-and-feel.el"
         "prose.el"
         "misc.el"
         "code-conventions.el"
