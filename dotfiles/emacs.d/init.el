@@ -108,33 +108,42 @@
 (unless (server-running-p)
   (server-start))
 
+;;;
+;;; Desktop-save-mode
+;;;
+
 ;; Restore previous session's frameset, buffers, modes, etc.
 (desktop-save-mode 1)
 (setq desktop-globals-to-save
       (append desktop-globals-to-save
               '((extended-command-history . 50)
-                (regexp-history . 50))))
+                (regexp-history . 50)
+                cf--name-to-numbered-confs-alist
+                cf--name-to-pre-restore-conf-alist)))
+
 ;; I want desktop-save-mode to save/restore frame names.
 ;; Note: might be better to do this as advice on desktop-save and desktop-read.
-(setq frameset-filter-alist
-      (nconc (list (cons 'name nil))
-             (copy-tree frameset-filter-alist)))
-;;
+(require 'frameset)  ;; ensure `frameset-filter-alist` is loaded
+(unless (eq (alist-get 'name frameset-filter-alist) nil)
+  (push '(name . nil) frameset-filter-alist))
+;; Never save the powerline cache as it's known to cause problems upon restore.
+(unless (eq (alist-get 'powerline-cache frameset-filter-alist) :never)
+  (push '(powerline-cache . :never) frameset-filter-alist))
+
 ;; desktop-save-mode will not restore frames in terminal Emacs because of a
 ;; check for `(display-graphic-p)` in `(desktop-restoring-frameset-p)`. But the
 ;; restore works just fine if you force it.
 ;;
 ;; Inspiration: https://emacs.stackexchange.com/a/45829
 (unless (display-graphic-p)
-  ;; (setq desktop-restore-forces-onscreen nil)
-  (setq desktop-restore-forces-onscreen 'all)
-  (defun always-t () t)
+  ;; (setq desktop-restore-forces-onscreen 'all)  ;; causes error in tty
+  (setq desktop-restore-forces-onscreen nil)
+  (defun steve-always-t () t)
   ;; Note: this only works when called by the hook below.
   (defun steve--restore-desktop-frameset-even-in-tty ()
-    (advice-add #'display-graphic-p :override #'always-t)
+    (advice-add #'display-graphic-p :override #'steve-always-t)
     (desktop-restore-frameset)
-    (advice-remove #'display-graphic-p #'always-t)
-    (fmakunbound #'always-t)
+    (advice-remove #'display-graphic-p #'steve-always-t)
     (message "Frames restored"))
   (add-hook 'desktop-after-read-hook
             #'steve--restore-desktop-frameset-even-in-tty))

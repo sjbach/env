@@ -6,6 +6,7 @@
 ;;
 
 (require 'hydra)
+(require 'hercules)
 
 ;;;
 ;;; Custom input sequences
@@ -72,7 +73,7 @@
 ;; Change the active window with Shift-<arrow key>.
 (require 'windmove)
 (windmove-default-keybindings)
-(setq windmove-wrap-around t)
+;; (setq windmove-wrap-around t)
 
 
 ;;;
@@ -100,4 +101,8 @@
    ("s" (elisp-refs-special (symbol-at-point)) "specials")
    ("q" nil))
 
+;; Macrostep
+(hercules-def
+ :toggle-funs #'macrostep-mode
+ :keymap 'macrostep-keymap)
 

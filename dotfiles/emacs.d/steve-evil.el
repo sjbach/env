@@ -83,8 +83,8 @@
 (define-prefix-command 'steve-comma-motion-map)
 (define-key evil-motion-state-map "," 'steve-comma-motion-map)
 (define-key steve-comma-motion-map "r" 'lusty-file-explorer)
-;; (define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
-(define-key steve-comma-motion-map "B" #'lusty-buffer-explorer)
+(define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
+;; (define-key steve-comma-motion-map "B" #'lusty-buffer-explorer)
 (define-key steve-comma-motion-map "A" 'beginning-of-defun)
 (define-key steve-comma-motion-map "p" 'fill-paragraph)
 ; STEVE rarely used vv
@@ -225,7 +225,9 @@
   "\C-y" #'steve-evil-scroll-line-up
   "\C-e" #'steve-evil-scroll-line-down
   "\M-y" #'steve-evil-scroll-line-up-other
-  "\M-e" #'steve-evil-scroll-line-down-other)
+  "\M-e" #'steve-evil-scroll-line-down-other
+  ;; Replaces evil-shell-command
+  "!" (lambda () (interactive) (w)))
 
 (evil-define-key*
   ;; STEVE instead of global should be the map for fundamental-mode (if one
@@ -280,13 +282,13 @@
               "\C-b" 'lusty-highlight-previous-column)))
 
 ;; Emacs Lisp
+(require 'ielm)  ;; so that ielm-map is defined
 (dolist (elisp-related-map (list emacs-lisp-mode-map
-                                 lisp-interaction-mode-map))
+                                 lisp-interaction-mode-map
+                                 ielm-map))
+  ;; All motion modes
   (let ((temp-space-map (make-sparse-keymap)))
-    ;; Note: I think the glue for this is provided by the `elisp-slime-nav`
-    ;; package.
-    ;(define-key temp-space-map "." 'xref-find-definitions)
-    ;(define-key temp-space-map "," 'xref-pop-marker-stack)
+    ;; (define-key temp-space-map "." 'elisp-slime-nav-find-elisp-thing-at-point)
     (define-key temp-space-map "." #'elisp-def)
     (define-key temp-space-map "," 'pop-tag-mark)
     (define-key temp-space-map "h" #'elisp-slime-nav-describe-elisp-thing-at-point)
@@ -297,9 +299,11 @@
     (define-key temp-space-map "\C-i" #'steve-toggle-dp-on-sexp)
     (define-key temp-space-map "x" #'eval-defun)
     (define-key temp-space-map "M" #'macrostep-expand)
+    (define-key temp-space-map "W" #'steve-hydra-elisp-refs/body)
     (evil-define-key*
       '(motion normal) elisp-related-map
       (kbd "C-SPC") temp-space-map))
+  ;; Visual mode only
   (let ((temp-space-map (make-sparse-keymap)))
     (define-key temp-space-map "r" #'steve-eval-region-and-close-visual-mode)
     (evil-define-key*
@@ -362,6 +366,6 @@
 
 ;; Note: could probably use `evil-write` instead, but I'm used to this.
 (defun w (&optional args)
-  (interactive "p")
+  ;; (interactive "p")
   (save-buffer args))
 

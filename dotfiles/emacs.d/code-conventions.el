@@ -4,6 +4,7 @@
 (add-hook 'prog-mode-hook #'flyspell-prog-mode)
 ;; Automatically break long lines.
 (add-hook 'prog-mode-hook #'turn-on-auto-fill)
+(add-hook 'prog-mode-hook #'steve-turn-on-fill-column-indiciator)
 
 (add-hook 'html-mode-hook
           (lambda ()
@@ -28,7 +29,6 @@
   ;; bindings, functions defined in macros (such as by cl-defstruct).
   (add-hook elisp-hook #'elisp-def-mode))
 
-(add-hook 'emacs-lisp-mode-hook #'steve-turn-on-fill-column-indiciator)
 (add-hook 'emacs-lisp-mode-hook
           (lambda () (setq fill-column 79)))
 
