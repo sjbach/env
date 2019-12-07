@@ -91,14 +91,25 @@
 
 ;; Debug print. Evaluate the given form (just once, in case it has
 ;; side-effects), print its representation to *Messages*, and return it.
-(defmacro STEVE-dp (arg)
-  (let ((name-var (gensym "STEVE-name"))
+(require 'cl-lib)
+(defmacro STEVE-dp (&rest args)
+  (let ((sym-var (gensym "STEVE-name"))
         (val-var (gensym "STEVE-val")))
-    `(let ((,name-var ',arg)
-           (,val-var ,arg))
-       (message "STEVE-dp %S: %S" ,name-var ,val-var)
-       (message nil)
-       ,val-var)))
+    (cl-multiple-value-bind (msg-string sexp)
+        (cl-case (length args)
+          (0 (error "STEVE-dp: no args provided"))
+          (1 (cl-values "STEVE-dp %S: %S" (car args)))
+          (2 (unless (stringp (car args))
+               (error "STEVE-dp: malformed args: %S" args))
+             (let ((annotation (car args)))
+               (cl-values (format "STEVE-dp \"%s\" %%S: %%S" annotation)
+                          (cadr args))))
+          (t (error "STEVE-dp: too many args: %S" args)))
+      `(let ((,sym-var ',sexp)
+             (,val-var ,sexp))
+         (message ,msg-string ,sym-var ,val-var)
+         (message nil)
+         ,val-var))))
 
 (defun steve-toggle-dp-on-sexp ()
   (interactive)
@@ -113,10 +124,31 @@
         (check-parens)  ;; (Just in case; should not be able to fail here.)
         (atomic-change-group
           (if (looking-at (rx point "(STEVE-dp"))
-              ;; Remove the (STEVE-dp ...) wrapper.
-              (progn
+              (let ((has-annotation-p
+                     (let ((sexp (read (buffer-string))))
+                       (cl-case (length sexp)
+                         ((0 1) (error "Form is empty"))
+                         ((2 3)
+                          (unless (eq (car sexp) 'STEVE-dp)
+                            (error "Not a debug-print form"))
+                          (if (= (length sexp) 3)
+                              (progn
+                                (when (not (stringp (cadr sexp)))
+                                  (error "Form is invalid"))
+                                t)
+                            nil))
+                         (t (error "Form is invalid"))))))
+                ;; Remove the (STEVE-dp ...) wrapper.
                 (delete-char (length "(STEVE-dp"))
                 (delete-horizontal-space)
+                (when has-annotation-p
+                  (cl-assert (looking-at (rx point "\"")))
+                  ;; There is an annotation string - remove it as well.
+                  (cl-destructuring-bind (str-beg . str-end)
+                      (bounds-of-thing-at-point 'sexp)
+                    (delete-region str-beg str-end))
+                  (delete-horizontal-space))
+                ;; Trailing ")".
                 (end-of-buffer)
                 (backward-char)
                 (cl-assert (looking-at ")"))
