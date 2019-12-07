@@ -70,6 +70,9 @@
   ;; I use different bindings for tag stuff.
   "\C-t" nil)
 
+;; No accidental `evil-quit` call.
+(define-key evil-window-map "q" nil)
+
 
 ;;;
 ;;; Custom general-use bindings (global-ish).

@@ -61,6 +61,10 @@
 (global-set-key (kbd "C-DEL") #'steve-kill-buffer)
 (global-set-key (kbd "C-S-DEL") #'kill-buffer-and-window)
 
+;; No good reason for quitting Emacs to be a convenient key sequence.
+(define-key ctl-x-map (kbd "C-c") nil)
+(define-key ctl-x-map (kbd "C-c C-x C-c C-x C-c") #'save-buffers-kill-terminal)
+
 ;; I use frames as pseudo-workspaces, I don't want to delete them all
 ;; accidentally because of a mistype.
 (define-key ctl-x-5-map "1"
@@ -74,6 +78,7 @@
 (require 'windmove)
 (windmove-default-keybindings)
 ;; (setq windmove-wrap-around t)
+(setq windmove-wrap-around nil)
 
 
 ;;;
