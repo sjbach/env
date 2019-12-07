@@ -28,6 +28,19 @@
 ;; Magit
 (setq evil-magit-state 'motion)
 (require 'evil-magit)
+;; Override remapping of ":", as I use it for `execute-extended-command`.
+;; Remove mapping for `evil-ex`
+(evil-define-key evil-magit-state magit-mode-map ":" nil)
+;; Remove mapping for `magit-git-command`
+(define-key magit-status-mode-map ":" nil)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 1")
+  #'magit-section-show-level-1-all)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 2")
+  #'magit-section-show-level-2-all)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 3")
+  #'magit-section-show-level-3-all)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 4")
+  #'magit-section-show-level-4-all)
 
 ;; Surround
 (require 'evil-surround)
