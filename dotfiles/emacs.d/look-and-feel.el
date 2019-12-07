@@ -71,6 +71,13 @@
 (require 'git-gutter)
 (global-git-gutter-mode 1)
 
+;; Faster eldoc annotations.
+(setq eldoc-idle-delay 0.1)  ;; default: 0.5
+
+;; More info in `undo-tree-visualize`.
+(setq undo-tree-visualizer-relative-timestamps t)
+(setq undo-tree-visualizer-timestamps t)
+
 (require 'company)
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
@@ -82,6 +89,7 @@
 ;;
 
 (dumb-jump-mode 1)
+;; (setq dumb-jump-selector 'helm)
 (setq dumb-jump-selector 'ivy)
 
 ;; Ace window
