@@ -69,23 +69,14 @@ set timeoutlen=300
 " Use '!' to save.
 nmap ! :w<CR>
 
-" Alternatives to ESC:
-"imap jkl <ESC>
-"imap jlk <ESC>
-"imap kjl <ESC>
-"imap klj <ESC>
-"imap lkj <ESC>
-"imap ljk <ESC>
-"imap ;l <ESC>
+" Unmap ZZ and ZQ because they can be pressed accidentally.
+" Aside: there is `:unmap` but it can't be used for internal/native bindings.
+map ZZ <Nop>
+map ZQ <Nop>
 
 " "Very magic" regexes in searches
 "nnoremap / /\v
 "nnoremap ? ?\v
-
-" Vi-style editing in the command-line
-"nnoremap : q:a
-"nnoremap / q/a
-"nnoremap ? q?a
 
 " Lusty
 "let g:LustyJugglerShowKeys = 2
