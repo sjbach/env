@@ -21,6 +21,33 @@
   (interactive)
   (kill-buffer (current-buffer)))
 
+(defun steve-pp-eval-dwim ()
+  (interactive)
+  (let ((sexp
+         (cond ((use-region-p)
+                ;; Eval region.
+                (read
+                 (buffer-substring-no-properties (region-beginning)
+                                                 (region-end))))
+               ;; Aside: in Evil w/ filled cursor, char-after is the character under
+               ;; cursor and char-before is the character before cursor.
+               ((eq (char-after) ?\ )  ;; if Evil cursor is on a space
+                ;; Eval surrounding sexp.
+                (save-excursion
+                  (up-list)
+                  (sexp-at-point)))
+               ((eq (char-after) ?\()  ;; if Evil cursor is on a left paren
+                ;; Eval next sexp (i.e. that begins with this parenthesis).
+                (sexp-at-point))
+               ((eq (char-after) ?\))  ;; if Evil cursor is on a right paren
+                ;; Eval prior (enclosing) sexp, including this paren
+                (save-excursion
+                  (up-list)
+                  (sexp-at-point)))
+               (t
+                (sexp-at-point)))))
+    (message "Evaluating: `%s'" sexp)
+    (pp-eval-expression sexp)))
 
 ; STEVE make work in terminal
 (defun steve-vim-excursion ()
