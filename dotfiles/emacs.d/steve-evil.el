@@ -108,7 +108,9 @@
 
 (define-key steve-comma-motion-map "x" ctl-x-map)
 (define-key steve-comma-motion-map "xk" #'steve-kill-buffer)
-(define-key steve-comma-motion-map "xo" #'ace-window)
+;; (define-key steve-comma-motion-map "xo" #'ace-window)
+(define-key steve-comma-motion-map "xo" #'steve-windows)
+(define-key steve-comma-motion-map "xO" #'steve-hydra-windows/body)
 (define-key steve-comma-motion-map "xg" #'magit-status)
 
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
@@ -297,6 +299,14 @@
               "\C-f" 'lusty-highlight-next-column
               "\C-b" 'lusty-highlight-previous-column)))
 
+;; All programming modes
+;; (Inherited by all/most other programming modes)
+(let ((temp-space-map (make-sparse-keymap)))
+  (define-key temp-space-map "," #'pop-tag-mark)
+  (evil-define-key*
+    '(motion normal) prog-mode-map
+    (kbd "C-SPC") temp-space-map))
+
 ;; Emacs Lisp
 (require 'ielm)  ;; so that ielm-map is defined
 (dolist (elisp-related-map (list emacs-lisp-mode-map
@@ -306,7 +316,6 @@
   (let ((temp-space-map (make-sparse-keymap)))
     ;; (define-key temp-space-map "." 'elisp-slime-nav-find-elisp-thing-at-point)
     (define-key temp-space-map "." #'elisp-def)
-    (define-key temp-space-map "," 'pop-tag-mark)
     (define-key temp-space-map "h" #'elisp-slime-nav-describe-elisp-thing-at-point)
     (define-key temp-space-map "e" 'eval-last-sexp)
     (define-key temp-space-map "k" 'eval-buffer)
@@ -316,6 +325,7 @@
     (define-key temp-space-map "x" #'eval-defun)
     (define-key temp-space-map "M" #'macrostep-expand)
     (define-key temp-space-map "W" #'steve-hydra-elisp-refs/body)
+    (define-key temp-space-map "?" #'steve-pp-eval-dwim)
     (evil-define-key*
       '(motion normal) elisp-related-map
       (kbd "C-SPC") temp-space-map))
@@ -337,24 +347,11 @@
 ;; Rust
 (define-prefix-command 'steve-evil-rust-space-motion-map)
 (define-key steve-evil-rust-space-motion-map "." 'racer-find-definition)
-(define-key steve-evil-rust-space-motion-map "," 'pop-tag-mark)
 (define-key steve-evil-rust-space-motion-map "h" 'racer-describe)
 (evil-define-key
   '(motion normal) rust-mode-map
-(evil-define-key
-  'insert rust-mode-map
-  (kbd "TAB") 'company-indent-or-complete-common
-  "\C-n" 'company-select-next
-  "\C-p" 'company-select-previous
-  (kbd "<right>") 'company-complete)
   (kbd "C-SPC") steve-evil-rust-space-motion-map)
 
-;; Rust/cargo compilation
-(evil-define-key
-  '(motion normal) cargo-process-mode-map
-  ;; (Rather than next compilation error.)
-  (kbd "TAB") 'steve-juggle-previous-buffer
-  )
 
 ;;;
 ;;; Overrides of default states in some modes.

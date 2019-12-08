@@ -36,6 +36,7 @@
   (define-key input-map "\e[STEVE-C-DEL" (kbd "C-DEL"))
   (define-key input-map "\e[STEVE-C-S-DEL" (kbd "C-S-DEL"))
   (define-key input-map "\e[STEVE-C-/" (kbd "C-/"))
+  (define-key input-map "\e[STEVE-C-'" (kbd "C-'"))
   ;; STEVE Not yet set in iTerm2 b/c it is a macOS binding.
   (define-key input-map "\e[STEVE-C-TAB" (kbd "C-TAB"))
   )
@@ -74,12 +75,15 @@
 
 (define-key help-map "H" #'steve-show-help-buffer)
 
+;; Window management
+;;
 ;; Change the active window with Shift-<arrow key>.
 (require 'windmove)
 (windmove-default-keybindings)
 ;; (setq windmove-wrap-around t)
 (setq windmove-wrap-around nil)
-
+;;
+(global-set-key (kbd "C-'") #'steve-windows)
 
 ;;;
 ;;; Hydras

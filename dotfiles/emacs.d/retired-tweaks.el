@@ -1,6 +1,23 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (assert false)
 
+;; Rust/cargo/company stuff
+;;
+;; (redundant with default bindings)
+(evil-define-key*
+  'insert rust-mode-map
+  (kbd "TAB") 'company-indent-or-complete-common
+  "\C-n" 'company-select-next
+  "\C-p" 'company-select-previous
+  (kbd "<right>") 'company-complete)
+;;
+(evil-define-key
+  '(motion normal) cargo-process-mode-map
+  ;; (Rather than next compilation-next-error in compilation-mode-map.)
+  ;(kbd "TAB") 'steve-juggle-previous-buffer
+  ;(kbd "TAB") 'cargo-next
+  "\t" 'compilation-next-error)
+
 ;; See `macrostep-expand` instead, or just `pp-macroexpand-last-sexp`.
 (defun steve-show-macroexpansion-for-region (beg end)
   (interactive "r")
