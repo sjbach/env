@@ -133,6 +133,23 @@
 ;; - sml/replacer-regexp-list
 (sml/setup)
 
+;; In the terminal, change the cursor glyph based on Evil state.
+(unless (display-graphic-p)
+  (require 'evil-terminal-cursor-changer)  ;; warning: package not maintained
+  ;; Note: each of the below evil-*-state-cursor vars must be set non-nil
+  ;; before running `evil-terminal-cursor-changer-activate` to avoid an error:
+  ;;
+  ;; `Error in pre-command-hook (etcc--evil-set-cursor): (void-variable seq)'
+  ;;
+  ;; See `cursor-type` for options.
+  (setq evil-motion-state-cursor 'box)   ; █
+  (setq evil-visual-state-cursor 'box)   ; █
+  (setq evil-normal-state-cursor 'box)   ; █
+  (setq evil-insert-state-cursor 'bar)   ; ⎸
+  (setq evil-emacs-state-cursor  'hbar)  ; _
+  (evil-terminal-cursor-changer-activate))
+;; (evil-terminal-cursor-changer-deactivate)
+
 ;; The completion buffer still shows too much boilerplate, but this helps
 (setq completion-show-help nil)
 
