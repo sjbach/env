@@ -1,5 +1,17 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
-(assert false)
+(cl-assert false)
+
+(evil-define-key*
+  'insert 'global
+  ;; Mapping C-d in insert mode to close buffer feels risky to me, but I want
+  ;; it in at least one place, so special case it.
+  "\C-d" #'(lambda ()
+             (interactive)
+             (if (string-equal (buffer-name) steve--temp-paste-buf-name)
+                 (kill-buffer-and-window)
+               ;; Default binding (though I never actually use this).
+               ; STEVE vv this path causes an error
+               (evil-shift-left-line 1))))
 
 ;; Rust/cargo/company stuff
 ;;

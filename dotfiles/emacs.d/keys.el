@@ -30,6 +30,7 @@
   ;; terminal emulator.
   (define-key input-map "\e[STEVE-C-SPC" (kbd "C-SPC"))
   (define-key input-map "\e[STEVE-C-S-SPC" (kbd "C-S-SPC"))
+  (define-key input-map "\e[STEVE-S-RET" [S-return])
   (define-key input-map "\e[STEVE-C-RET" [C-return])
   (define-key input-map "\e[STEVE-C-S-RET" [C-S-return])
   (define-key input-map "\e[STEVE-S-DEL" (kbd "S-DEL"))
@@ -37,8 +38,12 @@
   (define-key input-map "\e[STEVE-C-S-DEL" (kbd "C-S-DEL"))
   (define-key input-map "\e[STEVE-C-/" (kbd "C-/"))
   (define-key input-map "\e[STEVE-C-'" (kbd "C-'"))
+  (define-key input-map "\e[STEVE-C-," (kbd "C-,"))
+  (define-key input-map "\e[STEVE-C-." (kbd "C-."))
+  (define-key input-map "\e[STEVE-C--" (kbd "C--"))
   ;; STEVE Not yet set in iTerm2 b/c it is a macOS binding.
   (define-key input-map "\e[STEVE-C-TAB" (kbd "C-TAB"))
+  ;; Note: C-- --> `negative-argument`
   )
 
 
@@ -54,8 +59,7 @@
 (global-set-key [f5] #'other-frame)
 (global-set-key [S-f5] (kbd "C-u - <f5>"))
 
-(global-set-key [C-return] 'steve-juggle-previous-buffer)
-(global-set-key (kbd "C-SPC") nil)  ;; STEVE
+;; (global-set-key (kbd "C-SPC") nil)  ;; STEVE
 (global-set-key (kbd "S-RET") nil)  ;; STEVE
 ;; Aside: `DEL` refers to the backspace key; The Delete key is
 ;; `delete`/`<deletechar>`.
@@ -84,6 +88,9 @@
 (setq windmove-wrap-around nil)
 ;;
 (global-set-key (kbd "C-'") #'steve-windows)
+(global-set-key [C-return] 'steve-juggle-previous-buffer)
+(global-set-key (kbd "C-\\") #'cf-other-frame)  ;; overrides toggle-input-method
+
 
 ;;;
 ;;; Hydras
