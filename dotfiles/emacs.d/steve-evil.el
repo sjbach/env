@@ -251,15 +251,9 @@
   ;; STEVE instead of global should be the map for fundamental-mode (if one
   ;; existed).
   'insert 'global
-  ;; Mapping C-d in insert mode to close buffer feels risky to me, but I want
-  ;; it in at least one place, so special case it.
-  "\C-d" #'(lambda ()
-             (interactive)
-             (if (string-equal (buffer-name) steve--temp-paste-buf-name)
-                 (kill-buffer-and-window)
-               ;; Default binding (though I never actually use this).
-               ; STEVE vv this path causes an error
-               (evil-shift-left-line 1))))
+  ;; Scroll-other in insert mode.
+  "\M-y" #'steve-evil-scroll-line-up-other     ;; overrides `keyboard-quit`
+  "\M-e" #'steve-evil-scroll-line-down-other)  ;; overrides `forward-sentence`
 
 ;;;
 ;;; Mode-specific bindings:
