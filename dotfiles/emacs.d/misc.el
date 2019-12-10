@@ -104,7 +104,8 @@
 
 (defun steve-juggle-previous-buffer ()
   (interactive)
-  (switch-to-buffer (other-buffer)))
+  ;; "True" previous buffer; forgo the logic of preferring non-visible buffers.
+  (switch-to-buffer (other-buffer 'visible-ok) nil 'force-same-window))
 
 (defun steve-show-help-buffer ()
   (interactive)
@@ -114,7 +115,9 @@
       (let ((help-window (get-buffer-window help-buffer-name)))
         (if help-window
             (select-window help-window)
-          (pop-to-buffer help-buffer-name))))))
+          ;; Prefer the buffer be shown in a different window.
+          ;; (pop-to-buffer help-buffer-name))))))
+          (switch-to-buffer-other-window help-buffer-name))))))
 
 ;; Debug print. Evaluate the given form (just once, in case it has
 ;; side-effects), print its representation to *Messages*, and return it.
