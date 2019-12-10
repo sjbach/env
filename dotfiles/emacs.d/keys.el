@@ -41,6 +41,7 @@
   (define-key input-map "\e[STEVE-C-," (kbd "C-,"))
   (define-key input-map "\e[STEVE-C-." (kbd "C-."))
   (define-key input-map "\e[STEVE-C--" (kbd "C--"))
+  (define-key input-map "\e[STEVE-C-S-'" (kbd "C-S-'"))
   ;; STEVE Not yet set in iTerm2 b/c it is a macOS binding.
   (define-key input-map "\e[STEVE-C-TAB" (kbd "C-TAB"))
   ;; Note: C-- --> `negative-argument`
@@ -88,6 +89,7 @@
 (setq windmove-wrap-around nil)
 ;;
 (global-set-key (kbd "C-'") #'steve-windows)
+(global-set-key (kbd "C-S-'") (kbd "C-u - C-'"))
 (global-set-key [C-return] 'steve-juggle-previous-buffer)
 (global-set-key (kbd "C-\\") #'cf-other-frame)  ;; overrides toggle-input-method
 
