@@ -109,8 +109,8 @@
 (define-key steve-comma-motion-map "x" ctl-x-map)
 (define-key steve-comma-motion-map "xk" #'steve-kill-buffer)
 ;; (define-key steve-comma-motion-map "xo" #'ace-window)
-(define-key steve-comma-motion-map "xo" #'steve-windows)
-(define-key steve-comma-motion-map "xO" #'steve-hydra-windows/body)
+;; (define-key steve-comma-motion-map "xo" #'vitreous)
+(define-key steve-comma-motion-map "xO" #'vitreous-hydra/body)
 (define-key steve-comma-motion-map "xg" #'magit-status)
 
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
