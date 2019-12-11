@@ -245,7 +245,7 @@
   "\M-y" #'steve-evil-scroll-line-up-other
   "\M-e" #'steve-evil-scroll-line-down-other
   ;; Replaces evil-shell-command
-  "!" (lambda () (interactive) (w)))
+  "!" #'save-buffer)
 
 (evil-define-key*
   ;; STEVE instead of global should be the map for fundamental-mode (if one
@@ -370,9 +370,4 @@
 (defun e ()
   (interactive)
   (revert-buffer nil t))
-
-;; Note: could probably use `evil-write` instead, but I'm used to this.
-(defun w (&optional args)
-  ;; (interactive "p")
-  (save-buffer args))
 

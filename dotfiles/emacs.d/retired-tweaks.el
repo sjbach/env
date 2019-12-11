@@ -211,6 +211,10 @@
 (require 'scf-mode)
 (add-hook 'grep-mode-hook (lambda () (scf-mode 1)))
 
+(defun w (&optional args)
+  (interactive "p")
+  (save-buffer args))
+
 (defun q (&optional args)
   (interactive "P")
   (save-buffers-kill-emacs args))
