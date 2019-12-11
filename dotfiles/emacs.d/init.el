@@ -99,7 +99,7 @@
         "clojure.el"
         "R.el"
         "rust.el"
-        "steve-evil.el"
+        "evil-tweaks.el"
         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
         ))
 
