@@ -96,7 +96,6 @@
         "prose.el"
         "misc.el"
         "code-conventions.el"
-        "clojure.el"
         "R.el"
         "rust.el"
         "evil-tweaks.el"
