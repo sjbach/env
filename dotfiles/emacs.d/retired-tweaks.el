@@ -128,6 +128,19 @@
 (setq jit-lock-stealth-time 0.5)
 (setq jit-lock-stealth-nice 0.1)
 
+(when (file-exists-p "~/clojure")
+  ;; TODO: cleanup
+  ;(add-to-list 'load-path "~/clojure/swank-clojure")
+  ;(setq swank-clojure-jar-path "~/clojure/clojure-git/clojure.jar")
+  ;(require 'swank-clojure-autoload)
+
+;  (eval-after-load "slime"
+;    '(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl"))))
+
+  (add-to-list 'load-path "~/clojure/clojure-mode")
+  (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
+  (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode)))
+
 ;; force horizontal splits - stolen from stackoverflow somewhere
 (setq split-height-threshold
       (if (>= emacs-major-version 23)
