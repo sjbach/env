@@ -20,18 +20,34 @@
 (defun steve-kill-buffer ()
   (interactive)
   (kill-buffer (current-buffer)))
-(defun steve-show-macroexpansion-for-region (beg end)
-  (interactive "r")
-  (unless (and beg end)
-    (error "No region given"))
-  (let* ((s (buffer-substring-no-properties beg end))
-         (sexp (read s))
-         (macroexpanded (macroexpand-1 sexp))
-         (buf-name "*Steve-Macroexpanded*")
-         (temp-buffer-setup-hook '(emacs-lisp-mode)))
-    (with-output-to-temp-buffer buf-name
-      ;(print macroexpanded)
-      (pp macroexpanded))))
+
+(defun steve-pp-eval-dwim ()
+  (interactive)
+  (let ((sexp
+         (cond ((use-region-p)
+                ;; Eval region.
+                (read
+                 (buffer-substring-no-properties (region-beginning)
+                                                 (region-end))))
+               ;; Aside: in Evil w/ filled cursor, char-after is the character under
+               ;; cursor and char-before is the character before cursor.
+               ((eq (char-after) ?\ )  ;; if Evil cursor is on a space
+                ;; Eval surrounding sexp.
+                (save-excursion
+                  (up-list)
+                  (sexp-at-point)))
+               ((eq (char-after) ?\()  ;; if Evil cursor is on a left paren
+                ;; Eval next sexp (i.e. that begins with this parenthesis).
+                (sexp-at-point))
+               ((eq (char-after) ?\))  ;; if Evil cursor is on a right paren
+                ;; Eval prior (enclosing) sexp, including this paren
+                (save-excursion
+                  (up-list)
+                  (sexp-at-point)))
+               (t
+                (sexp-at-point)))))
+    (message "Evaluating: `%s'" sexp)
+    (pp-eval-expression sexp)))
 
 ; STEVE make work in terminal
 (defun steve-vim-excursion ()
@@ -88,29 +104,42 @@
 
 (defun steve-juggle-previous-buffer ()
   (interactive)
-  (switch-to-buffer (other-buffer)))
+  ;; "True" previous buffer; forgo the logic of preferring non-visible buffers.
+  (switch-to-buffer (other-buffer 'visible-ok) nil 'force-same-window))
 
 (defun steve-show-help-buffer ()
   (interactive)
-  ;; (let ((help-buffer-name (get-buffer "*Help*")))
   (let ((help-buffer-name (help-buffer)))
     (if (null help-buffer-name)
         (error "No help buffer.")
       (let ((help-window (get-buffer-window help-buffer-name)))
         (if help-window
             (select-window help-window)
-          (switch-to-buffer help-buffer-name))))))
+          ;; Prefer the buffer be shown in a different window.
+          ;; (pop-to-buffer help-buffer-name))))))
+          (switch-to-buffer-other-window help-buffer-name))))))
 
 ;; Debug print. Evaluate the given form (just once, in case it has
 ;; side-effects), print its representation to *Messages*, and return it.
-(defmacro STEVE-dp (arg)
-  (let ((name-var (gensym "STEVE-name"))
+(require 'cl-lib)
+(defmacro STEVE-dp (&rest args)
+  (let ((sym-var (gensym "STEVE-name"))
         (val-var (gensym "STEVE-val")))
-    `(let ((,name-var ',arg)
-           (,val-var ,arg))
-       (message "STEVE-dp %S: %S" ,name-var ,val-var)
-       (message nil)
-       ,val-var)))
+    (cl-multiple-value-bind (msg-string sexp)
+        (cl-case (length args)
+          (0 (error "STEVE-dp: no args provided"))
+          (1 (cl-values "STEVE-dp %S: %S" (car args)))
+          (2 (unless (stringp (car args))
+               (error "STEVE-dp: malformed args: %S" args))
+             (let ((annotation (car args)))
+               (cl-values (format "STEVE-dp \"%s\" %%S: %%S" annotation)
+                          (cadr args))))
+          (t (error "STEVE-dp: too many args: %S" args)))
+      `(let ((,sym-var ',sexp)
+             (,val-var ,sexp))
+         (message ,msg-string ,sym-var ,val-var)
+         (message nil)
+         ,val-var))))
 
 (defun steve-toggle-dp-on-sexp ()
   (interactive)
@@ -125,10 +154,31 @@
         (check-parens)  ;; (Just in case; should not be able to fail here.)
         (atomic-change-group
           (if (looking-at (rx point "(STEVE-dp"))
-              ;; Remove the (STEVE-dp ...) wrapper.
-              (progn
+              (let ((has-annotation-p
+                     (let ((sexp (read (buffer-string))))
+                       (cl-case (length sexp)
+                         ((0 1) (error "Form is empty"))
+                         ((2 3)
+                          (unless (eq (car sexp) 'STEVE-dp)
+                            (error "Not a debug-print form"))
+                          (if (= (length sexp) 3)
+                              (progn
+                                (when (not (stringp (cadr sexp)))
+                                  (error "Form is invalid"))
+                                t)
+                            nil))
+                         (t (error "Form is invalid"))))))
+                ;; Remove the (STEVE-dp ...) wrapper.
                 (delete-char (length "(STEVE-dp"))
                 (delete-horizontal-space)
+                (when has-annotation-p
+                  (cl-assert (looking-at (rx point "\"")))
+                  ;; There is an annotation string - remove it as well.
+                  (cl-destructuring-bind (str-beg . str-end)
+                      (bounds-of-thing-at-point 'sexp)
+                    (delete-region str-beg str-end))
+                  (delete-horizontal-space))
+                ;; Trailing ")".
                 (end-of-buffer)
                 (backward-char)
                 (cl-assert (looking-at ")"))

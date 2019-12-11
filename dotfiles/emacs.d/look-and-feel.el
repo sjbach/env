@@ -29,11 +29,15 @@
 (require 'diminish)
 (add-hook 'after-init-hook
           (lambda ()
+            (diminish 'visual-line-mode)
             (diminish 'undo-tree-mode)
             (diminish 'company-mode)
+            (diminish 'emacs-lock-mode)
             (diminish 'git-gutter-mode)
             (diminish 'eldoc-mode)
             (diminish 'elisp-slime-nav-mode)
+            (diminish 'elisp-def-mode)
+            (diminish 'flyspell-mode)
             (diminish 'which-key-mode)
             (diminish 'racer-mode)
             (diminish 'cargo-minor-mode)
@@ -71,6 +75,13 @@
 (require 'git-gutter)
 (global-git-gutter-mode 1)
 
+;; Faster eldoc annotations.
+(setq eldoc-idle-delay 0.1)  ;; default: 0.5
+
+;; More info in `undo-tree-visualize`.
+(setq undo-tree-visualizer-relative-timestamps t)
+(setq undo-tree-visualizer-timestamps t)
+
 (require 'company)
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
@@ -82,6 +93,7 @@
 ;;
 
 (dumb-jump-mode 1)
+;; (setq dumb-jump-selector 'helm)
 (setq dumb-jump-selector 'ivy)
 
 ;; Ace window
@@ -105,9 +117,38 @@
 ;; (which-key-setup-side-window-bottom)
 (which-key-setup-side-window-right)
 
-;; Show colums and lines in the status bar
-(column-number-mode t)
+;; Mode line
+;;
+;; Show line and column numbers in the mode line.
+(column-number-mode 1)
 (line-number-mode 1)
+;;
+;; Smart-mode-line
+(require 'smart-mode-line)
+(setq sml/show-frame-identification t)  ;; show frame name
+(setq sml/theme 'smart-mode-line-powerline)
+;; Other relevant variables:
+;; - sml/name-width ;; default: 44
+;; - sml/mode-width ;; default: 'full
+;; - sml/replacer-regexp-list
+(sml/setup)
+
+;; In the terminal, change the cursor glyph based on Evil state.
+(unless (display-graphic-p)
+  (require 'evil-terminal-cursor-changer)  ;; warning: package not maintained
+  ;; Note: each of the below evil-*-state-cursor vars must be set non-nil
+  ;; before running `evil-terminal-cursor-changer-activate` to avoid an error:
+  ;;
+  ;; `Error in pre-command-hook (etcc--evil-set-cursor): (void-variable seq)'
+  ;;
+  ;; See `cursor-type` for options.
+  (setq evil-motion-state-cursor 'box)   ; █
+  (setq evil-visual-state-cursor 'box)   ; █
+  (setq evil-normal-state-cursor 'box)   ; █
+  (setq evil-insert-state-cursor 'bar)   ; ⎸
+  (setq evil-emacs-state-cursor  'hbar)  ; _
+  (evil-terminal-cursor-changer-activate))
+;; (evil-terminal-cursor-changer-deactivate)
 
 ;; The completion buffer still shows too much boilerplate, but this helps
 (setq completion-show-help nil)

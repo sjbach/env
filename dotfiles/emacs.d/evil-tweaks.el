@@ -28,6 +28,19 @@
 ;; Magit
 (setq evil-magit-state 'motion)
 (require 'evil-magit)
+;; Override remapping of ":", as I use it for `execute-extended-command`.
+;; Remove mapping for `evil-ex`
+(evil-define-key evil-magit-state magit-mode-map ":" nil)
+;; Remove mapping for `magit-git-command`
+(define-key magit-status-mode-map ":" nil)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 1")
+  #'magit-section-show-level-1-all)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 2")
+  #'magit-section-show-level-2-all)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 3")
+  #'magit-section-show-level-3-all)
+(evil-define-key evil-magit-state magit-mode-map (kbd "C-SPC 4")
+  #'magit-section-show-level-4-all)
 
 ;; Surround
 (require 'evil-surround)
@@ -70,6 +83,9 @@
   ;; I use different bindings for tag stuff.
   "\C-t" nil)
 
+;; No accidental `evil-quit` call.
+(define-key evil-window-map "q" nil)
+
 
 ;;;
 ;;; Custom general-use bindings (global-ish).
@@ -83,17 +99,18 @@
 (define-prefix-command 'steve-comma-motion-map)
 (define-key evil-motion-state-map "," 'steve-comma-motion-map)
 (define-key steve-comma-motion-map "r" 'lusty-file-explorer)
-;; (define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
-(define-key steve-comma-motion-map "B" #'lusty-buffer-explorer)
+(define-key steve-comma-motion-map "b" 'lusty-buffer-explorer)
+;; (define-key steve-comma-motion-map "B" #'lusty-buffer-explorer)
 (define-key steve-comma-motion-map "A" 'beginning-of-defun)
 (define-key steve-comma-motion-map "p" 'fill-paragraph)
 ; STEVE rarely used vv
-(define-key steve-comma-motion-map "h" 'ff-find-other-file)
 (define-key steve-comma-motion-map " " 'locate)
 
 (define-key steve-comma-motion-map "x" ctl-x-map)
 (define-key steve-comma-motion-map "xk" #'steve-kill-buffer)
-(define-key steve-comma-motion-map "xo" #'ace-window)
+;; (define-key steve-comma-motion-map "xo" #'ace-window)
+;; (define-key steve-comma-motion-map "xo" #'vitreous)
+(define-key steve-comma-motion-map "xO" #'vitreous-hydra/body)
 (define-key steve-comma-motion-map "xg" #'magit-status)
 
 (define-key steve-comma-motion-map "v" 'steve-vim-excursion)
@@ -108,6 +125,8 @@
 
 (define-key steve-comma-motion-map "mj" #'bookmark-jump)
 (define-key steve-comma-motion-map "ms" #'bookmark-set)
+
+(define-key steve-comma-motion-map "h" #'steve-hydra-hideshow/body)
 
 (defun steve-eval-region-and-close-visual-mode (beg end)
   (interactive "r")
@@ -224,28 +243,24 @@
   "\C-y" #'steve-evil-scroll-line-up
   "\C-e" #'steve-evil-scroll-line-down
   "\M-y" #'steve-evil-scroll-line-up-other
-  "\M-e" #'steve-evil-scroll-line-down-other)
+  "\M-e" #'steve-evil-scroll-line-down-other
+  ;; Replaces evil-shell-command
+  "!" #'save-buffer)
 
 (evil-define-key*
   ;; STEVE instead of global should be the map for fundamental-mode (if one
   ;; existed).
   'insert 'global
-  ;; Mapping C-d in insert mode to close buffer feels risky to me, but I want
-  ;; it in at least one place, so special case it.
-  "\C-d" #'(lambda ()
-             (interactive)
-             (if (string-equal (buffer-name) steve--temp-paste-buf-name)
-                 (kill-buffer-and-window)
-               ;; Default binding (though I never actually use this).
-               ; STEVE vv this path causes an error
-               (evil-shift-left-line 1))))
+  ;; Scroll-other in insert mode.
+  "\M-y" #'steve-evil-scroll-line-up-other     ;; overrides `keyboard-quit`
+  "\M-e" #'steve-evil-scroll-line-down-other)  ;; overrides `forward-sentence`
 
 ;;;
 ;;; Mode-specific bindings:
 ;;;
 
 ;;
-;; Generally, SPC as a Vim-style leader key.
+;; Generally, C-SPC as a Vim-style leader key.
 
 ;; Help
 (let ((temp-space-map (make-sparse-keymap)))
@@ -262,8 +277,6 @@
   (define-key temp-space-map "," 'help-go-back)
   (evil-define-key*
     '(motion normal) help-mode-map
-    ;(kbd "C-h") 'help-go-back
-    ;(kbd "C-l") 'help-go-forward
     (kbd "C-SPC") temp-space-map))
 
 ;; Lusty Explorer
@@ -280,26 +293,37 @@
               "\C-f" 'lusty-highlight-next-column
               "\C-b" 'lusty-highlight-previous-column)))
 
+;; All programming modes
+;; (Inherited by all/most other programming modes)
+(let ((temp-space-map (make-sparse-keymap)))
+  (define-key temp-space-map "," #'pop-tag-mark)
+  (evil-define-key*
+    '(motion normal) prog-mode-map
+    (kbd "C-SPC") temp-space-map))
+
 ;; Emacs Lisp
+(require 'ielm)  ;; so that ielm-map is defined
 (dolist (elisp-related-map (list emacs-lisp-mode-map
-                                 lisp-interaction-mode-map))
+                                 lisp-interaction-mode-map
+                                 ielm-map))
+  ;; All motion modes
   (let ((temp-space-map (make-sparse-keymap)))
-    ;; Note: I think the glue for this is provided by the `elisp-slime-nav`
-    ;; package.
-    ;(define-key temp-space-map "." 'xref-find-definitions)
-    ;(define-key temp-space-map "," 'xref-pop-marker-stack)
-    (define-key temp-space-map "." 'elisp-slime-nav-find-elisp-thing-at-point)
-    (define-key temp-space-map "," 'pop-tag-mark)
-    (define-key temp-space-map "d" 'elisp-slime-nav-describe-elisp-thing-at-point)
+    ;; (define-key temp-space-map "." 'elisp-slime-nav-find-elisp-thing-at-point)
+    (define-key temp-space-map "." #'elisp-def)
+    (define-key temp-space-map "h" #'elisp-slime-nav-describe-elisp-thing-at-point)
     (define-key temp-space-map "e" 'eval-last-sexp)
     (define-key temp-space-map "k" 'eval-buffer)
     (define-key temp-space-map "K" 'eval-buffer)
     (define-key temp-space-map "i" #'steve-toggle-dp-on-sexp)
     (define-key temp-space-map "\C-i" #'steve-toggle-dp-on-sexp)
     (define-key temp-space-map "x" #'eval-defun)
+    (define-key temp-space-map "M" #'macrostep-expand)
+    (define-key temp-space-map "W" #'steve-hydra-elisp-refs/body)
+    (define-key temp-space-map "?" #'steve-pp-eval-dwim)
     (evil-define-key*
       '(motion normal) elisp-related-map
       (kbd "C-SPC") temp-space-map))
+  ;; Visual mode only
   (let ((temp-space-map (make-sparse-keymap)))
     (define-key temp-space-map "r" #'steve-eval-region-and-close-visual-mode)
     (evil-define-key*
@@ -317,25 +341,11 @@
 ;; Rust
 (define-prefix-command 'steve-evil-rust-space-motion-map)
 (define-key steve-evil-rust-space-motion-map "." 'racer-find-definition)
-(define-key steve-evil-rust-space-motion-map "," 'pop-tag-mark)
-(define-key steve-evil-rust-space-motion-map "d" 'racer-describe)
 (define-key steve-evil-rust-space-motion-map "h" 'racer-describe)
 (evil-define-key
   '(motion normal) rust-mode-map
-(evil-define-key
-  'insert rust-mode-map
-  (kbd "TAB") 'company-indent-or-complete-common
-  "\C-n" 'company-select-next
-  "\C-p" 'company-select-previous
-  (kbd "<right>") 'company-complete)
   (kbd "C-SPC") steve-evil-rust-space-motion-map)
 
-;; Rust/cargo compilation
-(evil-define-key
-  '(motion normal) cargo-process-mode-map
-  ;; (Rather than next compilation error.)
-  (kbd "TAB") 'steve-juggle-previous-buffer
-  )
 
 ;;;
 ;;; Overrides of default states in some modes.
@@ -360,9 +370,4 @@
 (defun e ()
   (interactive)
   (revert-buffer nil t))
-
-;; Note: could probably use `evil-write` instead, but I'm used to this.
-(defun w (&optional args)
-  (interactive "p")
-  (save-buffer args))
 

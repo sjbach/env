@@ -1,5 +1,47 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
-(assert false)
+(cl-assert false)
+
+(evil-define-key*
+  'insert 'global
+  ;; Mapping C-d in insert mode to close buffer feels risky to me, but I want
+  ;; it in at least one place, so special case it.
+  "\C-d" #'(lambda ()
+             (interactive)
+             (if (string-equal (buffer-name) steve--temp-paste-buf-name)
+                 (kill-buffer-and-window)
+               ;; Default binding (though I never actually use this).
+               ; STEVE vv this path causes an error
+               (evil-shift-left-line 1))))
+
+;; Rust/cargo/company stuff
+;;
+;; (redundant with default bindings)
+(evil-define-key*
+  'insert rust-mode-map
+  (kbd "TAB") 'company-indent-or-complete-common
+  "\C-n" 'company-select-next
+  "\C-p" 'company-select-previous
+  (kbd "<right>") 'company-complete)
+;;
+(evil-define-key
+  '(motion normal) cargo-process-mode-map
+  ;; (Rather than next compilation-next-error in compilation-mode-map.)
+  ;(kbd "TAB") 'steve-juggle-previous-buffer
+  ;(kbd "TAB") 'cargo-next
+  "\t" 'compilation-next-error)
+
+;; See `macrostep-expand` instead, or just `pp-macroexpand-last-sexp`.
+(defun steve-show-macroexpansion-for-region (beg end)
+  (interactive "r")
+  (unless (and beg end)
+    (error "No region given"))
+  (let* ((s (buffer-substring-no-properties beg end))
+         (sexp (read s))
+         (macroexpanded (macroexpand-1 sexp))
+         (buf-name "*Steve-Macroexpanded*")
+         (temp-buffer-setup-hook '(emacs-lisp-mode)))
+    (with-output-to-temp-buffer buf-name
+      (pp macroexpanded))))
 
 (global-set-key (kbd "C-S-L") 'latex-preview-pane-mode)
 
@@ -86,6 +128,19 @@
 (setq jit-lock-stealth-time 0.5)
 (setq jit-lock-stealth-nice 0.1)
 
+(when (file-exists-p "~/clojure")
+  ;; TODO: cleanup
+  ;(add-to-list 'load-path "~/clojure/swank-clojure")
+  ;(setq swank-clojure-jar-path "~/clojure/clojure-git/clojure.jar")
+  ;(require 'swank-clojure-autoload)
+
+;  (eval-after-load "slime"
+;    '(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl"))))
+
+  (add-to-list 'load-path "~/clojure/clojure-mode")
+  (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
+  (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode)))
+
 ;; force horizontal splits - stolen from stackoverflow somewhere
 (setq split-height-threshold
       (if (>= emacs-major-version 23)
@@ -168,6 +223,10 @@
 ;; Disabled now that I'm not working in java as much
 (require 'scf-mode)
 (add-hook 'grep-mode-hook (lambda () (scf-mode 1)))
+
+(defun w (&optional args)
+  (interactive "p")
+  (save-buffer args))
 
 (defun q (&optional args)
   (interactive "P")

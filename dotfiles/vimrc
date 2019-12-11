@@ -56,29 +56,27 @@ else
   colorscheme desert
 end
 
+""
+"" Bindings
+""
+
 " Change <Leader>
 let mapleader = ","
 
 " Quick timeouts on key combinations.
 set timeoutlen=300
 
-" Alternatives to ESC:
-"imap jkl <ESC>
-"imap jlk <ESC>
-"imap kjl <ESC>
-"imap klj <ESC>
-"imap lkj <ESC>
-"imap ljk <ESC>
-"imap ;l <ESC>
+" Use '!' to save.
+nmap ! :w<CR>
+
+" Unmap ZZ and ZQ because they can be pressed accidentally.
+" Aside: there is `:unmap` but it can't be used for internal/native bindings.
+map ZZ <Nop>
+map ZQ <Nop>
 
 " "Very magic" regexes in searches
 "nnoremap / /\v
 "nnoremap ? ?\v
-
-" Vi-style editing in the command-line
-"nnoremap : q:a
-"nnoremap / q/a
-"nnoremap ? q?a
 
 " Lusty
 "let g:LustyJugglerShowKeys = 2
@@ -122,12 +120,14 @@ vmap <C-d> :bw<CR>
 nmap <silent> <C-n> :silent :nohlsearch<CR>
 nmap <silent> <C-_> :silent :nohlsearch<CR>
 
-
 " Scroll faster
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
 vnoremap <C-e> 3<C-e>
 vnoremap <C-y> 3<C-y>
+
+" a.vim
+nmap <silent> <Leader>h :A<CR>
 
 " % matches on if/else, html tags, etc.
 runtime macros/matchit.vim
@@ -148,9 +148,6 @@ autocmd FileType r set ts=2 shiftwidth=2 expandtab
 autocmd BufReadPre viper,.viper set filetype=lisp
 autocmd FileType tex set ts=2 shiftwidth=2 expandtab
 
-" a.vim
-nmap <silent> <Leader>h :A<CR>
-
 " Indent XML readably
 function! DoPrettyXML()
 	1,$!xmllint --format --recover -
@@ -158,7 +155,7 @@ function! DoPrettyXML()
 endfunction
 command! PrettyXML call DoPrettyXML()
 
-" Load local settings
+" Load local/private settings
 if filereadable($HOME . "/.vimrc-local")
 	source ~/.vimrc-local
 endif
