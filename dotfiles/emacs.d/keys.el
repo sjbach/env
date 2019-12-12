@@ -52,6 +52,12 @@
 ;;; Context-free global bindings
 ;;;
 
+;; No good reason for quitting Emacs to be a convenient key sequence.
+(define-key ctl-x-map (kbd "C-c") nil)
+(define-key ctl-x-map (kbd "C-c C-x C-c C-x C-c") #'save-buffers-kill-terminal)
+
+;; Remap some function keys
+;;
 ;; Instead of kmacro-start-macro-or-insert-counter
 (global-set-key [f3] 'steve-juggle-previous-buffer)
 ;; Instead of kmacro-end-or-call-macro
@@ -60,24 +66,16 @@
 (global-set-key [f5] #'other-frame)
 (global-set-key [S-f5] (kbd "C-u - <f5>"))
 
-;; (global-set-key (kbd "C-SPC") nil)  ;; STEVE
-(global-set-key (kbd "S-RET") nil)  ;; STEVE
+;; Buffer management
+;;
+;; (global-set-key [C-return] 'steve-juggle-previous-buffer)
+(global-set-key [C-return] #'rummage-other-buffer)
+;;
 ;; Aside: `DEL` refers to the backspace key; The Delete key is
 ;; `delete`/`<deletechar>`.
 (global-set-key (kbd "C-DEL") #'steve-kill-buffer)
 (global-set-key (kbd "C-S-DEL") #'kill-buffer-and-window)
-
-;; No good reason for quitting Emacs to be a convenient key sequence.
-(define-key ctl-x-map (kbd "C-c") nil)
-(define-key ctl-x-map (kbd "C-c C-x C-c C-x C-c") #'save-buffers-kill-terminal)
-
-;; I use frames as pseudo-workspaces, I don't want to delete them all
-;; accidentally because of a mistype.
-(define-key ctl-x-5-map "1"
-  (lambda (&optional dummy)
-    (interactive)
-    (message "Run `M-x delete-other-frames'")))
-
+;;
 (define-key help-map "H" #'steve-show-help-buffer)
 
 ;; Window management
@@ -90,9 +88,16 @@
 ;;
 (global-set-key (kbd "C-'") #'vitreous-other-window)
 (global-set-key (kbd "C-S-'") (kbd "C-u - C-'"))
-;; (global-set-key [C-return] 'steve-juggle-previous-buffer)
-(global-set-key [C-return] #'rummage-other-buffer)
+
+;; Frame management
 (global-set-key (kbd "C-\\") #'cf-other-frame)  ;; overrides toggle-input-method
+;;
+;; I use frames as pseudo-workspaces, I don't want to delete them all
+;; accidentally because of a mistype.
+(define-key ctl-x-5-map "1"
+  (lambda (&optional dummy)
+    (interactive)
+    (message "Run `M-x delete-other-frames'")))
 
 
 ;;;
