@@ -73,6 +73,7 @@
 (define-key (cdr ido-minor-mode-map-entry) [remap kill-buffer] nil)
 
 (require 'git-gutter)
+(setq git-gutter:modified-sign "*")  ;; overrides "="
 (global-git-gutter-mode 1)
 
 ;; Faster eldoc annotations.
@@ -90,6 +91,7 @@
 ;; A little extra highlighting in Lisp.
 (require 'lisp-extra-font-lock)
 (lisp-extra-font-lock-global-mode 1)
+(require 'highlight-parentheses)
 ;;
 
 (dumb-jump-mode 1)
@@ -121,7 +123,7 @@
 ;;
 ;; Show line and column numbers in the mode line.
 (column-number-mode 1)
-(line-number-mode 1)
+(line-number-mode 1)  ;; (in mode line, not in text body)
 ;;
 ;; Smart-mode-line
 (require 'smart-mode-line)

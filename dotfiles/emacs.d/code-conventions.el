@@ -24,6 +24,7 @@
   (add-hook elisp-hook #'company-mode)
   ;; (setq rainbow-delimiters-max-face-count 8)  ;; vs 9
   (add-hook elisp-hook #'rainbow-delimiters-mode)
+  (add-hook elisp-hook #'highlight-parentheses-mode)
   ;; Better version of `xref-find-definitions` or
   ;; `elisp-slime-nav-find-elisp-thing-at-point` that works on e.g. local
   ;; bindings, functions defined in macros (such as by cl-defstruct).

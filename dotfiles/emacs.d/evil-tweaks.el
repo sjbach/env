@@ -16,6 +16,9 @@
 (require 'evil)
 (evil-mode 1)
 
+;; Save and restore markers across sessions.
+(add-to-list 'desktop-locals-to-save 'evil-markers-alist)
+
 ;; This evil-collection setting appears to pre-date `evil-want-minibuffer` in
 ;; the standard evil package, so I'm not clear whether or not it's redundant,
 ;; but I notice setting it makes the custom lusty-explorer bindings work
@@ -46,7 +49,9 @@
 (require 'evil-surround)
 (global-evil-surround-mode 1)
 
-(add-to-list 'desktop-locals-to-save 'evil-markers-alist)
+;; Matchit
+(require 'evil-matchit)
+(global-evil-matchit-mode 1)
 
 ;;;
 ;;; Overrides of default evil bindings.
@@ -68,11 +73,11 @@
 (define-key evil-motion-state-map "`" 'evil-goto-mark-line)
 
 ;; I don't use :ex mode (evil-ex).
-(define-key evil-motion-state-map ":" 'execute-extended-command)
-;; Shift-meta-: is awkward.
-(define-key evil-motion-state-map "\M-;" #'eval-expression)
-;; I don't use ';' for its traditional purpose ("Repeat latest f, t, F or T").
-; (define-key evil-motion-state-map ";" 'execute-extended-command)
+(define-key evil-motion-state-map ":" #'execute-extended-command)
+;; `pp-eval-expression' is generally superior to `eval-expression'.
+(define-key evil-motion-state-map "\M-:" #'pp-eval-expression)
+;; S-M-: is awkward.
+(define-key evil-motion-state-map "\M-;" #'pp-eval-expression)
 
 (evil-define-key*
   'normal 'global
@@ -245,7 +250,12 @@
   "\M-y" #'steve-evil-scroll-line-up-other
   "\M-e" #'steve-evil-scroll-line-down-other
   ;; Replaces evil-shell-command
-  "!" #'save-buffer)
+  "!" (lambda () (interactive) (error "Press \"S\"")))
+
+(evil-define-key*
+  'normal 'global
+  ;; Replaces `evil-change-whole-line', which is functionally the same as "cc".
+  "S" #'save-buffer)
 
 (evil-define-key*
   ;; STEVE instead of global should be the map for fundamental-mode (if one

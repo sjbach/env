@@ -90,7 +90,8 @@
 ;;
 (global-set-key (kbd "C-'") #'vitreous-other-window)
 (global-set-key (kbd "C-S-'") (kbd "C-u - C-'"))
-(global-set-key [C-return] 'steve-juggle-previous-buffer)
+;; (global-set-key [C-return] 'steve-juggle-previous-buffer)
+(global-set-key [C-return] #'rummage-other-buffer)
 (global-set-key (kbd "C-\\") #'cf-other-frame)  ;; overrides toggle-input-method
 
 
