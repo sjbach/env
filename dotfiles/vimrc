@@ -66,8 +66,8 @@ let mapleader = ","
 " Quick timeouts on key combinations.
 set timeoutlen=300
 
-" Use '!' to save.
-nmap ! :w<CR>
+" Use 'S' to save. The original 'S' is essentially the same as 'cc'.
+nmap S :w<CR>
 
 " Unmap ZZ and ZQ because they can be pressed accidentally.
 " Aside: there is `:unmap` but it can't be used for internal/native bindings.

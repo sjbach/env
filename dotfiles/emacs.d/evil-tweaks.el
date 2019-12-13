@@ -248,9 +248,7 @@
   "\C-y" #'steve-evil-scroll-line-up
   "\C-e" #'steve-evil-scroll-line-down
   "\M-y" #'steve-evil-scroll-line-up-other
-  "\M-e" #'steve-evil-scroll-line-down-other
-  ;; Replaces evil-shell-command
-  "!" (lambda () (interactive) (error "Press \"S\"")))
+  "\M-e" #'steve-evil-scroll-line-down-other)
 
 (evil-define-key*
   'normal 'global

@@ -143,7 +143,8 @@
   ;;
   ;; `Error in pre-command-hook (etcc--evil-set-cursor): (void-variable seq)'
   ;;
-  ;; See `cursor-type` for options.
+  ;; See `cursor-type` for options.  (Aside: 'hollow doesn't seem to work in
+  ;; the terminal.)
   (setq evil-motion-state-cursor 'box)   ; █
   (setq evil-visual-state-cursor 'box)   ; █
   (setq evil-normal-state-cursor 'box)   ; █
