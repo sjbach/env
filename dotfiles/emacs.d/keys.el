@@ -42,6 +42,7 @@
   (define-key input-map "\e[STEVE-C-." (kbd "C-."))
   (define-key input-map "\e[STEVE-C--" (kbd "C--"))
   (define-key input-map "\e[STEVE-C-S-'" (kbd "C-S-'"))
+  (define-key input-map "\e[STEVE-C-S-t" (kbd "C-S-t"))
   ;; STEVE Not yet set in iTerm2 b/c it is a macOS binding.
   (define-key input-map "\e[STEVE-C-TAB" (kbd "C-TAB"))
   ;; Note: C-- --> `negative-argument`
