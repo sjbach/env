@@ -144,6 +144,12 @@
            (message nil)
            ,val-var)))))
 
+(defun steve-jump-to-scratch ()
+  (interactive)
+  (unless (string= (cf--frame-name) "research")
+    (cf-frame-choose "research"))
+  (pop-to-buffer "*Scratch*"))
+
 (defun steve-toggle-dp-on-sexp ()
   (interactive)
   (save-mark-and-excursion

@@ -138,11 +138,6 @@
 ;; In the terminal, change the cursor glyph based on Evil state.
 (unless (display-graphic-p)
   (require 'evil-terminal-cursor-changer)  ;; warning: package not maintained
-  ;; Note: each of the below evil-*-state-cursor vars must be set non-nil
-  ;; before running `evil-terminal-cursor-changer-activate` to avoid an error:
-  ;;
-  ;; `Error in pre-command-hook (etcc--evil-set-cursor): (void-variable seq)'
-  ;;
   ;; See `cursor-type` for options.  (Aside: 'hollow doesn't seem to work in
   ;; the terminal.)
   (setq evil-motion-state-cursor 'box)   ; █
@@ -150,6 +145,12 @@
   (setq evil-normal-state-cursor 'box)   ; █
   (setq evil-insert-state-cursor 'bar)   ; ⎸
   (setq evil-emacs-state-cursor  'hbar)  ; _
+  ;; Note: there is a clear bug in `etcc--make-xterm-cursor-shape-seq' that can
+  ;; produce this error:
+  ;;
+  ;; `Error in pre-command-hook (etcc--evil-set-cursor): (void-variable seq)'
+  ;;
+  ;; Re-running the activation function should resolve it.
   (evil-terminal-cursor-changer-activate))
 ;; (evil-terminal-cursor-changer-deactivate)
 
@@ -160,6 +161,11 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 ;; Prevent the annoying beep on errors
 (setq visible-bell t)
+;; Don't print "Saving file <filename>" on every save as that info is redundant
+;; with the mode line indicator and these messages dominate the otherwise
+;; helpful *Messages* buffer. (Aside: doesn't appear to be a simple way to
+;; suppress "Wrote <filename>".)
+(setq save-silently t)
 
 ;; Highlight XXX style code tags in source
 (let ((words

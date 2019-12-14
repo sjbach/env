@@ -43,6 +43,7 @@
   (define-key input-map "\e[STEVE-C--" (kbd "C--"))
   (define-key input-map "\e[STEVE-C-S-'" (kbd "C-S-'"))
   (define-key input-map "\e[STEVE-C-S-t" (kbd "C-S-t"))
+  (define-key input-map "\e[STEVE-C-S-s" (kbd "C-S-s"))
   ;; STEVE Not yet set in iTerm2 b/c it is a macOS binding.
   (define-key input-map "\e[STEVE-C-TAB" (kbd "C-TAB"))
   ;; Note: C-- --> `negative-argument`
@@ -70,7 +71,7 @@
 ;; Buffer management
 ;;
 ;; (global-set-key [C-return] 'steve-juggle-previous-buffer)
-(global-set-key [C-return] #'rummage-other-buffer)
+(global-set-key [C-return] #'reach-other-buffer)
 ;;
 ;; Aside: `DEL` refers to the backspace key; The Delete key is
 ;; `delete`/`<deletechar>`.
@@ -100,6 +101,7 @@
     (interactive)
     (message "Run `M-x delete-other-frames'")))
 
+(global-set-key (kbd "C-S-s") #'steve-jump-to-scratch)
 
 ;;;
 ;;; Hydras
