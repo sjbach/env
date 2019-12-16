@@ -127,6 +127,7 @@
 
 (define-key steve-comma-motion-map "d." #'dumb-jump-go)
 (define-key steve-comma-motion-map "d," #'dumb-jump-back)
+(define-key steve-comma-motion-map "dg" #'toggle-debug-on-error)
 
 (define-key steve-comma-motion-map "mj" #'bookmark-jump)
 (define-key steve-comma-motion-map "ms" #'bookmark-set)

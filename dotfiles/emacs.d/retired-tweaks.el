@@ -1,6 +1,8 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (cl-assert false)
 
+(setq which-key-max-description-length 70)  ;; default: 27
+
 (evil-define-key*
   'insert 'global
   ;; Mapping C-d in insert mode to close buffer feels risky to me, but I want
