@@ -89,9 +89,10 @@
 (setq company-tooltip-limit 30)
 ;; Lisp
 ;; A little extra highlighting in Lisp.
-(require 'lisp-extra-font-lock)
-(lisp-extra-font-lock-global-mode 1)
 (require 'highlight-parentheses)
+;; Disabled; performance issues: https://github.com/Lindydancer/lisp-extra-font-lock/issues/8
+;; (require 'lisp-extra-font-lock)
+;; (lisp-extra-font-lock-global-mode 1)
 ;;
 
 (dumb-jump-mode 1)

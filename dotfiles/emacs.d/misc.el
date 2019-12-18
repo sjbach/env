@@ -117,7 +117,8 @@
             (select-window help-window)
           ;; Prefer the buffer be shown in a different window.
           ;; (pop-to-buffer help-buffer-name))))))
-          (switch-to-buffer-other-window help-buffer-name))))))
+          (save-selected-window
+            (switch-to-buffer-other-window help-buffer-name)))))))
 
 ;; Debug print. Evaluate the given form (just once, in case it has
 ;; side-effects), print its representation to *Messages*, and return it.

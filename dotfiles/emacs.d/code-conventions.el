@@ -1,7 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 ;; Spell check in comments.
-(add-hook 'prog-mode-hook #'flyspell-prog-mode)
+;; Disabled; expensive in CPU and GC according to profiler.
+;; (add-hook 'prog-mode-hook #'flyspell-prog-mode)
 ;; Automatically break long lines.
 (add-hook 'prog-mode-hook #'turn-on-auto-fill)
 (add-hook 'prog-mode-hook #'steve-turn-on-fill-column-indiciator)
