@@ -1,29 +1,16 @@
+;;; -*- lexical-binding: t; -*-
 ;;
 ;; Look and feel
 ;;
 
-(require 'color-theme)
-;(color-theme-xemacs)
-(color-theme-initialize)
-(let ((display (getenv "DISPLAY")))
-  (if (and display (> (length display) 0))
-      ;; X
-      (color-theme-robin-hood)
-    ;; Terminal
-    ;(color-theme-dark-laptop)))
-    ;(color-theme-comidia)))
-    ;(progn
-    ;  (load-theme 'ample t t)
-    ;  (enable-theme 'ample))))
-;    (color-theme-comidia)))
-    (color-theme-dark-laptop)))
-;(color-theme-sitaramv-solaris)
-
-; Slime autodoc used to expand the minibuffer height, which was annoying.
-;(setq resize-mini-windows nil)
-
-;; Different color for parens
-(require 'parenface)
+;; Scrolling behavior. (Make similar to Vim)
+;;
+;; Begin scrolling the window four lines before the margin.
+(setq scroll-margin 4)
+;; When point moves out of the window, don't recenter the window on point,
+;; rather scroll just enough to get point in the window again (respecting the
+;; margin above).
+(setq scroll-conservatively 200)  ; (arbitrary high number)
 
 (setq show-paren-delay 0)
 (show-paren-mode t)
@@ -31,72 +18,142 @@
 
 (setq inhibit-startup-message t)
 
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-;(set-scroll-bar-mode 'right)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
 (toggle-scroll-bar -1)
+(tooltip-mode -1)
 
-;; force horizontal splits - stolen from stackoverflow somewhere
-(setq split-height-threshold
-      (if (>= emacs-major-version 23)
-        nil
-        999))
-(setq split-width-threshold 0)
+;; Show *Register Preview* quickly.
+(setq register-preview-delay 0.25)  ;; default: 1
 
-;; Try to prevent lots of window splitting.  Stolen with modification from here
-;; http://stackoverflow.com/questions/1381794/too-many-split-screens-opening-in
+(require 'diminish)
+(add-hook 'after-init-hook
+          (lambda ()
+            (diminish 'visual-line-mode)
+            (diminish 'undo-tree-mode)
+            (diminish 'company-mode)
+            (diminish 'emacs-lock-mode)
+            (diminish 'git-gutter-mode)
+            (diminish 'eldoc-mode)
+            (diminish 'elisp-slime-nav-mode)
+            (diminish 'elisp-def-mode)
+            (diminish 'flyspell-mode)
+            (diminish 'which-key-mode)
+            (diminish 'racer-mode)
+            (diminish 'cargo-minor-mode)
+            (diminish 'hs-minor-mode)))
+
+;; Window splitter styling (for vertical splits)
+(set-face-inverse-video 'vertical-border nil)
+(set-face-background 'vertical-border (face-background 'default))
+(set-face-foreground 'vertical-border "blue")  ;; magenta?
+;; Set a nicer symbol than "|"
+(require 'disp-table)  ;; ensure standard-display-table is set
+(defun steve-set-smooth-window-divider ()
+  (let ((display-table (or buffer-display-table
+                           (window-display-table)
+                           standard-display-table)))
+    (when display-table
+      (set-display-table-slot
+       ;; Thinner alternative: ?│
+       display-table 'vertical-border (make-glyph-code ?┃))
+      (set-window-display-table (selected-window) display-table))))
+(add-hook 'window-configuration-change-hook #'steve-set-smooth-window-divider)
+
+;; Terminal title
+(when (boundp 'xterm-set-window-title)
+  (setq xterm-set-window-title t))
+
+;; Consider:
+;; (global-display-fill-column-indicator-mode 1)
+
+;; ido remaps any key mapping to kill-buffer to map to ido-kill-buffer
+;; instead. But this is overreaching- ido-kill-buffer is not a drop-in
+;; replacement for all kill-buffer usages, so undo that.
+(define-key (cdr ido-minor-mode-map-entry) [remap kill-buffer] nil)
+
+(require 'git-gutter)
+(setq git-gutter:modified-sign "*")  ;; overrides "="
+(global-git-gutter-mode 1)
+
+;; Faster eldoc annotations.
+(setq eldoc-idle-delay 0.1)  ;; default: 0.5
+
+;; More info in `undo-tree-visualize`.
+(setq undo-tree-visualizer-relative-timestamps t)
+(setq undo-tree-visualizer-timestamps t)
+
+(require 'company)
+(setq company-idle-delay 0.1)
+(setq company-minimum-prefix-length 2)
+(setq company-tooltip-limit 30)
+;; Lisp
+;; A little extra highlighting in Lisp.
+(require 'highlight-parentheses)
+;; Disabled; performance issues: https://github.com/Lindydancer/lisp-extra-font-lock/issues/8
+;; (require 'lisp-extra-font-lock)
+;; (lisp-extra-font-lock-global-mode 1)
 ;;
-(defun steve-display-buffer-fn (buffer current-window-unacceptable-p)
-  (if (and (not pop-up-frames)
-           (one-window-p)
-           (or current-window-unacceptable-p
-               (not (eq (window-buffer (selected-window))
-                        buffer)))
-;           (> (frame-width) 162)
-           )
-      (split-window-horizontally))
-  ;; Note: Some modules sets `pop-up-windows' to t before calling
-  ;; `display-buffer'
-  (let ((display-buffer-function nil)
-        (pop-up-windows nil))
-;    (display-buffer buffer current-window-unacceptable-p)))
-    (display-buffer buffer nil)))
-(setq display-buffer-function 'steve-display-buffer-fn)
 
-;; Shorten paths in grep-mode
-;; FIXME can I do this quicker so that the pre-overlay names aren't visible?
-;(require 'scf-mode)
-;(add-hook 'grep-mode-hook (lambda () (scf-mode 1)))
-;; NOTE disabled now that I'm not working in java as much
+(dumb-jump-mode 1)
+;; (setq dumb-jump-selector 'helm)
+(setq dumb-jump-selector 'ivy)
 
-(when (and (>= emacs-major-version 23)
-           (x-display-list))
-  (let ((font
-          (cond ((x-list-fonts "Bitstream Vera Sans Mono-9")
-                  "Bitstream Vera Sans Mono-9")
-                ((string-equal system-type "darwin")
-                 "Dejavu Sans Mono-12")
-                (t
-                 "Dejavu Sans Mono-9"))))
-    (if (or (> emacs-major-version 23)
-            (and (eq emacs-major-version 23)
-                 (>= emacs-minor-version 1)))
-      (set-frame-font font)
-      (set-default-font font))))
+;; Ace window
+(require 'ace-window)
+;; In terminal Emacs you only view one frame at a time, so a global scope is
+;; not usually what you want.
+(setq aw-scope 'frame)  ;; vs global (all frames)
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
-;; Turn on font-lock mode for syntax highlighting
-(global-font-lock-mode t)
-(setq font-lock-maximum-decoration t)
+;; Which-key
+(require 'which-key)
+(setq which-key-allow-imprecise-window-fit t)
+(setq which-key-sort-order 'which-key-prefix-then-key-order)
+(setq which-key-allow-evil-operators t)
+(setq which-key-idle-delay 0.25)  ;; When the connectivity is good
+;; (setq which-key-idle-delay 1)  ;; When the connectivity is poor
+(setq which-key-idle-secondary-delay 0.05)
+(setq which-key-is-verbose t)
+(setq which-key-side-window-max-width 0.5)
+(which-key-mode 1)
+;; (which-key-setup-side-window-bottom)
+(which-key-setup-side-window-right)
 
-;; Show colums and lines in the status bar
-(column-number-mode t)
-(line-number-mode 1)
+;; Mode line
+;;
+;; Show line and column numbers in the mode line.
+(column-number-mode 1)
+(line-number-mode 1)  ;; (in mode line, not in text body)
+;;
+;; Smart-mode-line
+(require 'smart-mode-line)
+(setq sml/show-frame-identification t)  ;; show frame name
+(setq sml/theme 'smart-mode-line-powerline)
+;; Other relevant variables:
+;; - sml/name-width ;; default: 44
+;; - sml/mode-width ;; default: 'full
+;; - sml/replacer-regexp-list
+(sml/setup)
 
-;; New windows are annoying.
-(setq pop-up-windows nil)
-
-;; Enable visual feedback on selections
-(transient-mark-mode t)
+;; In the terminal, change the cursor glyph based on Evil state.
+(unless (display-graphic-p)
+  (require 'evil-terminal-cursor-changer)  ;; warning: package not maintained
+  ;; See `cursor-type` for options.  (Aside: 'hollow doesn't seem to work in
+  ;; the terminal.)
+  (setq evil-motion-state-cursor 'box)   ; █
+  (setq evil-visual-state-cursor 'box)   ; █
+  (setq evil-normal-state-cursor 'box)   ; █
+  (setq evil-insert-state-cursor 'bar)   ; ⎸
+  (setq evil-emacs-state-cursor  'hbar)  ; _
+  ;; Note: there is a clear bug in `etcc--make-xterm-cursor-shape-seq' that can
+  ;; produce this error:
+  ;;
+  ;; `Error in pre-command-hook (etcc--evil-set-cursor): (void-variable seq)'
+  ;;
+  ;; Re-running the activation function should resolve it.
+  (evil-terminal-cursor-changer-activate))
+;; (evil-terminal-cursor-changer-deactivate)
 
 ;; The completion buffer still shows too much boilerplate, but this helps
 (setq completion-show-help nil)
@@ -105,6 +162,11 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 ;; Prevent the annoying beep on errors
 (setq visible-bell t)
+;; Don't print "Saving file <filename>" on every save as that info is redundant
+;; with the mode line indicator and these messages dominate the otherwise
+;; helpful *Messages* buffer. (Aside: doesn't appear to be a simple way to
+;; suppress "Wrote <filename>".)
+(setq save-silently t)
 
 ;; Highlight XXX style code tags in source
 (let ((words
@@ -122,7 +184,8 @@
   (font-lock-add-keywords 'nxml-mode words)
   (font-lock-add-keywords 'python-mode words)
   (font-lock-add-keywords 'ruby-mode words)
-  (font-lock-add-keywords 'sh-mode words))
+  (font-lock-add-keywords 'sh-mode words)
+  (font-lock-add-keywords 'rust-mode words))
 
 (when (string-equal system-type "darwin")
   (toggle-frame-maximized))
