@@ -11,7 +11,7 @@
                                  nil)))
 
 (defun steve-turn-on-fill-column-indiciator ()
-  (if (boundp 'display-fill-column-indicator)
+  (if (fboundp 'display-fill-column-indicator-mode)
       ;; Only present in 27.1+.
       (display-fill-column-indicator-mode 1)
     (turn-on-fci-mode)))

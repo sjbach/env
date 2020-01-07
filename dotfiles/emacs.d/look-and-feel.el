@@ -20,6 +20,7 @@
 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+(require 'scroll-bar)
 (toggle-scroll-bar -1)
 (tooltip-mode -1)
 
@@ -70,7 +71,8 @@
 ;; ido remaps any key mapping to kill-buffer to map to ido-kill-buffer
 ;; instead. But this is overreaching- ido-kill-buffer is not a drop-in
 ;; replacement for all kill-buffer usages, so undo that.
-(define-key (cdr ido-minor-mode-map-entry) [remap kill-buffer] nil)
+(unless (null ido-mode)
+  (define-key (cdr ido-minor-mode-map-entry) [remap kill-buffer] nil))
 
 (require 'git-gutter)
 (setq git-gutter:modified-sign "*")  ;; overrides "="
