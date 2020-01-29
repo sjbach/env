@@ -17,6 +17,7 @@
 (setq auto-save-list-file-prefix "~/.emacs.d/auto-save-list/.saves-")
 ;; Auto save files all in one directory rather than dropped wherever I'm
 ;; editing.
+(make-directory "~/.emacs.d/auto-saves/" 'already-exists-ok)
 (setq auto-save-file-name-transforms `((".*" "~/.emacs.d/auto-saves/" t)))
 
 ;; Don't warn about opening symlinked files.

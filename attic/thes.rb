@@ -1,3 +1,4 @@
+#!/usr/local/bin/ruby
 #!/usr/bin/ruby
 #
 # Half-assed Collins Thesaurus scraper.

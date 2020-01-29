@@ -11,7 +11,7 @@ fi
     osdcat "$msg"
   fi
   for i in 1 2 3; do
-    /bin/echo -en '\a'
+    /usr/bin/printf '\a'
     sleep 0.3
   done 2>/dev/null
 ) &
