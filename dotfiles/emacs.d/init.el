@@ -91,13 +91,13 @@
     (load-file (expand-file-name (format "~/.emacs.d/%s" filename)))))
 
 (mapc 'expand-load
-      `("keys.el"
-        "look-and-feel.el"
+      `("look-and-feel.el"
         "prose.el"
         "misc.el"
         "code-conventions.el"
         "R.el"
         "rust.el"
+        "keys.el"
         "evil-tweaks.el"
         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
         ))

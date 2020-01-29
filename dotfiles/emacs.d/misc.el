@@ -50,18 +50,18 @@
     (pp-eval-expression sexp)))
 
 ; STEVE make work in terminal
-(defun steve-vim-excursion ()
-  ;; FIXME cleanup
-  (interactive)
-  (let ((display (getenv "DISPLAY")))
-    (if (and display (> (length display) 0))
-      (let ((file (buffer-file-name)))
-        (cond ((null file) (message "Buffer not visiting a file"))
-              ((buffer-modified-p) (message "Buffer is modified!"))
-              (t
-                (call-process "gvim" nil nil nil file)
-                (ex-edit))))
-      (user-error "No DISPLAY available."))))
+;; (defun steve-vim-excursion ()
+;;   ;; FIXME cleanup
+;;   (interactive)
+;;   (let ((display (getenv "DISPLAY")))
+;;     (if (and display (> (length display) 0))
+;;       (let ((file (buffer-file-name)))
+;;         (cond ((null file) (message "Buffer not visiting a file"))
+;;               ((buffer-modified-p) (message "Buffer is modified!"))
+;;               (t
+;;                 (call-process "gvim" nil nil nil file)
+;;                 (ex-edit))))
+;;       (user-error "No DISPLAY available."))))
 
 (defvar steve--temp-paste-buf-name
   ;; Posterity: leading space means hidden.
