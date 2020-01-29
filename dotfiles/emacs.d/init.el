@@ -146,3 +146,7 @@
     (message "Frames restored"))
   (add-hook 'desktop-after-read-hook
             #'steve--restore-desktop-frameset-even-in-tty))
+
+;; Note for posterity: `package-initialize', if not called prior to this point,
+;; runs at this point (effectively), after which the functions on
+;; `after-init-hook' run.

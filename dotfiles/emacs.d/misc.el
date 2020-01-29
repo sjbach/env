@@ -16,7 +16,7 @@
       (display-fill-column-indicator-mode 1)
     (turn-on-fci-mode)))
 
-;; Simpler wrapper on `kill-buffer` that does not prompt for a buffer name.
+;; Simpler wrapper on `kill-buffer' that does not prompt for a buffer name.
 (defun steve-kill-buffer ()
   (interactive)
   (kill-buffer (current-buffer)))

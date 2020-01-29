@@ -82,7 +82,8 @@ UXTerm*metaSendsEscape: true
 !
 ! Notably missing:
 ! - S-SPC (which is fine, because it`s so easy to mistype)
-! - C-SPC (because its original mapping, C-@, is in common use)
+! - C-SPC (because its original mapping, C-@, is in common use, e.g.
+!   set-mark-command in Emacs)
 ! - S-TAB, C-S-TAB
 ! - S-<backspace>, C-<backspace>, C-S-<backspace>
 ! - C-`, C-~
