@@ -85,8 +85,10 @@
   ;; rare. I never want it to happen willy-nilly. So unset them.
   "ZZ" nil
   "ZQ" nil
-  ;; I use different bindings for tag stuff.
-  "\C-t" nil)
+  ;; Instead of `pop-tag-mark'. I use different bindings for tag stuff.
+  (kbd "C-t") nil
+  ;; Instead of inheriting `undo' or `undo-tree-undo'.
+  (kbd "C-/") 'steve-remove-evil-search-highlight)
 
 ;; No accidental `evil-quit` call.
 (define-key evil-window-map "q" nil)
@@ -98,6 +100,11 @@
   (eval-region beg end)
   (when (evil-visual-state-p)
     (setq deactivate-mark t)))
+
+;; Remove /-style search highlights.
+(defun steve-remove-evil-search-highlight ()
+  (interactive)
+  (evil-ex-delete-hl 'evil-ex-search))
 
 ; STEVE genericize: take a register char as a prefix arg
 ; - but: takes up entire `,e` namespace;
