@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
+(setq sh-basic-offset 2)  ;; default: 4
+
 ;; Spell check in comments.
 ;; Disabled; expensive in CPU and GC according to profiler.
 ;; (add-hook 'prog-mode-hook #'flyspell-prog-mode)
@@ -20,6 +22,9 @@
 (add-hook 'c++-mode-hook
           (lambda () (set-fill-column 80)))
 
+(add-hook 'sh-mode-hook
+          (lambda () (flycheck-mode 1)))
+
 (dolist (elisp-hook '(emacs-lisp-mode-hook ielm-mode-hook))
   (add-hook elisp-hook #'turn-on-elisp-slime-nav-mode)
   (add-hook elisp-hook #'company-mode)
@@ -33,6 +38,8 @@
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda () (setq fill-column 79)))
+(add-hook 'emacs-lisp-mode-hook
+          (lambda () (flycheck-mode 1)))
 
 ;; ^L is used as a section separator in GNU code. Make it look purposeful.
 (defun xah-show-formfeed-as-line ()

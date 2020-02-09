@@ -3,6 +3,8 @@
 ;; Look and feel
 ;;
 
+(setq-default tab-width 2)
+
 ;; Scrolling behavior. (Make similar to Vim)
 ;;
 ;; Begin scrolling the window four lines before the margin.
@@ -23,6 +25,10 @@
 (require 'scroll-bar)
 (toggle-scroll-bar -1)
 (tooltip-mode -1)
+
+;; Note: non-terminal only.
+(setq indicate-empty-lines t)
+(setq indicate-buffer-boundaries 'left)
 
 ;; Show *Register Preview* quickly.
 (setq register-preview-delay 0.25)  ;; default: 1
@@ -101,13 +107,6 @@
 ;; (setq dumb-jump-selector 'helm)
 (setq dumb-jump-selector 'ivy)
 
-;; Ace window
-(require 'ace-window)
-;; In terminal Emacs you only view one frame at a time, so a global scope is
-;; not usually what you want.
-(setq aw-scope 'frame)  ;; vs global (all frames)
-(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-
 ;; Which-key
 (require 'which-key)
 (setq which-key-allow-imprecise-window-fit t)
@@ -126,7 +125,8 @@
 ;;
 ;; Show line and column numbers in the mode line.
 (column-number-mode 1)
-(line-number-mode 1)  ;; (in mode line, not in text body)
+(line-number-mode 1)  ;; (note: in mode line, not in text body)
+(size-indication-mode 1)  ;; e.g. "7.3k" in mode line.
 ;;
 ;; Smart-mode-line
 (require 'smart-mode-line)

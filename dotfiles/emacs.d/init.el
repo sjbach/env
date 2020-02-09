@@ -7,6 +7,7 @@
 ;; Backups and auto-saves.
 ;; Put all backups into a single directory
 (setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs.d/backups"))))
+(setq tramp-backup-directory-alist backup-directory-alist)
 (setq-default vc-make-backup-files t)
 ;; Don't create backups by renaming, create by copying. A little slower I guess
 ;; but I bet rarely significant.
@@ -38,7 +39,8 @@
 (setq messages-buffer-max-lines 32768)  ;; arbitrary high number
 ;; Could be higher, but this is the limit used by desktop-save-mode and I don't
 ;; see much value in preserving >200 open buffers.
-(setq history-length 200)
+(setq history-length 200)  ;; default: 100
+(setq kill-ring-max 200) ;; default: 60
 
 (when (file-exists-p "~/emacs-src-git/src/")
   (setq find-function-C-source-directory

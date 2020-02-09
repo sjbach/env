@@ -1,6 +1,13 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (cl-assert false)
 
+;; Ace window
+(require 'ace-window)
+;; In terminal Emacs you only view one frame at a time, so a global scope is
+;; not usually what you want.
+(setq aw-scope 'frame)  ;; vs global (all frames)
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
 (setq which-key-max-description-length 70)  ;; default: 27
 
 (evil-define-key*

@@ -73,8 +73,7 @@
 ;; Buffer management
 ;;
 ;; Rather than `flyspell-auto-correct-previous-word'.
-(global-set-key (kbd "C-;") #'reach-other-buffer)  ;; Sometimes gets overridden.
-(global-set-key [C-return] #'reach-other-buffer)   ;; Backup binding.
+(global-set-key (kbd "C-;") #'reach-other-buffer)
 ;;
 ;; Aside: `DEL` refers to the backspace key; The Delete key is
 ;; `delete`/`<deletechar>`.
@@ -133,13 +132,11 @@
 (define-prefix-command 'steve-filename-search-prefix-map)
 (define-key steve-C-SPC-map "f" steve-filename-search-prefix-map)
 ;; (Filled in elsewhere.)
-(define-key steve-filename-search-prefix-map "h" 'help-go-back)
 
 ;; File grep:
 (define-prefix-command 'steve-grep-prefix-map)
 (define-key steve-C-SPC-map "g" steve-grep-prefix-map)
 ;; (Filled in elsewhere.)
-(define-key steve-grep-prefix-map "h" 'help-go-back)
 
 
 ;;;
@@ -249,6 +246,11 @@
 ;;;
 ;;; Overrides
 ;;;
+
+;; Instead of `undo' or `undo-tree-undo'. Set on `global-map' in addition to
+;; `evil-normal-state-map' because at times when Evil is unavailable I don't
+;; want to be surprised by the fallback keybinding.
+(global-set-key (kbd "C-/") 'steve-remove-evil-search-highlight)
 
 ;; Instead of `kill-buffer'.
 (define-key ctl-x-map "k" #'steve-kill-buffer)
