@@ -53,9 +53,9 @@
 ;; with-eval-after-load and confuse the control flow.
 (cl-assert (featurep 'evil-maps))
 
-;; The default Evil bindings for these keys aren't that useful while the
-;; default major-mode bindings often are useful. Drop the Evil bindings so that
-;; the major-mode bindings are made available.
+;; The default Evil bindings for these keys aren't that useful while various
+;; major-mode bindings on these keys often are useful. Drop the Evil bindings
+;; so that the major-mode bindings are made available.
 (define-key evil-motion-state-map (kbd "TAB") nil)
 (define-key evil-motion-state-map " " nil)
 
@@ -85,10 +85,28 @@
   ;; rare. I never want it to happen willy-nilly. So unset them.
   "ZZ" nil
   "ZQ" nil
+
   ;; Instead of `pop-tag-mark'. I use different bindings for tag stuff.
   (kbd "C-t") nil
+
   ;; Instead of inheriting `undo' or `undo-tree-undo'.
-  (kbd "C-/") 'steve-remove-evil-search-highlight)
+  (kbd "C-/") 'steve-remove-evil-search-highlight
+
+  ;; Use "s" to save the current buffer instead of substitute. For my usage
+  ;; pattern the save operation happens about twice as frequently as
+  ;; substitution.
+  ;;
+  ;; Replaces `evil-substitute'. (Restored to original binding in visual state.)
+  "s" #'save-buffer
+  ;; Replaces `evil-change-whole-line', which is functionally the same as "cc".
+  "S" #'evil-substitute)
+
+(evil-define-key*
+  'visual 'global
+  ;; (Restoring the standard binding, overridden above.)
+  "s" #'evil-substitute
+  ;; Aside: "S" adopted by `evil-surround'.
+  )
 
 ;; No accidental `evil-quit` call.
 (define-key evil-window-map "q" nil)
@@ -216,11 +234,6 @@
   "\M-e" #'steve-evil-scroll-line-down-other)
 
 (evil-define-key*
-  'normal 'global
-  ;; Replaces `evil-change-whole-line', which is functionally the same as "cc".
-  "S" #'save-buffer)
-
-(evil-define-key*
   ;; STEVE instead of global should be the map for fundamental-mode (if one
   ;; existed).
   'insert 'global
@@ -287,10 +300,6 @@
 ;;;
 ;;; Misc
 ;;;
-
-;; Treat "_" as a word character.
-;(add-hook 'c-mode-common-hook (lambda () (modify-syntax-entry ?_ "w")))
-(modify-syntax-entry ?_ "w")
 
 
 ;; Vim-related utility functions.

@@ -9,6 +9,7 @@
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
 (setq which-key-max-description-length 70)  ;; default: 27
+(setq which-key-show-early-on-C-h t)  ;; default: nil
 
 (evil-define-key*
   'insert 'global

@@ -63,7 +63,6 @@
    (with-temp-file file-name
     (insert (concat header " en 1\n" new-word "\n")))))
  (ispell-kill-ispell t) ; restart ispell
- (flyspell-mode)
  (flyspell-mode))
 
 (defun append-aspell-current ()

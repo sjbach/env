@@ -1,5 +1,9 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; By default, treat "_" as a word character.
+;(add-hook 'c-mode-common-hook (lambda () (modify-syntax-entry ?_ "w")))
+(modify-syntax-entry ?_ "w")
+
 (setq sh-basic-offset 2)  ;; default: 4
 
 ;; Spell check in comments.

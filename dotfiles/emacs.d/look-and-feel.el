@@ -3,6 +3,7 @@
 ;; Look and feel
 ;;
 
+;; Tab characters displayed as 2 columns instead of 8.
 (setq-default tab-width 2)
 
 ;; Scrolling behavior. (Make similar to Vim)
@@ -20,6 +21,7 @@
 
 (setq inhibit-startup-message t)
 
+;; Unneeded visible controls.
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (require 'scroll-bar)
@@ -50,21 +52,37 @@
             (diminish 'cargo-minor-mode)
             (diminish 'hs-minor-mode)))
 
-;; Window splitter styling (for vertical splits)
+;; Window splitter styling (for vertical window splits)
 (set-face-inverse-video 'vertical-border nil)
 (set-face-background 'vertical-border (face-background 'default))
 (set-face-foreground 'vertical-border "blue")  ;; magenta?
+;;
 ;; Set a nicer symbol than "|"
-(require 'disp-table)  ;; ensure standard-display-table is set
+(require 'disp-table)  ;; encourage `standard-display-table' to be set
+(defun steve--set-smooth-window-divider (display-table)
+  (set-display-table-slot
+   ;; Good options: ?│ ?┃
+   ;; display-table 'vertical-border (make-glyph-code ?┃))
+   display-table 'vertical-border (make-glyph-code ?│)))
+;;
 (defun steve-set-smooth-window-divider ()
-  (let ((display-table (or buffer-display-table
-                           (window-display-table)
-                           standard-display-table)))
-    (when display-table
-      (set-display-table-slot
-       ;; Thinner alternative: ?│
-       display-table 'vertical-border (make-glyph-code ?┃))
-      (set-window-display-table (selected-window) display-table))))
+  (unless (display-graphic-p)
+    ;; "The window's display table, if there is one, takes precedence over the
+    ;; buffer's display table. If neither exists, Emacs tries to use the standard
+    ;; display table; if that is nil, Emacs uses the usual character display
+    ;; conventions"
+    (setq standard-display-table
+          (or standard-display-table (make-display-table)))
+    (steve--set-smooth-window-divider standard-display-table)
+    (dolist (w (window-list (selected-frame)
+                            'never-minibuf))
+      (when (window-live-p w)
+        (cond ((window-display-table)
+               (steve--set-smooth-window-divider (window-display-table)))
+              (buffer-display-table
+               (steve--set-smooth-window-divider buffer-display-table)))))))
+;; This really only needs to be done once, when a session is attached to a
+;; terminal, but it's not too expensive.
 (add-hook 'window-configuration-change-hook #'steve-set-smooth-window-divider)
 
 ;; Terminal title
@@ -112,8 +130,8 @@
 (setq which-key-allow-imprecise-window-fit t)
 (setq which-key-sort-order 'which-key-prefix-then-key-order)
 (setq which-key-allow-evil-operators t)
-(setq which-key-idle-delay 0.25)  ;; When the connectivity is good
-;; (setq which-key-idle-delay 1)  ;; When the connectivity is poor
+(setq which-key-idle-delay 0.25)  ;; When connection latency is reliable
+;; (setq which-key-idle-delay 1)  ;; Otherwise
 (setq which-key-idle-secondary-delay 0.05)
 (setq which-key-is-verbose t)
 (setq which-key-side-window-max-width 0.5)
