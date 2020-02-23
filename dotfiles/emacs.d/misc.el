@@ -147,8 +147,8 @@
 
 (defun steve-jump-to-scratch ()
   (interactive)
-  (unless (string= (cf--frame-name) "research")
-    (cf-frame-choose "research"))
+  (unless (string= (ef--frame-name) "research")
+    (ef-frame-choose "research"))
   (pop-to-buffer "*Scratch*"))
 
 (defun steve-toggle-dp-on-sexp ()

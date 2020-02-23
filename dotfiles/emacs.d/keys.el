@@ -63,7 +63,7 @@
 ;; Remap some function keys
 ;;
 ;; Instead of `kmacro-start-macro-or-insert-counter'.
-(global-set-key [f3] #'reach-other-buffer)
+(global-set-key [f3] #'pluck-other-buffer)
 ;; Instead of `kmacro-end-or-call-macro'.
 (global-set-key [f4] #'other-window)
 (global-set-key [S-f4] (kbd "C-u - <f4>"))
@@ -73,7 +73,7 @@
 ;; Buffer management
 ;;
 ;; Rather than `flyspell-auto-correct-previous-word'.
-(global-set-key (kbd "C-;") #'reach-other-buffer)
+(global-set-key (kbd "C-;") #'pluck-other-buffer)
 ;;
 ;; Aside: `DEL` refers to the backspace key; The Delete key is
 ;; `delete`/`<deletechar>`.
@@ -93,7 +93,9 @@
 (global-set-key (kbd "C-S-'") (kbd "C-u - C-'"))
 
 ;; Frame management
-(global-set-key (kbd "C-\\") #'cf-other-frame)  ;; overrides toggle-input-method
+;; (global-set-key (kbd "C-\\") #'ef-other-frame)  ;; overrides toggle-input-method
+;; (global-set-key [C-return] #'ef-other-frame)
+(global-set-key [C-return] #'pluck-other-errand-frame)
 ;;
 ;; I use frames as pseudo-workspaces, I don't want to delete them all
 ;; accidentally because of a mistype.

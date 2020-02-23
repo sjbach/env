@@ -120,8 +120,8 @@
       (append desktop-globals-to-save
               '((extended-command-history . 50)
                 (regexp-history . 50)
-                cf--name-to-numbered-confs-alist
-                cf--name-to-pre-restore-conf-alist)))
+                ef--name-to-numbered-confs-alist
+                ef--name-to-pre-restore-conf-alist)))
 
 ;; I want desktop-save-mode to save/restore frame names.
 ;; Note: might be better to do this as advice on desktop-save and desktop-read.
