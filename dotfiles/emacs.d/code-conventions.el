@@ -1,8 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
-;; By default, treat "_" as a word character.
-;(add-hook 'c-mode-common-hook (lambda () (modify-syntax-entry ?_ "w")))
-(modify-syntax-entry ?_ "w")
+;; Treat underscore as a word character rather than a syntax character unless
+;; otherwise specified.
+(modify-syntax-entry ?_ "w" (standard-syntax-table))
 
 (setq sh-basic-offset 2)  ;; default: 4
 
@@ -12,6 +12,9 @@
 ;; Automatically break long lines.
 (add-hook 'prog-mode-hook #'turn-on-auto-fill)
 (add-hook 'prog-mode-hook #'steve-turn-on-fill-column-indiciator)
+
+;; Highlight trailing whitespace when it's actionable.
+(add-hook 'prog-mode-hook #'steve-maybe-highlight-trailing-whitespace)
 
 (add-hook 'html-mode-hook
           (lambda ()
@@ -37,13 +40,27 @@
   (add-hook elisp-hook #'highlight-parentheses-mode)
   ;; Better version of `xref-find-definitions` or
   ;; `elisp-slime-nav-find-elisp-thing-at-point` that works on e.g. local
-  ;; bindings, functions defined in macros (such as by cl-defstruct).
+  ;; variable bindings and functions defined in macros (such as by
+  ;; cl-defstruct).
   (add-hook elisp-hook #'elisp-def-mode))
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda () (setq fill-column 79)))
 (add-hook 'emacs-lisp-mode-hook
           (lambda () (flycheck-mode 1)))
+
+(defun steve-turn-on-fill-column-indiciator ()
+  (if (fboundp 'display-fill-column-indicator-mode)
+      ;; Only present in 27.1+.
+      (display-fill-column-indicator-mode 1)
+    (turn-on-fci-mode)))
+
+(defun steve-maybe-highlight-trailing-whitespace ()
+  (unless (or buffer-read-only
+              (and (buffer-file-name)
+                   (string-match-p "emacs\.d/elpa/"
+                                   (buffer-file-name))))
+    (setq show-trailing-whitespace t)))
 
 ;; ^L is used as a section separator in GNU code. Make it look purposeful.
 (defun xah-show-formfeed-as-line ()

@@ -276,6 +276,8 @@
 ;;; Hydras
 ;;;
 
+(setq hydra-look-for-remap t)
+
 ;; Hideshow
 (defhydra steve-hydra-hideshow (:pre (hs-minor-mode 1)
                                 :foreign-keys run)

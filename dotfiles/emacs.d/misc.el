@@ -10,12 +10,6 @@
                                  (line-end-position)
                                  nil)))
 
-(defun steve-turn-on-fill-column-indiciator ()
-  (if (fboundp 'display-fill-column-indicator-mode)
-      ;; Only present in 27.1+.
-      (display-fill-column-indicator-mode 1)
-    (turn-on-fci-mode)))
-
 ;; Simpler wrapper on `kill-buffer' that does not prompt for a buffer name.
 (defun steve-kill-buffer ()
   (interactive)

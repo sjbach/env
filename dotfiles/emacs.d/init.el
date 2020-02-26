@@ -2,7 +2,10 @@
 
 (add-to-list 'load-path "~/.emacs.d/elisp")
 
+;; No tab characters in new indentation.
 (setq-default indent-tabs-mode nil)
+;; Fill doesn't need two spaces after a period.
+(setq-default sentence-end-double-space nil)
 
 ;; Backups and auto-saves.
 ;; Put all backups into a single directory
@@ -25,6 +28,12 @@
 (setq vc-follow-symlinks t)
 ;; Don't ask to save buffers before running a grep.
 (setq grep-save-buffers nil)
+
+;; Prefer the filename found by evaluating all symbolic links.
+(setq find-file-visit-truename t)
+
+;; Don't load old byte code if the source file is newer.
+(setq load-prefer-newer t)
 
 ;; Use Spotlight for `locate` command on OS X
 (when (string-equal system-type "darwin")
