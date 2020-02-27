@@ -35,6 +35,9 @@
 ;; Show *Register Preview* quickly.
 (setq register-preview-delay 0.25)  ;; default: 1
 
+;; A little help when typing long, rarely used command prefixes.
+(setq echo-keystrokes 0.0625)  ;; default: 1 (second)
+
 (require 'diminish)
 (add-hook 'after-init-hook
           (lambda ()

@@ -9,8 +9,6 @@
 ;; Normally I'd want to enable this, but it's superceded by evil-collection.
 ;; Context: https://github.com/emacs-evil/evil-collection/issues/60
 (customize-set-variable 'evil-want-keybinding nil)
-;;
-;(setq-default evil-symbol-word-search t)
 (customize-set-variable 'evil-symbol-word-search t)
 ;;
 (require 'evil)
@@ -19,7 +17,7 @@
 ;; Save and restore markers across sessions.
 (add-to-list 'desktop-locals-to-save 'evil-markers-alist)
 
-;; This evil-collection setting appears to pre-date `evil-want-minibuffer` in
+;; This evil-collection setting appears to pre-date `evil-want-minibuffer' in
 ;; the standard evil package, so I'm not clear whether or not it's redundant,
 ;; but I notice setting it makes the custom lusty-explorer bindings work
 ;; correctly (below).
@@ -31,10 +29,10 @@
 ;; Magit
 (setq evil-magit-state 'motion)
 (require 'evil-magit)
-;; Override remapping of ":", as I use it for `execute-extended-command`.
-;; Remove mapping for `evil-ex`
+;; Override remapping of ":", as I use it for `execute-extended-command'.
+;; Remove mapping for `evil-ex'
 (evil-define-key evil-magit-state magit-mode-map ":" nil)
-;; Remove mapping for `magit-git-command`
+;; Remove mapping for `magit-git-command'
 (define-key magit-status-mode-map ":" nil)
 
 ;; Surround

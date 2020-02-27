@@ -122,7 +122,6 @@
 ;; Note: overrides `C-@' -> `set-mark-command'.
 (global-set-key (kbd "C-SPC") steve-C-SPC-map)
 
-(define-key steve-C-SPC-map "S" #'save-buffer)
 (define-key steve-C-SPC-map "x" ctl-x-map)
 (define-key steve-C-SPC-map (kbd "C-f") 'lusty-file-explorer)
 (define-key steve-C-SPC-map (kbd "C-b") 'lusty-buffer-explorer)

@@ -1,4 +1,11 @@
-;;; -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t -*-
+
+(require 'company)
+;; `company-dabbrev' can be distracting as it will try to complete words inside
+;; comments. Both the menu and the a minor computational drag on the UI.
+;; `company-dabbrev-code' is still included.
+(setq-default company-backends
+              (remove 'company-dabbrev company-backends))
 
 ;; Treat underscore as a word character rather than a syntax character unless
 ;; otherwise specified.
@@ -9,7 +16,9 @@
 ;; Spell check in comments.
 ;; Disabled; expensive in CPU and GC according to profiler.
 ;; (add-hook 'prog-mode-hook #'flyspell-prog-mode)
-;; Automatically break long lines.
+
+;; Automatically break long comment lines.
+(setq comment-auto-fill-only-comments t)
 (add-hook 'prog-mode-hook #'turn-on-auto-fill)
 (add-hook 'prog-mode-hook #'steve-turn-on-fill-column-indiciator)
 
@@ -47,7 +56,11 @@
 (add-hook 'emacs-lisp-mode-hook
           (lambda () (setq fill-column 79)))
 (add-hook 'emacs-lisp-mode-hook
-          (lambda () (flycheck-mode 1)))
+          (lambda ()
+            ;; Don't try to make sense of scratch buffers.
+            (unless (or (string-equal (buffer-name) "*scratch*")
+                        (string-equal (buffer-name) "*Scratch*"))
+            (flycheck-mode 1))))
 
 (defun steve-turn-on-fill-column-indiciator ()
   (if (fboundp 'display-fill-column-indicator-mode)

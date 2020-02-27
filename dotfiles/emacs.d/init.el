@@ -33,6 +33,8 @@
 (setq find-file-visit-truename t)
 
 ;; Don't load old byte code if the source file is newer.
+;; (Posterity: once caused a Recursive Load error re: jka-compr.el.gz but seems
+;; to be okay now)
 (setq load-prefer-newer t)
 
 ;; Use Spotlight for `locate` command on OS X
