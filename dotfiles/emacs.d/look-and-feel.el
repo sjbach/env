@@ -55,18 +55,19 @@
             (diminish 'cargo-minor-mode)
             (diminish 'hs-minor-mode)))
 
-;; Window splitter styling (for vertical window splits)
+;; Terminal Emacs: window splitter styling (for vertical window splits)
 (set-face-inverse-video 'vertical-border nil)
 (set-face-background 'vertical-border (face-background 'default))
 (set-face-foreground 'vertical-border "blue")  ;; magenta?
+(set-face-attribute 'vertical-border nil :slant 'normal)
 ;;
-;; Set a nicer symbol than "|"
+;; Set a nicer glyph than "|"
 (require 'disp-table)  ;; encourage `standard-display-table' to be set
 (defun steve--set-smooth-window-divider (display-table)
   (set-display-table-slot
    ;; Good options: ?│ ?┃
-   ;; display-table 'vertical-border (make-glyph-code ?┃))
-   display-table 'vertical-border (make-glyph-code ?│)))
+   ;; display-table 'vertical-border (make-glyph-code ?│)))
+   display-table 'vertical-border (make-glyph-code ?┃)))
 ;;
 (defun steve-set-smooth-window-divider ()
   (unless (display-graphic-p)
