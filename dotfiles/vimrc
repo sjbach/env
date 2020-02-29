@@ -66,11 +66,17 @@ let mapleader = ","
 " Quick timeouts on key combinations.
 set timeoutlen=300
 
-" Use 'S' to save. The original 'S' is essentially the same as 'cc'.
+" Substitution is useful but redundant so the 's' key is better mapped to other
+" things in normal mode.
+" Use 's' to save in normal mode. ('cl' or 'vs' do what 's' did.)
+nmap s :w<CR>
+" Also may as well use 'S' to save because it isn't very useful. ('cc' does what
+" 'S' did.)
 nmap S :w<CR>
+" Note: 's' and 'S' retain their native binding in visual mode.
 
 " Unmap ZZ and ZQ because they can be pressed accidentally.
-" Aside: there is `:unmap` but it can't be used for internal/native bindings.
+" Aside: there is `:unmap` but it can't be applied to internal/native bindings.
 map ZZ <Nop>
 map ZQ <Nop>
 
