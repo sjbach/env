@@ -50,13 +50,24 @@ URxvt.termName: rxvt-unicode-256color
 !XTerm*utf8: true
 !*utf8Title: true
 !
-! Enable TrueType fonts, select a font with powerline glyphs.
-XTerm*faceName: UbuntuMono Nerd Font Mono
-XTerm*faceSize: 9
+! Enable TrueType fonts; make the `faceName` property functional.
 XTerm*renderFont: true
-UXTerm*faceName: UbuntuMono Nerd Font Mono
-UXTerm*faceSize: 9
 UXTerm*renderFont: true
+! Font selection:
+! - Names below are as shown in the output of `fc-list`.
+! - Select a font with programming glyphs:
+!   https://github.com/ryanoasis/nerd-fonts
+! - Proper DPI value noticeably improves font clarity. Calculable e.g. here:
+!   https://www.sven.de/dpi/
+! - Check the results of font specification with:
+!   `xterm -report-fonts` (after loading with `xrdb`)
+!XTerm*faceName: UbuntuMono Nerd Font Mono:pixelsize=10:dpi=69.93
+! See: https://github.com/be5invis/iosevka
+!XTerm*faceName: Iosevka Nerd Font Mono:pixelsize=10:dpi=69.93
+XTerm*faceName: DejaVuSansMono Nerd Font Mono:pixelsize=10:dpi=69.93
+XTerm*faceSize: 10
+UXTerm*faceName: DejaVuSansMono Nerd Font Mono:pixelsize=10:dpi=69.93
+UXTerm*faceSize: 10
 !
 ! Arbitrary, but well above the Ubuntu default of 1024.
 XTerm*saveLines: 32768
@@ -106,7 +117,16 @@ XTerm*vt100.translations: #override \
     Ctrl Shift <Key>space: string("\033[STEVE-C-S-SPC") \n\
     Ctrl <Key>space: string("\033[STEVE-C-SPC") \n\
     Ctrl Shift <Key>slash: string("\033[63;6u") \n\
-    Ctrl <Key>slash: string("\033[STEVE-C-/")
+    Ctrl <Key>semicolon: string("\033[STEVE-C-;") \n\
+    Ctrl <Key>slash: string("\033[STEVE-C-/") \n\
+    Ctrl Shift <Key>apostrophe: string("\033[STEVE-C-S-'") \n\
+    Ctrl <Key>apostrophe: string("\033[STEVE-C-'") \n\
+    Ctrl <Key>comma: string("\033[STEVE-C-,") \n\
+    Ctrl <Key>period: string("\033[STEVE-C-.") \n\
+    Ctrl <Key>minus: string("\033[STEVE-C--") \n\
+    Ctrl Shift <Key>O: string("\033[STEVE-C-S-o") \n\
+    Ctrl Shift <Key>S: string("\033[STEVE-C-S-s") \n\
+    Ctrl Shift <Key>T: string("\033[STEVE-C-S-t")
 UXTerm*vt100.translations: #override \
     Ctrl Shift <Key>BackSpace: string("\033[STEVE-C-S-DEL") \n\
     Ctrl <Key>BackSpace: string("\033[STEVE-C-DEL") \n\
@@ -114,7 +134,16 @@ UXTerm*vt100.translations: #override \
     Ctrl Shift <Key>space: string("\033[STEVE-C-S-SPC") \n\
     Ctrl <Key>space: string("\033[STEVE-C-SPC") \n\
     Ctrl Shift <Key>slash: string("\033[63;6u") \n\
-    Ctrl <Key>slash: string("\033[STEVE-C-/")
+    Ctrl <Key>semicolon: string("\033[STEVE-C-;") \n\
+    Ctrl <Key>slash: string("\033[STEVE-C-/") \n\
+    Ctrl Shift <Key>apostrophe: string("\033[STEVE-C-S-'") \n\
+    Ctrl <Key>apostrophe: string("\033[STEVE-C-'") \n\
+    Ctrl <Key>comma: string("\033[STEVE-C-,") \n\
+    Ctrl <Key>period: string("\033[STEVE-C-.") \n\
+    Ctrl <Key>minus: string("\033[STEVE-C--") \n\
+    Ctrl Shift <Key>O: string("\033[STEVE-C-S-o") \n\
+    Ctrl Shift <Key>S: string("\033[STEVE-C-S-s") \n\
+    Ctrl Shift <Key>T: string("\033[STEVE-C-S-t")
 
 !! urxvt:
 !
@@ -140,10 +169,17 @@ URxvt.thickness: 5
 ! and that will "win" against "*color5: #75507b" because the former is more
 ! specific in its wildcard usage.
 !
-! special
+! Slightly off-white foreground because white can be too bright on some
+! displays.
 !XTerm*foreground:   #ffffff
 XTerm*foreground:   #b2b2b2
-XTerm*background:   #000000
+! Give the (dark) background a red component so that other colors which have
+! no red component will still be visible in contrast when I`m blocking blue
+! light.
+!XTerm*background:   #000000
+!XTerm*background:   #1d1d1d
+!XTerm*background:   #1a1a1a
+XTerm*background:   #141414
 XTerm*cursorColor:  yellow
 ! black
 XTerm*color0:       #000000
@@ -171,10 +207,8 @@ XTerm*color7:       #d3d7cf
 XTerm*color15:      #eeeeec
 !
 !! The same again, for everything else:
-! special
-!*foreground:   #ffffff
 *foreground:   #b2b2b2
-*background:   #000000
+*background:   #141414
 *cursorColor:  yellow
 ! black
 *color0:       #000000
