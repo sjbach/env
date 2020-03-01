@@ -8,6 +8,7 @@
 (setq-default sentence-end-double-space nil)
 
 ;; Backups and auto-saves.
+;;
 ;; Put all backups into a single directory
 (setq backup-directory-alist `(("." . ,(expand-file-name "~/.emacs.d/backups"))))
 (setq tramp-backup-directory-alist backup-directory-alist)

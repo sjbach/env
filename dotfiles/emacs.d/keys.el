@@ -89,8 +89,10 @@
 (windmove-default-keybindings)
 (setq windmove-wrap-around nil)
 ;;
-(global-set-key (kbd "C-'") #'vitreous-other-window)
-(global-set-key (kbd "C-S-'") (kbd "C-u - C-'"))
+;; (global-set-key (kbd "C-'") #'vitreous-other-window)
+(global-set-key (kbd "C-'") #'vitreous-dwim)
+;; (global-set-key (kbd "C-S-'") (kbd "C-u - C-'"))
+(global-set-key (kbd "C-S-'") #'vitreous-hydra/body)
 
 ;; Frame management
 ;; (global-set-key (kbd "C-\\") #'ef-other-frame)  ;; overrides toggle-input-method

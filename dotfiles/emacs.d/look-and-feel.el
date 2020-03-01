@@ -41,6 +41,8 @@
 (require 'diminish)
 (add-hook 'after-init-hook
           (lambda ()
+            (diminish 'auto-fill-function)  ; note: 'function', not 'mode'
+            (diminish 'auto-revert-mode)
             (diminish 'visual-line-mode)
             (diminish 'undo-tree-mode)
             (diminish 'company-mode)
@@ -96,6 +98,12 @@
 ;; Consider:
 ;; (global-display-fill-column-indicator-mode 1)
 
+;; Better `ido' interface.
+(require 'ido)
+(ido-mode 1)
+(require 'ido-grid-mode)
+(ido-grid-mode 1)
+(setq ido-enable-flex-matching t)
 ;; ido remaps any key mapping to kill-buffer to map to ido-kill-buffer
 ;; instead. But this is overreaching- ido-kill-buffer is not a drop-in
 ;; replacement for all kill-buffer usages, so undo that.
