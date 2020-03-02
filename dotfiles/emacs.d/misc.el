@@ -1,4 +1,7 @@
-;;; -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t -*-
+
+(require 'cl-lib)
+(require 'dash)
 
 (defun steve-comment-line-or-region ()
   (interactive)
@@ -114,10 +117,55 @@
           (save-selected-window
             (switch-to-buffer-other-window help-buffer-name)))))))
 
-;; Debug print. Evaluate the given form (just once, in case it has
-;; side-effects), print its representation to *Messages*, and return it.
-(require 'cl-lib)
+(defun steve-jump-to-scratch ()
+  (interactive)
+  (unless (string= (ef--frame-name) "research")
+    (ef-frame-choose "research"))
+  (pop-to-buffer "*Scratch*"))
+
+
+;;;
+;;; Debugging
+;;;
+
+(defun steve-list-core-font-faces ()
+  (interactive)
+  (list-faces-display
+   (rx string-start
+       (or "default" "bold" "italic" "bold-italic" "underline"
+           "fixed-pitch" "fixed-pitch-serif")
+       string-end)))
+
+(defun steve-list-predefined-font-lock-faces ()
+  (interactive)
+  (list-faces-display
+   (rx string-start "font-lock-" (* not-newline) "-face" string-end)))
+
+(defun steve-list-active-minor-modes (&optional buffer)
+  (interactive)
+  (setq buffer (or buffer (current-buffer)))
+  (let ((all-minor-modes
+         (with-current-buffer buffer
+           (-uniq
+            (sort
+             (-filter
+              (lambda (sym) (and (boundp sym) (symbol-value sym)))
+              (append
+               (mapcar #'car minor-mode-alist)
+               (cl-copy-list minor-mode-list)))
+             (lambda (a b)
+               (string< a b)))))))
+    (with-temp-buffer-window "*steve-minor-modes*" nil nil
+      (with-current-buffer "*steve-minor-modes*"
+        (insert
+         (string-join (mapcar #'symbol-name all-minor-modes)
+                      "\n"))))))
+
 (defmacro STEVE-dp (&rest args)
+  "Debug print: evaluate the given form (just once, in case it has
+side-effects), print its representation to *Messages*, and return it.
+
+ARGS is a single form or an annotation string and a form."
   (let ((sym-var (gensym "STEVE-name"))
         (val-var (gensym "STEVE-val")))
     (if (and (= (length args) 1)
@@ -138,12 +186,6 @@
            (message ,msg-string ,sym-var ,val-var)
            (message nil)
            ,val-var)))))
-
-(defun steve-jump-to-scratch ()
-  (interactive)
-  (unless (string= (ef--frame-name) "research")
-    (ef-frame-choose "research"))
-  (pop-to-buffer "*Scratch*"))
 
 (defun steve-toggle-dp-on-sexp ()
   (interactive)
@@ -191,3 +233,4 @@
             (insert "(STEVE-dp ")
             (end-of-buffer)
             (insert ")")))))))
+
