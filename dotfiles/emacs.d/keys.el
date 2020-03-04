@@ -108,9 +108,9 @@
 
 (global-set-key (kbd "C-S-s") #'steve-jump-to-scratch)
 
-;; Magit defines this on "C-x g" explicitly rather than on `ctl-x-map'
-;; preventing it from being accessed through other methods of reaching
-;; `ctl-x-map'.
+;; Magit defines `magit-status' on "C-x g" explicitly rather than on
+;; `ctl-x-map' preventing it from being accessed through other methods of
+;; reaching `ctl-x-map'.
 (define-key ctl-x-map "g" #'magit-status)
 
 
@@ -140,6 +140,17 @@
 (define-prefix-command 'steve-grep-prefix-map)
 (define-key steve-C-SPC-map "g" steve-grep-prefix-map)
 ;; (Filled in elsewhere.)
+
+;; Helpful:
+(let ((prefix-map (make-sparse-keymap)))
+  (define-key prefix-map (kbd "C-c") #'helpful-callable)
+  (define-key prefix-map (kbd "C-f") #'helpful-function)
+  (define-key prefix-map (kbd "C-m") #'helpful-macro)
+  (define-key prefix-map (kbd "C-c") #'helpful-command)
+  (define-key prefix-map (kbd "C-k") #'helpful-key)
+  (define-key prefix-map (kbd "C-v") #'helpful-variable)
+  (define-key prefix-map (kbd "C-.") #'helpful-at-point)
+  (define-key steve-C-SPC-map (kbd "C-h") prefix-map))
 
 
 ;;;
@@ -194,6 +205,21 @@
   (define-key prefix-map "." 'push-button)   ;; Duplicate: ",."
   (define-key prefix-map "," 'help-go-back)  ;; Duplicate: ",,"
   (define-key help-mode-map steve-mode-specific-prefix-key prefix-map))
+;;
+;; Clear out some bindings from `help-map' to make its `which-key' window
+;; a little easier to scan.
+(define-key help-map "\C-a" nil)
+(define-key help-map "\C-c" nil)
+(define-key help-map "\C-e" nil)
+(define-key help-map "\C-m" nil)
+(define-key help-map "\C-o" nil)
+(define-key help-map "\C-s" nil)
+(define-key help-map "\C-w" nil)
+;;
+(define-key help-map "g" nil)
+(define-key help-map "4i" nil)
+(define-key help-map "n" nil)
+(define-key help-map "t" nil)
 
 ;; Programming modes:
 (let ((prefix-map (make-sparse-keymap)))

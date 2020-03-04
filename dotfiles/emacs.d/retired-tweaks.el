@@ -1,6 +1,12 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (cl-assert false)
 
+
+;; Tab characters displayed as 2 columns instead of 8.
+(setq-default tab-width 2)
+;; Disabled because it looks bad in any code with tabs that expects a tab is 8
+;; spaces.
+
 ;; Ace window
 (require 'ace-window)
 ;; In terminal Emacs you only view one frame at a time, so a global scope is

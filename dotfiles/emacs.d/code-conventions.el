@@ -91,3 +91,14 @@ Version 2018-08-30"
     ;; (redraw-frame)
     ))
 (add-hook 'emacs-lisp-mode-hook #'xah-show-formfeed-as-line)
+
+(defun steve--add-fixme-font-lock-keywords ()
+  "Highlight XXX-style tokens in source code."
+  (let* ((tokens '("FIXME" "HACK" "XXX" "TODO" "BUG" "STEVE"))
+         (regex (regexp-opt tokens 'words))
+         (font-lock-stanza `((,regex 0 font-lock-warning-face prepend))))
+    (font-lock-add-keywords nil font-lock-stanza)))
+;;
+(dolist (hook '(prog-mode-hook sgml-mode-hook))
+  (add-hook hook #'steve--add-fixme-font-lock-keywords))
+

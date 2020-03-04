@@ -3,8 +3,6 @@
 ;; Look and feel
 ;;
 
-;; Tab characters displayed as 2 columns instead of 8.
-(setq-default tab-width 2)
 
 ;; Scrolling behavior. (Make similar to Vim)
 ;;
@@ -192,32 +190,25 @@
 
 ;; "y or n" instead of "yes or no"
 (fset 'yes-or-no-p 'y-or-n-p)
-;; Prevent the annoying beep on errors
-(setq visible-bell t)
+
+;; Error bell
+;;
+;; Do not beep on errors but neither flash the full frame.
+;; (setq visible-bell t)
+(setq visible-bell nil)
+;; Source: https://www.emacswiki.org/emacs/AlarmBell
+(defun steve-flash-mode-line ()
+  (invert-face 'mode-line)
+  (run-with-timer 0.05 nil 'invert-face 'mode-line)
+  nil)
+;;
+(setq ring-bell-function #'steve-flash-mode-line)
+
 ;; Don't print "Saving file <filename>" on every save as that info is redundant
 ;; with the mode line indicator and these messages dominate the otherwise
 ;; helpful *Messages* buffer. (Aside: doesn't appear to be a simple way to
 ;; suppress "Wrote <filename>".)
 (setq save-silently t)
-
-;; Highlight XXX style code tags in source
-(let ((words
-       '(("\\<\\(FIXME\\|HACK\\|XXX\\|TODO\\|BUG\\|STEVE\\)"
-          1 font-lock-warning-face prepend))))
-  (font-lock-add-keywords 'c-mode words)
-  (font-lock-add-keywords 'c++-mode words)
-  (font-lock-add-keywords 'emacs-lisp-mode words)
-  (font-lock-add-keywords 'ess-mode words)
-  (font-lock-add-keywords 'html-mode words)
-  (font-lock-add-keywords 'java-mode words)
-  (font-lock-add-keywords 'js-mode words)
-  (font-lock-add-keywords 'latex-mode words)
-  (font-lock-add-keywords 'lisp-mode words)
-  (font-lock-add-keywords 'nxml-mode words)
-  (font-lock-add-keywords 'python-mode words)
-  (font-lock-add-keywords 'ruby-mode words)
-  (font-lock-add-keywords 'sh-mode words)
-  (font-lock-add-keywords 'rust-mode words))
 
 (when (string-equal system-type "darwin")
   (toggle-frame-maximized))

@@ -43,6 +43,10 @@
 (require 'evil-matchit)
 (global-evil-matchit-mode 1)
 
+;; quickscope
+(require 'evil-quickscope)
+(global-evil-quickscope-mode 1)
+
 ;;;
 ;;; Tweaks and overrides of default Evil bindings.
 ;;;
@@ -101,9 +105,13 @@
 
 (evil-define-key*
   'visual 'global
-  ;; (Restoring the standard binding, overridden above.)
+  ;; Restoring the standard "s" binding in visual state, overridden above.
+  ;; (Aside: "S" adopted by `evil-surround'.)
   "s" #'evil-substitute
-  ;; Aside: "S" adopted by `evil-surround'.
+  ;; "d" and "D" are redundant with "x" in visual state, so reassign them to
+  ;; the `expand-region' package - much more useful.
+  "d" 'er/expand-region
+  "D" 'er/contract-region
   )
 
 ;; No accidental `evil-quit` call.
@@ -164,6 +172,8 @@
 (define-key evil-normal-state-map ">" #'steve-evil-shift-right)
 (define-key evil-normal-state-map "=" #'steve-evil-indent)
 
+;; Tweak the semantics of `$`
+;;
 ;; In Evil (and Vim), a `$` in visual mode will stretch the region to include
 ;; the trailing newline of the current line. But usually when I press `$` in
 ;; visual mode I only want the region to extend to the character preceding the
