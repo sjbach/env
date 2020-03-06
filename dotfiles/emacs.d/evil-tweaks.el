@@ -146,17 +146,22 @@
 ;; line, one key press, rather than wait for a motion. Delegate to the regular
 ;; operator for visual mode.
 (require 'evil-types)  ;; For `(interactive "<v><vc>")`
-(evil-define-operator steve-evil-shift-left (beg end &optional dummy-type count preserve-empty)
+(evil-define-operator steve-evil-shift-left (beg end
+                                             &optional
+                                             dummy-type count preserve-empty)
   :type line
   (interactive "<v><vc>")
   (steve-evil-shift-right beg end dummy-type (- (or count 1)) preserve-empty))
 ;;
-(evil-define-operator steve-evil-shift-right (beg end &optional dummy-type count preserve-empty)
+(evil-define-operator steve-evil-shift-right (beg end
+                                              &optional
+                                              dummy-type count preserve-empty)
   :type line
   (interactive "<v><vc>")
-  (if (and beg end)
-      (evil-shift-right beg end count preserve-empty)
-    (evil-shift-right-line count)))
+  (save-excursion  ; don't move point to first non-whitespace character
+    (if (and beg end)
+        (evil-shift-right beg end count preserve-empty)
+      (evil-shift-right-line count))))
 ;;
 ;; Make "=" behave in normal mode like it does in visual mode, acting
 ;; immediately on the current rather than waiting for a motion.

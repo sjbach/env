@@ -298,6 +298,8 @@
 ;; Instead of `flyspell-auto-correct-word'.
 (define-key flyspell-mode-map [(control ?\.)] nil)
 
+;; Because it confuses me when I accidentally press M-v as terminal paste.
+(global-unset-key (kbd "M-v"))  ; default: `scroll-down-command'
 
 ;;;
 ;;; Hydras

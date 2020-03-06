@@ -60,35 +60,39 @@
 ;;                 (ex-edit))))
 ;;       (user-error "No DISPLAY available."))))
 
+;; Command to create a temporary buffer in which to paste and clean up text
+;; without interference by the particular major mode.
 (defvar steve--temp-paste-buf-name
   ;; Posterity: leading space means hidden.
   " *Steve text paste buffer*")
 ;;
-(defun steve--temp-paste-buffer-cleanup ()
-  ;; Copy buffer contents to kill-ring / evil unnamed register.
-  (when (string-equal (buffer-name) steve--temp-paste-buf-name)
-    (widen)
-    (kill-new
-     (s-trim
-      (buffer-string)))))
-;;
 (defun steve-text-pasting-excursion ()
   (interactive)
-  ;; Kill the paste buffer if it exists.
-  (let ((old-temp-paste-buf (get-buffer steve--temp-paste-buf-name))
-        (kill-buffer-hook nil))  ; don't run hooks.
-    (when old-temp-paste-buf
-      (kill-buffer old-temp-paste-buf)))
-  (let ((temp-paste-buf (get-buffer-create steve--temp-paste-buf-name)))
-    (pop-to-buffer temp-paste-buf)
-    ;; Disable auto-indent.
-    (electric-indent-local-mode -1)
-    ;(use-local-map (copy-keymap foo-mode-map))
-    ;(local-set-key "d" 'some-function)
+  (let ((buffer-to-return-to (current-buffer)))
+    ;; Kill the paste buffer if it exists.
+    (let ((old-temp-paste-buf (get-buffer steve--temp-paste-buf-name))
+          (kill-buffer-hook nil))  ; don't run hooks.
+      (when old-temp-paste-buf
+        (kill-buffer old-temp-paste-buf)))
+    (pop-to-buffer (get-buffer-create steve--temp-paste-buf-name))
+    (cl-assert (eq (current-buffer)
+                   (get-buffer-create steve--temp-paste-buf-name)))
+    ;; At close, copy buffer contents to kill-ring / evil unnamed register.
     (add-hook 'kill-buffer-hook
-              #'steve--temp-paste-buffer-cleanup)
-    (evil-insert-state)
-    (message "(Now in insert mode)")))
+              (lambda ()
+                ;; (Should always be the case.)
+                (when (string-equal (buffer-name) steve--temp-paste-buf-name)
+                  (widen)
+                  (kill-new
+                   (s-trim
+                    (buffer-string)))
+                  (pop-to-buffer buffer-to-return-to)))
+              nil
+              'local))
+  ;; Disable auto-indent.
+  (electric-indent-local-mode -1)
+  (evil-insert-state)
+  (message "(Now in insert mode)"))
 
 (defun steve-remove-matching-lines ()
   (interactive)

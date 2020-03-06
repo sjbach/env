@@ -23,7 +23,8 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (require 'scroll-bar)
-(toggle-scroll-bar -1)
+(scroll-bar-mode -1)
+(horizontal-scroll-bar-mode -1)
 (tooltip-mode -1)
 
 ;; Note: non-terminal only.
@@ -210,6 +211,14 @@
 ;; suppress "Wrote <filename>".)
 (setq save-silently t)
 
+;; A little more dept in printing lists/trees.
+(setq eval-expression-print-level 5)  ; default: 4
+
 (when (string-equal system-type "darwin")
   (toggle-frame-maximized))
+
+;; Keep the active line highlighted.
+(require 'hl-line)
+;; The highlight face 'hl-line also customized to a dark grey background.
+(global-hl-line-mode 1)
 

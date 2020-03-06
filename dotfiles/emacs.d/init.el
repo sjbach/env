@@ -33,7 +33,7 @@
 ;; Prefer the filename found by evaluating all symbolic links.
 (setq find-file-visit-truename t)
 
-;; Don't load old byte code if the source file is newer.
+;; Don't load old byte code if the source .el file has a newer timestamp.
 ;; (Posterity: once caused a Recursive Load error re: jka-compr.el.gz but seems
 ;; to be okay now)
 (setq load-prefer-newer t)
@@ -49,8 +49,8 @@
 ;; Save bookmarks to the fileysystem whenever there are changes.
 (setq bookmark-save-flag 1)
 (setq messages-buffer-max-lines 32768)  ;; arbitrary high number
-;; Could be higher, but this is the limit used by desktop-save-mode and I don't
-;; see much value in preserving >200 open buffers.
+;; These could be higher, but this is the limit used by desktop-save-mode and I
+;; don't see much value in preserving >200 open buffers.
 (setq history-length 200)  ;; default: 100
 (setq kill-ring-max 200) ;; default: 60
 
@@ -83,8 +83,9 @@
 (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 (setq git-timemachine-show-author nil)
 
-;; `xterm-paste` pushes what it pastes onto the kill ring, which overwrites
-;; Evil's nameless register and shifts all the numbered registers down. I
+;; `xterm-paste', activated when terminal Emacs detects that input is a pasted
+;; text stream, pushes what it pastes onto the kill ring, which overwrites
+;; Evil's nameless register and shifts all the numbered registers down by 1. I
 ;; understand why it happens but it's not useful to me, so undo it.
 (defun steve--delete-top-of-kill-ring (&rest d)
   (let ((interprogram-paste nil)
