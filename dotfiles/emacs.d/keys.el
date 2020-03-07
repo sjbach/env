@@ -2,7 +2,7 @@
 ;;
 ;; Key translation, key maps, key definitions
 ;;
-;; Note: other files also contain key maps and key definitions.
+;; Note: evil-tweaks.el also contains key definitions.
 ;;
 
 (require 'hydra)
@@ -108,14 +108,11 @@
 
 (global-set-key (kbd "C-S-s") #'steve-jump-to-scratch)
 
-;; Magit defines `magit-status' on "C-x g" explicitly rather than on
-;; `ctl-x-map' preventing it from being accessed through other methods of
-;; reaching `ctl-x-map'.
-(define-key ctl-x-map "g" #'magit-status)
 
+;;;
+;;; Global prefix key: C-SPC
+;;;
 
-;; A global prefix key: C-SPC.
-;;
 ;; Established for context-free commands having the spirit of commanding Emacs
 ;; to do something that doesn't relate to the content of the current buffer,
 ;; e.g. window management, buffer switching. Always defined/available.
@@ -127,6 +124,7 @@
 (define-key steve-C-SPC-map "x" ctl-x-map)
 (define-key steve-C-SPC-map (kbd "C-f") 'lusty-file-explorer)
 (define-key steve-C-SPC-map (kbd "C-b") 'lusty-buffer-explorer)
+(define-key steve-C-SPC-map (kbd "C-j") 'lusty-buffer-explorer)
 (define-key steve-C-SPC-map "b" 'lusty-buffer-explorer)
 (define-key steve-C-SPC-map "d" #'toggle-debug-on-error)
 ;; (define-key steve-C-SPC-map "v" 'steve-vim-excursion)
@@ -154,10 +152,10 @@
 
 
 ;;;
-;;; Custom mode-specific bindings
+;;; Secondary, contextual prefix keys
 ;;;
 
-;; A global prefix key: "C-,".
+;; Available globally: "C-,"
 ;;
 ;; Established for commands that relate in some way to the
 ;; code/content/properties of the current buffer. Perhaps mode-related, perhaps
@@ -165,23 +163,37 @@
 ;; relating to the cursor position or active region.
 ;;
 (defvar steve-mode-specific-prefix-key (kbd "C-,"))
-;;
-;; Posterity:
-;; - Many "C-," mappings are not placed on this map but rather on encapsulating
-;;   maps.
-;; - Also accessible as "," in Evil normal mode. (But without the "C-," bindings
-;;   set outside this map.)
 (define-prefix-command 'steve-C-comma-map)
 (global-set-key steve-mode-specific-prefix-key steve-C-comma-map)
 
+;; Available semi-globally: ","
+;;
+;; A DWIM (do what I mean) prefix map. Mostly parallel to "C-,", but
+;; flat/simplified. Bound to "," in Evil as a leader and available only in an
+;; Evil context. Exists mostly because "," is easier to type than "C-,".
+(defvar steve-dwim-leader-prefix-key ",")
+(define-prefix-command 'steve-dwim-leader-map)
+
 (define-key steve-C-comma-map "x" ctl-x-map)
-(define-key steve-C-comma-map "c" 'steve-comment-line-or-region)
+(define-key steve-dwim-leader-map "x" ctl-x-map)
+
+(define-key steve-C-comma-map "cc" 'steve-comment-line-or-region-dwim)
+(define-key steve-C-comma-map "cd" 'steve-duplicate-and-comment-out)
+(define-key steve-dwim-leader-map "c" 'steve-comment-line-or-region-dwim)
+
 (define-key steve-C-comma-map "A" 'beginning-of-defun)
-(define-key steve-C-comma-map "p" 'fill-paragraph)
+(define-key steve-dwim-leader-map "A" 'beginning-of-defun)
+
+(define-key steve-C-comma-map "fp" 'fill-paragraph)
+(define-key steve-C-comma-map "fr" 'fill-region)
+(define-key steve-C-comma-map "fi" 'fill-individual-paragraphs)
+(define-key steve-C-comma-map "fR" 'fill-region-as-paragraph)
+(define-key steve-dwim-leader-map "f" 'fill-paragraph)
 
 (define-key steve-C-comma-map "ea" 'steve-copy-register-unnamed-to-a)
 (define-key steve-C-comma-map "eb" 'steve-copy-register-unnamed-to-b)
 (define-key steve-C-comma-map "ec" 'steve-copy-register-unnamed-to-c)
+(define-key steve-dwim-leader-map "e" 'steve-copy-register-unnamed-to-a)
 
 (define-key steve-C-comma-map "d." #'dumb-jump-go)
 (define-key steve-C-comma-map "d," #'dumb-jump-back)
@@ -190,7 +202,14 @@
 (define-key steve-C-comma-map "ms" #'bookmark-set)
 
 (define-key steve-C-comma-map "h" #'steve-hydra-hideshow/body)
+(define-key steve-dwim-leader-map "h" #'steve-hydra-hideshow/body)
 
+;;
+;; Custom mode-specific bindings on these prefix keys
+;;
+
+(defmacro steve-run-after-evil-tweaks (f)
+  `(eval-after-load 'steve-evil-tweaks (lambda () ,f)))
 
 ;; Help:
 (let ((prefix-map (make-sparse-keymap)))
@@ -204,28 +223,21 @@
   ;; formal links.
   (define-key prefix-map "." 'push-button)   ;; Duplicate: ",."
   (define-key prefix-map "," 'help-go-back)  ;; Duplicate: ",,"
-  (define-key help-mode-map steve-mode-specific-prefix-key prefix-map))
-;;
-;; Clear out some bindings from `help-map' to make its `which-key' window
-;; a little easier to scan.
-(define-key help-map "\C-a" nil)
-(define-key help-map "\C-c" nil)
-(define-key help-map "\C-e" nil)
-(define-key help-map "\C-m" nil)
-(define-key help-map "\C-o" nil)
-(define-key help-map "\C-s" nil)
-(define-key help-map "\C-w" nil)
-;;
-(define-key help-map "g" nil)
-(define-key help-map "4i" nil)
-(define-key help-map "n" nil)
-(define-key help-map "t" nil)
+  (define-key help-mode-map steve-mode-specific-prefix-key prefix-map)
+  (steve-run-after-evil-tweaks
+   (evil-define-key*
+    'motion help-mode-map
+    steve-dwim-leader-prefix-key prefix-map)))
 
 ;; Programming modes:
 (let ((prefix-map (make-sparse-keymap)))
   (define-key prefix-map "," 'pop-tag-mark)
   ;; (A keymap inhereited by most programming language modes.)
-  (define-key prog-mode-map steve-mode-specific-prefix-key prefix-map))
+  (define-key prog-mode-map steve-mode-specific-prefix-key prefix-map)
+  (steve-run-after-evil-tweaks
+   (evil-define-key*
+    'motion prog-mode-map
+    steve-dwim-leader-prefix-key prefix-map)))
 
 ;; Emacs Lisp:
 (require 'ielm)  ;; so that ielm-map is defined
@@ -241,27 +253,40 @@
     (define-key prefix-map "K" 'eval-buffer)  ;; STEVE more sensible binding
     (define-key prefix-map "i" #'steve-toggle-dp-on-sexp)
     (define-key prefix-map "\C-i" #'steve-toggle-dp-on-sexp)
-    ;; STEVE fix: overrides ctl-x-map
     (define-key prefix-map "x" #'eval-defun)
     (define-key prefix-map "M" #'macrostep-expand)
     (define-key prefix-map "W" #'steve-hydra-elisp-refs/body)
     (define-key prefix-map "?" #'steve-pp-eval-dwim)
     ;; (Actually visual-mode only)
     (define-key prefix-map "r" #'steve-eval-region-and-close-visual-mode)
-    (define-key elisp-related-map steve-mode-specific-prefix-key prefix-map)))
+    (define-key elisp-related-map steve-mode-specific-prefix-key prefix-map)
+    (let ((tweaked-prefix-map (copy-keymap prefix-map)))
+      (define-key tweaked-prefix-map "x" nil)  ; fall back to `ctl-x-map'.
+      (steve-run-after-evil-tweaks
+       (evil-define-key*
+        'motion elisp-related-map
+        steve-dwim-leader-prefix-key tweaked-prefix-map)))))
 
 ;; Grep
 (require 'grep)  ;; so that `grep-mode-map' is defined
 (let ((prefix-map (make-sparse-keymap)))
   (define-key prefix-map "D" 'steve-remove-matching-lines)
-  (define-key grep-mode-map steve-mode-specific-prefix-key prefix-map))
+  (define-key grep-mode-map steve-mode-specific-prefix-key prefix-map)
+  (steve-run-after-evil-tweaks
+   (evil-define-key*
+    'motion grep-mode-map
+    steve-dwim-leader-prefix-key prefix-map)))
 
 ;; Rust
 (require 'rust-mode)
 (let ((prefix-map (make-sparse-keymap)))
   (define-key prefix-map "." 'racer-find-definition)
   (define-key prefix-map "h" 'racer-describe)
-  (define-key rust-mode-map steve-mode-specific-prefix-key prefix-map))
+  (define-key rust-mode-map steve-mode-specific-prefix-key prefix-map)
+  (steve-run-after-evil-tweaks
+   (evil-define-key*
+    'motion rust-mode-map
+    steve-dwim-leader-prefix-key prefix-map)))
 
 ;; Magit
 (let ((prefix-map (make-sparse-keymap)))
@@ -269,12 +294,23 @@
   (define-key prefix-map "2" #'magit-section-show-level-2-all)
   (define-key prefix-map "3" #'magit-section-show-level-3-all)
   (define-key prefix-map "4" #'magit-section-show-level-4-all)
-  (define-key magit-mode-map steve-mode-specific-prefix-key prefix-map))
+  (define-key magit-mode-map steve-mode-specific-prefix-key prefix-map)
+  (steve-run-after-evil-tweaks
+   (evil-define-key*
+    'motion magit-mode-map
+    steve-dwim-leader-prefix-key prefix-map)))
 
 
 ;;;
-;;; Overrides
+;;; Tweaks, overrides on standard maps
 ;;;
+
+;; Magit defines `magit-status' on "C-x g" explicitly rather than on
+;; `ctl-x-map' preventing it from being accessed through other methods of
+;; reaching `ctl-x-map'.
+(define-key ctl-x-map "g" #'magit-status)
+;; Remove mapping for `magit-git-command'
+(define-key magit-status-mode-map ":" nil)
 
 ;; Instead of `undo' or `undo-tree-undo'. Set on `global-map' in addition to
 ;; `evil-normal-state-map' because at times when Evil is unavailable I don't
@@ -298,13 +334,32 @@
 ;; Instead of `flyspell-auto-correct-word'.
 (define-key flyspell-mode-map [(control ?\.)] nil)
 
-;; Because it confuses me when I accidentally press M-v as terminal paste.
+;; Unset these because they confuse me when I occasionally press M-c/M-v
+;; intending terminal copy/paste.
+(global-unset-key (kbd "M-c"))  ; default: `capitalize-word'
 (global-unset-key (kbd "M-v"))  ; default: `scroll-down-command'
+
+;; Clear out some bindings from `help-map' to make its `which-key' window
+;; a little easier to scan.
+(define-key help-map "\C-a" nil)
+(define-key help-map "\C-c" nil)
+(define-key help-map "\C-e" nil)
+(define-key help-map "\C-m" nil)
+(define-key help-map "\C-o" nil)
+(define-key help-map "\C-s" nil)
+(define-key help-map "\C-w" nil)
+;;
+(define-key help-map "g" nil)
+(define-key help-map "4i" nil)
+(define-key help-map "n" nil)
+(define-key help-map "t" nil)
+
 
 ;;;
 ;;; Hydras
 ;;;
 
+;; Respect [remap ...].
 (setq hydra-look-for-remap t)
 
 ;; Hideshow

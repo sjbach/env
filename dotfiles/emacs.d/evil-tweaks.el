@@ -1,4 +1,5 @@
 ;;; -*- lexical-binding: t; -*-
+
 ;;;
 ;;; Package loading.
 ;;;
@@ -32,8 +33,6 @@
 ;; Override remapping of ":", as I use it for `execute-extended-command'.
 ;; Remove mapping for `evil-ex'
 (evil-define-key evil-magit-state magit-mode-map ":" nil)
-;; Remove mapping for `magit-git-command'
-(define-key magit-status-mode-map ":" nil)
 
 ;; Surround
 (require 'evil-surround)
@@ -47,6 +46,7 @@
 (require 'evil-quickscope)
 (global-evil-quickscope-mode 1)
 
+
 ;;;
 ;;; Tweaks and overrides of default Evil bindings.
 ;;;
@@ -55,9 +55,9 @@
 ;; with-eval-after-load and confuse the control flow.
 (cl-assert (featurep 'evil-maps))
 
-;; The default Evil bindings for these keys aren't that useful while various
+;; The default Evil bindings for these keys aren't that useful whereas various
 ;; major-mode bindings on these keys often are useful. Drop the Evil bindings
-;; so that the major-mode bindings are made available.
+;; so that the major-mode bindings come to the surface.
 (define-key evil-motion-state-map (kbd "TAB") nil)
 (define-key evil-motion-state-map " " nil)
 
@@ -83,7 +83,7 @@
 
 (evil-define-key*
   'normal 'global
-  ;; I see these bindings as risky. In usual Emacs usage, quitting is quite
+  ;; I see these bindings as risky. In usual Emacs usage quitting is quite
   ;; rare. I never want it to happen willy-nilly. So unset them.
   "ZZ" nil
   "ZQ" nil
@@ -106,7 +106,7 @@
 (evil-define-key*
   'visual 'global
   ;; Restoring the standard "s" binding in visual state, overridden above.
-  ;; (Aside: "S" adopted by `evil-surround'.)
+  ;; (Aside: "S" in visual state adopted by `evil-surround'.)
   "s" #'evil-substitute
   ;; "d" and "D" are redundant with "x" in visual state, so reassign them to
   ;; the `expand-region' package - much more useful.
@@ -114,7 +114,7 @@
   "D" 'er/contract-region
   )
 
-;; No accidental `evil-quit` call.
+;; No accidental `evil-quit' call.
 (define-key evil-window-map "q" nil)
 
 (defun steve-eval-region-and-close-visual-mode (beg end)
@@ -251,8 +251,8 @@
   ;; existed).
   'insert 'global
   ;; Scroll-other in insert mode.
-  "\M-y" #'steve-evil-scroll-line-up-other     ;; overrides `keyboard-quit`
-  "\M-e" #'steve-evil-scroll-line-down-other)  ;; overrides `forward-sentence`
+  "\M-y" #'steve-evil-scroll-line-up-other     ;; overrides `keyboard-quit'
+  "\M-e" #'steve-evil-scroll-line-down-other)  ;; overrides `forward-sentence'
 
 
 ;;;
@@ -262,45 +262,15 @@
 ;; Note: overrides the traditional binding of ",", which is
 ;;       "Repeat latest f, t, F or T in opposite direction".
 ;;
-;; This is identical to "C-," but it's kinder to the pinky when normal mode is
-;; available, which is most of the time.
-(define-key evil-motion-state-map "," steve-C-comma-map)
-
-(evil-define-key*
- 'motion help-mode-map
- ",." 'push-button
- ",," 'help-go-back)
-
-(evil-define-key*
- 'motion prog-mode-map
- ",," 'pop-tag-mark)
+(define-key evil-motion-state-map steve-dwim-leader-prefix-key steve-dwim-leader-map)
 
 (evil-define-key*
   'motion grep-mode-map
   ;; (Instead of `recompile'.)
   "gg" 'evil-goto-first-line
-  "q" 'kill-buffer-and-window
-  "D" 'steve-remove-matching-lines)
+  "q" 'kill-buffer-and-window)
 
-(evil-define-key*
- 'motion rust-mode-map
- ",." 'racer-find-definition
- ",h" 'racer-describe)
-
-;; Lusty Explorer
-;; Have to do this in a hook because I wrote lusty-explorer.el in a weird way.
-;; Note: only necessary because I've enabled evil in the minibuffer.
-(add-hook 'lusty-setup-hook
-          (lambda ()
-            (evil-define-key*
-              '(insert normal motion global) lusty-mode-map
-              "\C-n" 'lusty-highlight-next
-              "\C-p" 'lusty-highlight-previous
-              "\C-s" 'lusty-highlight-next
-              "\C-r" 'lusty-highlight-previous
-              "\C-f" 'lusty-highlight-next-column
-              "\C-b" 'lusty-highlight-previous-column)))
-
+;; See also: keys.el
 
 
 ;;;
@@ -314,6 +284,19 @@
 ;;; Misc
 ;;;
 
+;; Lusty Explorer
+;; Have to do this in a hook because I wrote lusty-explorer.el in a weird way.
+;; Note: only necessary because I've enabled `evil-want-minibuffer'.
+(add-hook 'lusty-setup-hook
+          (lambda ()
+            (evil-define-key*
+              '(insert normal motion global) lusty-mode-map
+              "\C-n" 'lusty-highlight-next
+              "\C-p" 'lusty-highlight-previous
+              "\C-s" 'lusty-highlight-next
+              "\C-r" 'lusty-highlight-previous
+              "\C-f" 'lusty-highlight-next-column
+              "\C-b" 'lusty-highlight-previous-column)))
 
 ;; Vim-related utility functions.
 ;;
@@ -322,4 +305,6 @@
 (defun e ()
   (interactive)
   (revert-buffer nil t))
+
+(provide 'steve-evil-tweaks)
 
