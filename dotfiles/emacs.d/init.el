@@ -53,6 +53,7 @@
 ;; don't see much value in preserving >200 open buffers.
 (setq history-length 200)  ;; default: 100
 (setq kill-ring-max 200) ;; default: 60
+(setq list-command-history-max 200)  ;; default: 32
 
 (when (file-exists-p "~/emacs-src-git/src/")
   (setq find-function-C-source-directory

@@ -3,7 +3,10 @@
 (require 'cl-lib)
 (require 'dash)
 
-(defun steve-comment-line-or-region ()
+;; This instead of `comment-dwim' because I prefer the behavior of commenting
+;; out the current line, if region is inactive, rather than adding an
+;; annotation comment to the current line.
+(defun steve-comment-line-or-region-dwim ()
   (interactive)
   (if (use-region-p)
       (comment-or-uncomment-region (region-beginning)
@@ -12,6 +15,31 @@
     (comment-or-uncomment-region (line-beginning-position)
                                  (line-end-position)
                                  nil)))
+
+;; Copy above point the current line, or the lines covered by the region, and
+;; then comment out the copy.
+(defun steve-duplicate-and-comment-out ()
+  (interactive)
+  (cl-multiple-value-bind (start-pos end-pos)
+      (if (use-region-p)
+          (list (save-excursion
+                  (goto-char (region-beginning))
+                  (line-beginning-position))
+                (save-excursion
+                  (goto-char (if (eq (char-before) ?\n)
+                                 (1- (region-end))
+                               (region-end)))
+                  (line-end-position)))
+        (list (line-beginning-position)
+              (line-end-position)))
+    (cl-assert start-pos)
+    (cl-assert end-pos)
+    (save-excursion
+      (goto-char start-pos)
+      (let ((region-str (buffer-substring start-pos end-pos)))
+        (insert region-str "\n"))
+      ;; (comment-or-uncomment-region start-pos
+      (comment-region start-pos (point) nil))))
 
 ;; Simpler wrapper on `kill-buffer' that does not prompt for a buffer name.
 (defun steve-kill-buffer ()
