@@ -123,8 +123,9 @@
 
 (define-key steve-C-SPC-map "x" ctl-x-map)
 (define-key steve-C-SPC-map (kbd "C-f") 'lusty-file-explorer)
-(define-key steve-C-SPC-map (kbd "C-b") 'lusty-buffer-explorer)
+;; (define-key steve-C-SPC-map (kbd "C-b") 'lusty-buffer-explorer)
 (define-key steve-C-SPC-map (kbd "C-j") 'lusty-buffer-explorer)
+(define-key steve-C-SPC-map (kbd "C-k") 'ef-frame-choose)
 (define-key steve-C-SPC-map "b" 'lusty-buffer-explorer)
 (define-key steve-C-SPC-map "d" #'toggle-debug-on-error)
 ;; (define-key steve-C-SPC-map "v" 'steve-vim-excursion)

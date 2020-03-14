@@ -7,6 +7,10 @@
 (setq-default company-backends
               (remove 'company-dabbrev company-backends))
 
+;; Fire the martinet.
+(setq-default flycheck-disabled-checkers
+              '(emacs-lisp-checkdoc))
+
 ;; Treat underscore as a word character rather than a syntax character unless
 ;; otherwise specified.
 (modify-syntax-entry ?_ "w" (standard-syntax-table))

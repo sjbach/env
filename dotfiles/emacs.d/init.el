@@ -77,6 +77,10 @@
 
 (require 'lusty-explorer)
 
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-saved-items 100)  ;; default: 20
+
 (require 'magit)
 (setq magit-diff-refine-hunk 'all)
 ;; Can be slow in large repos.

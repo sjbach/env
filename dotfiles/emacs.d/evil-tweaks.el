@@ -11,6 +11,8 @@
 ;; Context: https://github.com/emacs-evil/evil-collection/issues/60
 (customize-set-variable 'evil-want-keybinding nil)
 (customize-set-variable 'evil-symbol-word-search t)
+;; Make "Y" behave like "D" and "C" instead of "yy".
+(customize-set-variable 'evil-want-Y-yank-to-eol t)
 ;;
 (require 'evil)
 (evil-mode 1)
@@ -46,6 +48,7 @@
 (require 'evil-quickscope)
 (global-evil-quickscope-mode 1)
 
+(require 'evil-numbers)
 
 ;;;
 ;;; Tweaks and overrides of default Evil bindings.
@@ -80,6 +83,13 @@
 (define-key evil-motion-state-map "\M-:" #'pp-eval-expression)
 ;; S-M-: is awkward.
 (define-key evil-motion-state-map "\M-;" #'pp-eval-expression)
+
+(evil-define-key*
+  'motion 'global
+  ;; Instead of `evil-next-line-first-non-blank'.
+  "+" 'evil-numbers/inc-at-pt
+  ;; Instead of `evil-previous-line-first-non-blank'.
+  "-" 'evil-numbers/dec-at-pt)
 
 (evil-define-key*
   'normal 'global
@@ -208,9 +218,7 @@
   :keep-visual t
   (interactive "p")
   (let ((scroll-preserve-screen-position nil))
-    (scroll-up count)
-    (scroll-up count)
-    (scroll-up count)))
+    (scroll-up (* 4 count))))
 ;;
 (evil-define-command steve-evil-scroll-line-up (count)
   "Scrolls the window 3 * COUNT lines upwards."
@@ -218,25 +226,19 @@
   :keep-visual t
   (interactive "p")
   (let ((scroll-preserve-screen-position nil))
-    (scroll-down count)
-    (scroll-down count)
-    (scroll-down count)))
+    (scroll-down (* 4 count))))
 ;;
 (evil-define-command steve-evil-scroll-line-down-other (count)
   :repeat nil
   :keep-visual t
   (interactive "p")
-  (scroll-other-window count)
-  (scroll-other-window count)
-  (scroll-other-window count))
+  (scroll-other-window (* 4 count)))
 ;;
 (evil-define-command steve-evil-scroll-line-up-other (count)
   :repeat nil
   :keep-visual t
   (interactive "p")
-  (scroll-other-window-down count)
-  (scroll-other-window-down count)
-  (scroll-other-window-down count))
+  (scroll-other-window-down (* 4 count)))
 
 (evil-define-key*
   'motion 'global

@@ -12,6 +12,9 @@
 ;; rather scroll just enough to get point in the window again (respecting the
 ;; margin above).
 (setq scroll-conservatively 200)  ; (arbitrary high number)
+;; Try not to move the visual coordinates of the cursor when e.g. paging up and
+;; down.
+(setq scroll-preserve-screen-position t)
 
 (setq show-paren-delay 0)
 (show-paren-mode t)
