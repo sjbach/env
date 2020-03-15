@@ -114,7 +114,7 @@
 (mapc 'expand-load
       `("look-and-feel.el"
         "prose.el"
-        "misc.el"
+        "misc-functions.el"
         "code-conventions.el"
         "R.el"
         "rust.el"
