@@ -325,6 +325,8 @@
 (define-key ctl-x-map "o" #'vitreous-other-window)
 ;; Instead of translating to `other-window'.
 (define-key ctl-x-map "O" #'vitreous-hydra/body)
+;; Instead of `compose-mail', which I don't use and never intend to launch.
+(define-key ctl-x-map "m" nil)
 
 (require 'flyspell)
 ;; I use flyspell in buffers that use these keys for other things.
@@ -340,6 +342,8 @@
 (global-unset-key (kbd "M-c"))  ; default: `capitalize-word'
 (global-unset-key (kbd "M-v"))  ; default: `scroll-down-command'
 
+;; Help:
+(define-key help-map "\C-f" 'describe-function)  ; default: `view-emacs-FAQ'
 ;; Clear out some bindings from `help-map' to make its `which-key' window
 ;; a little easier to scan.
 (define-key help-map "\C-a" nil)
