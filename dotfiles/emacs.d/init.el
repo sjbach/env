@@ -162,9 +162,11 @@
   ;; Note: this only works when called by the hook below.
   (defun steve--restore-desktop-frameset-even-in-tty ()
     (advice-add #'display-graphic-p :override #'steve-always-t)
-    (desktop-restore-frameset)
-    (advice-remove #'display-graphic-p #'steve-always-t)
-    (message "Frames restored"))
+    (unwind-protect
+        (progn
+          (desktop-restore-frameset)
+          (message "Frames restored"))
+      (advice-remove #'display-graphic-p #'steve-always-t)))
   (add-hook 'desktop-after-read-hook
             #'steve--restore-desktop-frameset-even-in-tty))
 
