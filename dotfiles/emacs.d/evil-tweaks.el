@@ -111,7 +111,12 @@
   ;; Replaces `evil-substitute'. (Restored to original binding in visual state.)
   "s" #'save-buffer
   ;; Replaces `evil-change-whole-line', which is functionally the same as "cc".
-  "S" #'evil-substitute)
+  "S" #'evil-substitute
+
+  ;; More easily repeatable visual-line scrolling than gj / gk.
+  (kbd "M-j") #'evil-next-visual-line      ; default: `default-indent-new-line'
+  (kbd "M-k") #'evil-previous-visual-line  ; default: `kill-sentence'
+  )
 
 (evil-define-key*
   'visual 'global
@@ -152,9 +157,9 @@
   (interactive)
   (evil-set-register ?c (evil-get-register ?\")))
 
-;; In normal mode I like ">" and "<" to operate immediately on the current
+;; In normal state I like ">" and "<" to operate immediately on the current
 ;; line, one key press, rather than wait for a motion. Delegate to the regular
-;; operator for visual mode.
+;; operator for visual state.
 (require 'evil-types)  ;; For `(interactive "<v><vc>")`
 (evil-define-operator steve-evil-shift-left (beg end
                                              &optional
@@ -173,7 +178,7 @@
         (evil-shift-right beg end count preserve-empty)
       (evil-shift-right-line count))))
 ;;
-;; Make "=" behave in normal mode like it does in visual mode, acting
+;; Make "=" behave in normal state like it does in visual state, acting
 ;; immediately on the current rather than waiting for a motion.
 (evil-define-operator steve-evil-indent (beg end &optional dummy)
   :move-point nil
@@ -189,9 +194,9 @@
 
 ;; Tweak the semantics of `$`
 ;;
-;; In Evil (and Vim), a `$` in visual mode will stretch the region to include
+;; In Evil (and Vim), a `$` in visual state will stretch the region to include
 ;; the trailing newline of the current line. But usually when I press `$` in
-;; visual mode I only want the region to extend to the character preceding the
+;; visual state I only want the region to extend to the character preceding the
 ;; newline. Sometimes I do want the newline though! So make it contextual. Two
 ;; presses will include the newline.
 (evil-define-motion steve-evil-end-of-line (count)
