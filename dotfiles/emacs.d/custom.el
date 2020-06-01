@@ -25,6 +25,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(hl-line ((t (:inherit highlight :extend t :background "color-235"))))
+ '(hl-line ((t (:inherit highlight :extend t :background "grey15"))))
  '(nameless-face ((t (:inherit font-lock-type-face :foreground "grey50")))))
 
