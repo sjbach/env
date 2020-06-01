@@ -14,6 +14,10 @@
 ;; Make "Y" behave like "D" and "C" instead of "yy".
 (customize-set-variable 'evil-want-Y-yank-to-eol t)
 ;;
+;; I prefer 'evil-search but its performance is very poor on large buffers.
+;; (customize-set-variable 'evil-search-module 'evil-search)
+;; (evil-select-search-module 'evil-search-module 'isearch)
+;;
 (require 'evil)
 (evil-mode 1)
 

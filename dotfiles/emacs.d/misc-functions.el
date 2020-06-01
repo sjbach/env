@@ -155,6 +155,12 @@
     (ef-frame-choose "research"))
   (pop-to-buffer "*Scratch*"))
 
+(defun steve-byte-compile-and-load-current-file ()
+  (interactive)
+  (let ((elisp-file-name (buffer-file-name (current-buffer))))
+    (unless (string-match-p "\.el$" elisp-file-name)
+      (error "Does not look like an elisp file: %s" elisp-file-name))
+    (byte-compile-file elisp-file-name 'load)))
 
 ;;;
 ;;; Debugging

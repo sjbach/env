@@ -102,7 +102,7 @@
 ;; I use frames as pseudo-workspaces, I don't want to delete them all
 ;; accidentally because of a mistype.
 (define-key ctl-x-5-map "1"
-  (lambda (&optional dummy)
+  (lambda (&optional _dummy)
     (interactive)
     (message "Run `M-x delete-other-frames'")))
 
@@ -139,6 +139,33 @@
 (define-prefix-command 'steve-grep-prefix-map)
 (define-key steve-C-SPC-map "g" steve-grep-prefix-map)
 ;; (Filled in elsewhere.)
+
+;; Debugging:
+(let ((prefix-map (make-sparse-keymap)))
+  (define-key prefix-map "s" #'toggle-debug-on-error)
+  (define-key prefix-map "u"
+    ;; Toggle whether 'user-error calls the debugger.
+    (lambda ()
+      (interactive)
+      (if (memq 'user-error debug-ignored-errors)
+          (progn
+            (message "Debugging `user-error'")
+            (setq debug-ignored-errors
+                  (delq 'user-error debug-ignored-errors)))
+        (push 'user-error debug-ignored-errors)
+        (message "Not debugging `user-error'"))))
+  (define-key prefix-map "q" #'toggle-debug-on-quit)
+  (define-key steve-C-SPC-map "D" prefix-map))
+
+;; Profiling:
+(let ((prefix-map (make-sparse-keymap)))
+  ;; (define-key prefix-map "s" #'profiler-start)
+  (define-key prefix-map "s" (lambda ()
+                               (interactive)
+                               (profiler-start 'cpu+mem)))
+  (define-key prefix-map "r" #'profiler-report)
+  (define-key prefix-map "o" #'profiler-stop)
+  (define-key steve-C-SPC-map "P" prefix-map))
 
 ;; Helpful:
 (let ((prefix-map (make-sparse-keymap)))
@@ -258,6 +285,8 @@
     (define-key prefix-map "M" #'macrostep-expand)
     (define-key prefix-map "W" #'steve-hydra-elisp-refs/body)
     (define-key prefix-map "?" #'steve-pp-eval-dwim)
+    (define-key prefix-map "n" #'nameless-mode)
+    (define-key prefix-map "\C-l" #'steve-byte-compile-and-load-current-file)
     ;; (Actually visual-mode only)
     (define-key prefix-map "r" #'steve-eval-region-and-close-visual-mode)
     (define-key elisp-related-map steve-mode-specific-prefix-key prefix-map)

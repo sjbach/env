@@ -1,8 +1,11 @@
-;;; -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t -*-
 ;;
 ;; Look and feel
 ;;
 
+;; I never use the suggested M-x abbreviations so the echoing is just
+;; noise.
+(setq extended-command-suggest-shorter nil)
 
 ;; Scrolling behavior. (Make similar to Vim)
 ;;

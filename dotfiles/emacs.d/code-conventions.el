@@ -66,6 +66,22 @@
                         (string-equal (buffer-name) "*Scratch*"))
             (flycheck-mode 1))))
 
+;; Emacs Lisp code can become hard to scan because of the heavy use of package
+;; prefixes resulting from the absence of true namespacing in the language.
+;; `nameless-mode' helps ameliorate this.
+;;
+;; package-foo becomes :foo and package--bar becomes ::bar.
+(setq nameless-prefix ":")        ; default: ":"
+;; A middot is an unambiguous token but it interacts oddly with `fci-mode' and
+;; with the window divider glyph in terminal Emacs.
+;; (setq nameless-prefix "·")        ; default: ":"
+;; (setq nameless-prefix "/")        ; default: ":"
+(setq nameless-private-prefix t)  ; default: nil
+;; Indent code and comments according to the true content, not the displayed
+;; content, as most readers will not be using `nameless-mode'.
+(setq nameless-affect-indentation-and-filling nil)  ; default: 'outside-strings
+;; (Note: `nameless-face' also customized to tamp down its vibrancy.)
+
 (defun steve-turn-on-fill-column-indiciator ()
   (if (fboundp 'display-fill-column-indicator-mode)
       ;; Only present in 27.1+.

@@ -32,6 +32,10 @@
 
 ;; Prefer the filename found by evaluating all symbolic links.
 (setq find-file-visit-truename t)
+;; Suppress "foo and bar are the same file" warnings. The above setting and/or
+;; `find-file-existing-other-name' ensure we dereference symlinks and keep a
+;; canonical buffer, so the warning is not helpful.
+(setq find-file-suppress-same-file-warnings t)
 
 ;; Don't load old byte code if the source .el file has a newer timestamp.
 ;; (Posterity: once caused a Recursive Load error re: jka-compr.el.gz but seems
@@ -83,10 +87,16 @@
 
 (require 'magit)
 (setq magit-diff-refine-hunk 'all)
-;; Can be slow in large repos.
-(add-hook 'after-save-hook #'magit-after-save-refresh-status)
+;; Refresh magit status upon save. Can be slow in large repos.
+;; Disabled: appears to sometimes cause `point' to jump to a different faraway
+;; position in the saved buffer.
+;; (add-hook 'after-save-hook #'magit-after-save-refresh-status)
 (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 (setq git-timemachine-show-author nil)
+
+;; hideshow seems to sometimes overreach in folding comments and can suppress
+;; a block of code if it sits between two large comment blocks.
+(setq hs-hide-comments-when-hiding-all nil)
 
 ;; `xterm-paste', activated when terminal Emacs detects that input is a pasted
 ;; text stream, pushes what it pastes onto the kill ring, which overwrites
