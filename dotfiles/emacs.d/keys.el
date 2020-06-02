@@ -75,10 +75,12 @@
 ;; Rather than `flyspell-auto-correct-previous-word'.
 (global-set-key (kbd "C-;") #'pluck-other-buffer)
 ;;
-;; Aside: `DEL` refers to the backspace key; The Delete key is
+;; Aside: In Emacs `DEL` refers to the backspace key; The Delete key is
 ;; `delete`/`<deletechar>`.
-(global-set-key (kbd "C-DEL") #'steve-kill-buffer)
-(global-set-key (kbd "C-S-DEL") #'kill-buffer-and-window)
+(global-set-key (kbd "C-DEL")
+                #'steve-bury-or-kill-current-buffer)
+(global-set-key (kbd "C-S-DEL")
+                #'steve-bury-or-kill-current-buffer-and-delete-window)
 ;;
 (define-key help-map "H" #'steve-show-help-buffer)
 

@@ -41,10 +41,18 @@
       ;; (comment-or-uncomment-region start-pos
       (comment-region start-pos (point) nil))))
 
-;; Simpler wrapper on `kill-buffer' that does not prompt for a buffer name.
-(defun steve-kill-buffer ()
-  (interactive)
-  (kill-buffer (current-buffer)))
+(defun steve-bury-or-kill-current-buffer (&optional kill)
+  (interactive "P")
+  (if kill  ; called with C-u prefix
+      (kill-buffer)
+    (bury-buffer)))
+
+(defun steve-bury-or-kill-current-buffer-and-delete-window (&optional kill)
+  (interactive "P")
+  (if kill  ; called with C-u prefix
+      (kill-buffer-and-window)
+    (bury-buffer (current-buffer))
+    (delete-window (selected-window))))
 
 (defun steve-pp-eval-dwim ()
   (interactive)
