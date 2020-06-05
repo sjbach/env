@@ -303,6 +303,7 @@
 (require 'grep)  ;; so that `grep-mode-map' is defined
 (let ((prefix-map (make-sparse-keymap)))
   (define-key prefix-map "D" 'steve-remove-matching-lines)
+  (define-key prefix-map "r" 'recompile)
   (define-key grep-mode-map steve-mode-specific-prefix-key prefix-map)
   (steve-run-after-evil-tweaks
    (evil-define-key*

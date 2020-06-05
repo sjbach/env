@@ -111,6 +111,7 @@ Version 2018-08-30"
     ;; (redraw-frame)
     ))
 (add-hook 'emacs-lisp-mode-hook #'xah-show-formfeed-as-line)
+(add-hook 'compilation-mode-hook #'xah-show-formfeed-as-line)
 
 (defun steve--add-fixme-font-lock-keywords ()
   "Highlight XXX-style tokens in source code."

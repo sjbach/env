@@ -1,6 +1,9 @@
 ;; This file isn't loaded, it's just for posterity / searchability.
 (cl-assert false)
 
+;; Disabled because it can be too noisy when working over a slow SSH
+;; connection.
+(setq grep-scroll-output t)
 
 ;; Tab characters displayed as 2 columns instead of 8.
 (setq-default tab-width 2)

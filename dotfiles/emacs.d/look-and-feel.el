@@ -145,10 +145,10 @@
 
 ;; Which-key
 (require 'which-key)
-(setq which-key-allow-imprecise-window-fit t)
+(setq which-key-allow-imprecise-window-fit t)  ; better in the terminal
 (setq which-key-sort-order 'which-key-prefix-then-key-order)
 (setq which-key-allow-evil-operators t)
-(setq which-key-idle-delay 0.25)  ;; When connection latency is reliable
+(setq which-key-idle-delay 0.33)  ;; When connection latency is reliable
 ;; (setq which-key-idle-delay 1)  ;; Otherwise
 (setq which-key-idle-secondary-delay 0.05)
 (setq which-key-is-verbose t)
