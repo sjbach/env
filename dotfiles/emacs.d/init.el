@@ -1,5 +1,10 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; Emacs 27 runs `package-initialize' after processing `early-init-file',
+;; just prior to processing this file, but earlier versions don't.
+(unless (bound-and-true-p package--initialized)
+  (package-initialize))
+
 (add-to-list 'load-path "~/.emacs.d/elisp")
 
 ;; No tab characters in new indentation.
