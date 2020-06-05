@@ -325,12 +325,10 @@
           (lambda ()
             (evil-define-key*
               '(insert normal motion global) lusty-mode-map
-              "\C-n" 'lusty-highlight-next
-              "\C-p" 'lusty-highlight-previous
-              "\C-s" 'lusty-highlight-next
-              "\C-r" 'lusty-highlight-previous
-              "\C-f" 'lusty-highlight-next-column
-              "\C-b" 'lusty-highlight-previous-column)))
+              (kbd "C-n") 'lusty-highlight-next
+              (kbd "C-p") 'lusty-highlight-previous
+              (kbd "C-s") 'lusty-highlight-next
+              (kbd "C-r") 'lusty-highlight-previous)))
 
 ;; Vim-related utility functions.
 ;;
