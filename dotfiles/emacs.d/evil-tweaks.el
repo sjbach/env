@@ -73,6 +73,29 @@
 (define-key evil-motion-state-map "'" 'evil-goto-mark)
 (define-key evil-motion-state-map "`" 'evil-goto-mark-line)
 
+;; Entering insert state wll clear the echo area but usually the echo area
+;; shows context relevant to why I am entering insert state, e.g. an eldoc
+;; annotation. Prevent a clear of the echo area when I enter insert state.
+(setq evil-insert-state-message nil)  ; default: "-- INSERT --"
+;;
+(defvar steve--previous-message nil)
+;;
+(defun steve--save-current-message ()
+  (setq steve--previous-message
+        (current-message)))
+;;
+(defun steve--apply-saved-message-to-echo-area ()
+  (when steve--previous-message
+    (let ((message-log-max nil))  ; don't show in *Messages*
+      (message "%s" steve--previous-message))))
+;;
+(add-hook 'echo-area-clear-hook  ; run before every command, I think
+          #'steve--save-current-message)
+(add-hook 'evil-insert-state-entry-hook
+          #'steve--apply-saved-message-to-echo-area)
+;; (remove-hook 'echo-area-clear-hook #'steve--save-current-message)
+;; (remove-hook 'evil-insert-state-entry-hook #'steve--apply-saved-message-to-echo-area)
+
 ;; C-o is bound to evil-jump-backward, which is useful; in Evil/Vim the counter
 ;; direction is C-i (see: `evil-want-C-i-jump'), but in terminal Emacs that key
 ;; is indistinguishable from TAB by default. Punt on the implications of
