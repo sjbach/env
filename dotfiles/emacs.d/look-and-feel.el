@@ -218,6 +218,8 @@
 ;; suppress "Wrote <filename>".)
 (setq save-silently t)
 
+(setq print-gensym t)  ; show gensyms as gensyms
+(setq print-circle t)  ; show `#N=' refs in circular lists
 ;; A little more dept in printing lists/trees.
 (setq eval-expression-print-level 5)  ; default: 4
 

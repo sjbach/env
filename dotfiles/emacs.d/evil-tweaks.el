@@ -85,7 +85,9 @@
         (current-message)))
 ;;
 (defun steve--apply-saved-message-to-echo-area ()
-  (when steve--previous-message
+  (when (and steve--previous-message
+             ;; Don't blast the echo area when we're in the minibuffer.
+             (not (minibufferp (current-buffer))))
     (let ((message-log-max nil))  ; don't show in *Messages*
       (message "%s" steve--previous-message))))
 ;;

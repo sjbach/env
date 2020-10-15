@@ -163,6 +163,14 @@
     (ef-frame-choose "research"))
   (pop-to-buffer "*Scratch*"))
 
+(defun steve--examine-overlays-current-buffer ()
+  (cl-loop with lists = (overlay-lists)
+           for ol in (nconc (car lists) (cdr lists))
+           collect
+           (list ol
+                 (- (overlay-end ol) (overlay-start ol))
+                 (overlay-properties ol))))
+
 (defun steve-byte-compile-and-load-current-file ()
   (interactive)
   (let ((elisp-file-name (buffer-file-name (current-buffer))))

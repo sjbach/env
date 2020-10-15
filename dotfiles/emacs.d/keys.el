@@ -130,8 +130,9 @@
 (define-key steve-C-SPC-map (kbd "C-j") 'lusty-buffer-explorer)
 (define-key steve-C-SPC-map (kbd "C-k") 'ef-frame-choose)
 (define-key steve-C-SPC-map "b" 'lusty-buffer-explorer)
-(define-key steve-C-SPC-map "d" #'toggle-debug-on-error)
 ;; (define-key steve-C-SPC-map "v" 'steve-vim-excursion)
+
+(define-key steve-C-SPC-map "h" #'steve-hydra-hideshow/body)
 
 ;; Filename search:
 (define-prefix-command 'steve-filename-search-prefix-map)
@@ -145,7 +146,7 @@
 
 ;; Debugging:
 (let ((prefix-map (make-sparse-keymap)))
-  (define-key prefix-map "s" #'toggle-debug-on-error)
+  (define-key prefix-map "e" #'toggle-debug-on-error)
   (define-key prefix-map "u"
     ;; Toggle whether 'user-error calls the debugger.
     (lambda ()
@@ -158,7 +159,7 @@
         (push 'user-error debug-ignored-errors)
         (message "Not debugging `user-error'"))))
   (define-key prefix-map "q" #'toggle-debug-on-quit)
-  (define-key steve-C-SPC-map "D" prefix-map))
+  (define-key steve-C-SPC-map "d" prefix-map))
 
 ;; Profiling:
 (let ((prefix-map (make-sparse-keymap)))
@@ -232,14 +233,12 @@
 (define-key steve-C-comma-map "mj" #'bookmark-jump)
 (define-key steve-C-comma-map "ms" #'bookmark-set)
 
-(define-key steve-C-comma-map "h" #'steve-hydra-hideshow/body)
-(define-key steve-dwim-leader-map "h" #'steve-hydra-hideshow/body)
-
 ;;
 ;; Custom mode-specific bindings on these prefix keys
 ;;
 
 (defmacro steve-run-after-evil-tweaks (f)
+  ;; (See evil-tweaks.el in this repo)
   `(eval-after-load 'steve-evil-tweaks (lambda () ,f)))
 
 ;; Help:
@@ -262,8 +261,11 @@
 
 ;; Programming modes:
 (let ((prefix-map (make-sparse-keymap)))
-  (define-key prefix-map "," 'pop-tag-mark)
-  ;; (A keymap inhereited by most programming language modes.)
+  (define-key prefix-map "." #'xref-find-definitions)
+  (define-key prefix-map "," #'xref-pop-marker-stack)
+  (define-key prefix-map "/" #'xref-find-references)
+  (define-key prefix-map (kbd "C-/") #'xref-find-apropos)
+  ;; Note: `prog-mode-map' is inherited by most programming language modes.
   (define-key prog-mode-map steve-mode-specific-prefix-key prefix-map)
   (steve-run-after-evil-tweaks
    (evil-define-key*
@@ -271,7 +273,7 @@
     steve-dwim-leader-prefix-key prefix-map)))
 
 ;; Emacs Lisp:
-(require 'ielm)  ;; so that ielm-map is defined
+(require 'ielm)  ; so that `ielm-map' is defined
 (dolist (elisp-related-map (list emacs-lisp-mode-map
                                  lisp-interaction-mode-map
                                  ielm-map))
@@ -290,6 +292,7 @@
     (define-key prefix-map "?" #'steve-pp-eval-dwim)
     (define-key prefix-map "n" #'nameless-mode)
     (define-key prefix-map "\C-l" #'steve-byte-compile-and-load-current-file)
+    (define-key prefix-map "=" #'indent-sexp)
     ;; (Actually visual-mode only)
     (define-key prefix-map "r" #'steve-eval-region-and-close-visual-mode)
     (define-key elisp-related-map steve-mode-specific-prefix-key prefix-map)
@@ -323,6 +326,7 @@
     steve-dwim-leader-prefix-key prefix-map)))
 
 ;; Magit
+(require 'magit)  ; ensure `magit-mode-map' is loaded.
 (let ((prefix-map (make-sparse-keymap)))
   (define-key prefix-map "1" #'magit-section-show-level-1-all)
   (define-key prefix-map "2" #'magit-section-show-level-2-all)

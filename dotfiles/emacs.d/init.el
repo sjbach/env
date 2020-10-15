@@ -1,11 +1,9 @@
-;;; -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t -*-
 
 ;; Emacs 27 runs `package-initialize' after processing `early-init-file',
 ;; just prior to processing this file, but earlier versions don't.
 (unless (bound-and-true-p package--initialized)
   (package-initialize))
-
-(add-to-list 'load-path "~/.emacs.d/elisp")
 
 ;; No tab characters in new indentation.
 (setq-default indent-tabs-mode nil)
@@ -59,8 +57,8 @@
 (setq bookmark-save-flag 1)
 (setq messages-buffer-max-lines 32768)  ;; arbitrary high number
 ;; These could be higher, but this is the limit used by desktop-save-mode and I
-;; don't see much value in preserving >200 open buffers.
-(setq history-length 200)  ;; default: 100
+;; don't see much value in preserving >300 open buffers.
+(setq history-length 300)  ;; default: 100
 (setq kill-ring-max 200) ;; default: 60
 (setq list-command-history-max 200)  ;; default: 32
 
@@ -84,13 +82,10 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
-(require 'lusty-explorer)
-
-(require 'recentf)
-(recentf-mode 1)
+;; (require 'recentf)
 (setq recentf-max-saved-items 100)  ;; default: 20
+(recentf-mode 1)
 
-(require 'magit)
 (setq magit-diff-refine-hunk 'all)
 ;; Refresh magit status upon save. Can be slow in large repos.
 ;; Disabled: appears to sometimes cause `point' to jump to a different faraway
@@ -117,26 +112,36 @@
 
 ;; Package
 ;;
-(require 'package)
 ;; ELPA, MELPA:
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
-(defun expand-load (filename)
-  (when (stringp filename)
-    (load-file (expand-file-name (format "~/.emacs.d/%s" filename)))))
+;; Include any workstation-local elisp libraries near the beginning of
+;; `load-path' so that they override `package', etc.
+(let ((local-elisp-dir "~/.emacs.d/local-elisp"))
+  (add-to-list 'load-path local-elisp-dir)
+  (dolist (file-name (directory-files local-elisp-dir))
+    (let ((full-path
+           (concat (file-name-as-directory local-elisp-dir) file-name)))
+      (when (and (file-directory-p full-path)
+                 (not (string= file-name ".."))
+                 (not (string= file-name ".")))
+        (add-to-list 'load-path full-path)))))
 
-(mapc 'expand-load
-      `("look-and-feel.el"
-        "prose.el"
-        "misc-functions.el"
-        "code-conventions.el"
-        "R.el"
-        "rust.el"
-        "keys.el"
-        "evil-tweaks.el"
-        ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el")
-        ))
+(let ((conf-files
+       `("look-and-feel.el"
+         "prose.el"
+         "misc-functions.el"
+         "code-conventions.el"
+         "R.el"
+         "rust.el"
+         "keys.el"
+         "evil-tweaks.el"
+         ,(and (file-exists-p "~/.emacs.d/nonpublic.el") "nonpublic.el"))))
+  (mapc (lambda (filename)
+          (when (stringp filename)
+            (load-file (expand-file-name (format "~/.emacs.d/%s" filename)))))
+        conf-files))
 
 ;; Launch Emacs server.
 (require 'server)
@@ -156,7 +161,7 @@
                 ef--name-to-numbered-confs-alist
                 ef--name-to-pre-restore-conf-alist)))
 
-;; I want desktop-save-mode to save/restore frame names.
+;; I want `desktop-save-mode' to save/restore frame names.
 ;; Note: might be better to do this as advice on desktop-save and desktop-read.
 (require 'frameset)  ;; ensure `frameset-filter-alist` is loaded
 (unless (eq (alist-get 'name frameset-filter-alist) nil)
@@ -165,7 +170,7 @@
 (unless (eq (alist-get 'powerline-cache frameset-filter-alist) :never)
   (push '(powerline-cache . :never) frameset-filter-alist))
 
-;; desktop-save-mode will not restore frames in terminal Emacs because of a
+;; `desktop-save-mode' will not restore frames in terminal Emacs because of a
 ;; check for `(display-graphic-p)` in `(desktop-restoring-frameset-p)`. But the
 ;; restore works just fine if you force it.
 ;;
