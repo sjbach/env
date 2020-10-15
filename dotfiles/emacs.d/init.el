@@ -120,13 +120,14 @@
 ;; `load-path' so that they override `package', etc.
 (let ((local-elisp-dir "~/.emacs.d/local-elisp"))
   (add-to-list 'load-path local-elisp-dir)
-  (dolist (file-name (directory-files local-elisp-dir))
-    (let ((full-path
-           (concat (file-name-as-directory local-elisp-dir) file-name)))
-      (when (and (file-directory-p full-path)
-                 (not (string= file-name ".."))
-                 (not (string= file-name ".")))
-        (add-to-list 'load-path full-path)))))
+  (when (file-directory-p local-elisp-dir)
+    (dolist (file-name (directory-files local-elisp-dir))
+      (let ((full-path
+             (concat (file-name-as-directory local-elisp-dir) file-name)))
+        (when (and (file-directory-p full-path)
+                   (not (string= file-name ".."))
+                   (not (string= file-name ".")))
+          (add-to-list 'load-path full-path))))))
 
 (let ((conf-files
        `("look-and-feel.el"
